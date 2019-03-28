@@ -13,8 +13,9 @@ public class StorageProperties {
      * WAR file for production, see https://stackoverflow.com/questions/8885201/uploaded-image-only-available-after-refreshing-the-page
      */
     private String location = "upload-dir"; // should be changed to eg /var/webapp/uploads before deploy
-    private String avatarPrefix = "avatar";
-    private String answerPrefix = "answer";
+    private String avatarPrefix = "avatars";
+    private String answerPrefix = "answers";
+    private String tempDir = location + "/temp";
 
     public String getLocation() {
         return location;
@@ -38,5 +39,13 @@ public class StorageProperties {
 
     public void setAnswerPrefix(String answerPrefix) {
         this.answerPrefix = answerPrefix;
+    }
+
+    public String getTempDir() {
+        return tempDir;
+    }
+
+    public void setTempDir(String tempDir) {
+        this.tempDir = tempDir;
     }
 }
