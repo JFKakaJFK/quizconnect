@@ -6,13 +6,13 @@
                 xmlns:p="http://primefaces.org/ui"
                 template="/WEB-INF/templates/main.xhtml">
     <ui:define name ="content">
-        <h:form enctype="multipart/form-data">
+        <h:form id="upload" enctype="multipart/form-data">
             Avatar Upload
             <p:growl id="messages" showDetail="true" />
             <!-- sizelimit should be  10MB -->
             <p:fileUpload fileUploadListener="#{fileUploadTestBean.handleAvatarUpload}" multiple="false"
                           mode="advanced" required="true"
-                          update="messages" auto="true" sizeLimit="10000000"
+                          update=":upload:messages avatar" auto="true" sizeLimit="10000000"
                           allowTypes="/(\.|\/)(jpe?g|png)$/"
                           styleClass="fileupload"
                           requiredMessage="Es muss eine Datei hochgeladen werden."
@@ -20,6 +20,8 @@
                           invalidSizeMessage="Diese Datei ist zu groß"
                           invalidFileMessage="Dieses Dateiformat ist nicht erlaubt"
             />
+            <img id="vatar" src="#{fileUploadTestBean.filename}" alt="avatar" />
+            <p:graphicImage id="avatar" value="#{fileUploadTestBean.filename}" alt="avatar" />
             Answer Upload
             <!-- sizelimit should be  10MB -->
             <p:fileUpload fileUploadListener="#{fileUploadTestBean.handleAnswerUpload}" multiple="false"

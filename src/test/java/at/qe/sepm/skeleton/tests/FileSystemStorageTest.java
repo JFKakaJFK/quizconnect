@@ -7,7 +7,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
-import org.primefaces.model.UploadedFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -39,8 +38,9 @@ public class FileSystemStorageTest {
 
     @Test
     public void testStoreAvatar() throws IOException {
-        File testFile = folder.newFile("testPic.jpg");
+        //File testFile = folder.newFile("testPic.jpg");
 
         //String stored = fileSystemStorageService.storeAvatar(testFile, "manager");
+
     }
 }

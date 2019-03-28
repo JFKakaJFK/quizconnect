@@ -1,9 +1,8 @@
 package at.qe.sepm.skeleton.services;
 
-import at.qe.sepm.skeleton.configs.StorageProperties;
 import org.apache.commons.io.FilenameUtils;
-import org.primefaces.model.UploadedFile;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 
@@ -22,86 +21,103 @@ import java.nio.file.StandardCopyOption;
 @Service
 public class FileSystemStorageService implements StorageService {
 
-    private final Path rootLocation;
-    private final Path tempDir;
-    private final String avatarPrefix;
-    private final String answerPrefix;
+    private Path rootLocation;
+    private Path temp;
+    private Path thumbs;
+    private int thumbSize;
+    private String avatarPrefix;
+    private String answerPrefix;
     private ImageService imageService;
 
+    @Autowired
+    public void initProperties(
+            @Value("${storage.uploads.location}") String location,
+            @Value("${storage.uploads.temporary}") String temp,
+            @Value("${storage.thumbnails.location}") String thumbs,
+            @Value("${storage.thumbnails.minResolution}") String thumbSize,
+            @Value("${storage.prefixes.avatar}") String avatarPrefix,
+            @Value("${storage.prefixes.answer}") String answerPrefix){
+        this.rootLocation = Paths.get(location);
+        this.temp = Paths.get(temp);
+        this.thumbs = Paths.get(thumbs);
+        this.thumbSize = Integer.valueOf(thumbSize);
+        this.avatarPrefix = avatarPrefix;
+        this.answerPrefix = answerPrefix;
+    }
+
     /**
-     * The {@link StorageProperties#location} is used as storage directory
+     * Autowires the {@link ImageService} on creation
      *
-     * @param properties
+     * @param imageService
      */
     @Autowired
-    public FileSystemStorageService(StorageProperties properties, ImageService imageService) {
-        this.rootLocation = Paths.get(properties.getLocation());
-        this.tempDir = Paths.get(properties.getTempDir());
-        this.avatarPrefix = properties.getAvatarPrefix();
-        this.answerPrefix = properties.getAnswerPrefix();
+    public FileSystemStorageService(ImageService imageService) {
         this.imageService = imageService;
     }
 
     /**
-     * Stores a {@link UploadedFile} in the service
+     * Stores a file in the service
      *
-     * @param uploadedFile file to store
      * @return filename of stored file, needed to retrieve file
      * @throws IOException
      */
     @Override
-    public String storeAvatar(UploadedFile uploadedFile, String managerId) throws IOException {
+    public String storeAvatar(InputStream inputStream, String filename, String managerId) throws IOException {
         Path uploadPath = Paths.get(managerId + "/" + avatarPrefix);
-        // TODO: compression options
-        return store(uploadedFile, uploadPath, 200, 200);
+        return store(inputStream, filename, uploadPath, thumbSize);
     }
 
     /**
-     * Stores a {@link UploadedFile} in the service
+     * Stores a file in the service
      *
-     * @param uploadedFile file to store
      * @return filename of stored file, needed to retrieve file
      * @throws IOException
      */
     @Override
-    public String storeAnswer(UploadedFile uploadedFile, String managerId) throws IOException {
-        // TODO: maybe add questionSet in path?
+    public String storeAnswer(InputStream inputStream, String filename, String managerId) throws IOException {
         Path uploadPath = Paths.get(managerId + "/" + answerPrefix);
-        // TODO: compression options
-        return store(uploadedFile, uploadPath);
+        return store(inputStream, filename, uploadPath, 400);
     }
 
     /**
-     * Stores a {@link UploadedFile} in the service
+     * Stores a in the service
      *
-     * @param uploadedFile file to store
+     * @param inputStream of file to store
      * @return filename of stored file, needed to retrieve file
      * @throws IOException
      */
-    private String store(UploadedFile uploadedFile, Path uploadPath) throws IOException {
-        String filename = FilenameUtils.getBaseName(uploadedFile.getFileName());
-        String extension = FilenameUtils.getExtension(uploadedFile.getFileName());
+    // no unit test, probably unnecessary
+    @Deprecated
+    private String store(InputStream inputStream, String filename, Path uploadPath) throws IOException {
+        String name = FilenameUtils.getBaseName(filename);
+        String extension = FilenameUtils.getExtension(filename);
 
         Files.createDirectories(rootLocation.resolve(uploadPath.toString()));
-        Path file = Files.createTempFile(rootLocation.resolve(uploadPath.toString()), filename + "-", "." + extension);
+        Path file = Files.createTempFile(rootLocation.resolve(uploadPath.toString()), name + "-", "." + extension);
 
-        InputStream input = uploadedFile.getInputstream();
-        Files.copy(input, file, StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(inputStream, file, StandardCopyOption.REPLACE_EXISTING);
         return uploadPath.resolve(file.getFileName().toString()).toString();
     }
 
-    private String store(UploadedFile uploadedFile, Path uploadPath, final int width, final int height) throws IOException {
-        String extension = FilenameUtils.getExtension(uploadedFile.getFileName());
+    /**
+     * Stores a user avatar in the service
+     *
+     * @param inputStream of file to store
+     * @return filename of stored file, needed to retrieve file
+     * @throws IOException
+     */
+    private String store(InputStream inputStream, String filename, Path uploadPath, final int size) throws IOException {
+        String extension = FilenameUtils.getExtension(filename);
 
+        Path tempFile = Files.createTempFile(temp, "upload", "." + extension);
+        Files.copy(inputStream, tempFile, StandardCopyOption.REPLACE_EXISTING);
 
-        Path tempFile = Files.createTempFile(tempDir, "upload", "." + extension);
-        InputStream input = uploadedFile.getInputstream();
-        Files.copy(input, tempFile, StandardCopyOption.REPLACE_EXISTING);
+        Files.createDirectories(thumbs.resolve(uploadPath.toString()));
+        Path filePath = imageService.resizeToPNG(tempFile, thumbs.resolve(uploadPath), size, size);
 
-        Files.createDirectories(rootLocation.resolve(uploadPath.toString()));
-        Path filePath = imageService.resizeToJPG(tempFile, rootLocation.resolve(uploadPath), width, height);
+        deleteFile(tempFile);
 
-        return uploadPath.resolve(filePath.toString()).toString();
+        return filePath.toString();
     }
 
     /**
@@ -112,13 +128,15 @@ public class FileSystemStorageService implements StorageService {
      */
     @Override
     public Path load(String filename) {
-        return rootLocation.resolve(filename);
+        return Paths.get(filename);
     }
 
     /**
      * Deletes all files stored in the service
      */
-    @Override
+    // no unit test, probably unnecessary
+    @Deprecated
+    //@Override
     public void deleteAll() {
         FileSystemUtils.deleteRecursively(rootLocation.toFile());
     }
@@ -131,7 +149,18 @@ public class FileSystemStorageService implements StorageService {
     @Override
     public void init() throws IOException {
         Files.createDirectories(rootLocation);
-        Files.createDirectories(tempDir);
+        Files.createDirectories(temp);
+        Files.createDirectories(thumbs);
+    }
+
+    /**
+     * Deletes a temporary file
+     *
+     * @param file
+     * @throws IOException
+     */
+    private void deleteFile(Path file) throws IOException {
+        Files.deleteIfExists(file);
     }
 
     /**
@@ -142,6 +171,6 @@ public class FileSystemStorageService implements StorageService {
      */
     @Override
     public void deleteFile(String filename) throws IOException {
-        Files.deleteIfExists(rootLocation.resolve(filename));
+        Files.deleteIfExists(Paths.get(filename));
     }
 }

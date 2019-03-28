@@ -2,12 +2,15 @@ package at.qe.sepm.skeleton.ui.beans;
 
 import at.qe.sepm.skeleton.services.StorageService;
 import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.UploadedFile;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.ManagedBean;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * Bean for testing file storage functionality.
@@ -18,7 +21,6 @@ public class FileUploadTestBean {
     @Autowired
     private StorageService storageService;
 
-    private String type;
     private String filename = null;
 
     /**
@@ -28,10 +30,9 @@ public class FileUploadTestBean {
      */
     public void handleAnswerUpload(FileUploadEvent event){
 
-        type = event.getFile().getContentType();
-
         try {
-            filename = storageService.storeAnswer(event.getFile(), "kevin");
+            UploadedFile upload = event.getFile();
+            filename = storageService.storeAnswer(upload.getInputstream(), upload.getFileName(), "kevin");
         } catch (IOException e){
             filename = null;
         }
@@ -45,10 +46,10 @@ public class FileUploadTestBean {
      */
     public void handleAvatarUpload(FileUploadEvent event){
 
-        type = event.getFile().getContentType();
-
         try {
-            filename = storageService.storeAvatar(event.getFile(), "admin");
+            UploadedFile upload = event.getFile();
+            filename = storageService.storeAvatar(upload.getInputstream(), upload.getFileName(), "admin");
+            //filename = storageService.storeAvatar(event.getFile(), "admin");
         } catch (IOException e){
             filename = null;
         }
@@ -71,7 +72,7 @@ public class FileUploadTestBean {
 
         filename = null;
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
-                FacesMessage.SEVERITY_INFO, "Success", "Datei vom Typ '" + type + "' erfolgreich gespeichert")
+                FacesMessage.SEVERITY_INFO, "Success", "Datei erfolgreich gespeichert")
         );
     }
 
@@ -82,7 +83,17 @@ public class FileUploadTestBean {
      */
     public void abort() throws IOException {
         if(filename != null){
-            storageService.deleteFile(filename);
+            //storageService.deleteAvatar(filename);
+            //storageService.deleteAnswer(filename);
         }
+    }
+
+    public String getFilename() {
+        if(filename == null){
+            return "";
+        }
+        //Path path = Paths.get(filename);
+        //path.toAbsolutePath().toString();
+        return filename;
     }
 }
