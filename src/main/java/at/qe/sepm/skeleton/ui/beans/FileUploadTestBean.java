@@ -1,9 +1,11 @@
 package at.qe.sepm.skeleton.ui.beans;
 
 import at.qe.sepm.skeleton.services.StorageService;
+import at.qe.sepm.skeleton.ui.controllers.ImageController;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.ManagedBean;
 import javax.faces.application.FacesMessage;
@@ -18,10 +20,17 @@ import java.nio.file.Paths;
 @ManagedBean
 public class FileUploadTestBean {
 
-    @Autowired
-    private StorageService storageService;
 
+    private StorageService storageService;
     private String filename = null;
+
+    @Autowired
+    public FileUploadTestBean(StorageService storageService){
+        this.storageService = storageService;
+    }
+
+    // TODO
+    String manager = "carlos";
 
     /**
      * Catches a fileupload and stores file
@@ -32,7 +41,7 @@ public class FileUploadTestBean {
 
         try {
             UploadedFile upload = event.getFile();
-            filename = storageService.storeAnswer(upload.getInputstream(), upload.getFileName(), "kevin");
+            filename = storageService.storeAnswer(upload.getInputstream(), upload.getFileName(), manager);
         } catch (IOException e){
             filename = null;
         }
@@ -48,7 +57,7 @@ public class FileUploadTestBean {
 
         try {
             UploadedFile upload = event.getFile();
-            filename = storageService.storeAvatar(upload.getInputstream(), upload.getFileName(), "admin");
+            filename = storageService.storeAvatar(upload.getInputstream(), upload.getFileName(), manager);
             //filename = storageService.storeAvatar(event.getFile(), "admin");
         } catch (IOException e){
             filename = null;
@@ -90,10 +99,10 @@ public class FileUploadTestBean {
 
     public String getFilename() {
         if(filename == null){
-            return "";
+            return "http://localhost:8080/" + "thumbnails/none/default.png";
         }
-        //Path path = Paths.get(filename);
+        Path path = Paths.get(filename);
         //path.toAbsolutePath().toString();
-        return filename;
+        return "http://localhost:8080/" + "thumbnails/" + manager + "/" + path.getFileName();
     }
 }

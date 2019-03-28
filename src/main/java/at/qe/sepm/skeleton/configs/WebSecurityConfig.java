@@ -38,6 +38,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 //Permit access to the H2 console
                 .antMatchers("/h2-console/**").permitAll()
+                //.antMatchers("/thumbnails/**").permitAll() // apparently not needed
                 //Permit access for all to error pages
                 .antMatchers("/error/**")
                 .permitAll()
@@ -57,7 +58,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.exceptionHandling().accessDeniedPage("/error/denied.xhtml");
 
-        http.sessionManagement().invalidSessionUrl("/error/invalid_session.xhtml");
+        http.sessionManagement().invalidSessionUrl("/");
 
     }
 
