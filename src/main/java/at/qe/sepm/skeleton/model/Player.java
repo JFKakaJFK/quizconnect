@@ -4,13 +4,14 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import org.springframework.data.domain.Persistable;
 
@@ -34,10 +35,8 @@ public class Player implements Persistable<Integer>
 	@GeneratedValue
 	private Integer id;
 	
-	@Column(length = 50)
-	private String username;
-	
-	private String password;
+	@OneToOne(optional = false, fetch = FetchType.EAGER)
+	private User user;
 	
 	private String avatarPath;
 	
@@ -47,29 +46,21 @@ public class Player implements Persistable<Integer>
 	/**
 	 * List of Players the Player played with recently. Number of players limited by maxPlayedWithLast. Sorted from least recently (index 0) to most recently played with.
 	 */
+	@ManyToMany(cascade = CascadeType.DETACH, fetch = FetchType.LAZY)
 	private List<Player> playedWithLast;
 	
 	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "player", fetch = FetchType.LAZY)
 	private List<QuestionSetPerformance> qSetPerformances;
 	
-	public String getUsername()
+	public User getUser()
 	{
-		return username;
+		return user;
 	}
 	
-	public void setUsername(String username)
+	public void setUser(User user)
 	{
-		this.username = username;
-	}
-	
-	public String getPassword()
-	{
-		return password;
-	}
-	
-	public void setPassword(String password)
-	{
-		this.password = password;
+		this.user = user;
+		user.setRole(UserRole.PLAYER);
 	}
 	
 	public String getAvatarPath()

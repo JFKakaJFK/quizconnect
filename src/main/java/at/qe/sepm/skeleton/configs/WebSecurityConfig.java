@@ -1,12 +1,14 @@
 package at.qe.sepm.skeleton.configs;
 
 import javax.sql.DataSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 /**
@@ -36,17 +38,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutSuccessUrl("/login.xhtml");
 
         http.authorizeRequests()
-                //Permit access to the H2 console
-                .antMatchers("/h2-console/**").permitAll()
-                //Permit access for all to error pages
                 .antMatchers("/error/**")
                 .permitAll()
-                // Only access with admin role
-                .antMatchers("/admin/**")
-                .hasAnyAuthority("ADMIN")
+				// Only access with manager role
+				.antMatchers("/manager/**").hasAnyAuthority("MANAGER")
                 //Permit access only for some roles
                 .antMatchers("/secured/**")
-                .hasAnyAuthority("ADMIN", "MANAGER", "EMPLOYEE")
+				.hasAnyAuthority("PLAYER", "MANAGER")
                 //If user doesn't have permission, forward him to login page
                 .and()
                 .formLogin()
@@ -65,9 +63,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         //Configure roles and passwords via datasource
         auth.jdbcAuthentication().dataSource(dataSource)
-                .usersByUsernameQuery("select username, password, enabled from user where username=?")
-                .authoritiesByUsernameQuery("select user_username, roles from user_user_role where user_username=?");
-        // :TODO: use passwordEncoder and do not store passwords in plain text
+				.usersByUsernameQuery("select username, password, enabled from user where username=?")
+				.authoritiesByUsernameQuery("select username, role from user where username=?").passwordEncoder(new BCryptPasswordEncoder(6));
     }
 
 }

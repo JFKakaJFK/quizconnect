@@ -9,6 +9,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import org.springframework.data.domain.Persistable;
 
@@ -27,10 +28,11 @@ public class Manager implements Persistable<Integer>
 	@GeneratedValue
 	private Integer id;
 	
+	@OneToOne(optional = false, fetch = FetchType.EAGER)
+	private User user;
+	
 	@Column(length = 100)
 	private String email;
-	
-	private String password;
 	
 	@Column(length = 200)
 	private String institution;
@@ -41,6 +43,17 @@ public class Manager implements Persistable<Integer>
 	@OneToMany(mappedBy = "author", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
 	private Set<QuestionSet> createdQuestionSets;
 	
+	public User getUser()
+	{
+		return user;
+	}
+	
+	public void setUser(User user)
+	{
+		this.user = user;
+		user.setRole(UserRole.MANAGER);
+	}
+	
 	public String getEmail()
 	{
 		return email;
@@ -49,16 +62,6 @@ public class Manager implements Persistable<Integer>
 	public void setEmail(String email)
 	{
 		this.email = email;
-	}
-	
-	public String getPassword()
-	{
-		return password;
-	}
-	
-	public void setPassword(String password)
-	{
-		this.password = password;
 	}
 	
 	public String getInstitution()
