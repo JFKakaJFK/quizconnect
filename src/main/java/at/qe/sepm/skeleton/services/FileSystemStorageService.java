@@ -76,7 +76,7 @@ public class FileSystemStorageService implements StorageService {
     @Override
     public String storeAnswer(InputStream inputStream, String filename, String managerId) throws IOException {
         Path uploadPath = Paths.get(managerId + "/" + answerPrefix);
-        return store(inputStream, filename, uploadPath, 400);
+        return store(inputStream, filename, uploadPath);
     }
 
     /**
@@ -86,8 +86,6 @@ public class FileSystemStorageService implements StorageService {
      * @return filename of stored file, needed to retrieve file
      * @throws IOException
      */
-    // no unit test, probably unnecessary
-    @Deprecated
     private String store(InputStream inputStream, String filename, Path uploadPath) throws IOException {
         String name = FilenameUtils.getBaseName(filename);
         String extension = FilenameUtils.getExtension(filename);
