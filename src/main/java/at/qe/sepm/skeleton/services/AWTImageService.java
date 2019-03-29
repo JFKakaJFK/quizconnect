@@ -7,19 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
-import javax.imageio.stream.ImageOutputStream;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Iterator;
 
 @Service
 public class AWTImageService implements ImageService {
@@ -63,8 +56,7 @@ public class AWTImageService implements ImageService {
 
             Path result = Files.createTempFile(output, "", "_" + resized.getWidth() + "x" + resized.getHeight() + "." + ext);
             ImageIO.write(resized, ext, result.toFile());
-            //ImageIO.write(resized, ext, input.toFile());
-            //compressImage(input, result);
+
             return result;
         } catch (IOException e){
             log.error("");
@@ -139,31 +131,5 @@ public class AWTImageService implements ImageService {
             result = copy;
         }
         return result;
-    }
-
-    // TODO: fix, throws compression not supported exception or output not set?
-    @Deprecated // unless fixed
-    private void compressImage(Path input, Path output){
-        try {
-            BufferedImage img = ImageIO.read(input.toFile());
-
-            OutputStream outputStream = new FileOutputStream(output.toFile());
-
-            Iterator<ImageWriter> iterator = ImageIO.getImageWritersByFormatName(JPG);
-            ImageWriter writer = (ImageWriter) iterator.next();
-            ImageOutputStream imageStream = ImageIO.createImageOutputStream(outputStream);
-
-            ImageWriteParam p = writer.getDefaultWriteParam();
-            p.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-            p.setCompressionQuality(quality);
-
-            writer.write(null, new IIOImage(img, null, null), p);
-
-            outputStream.close();
-            imageStream.close();
-            writer.dispose();
-        } catch (IOException e){
-            log.error("Could not compress the image");
-        }
     }
 }
