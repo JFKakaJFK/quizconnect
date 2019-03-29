@@ -111,11 +111,11 @@ public class FileSystemStorageTest {
         Assert.assertTrue("Directory at thumbs exists", Files.exists(thumbsPath));
     }
     @Test
-    public void testDeleteFile() throws IOException {
+    public void testDeleteAvatar() throws IOException {
         File testFile = folder.newFile("testFile.txt");
         String pathToFile = testFile.getPath();
 
-        fileSystemStorageService.deleteFile(pathToFile);
+        fileSystemStorageService.deleteAvatar(pathToFile);
 
         Assert.assertFalse("File was deleted", testFile.exists());
     }

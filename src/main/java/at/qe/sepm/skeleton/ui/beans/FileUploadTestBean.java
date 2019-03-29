@@ -1,7 +1,6 @@
 package at.qe.sepm.skeleton.ui.beans;
 
 import at.qe.sepm.skeleton.services.StorageService;
-import at.qe.sepm.skeleton.ui.controllers.ImageController;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +10,6 @@ import javax.annotation.ManagedBean;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 /**
  * Bean for testing file storage functionality.
@@ -20,13 +17,22 @@ import java.nio.file.Paths;
 @ManagedBean
 public class FileUploadTestBean {
 
-
     private StorageService storageService;
-    private String filename = null;
+    private String avatar = null;
+    private String answer = null;
+    private String avatarEndpoint;
+    private String answerEndpoint;
 
+    // TODO: find out if endpoint url is not needed, previously is somehow was necessary
     @Autowired
-    public FileUploadTestBean(StorageService storageService){
+    public FileUploadTestBean(
+            StorageService storageService,
+            @Value("${storage.api.endpoint}") String endpoint,
+            @Value("${storage.api.avatars}") String avatars,
+            @Value("${storage.api.answers}") String answers){
         this.storageService = storageService;
+        this.avatarEndpoint = avatars; //endpoint + avatars;
+        this.answerEndpoint = answers; //endpoint + answers;
     }
 
     // TODO
@@ -41,11 +47,10 @@ public class FileUploadTestBean {
 
         try {
             UploadedFile upload = event.getFile();
-            filename = storageService.storeAnswer(upload.getInputstream(), upload.getFileName(), manager);
+            answer = storageService.storeAnswer(upload.getInputstream(), upload.getFileName(), manager);
         } catch (IOException e){
-            filename = null;
+            answer = null;
         }
-        System.out.println(filename);
     }
 
     /**
@@ -57,52 +62,65 @@ public class FileUploadTestBean {
 
         try {
             UploadedFile upload = event.getFile();
-            filename = storageService.storeAvatar(upload.getInputstream(), upload.getFileName(), manager);
-            //filename = storageService.storeAvatar(event.getFile(), "admin");
+            avatar = storageService.storeAvatar(upload.getInputstream(), upload.getFileName(), manager);
         } catch (IOException e){
-            filename = null;
+            avatar = null;
         }
-
-        System.out.println(filename);
     }
 
     /**
      * BOILERPLATE
      */
     public void save(){
-        if(filename == null){
+        if(avatar == null){
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
                     FacesMessage.SEVERITY_ERROR, "Error", "Sie müssen zuerst eine Datei auswählen!")
             );
             return;
         }
 
-        // ...
+        // save user using service ...
 
-        filename = null;
+        avatar = null;
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
                 FacesMessage.SEVERITY_INFO, "Success", "Datei erfolgreich gespeichert")
         );
     }
 
     /**
-     * Deletes stored file
-     *
-     * @throws IOException
+     * BOILERPLATE
      */
-    public void abort() throws IOException {
-        if(filename != null){
-            //storageService.deleteAvatar(filename);
-            //storageService.deleteAnswer(filename);
+    public void abort() {
+        // ... call when user aborts action
+        if(avatar != null){
+            storageService.deleteAvatar(avatar);
+        }
+        if(answer != null){
+            storageService.deleteAnswer(avatar);
         }
     }
 
-    public String getFilename() {
-        if(filename == null){
-            return "http://localhost:8080/" + "thumbnails/none/default.png";
+    /**
+     * returns the source of the currently uploaded image
+     *
+     * @return
+     */
+    public String getAvatar() {
+        if(avatar == null){
+            return avatarEndpoint + "bad/request.png";
         }
-        Path path = Paths.get(filename);
-        //path.toAbsolutePath().toString();
-        return "http://localhost:8080/" + "thumbnails/" + manager + "/" + path.getFileName();
+        return avatarEndpoint + avatar;
+    }
+
+    /**
+     * returns the source of the currently uploaded image
+     *
+     * @return
+     */
+    public String getAnswer() {
+        if(answer == null){
+            return answerEndpoint + "bad/request.png";
+        }
+        return answerEndpoint + answer;
     }
 }

@@ -39,18 +39,33 @@ public interface StorageService {
     String storeAnswer(InputStream inputStream, String filename, String managerId) throws IOException;
 
     /**
-     * Returns a stored file
+     * Returns a stored avatar
      *
-     * @param filename
+     * @param avatar
      * @return
      */
-    Path load(String filename);
+    Path loadAvatar(String avatar);
+
+    /**
+     * Returns a stored answer
+     *
+     * @param answer
+     * @return
+     */
+    Path loadAnswer(String answer);
 
     /**
      * Deletes avatar from the service
      *
-     * @param filename of file to be deleted
+     * @param avatar file to be deleted
      * @throws IOException
      */
-    void deleteFile(String filename) throws IOException;
+    void deleteAvatar(String avatar);
+    /**
+     * Deletes answer from the service
+     *
+     * @param answer file to be deleted
+     * @throws IOException
+     */
+    void deleteAnswer(String answer);
 }

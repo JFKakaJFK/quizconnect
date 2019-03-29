@@ -1,10 +1,12 @@
 package at.qe.sepm.skeleton.services;
 
+import at.qe.sepm.skeleton.ui.controllers.ImageController;
 import org.apache.commons.io.FilenameUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.FileSystemUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,28 +23,32 @@ import java.nio.file.StandardCopyOption;
 @Service
 public class FileSystemStorageService implements StorageService {
 
-    private Path rootLocation;
+    private static final Logger log = LoggerFactory.getLogger(ImageController.class);
+
     private Path temp;
-    private Path thumbs;
-    private int thumbSize;
-    private String avatarPrefix;
-    private String answerPrefix;
+    private Path avatars;
+    private Path answers;
+    private int avatarSize;
+    private int answerSize;
+    @Value("${storage.avatars.imageType}")
+    private String avatarType;
+    @Value("${storage.answers.imageType}")
+    private String answerType;
     private ImageService imageService;
 
     @Autowired
     public void initProperties(
-            @Value("${storage.uploads.location}") String location,
+            @Value("${storage.uploads.location}") String root,
             @Value("${storage.uploads.temporary}") String temp,
-            @Value("${storage.thumbnails.location}") String thumbs,
-            @Value("${storage.thumbnails.minResolution}") String thumbSize,
-            @Value("${storage.prefixes.avatar}") String avatarPrefix,
-            @Value("${storage.prefixes.answer}") String answerPrefix){
-        this.rootLocation = Paths.get(location);
+            @Value("${storage.avatars.minResolution}") String avatarSize,
+            @Value("${storage.answers.minResolution}") String answerSize,
+            @Value("${storage.api.avatars}") String avatarEndpoint,
+            @Value("${storage.api.answers}") String answerEndpoint) {
         this.temp = Paths.get(temp);
-        this.thumbs = Paths.get(thumbs);
-        this.thumbSize = Integer.valueOf(thumbSize);
-        this.avatarPrefix = avatarPrefix;
-        this.answerPrefix = answerPrefix;
+        this.avatars = Paths.get(root).resolve(avatarEndpoint);
+        this.answers = Paths.get(root).resolve(answerEndpoint);
+        this.avatarSize = Integer.valueOf(avatarSize);
+        this.answerSize = Integer.valueOf(answerSize);
     }
 
     /**
@@ -56,119 +62,121 @@ public class FileSystemStorageService implements StorageService {
     }
 
     /**
-     * Stores a file in the service
-     *
-     * @return filename of stored file, needed to retrieve file
-     * @throws IOException
-     */
-    @Override
-    public String storeAvatar(InputStream inputStream, String filename, String managerId) throws IOException {
-        Path uploadPath = Paths.get(managerId + "/" + avatarPrefix);
-        return store(inputStream, filename, uploadPath, thumbSize);
-    }
-
-    /**
-     * Stores a file in the service
-     *
-     * @return filename of stored file, needed to retrieve file
-     * @throws IOException
-     */
-    @Override
-    public String storeAnswer(InputStream inputStream, String filename, String managerId) throws IOException {
-        Path uploadPath = Paths.get(managerId + "/" + answerPrefix);
-        return store(inputStream, filename, uploadPath);
-    }
-
-    /**
-     * Stores a in the service
-     *
-     * @param inputStream of file to store
-     * @return filename of stored file, needed to retrieve file
-     * @throws IOException
-     */
-    private String store(InputStream inputStream, String filename, Path uploadPath) throws IOException {
-        String name = FilenameUtils.getBaseName(filename);
-        String extension = FilenameUtils.getExtension(filename);
-
-        Files.createDirectories(rootLocation.resolve(uploadPath.toString()));
-        Path file = Files.createTempFile(rootLocation.resolve(uploadPath.toString()), name + "-", "." + extension);
-
-        Files.copy(inputStream, file, StandardCopyOption.REPLACE_EXISTING);
-        return uploadPath.resolve(file.getFileName().toString()).toString();
-    }
-
-    /**
-     * Stores a user avatar in the service
-     *
-     * @param inputStream of file to store
-     * @return filename of stored file, needed to retrieve file
-     * @throws IOException
-     */
-    private String store(InputStream inputStream, String filename, Path uploadPath, final int size) throws IOException {
-        String extension = FilenameUtils.getExtension(filename);
-
-        Path tempFile = Files.createTempFile(temp, "upload", "." + extension);
-        Files.copy(inputStream, tempFile, StandardCopyOption.REPLACE_EXISTING);
-
-        Files.createDirectories(thumbs.resolve(uploadPath.toString()));
-        Path filePath = imageService.resizeToPNG(tempFile, thumbs.resolve(uploadPath), size, size);
-
-        deleteFile(tempFile);
-
-        return filePath.toString();
-    }
-
-    /**
-     * Retrieves a previously stored file
-     *
-     * @param filename to retrieve
-     * @return {@link Path} to file
-     */
-    @Override
-    public Path load(String filename) {
-        return Paths.get(filename);
-    }
-
-    /**
-     * Deletes all files stored in the service
-     */
-    // no unit test, probably unnecessary
-    @Deprecated
-    //@Override
-    public void deleteAll() {
-        FileSystemUtils.deleteRecursively(rootLocation.toFile());
-    }
-
-    /**
-     * Initializes storage by creating storage directory
+     * Initializes storage by creating storage directories
      *
      * @throws IOException
      */
     @Override
     public void init() throws IOException {
-        Files.createDirectories(rootLocation);
         Files.createDirectories(temp);
-        Files.createDirectories(thumbs);
+        Files.createDirectories(avatars);
+        Files.createDirectories(answers);
     }
 
     /**
-     * Deletes a temporary file
+     * Stores a file in the service
      *
-     * @param file
-     * @throws IOException
-     */
-    private void deleteFile(Path file) throws IOException {
-        Files.deleteIfExists(file);
-    }
-
-    /**
-     * Deletes file from the service
-     *
-     * @param filename of file to be deleted
+     * @return filename of stored file, needed to retrieve file
      * @throws IOException
      */
     @Override
-    public void deleteFile(String filename) throws IOException {
-        Files.deleteIfExists(Paths.get(filename));
+    public String storeAvatar(InputStream inputStream, String filename, String managerId) {
+        return store(inputStream, filename, managerId, avatars, avatarSize, avatarType);
+    }
+
+    /**
+     * Stores a file in the service
+     *
+     * @return filename of stored file, needed to retrieve file
+     * @throws IOException
+     */
+    @Override
+    public String storeAnswer(InputStream inputStream, String filename, String managerId) {
+        return store(inputStream, filename, managerId, answers, answerSize, answerType);
+    }
+
+    /**
+     * First stores the stream contents in a temporary directory, resizes the image and
+     * then saves it to {root}/{managerId}/{uniqueFilename.ext}
+     * @param inputStream
+     * @param filename
+     * @param managerId
+     * @param root
+     * @param size
+     * @return
+     */
+    private String store(InputStream inputStream, String filename, String managerId, Path root, int size, String type){
+        String extension = FilenameUtils.getExtension(filename);
+
+        Path tempFile;
+        Path filePath;
+        try {
+            tempFile = Files.createTempFile(temp, "answer", "." + extension);
+            Files.copy(inputStream, tempFile, StandardCopyOption.REPLACE_EXISTING);
+            Files.createDirectories(root.resolve(managerId));
+
+            filePath = imageService.resizeImage(tempFile, root.resolve(managerId), size, size, type);
+        } catch (IOException e){
+            log.error("Failed to store uploaded file in temporary directory");
+            return null;
+        }
+
+        try {
+            Files.deleteIfExists(tempFile);
+        } catch (IOException e){
+            log.warn("Couldn't delete temporary file");
+        }
+
+        return managerId + "/" + filePath.getFileName();
+    }
+
+    /**
+     * loads a stored avatar
+     *
+     * @param avatar
+     * @return
+     */
+    @Override
+    public Path loadAvatar(String avatar) {
+        return avatars.resolve(avatar);
+    }
+
+    /**
+     * loads a stored answer
+     *
+     * @param answer
+     * @return
+     */
+    @Override
+    public Path loadAnswer(String answer) {
+        return answers.resolve(answer);
+    }
+
+    /**
+     * deletes a stored avatar
+     *
+     * @param avatar file to be deleted
+     */
+    @Override
+    public void deleteAvatar(String avatar) {
+        try {
+            Files.deleteIfExists(avatars.resolve(avatar));
+        } catch (IOException e){
+            log.error("Could not delete avatar " + avatar);
+        }
+    }
+
+    /**
+     * deletes a stored answer
+     *
+     * @param answer file to be deleted
+     */
+    @Override
+    public void deleteAnswer(String answer) {
+        try {
+            Files.deleteIfExists(avatars.resolve(answer));
+        } catch (IOException e){
+            log.error("Could not delete avatar " + answer);
+        }
     }
 }

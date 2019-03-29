@@ -9,17 +9,11 @@ import java.nio.file.Path;
  * @author Johannes Koch
  */
 public interface ImageService {
-    /**
-     * Resizes an image and stores result to output as JPG
-     *
-     * @throws IOException
-     */
-    Path resizeToJPG(Path input, Path output, final int width, final int height) throws IOException;
 
     /**
-     * Resizes an image and stores result to output as PNG
+     * Resizes an image and stores result to output as either .jpg or .png
      *
      * @throws IOException
      */
-    Path resizeToPNG(Path input, Path output, final int width, final int height) throws IOException;
+    Path resizeImage(Path input, Path output, final int width, final int height, String extension);
 }

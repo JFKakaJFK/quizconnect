@@ -15,48 +15,81 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Paths;
 
+
+/**
+ * This controller responds to requests to the avatar & answer endpoints and responds either
+ * with the sought image or a default file.
+ */
 @Controller
 @RequestMapping
 public class ImageController {
 
     private static final Logger log = LoggerFactory.getLogger(ImageController.class);
-    private final StorageService storageService;
-    @Value("${storage.thumbnails.location}")
-    private String thumbnails;
-    @Value("${storage.prefixes.avatar}")
-    private String avatarPrefix;
-    @Value("${storage.thumbnails.default}")
+    private StorageService storageService;
+    @Value("${storage.avatars.default}")
     private String defaultAvatar;
+    @Value("${storage.answers.default}")
+    private String defaultAnswer;
 
     @Autowired
     public ImageController(StorageService storageService){
         this.storageService = storageService;
     }
 
-    @RequestMapping(value = "/thumbnails/{manager}/{file}.{type}", method = RequestMethod.GET)
-    public void getThumbnail(HttpServletResponse response, @PathVariable String manager, @PathVariable String file, @PathVariable String type){
-        File img = Paths.get(thumbnails).resolve(manager).resolve(avatarPrefix).resolve(file + "." + type).toFile();
-        // TODO check if manager exists, maybe serve a default on error
-        if(manager.equals("none") || !(type.toLowerCase().equals("png") || type.toLowerCase().equals("jpg"))){
-            log.error("Request for thumbnails/" + manager + "/" + file + "." + type + " is not well-formed");
-            img = Paths.get(thumbnails).resolve(defaultAvatar).toFile();
-        }
-        if(!img.exists()){
-            log.error("Could not serve thumbnails/" + manager + "/" + file + "." + type + ": Does not exist");
-            img = Paths.get(thumbnails).resolve(defaultAvatar).toFile();
+    @RequestMapping(value = "/avatars/{manager}/{file}.{ext}", method = RequestMethod.GET)
+    public void getThumbnail(HttpServletResponse response, @PathVariable String manager, @PathVariable String file, @PathVariable String ext){
+        if(!(ext.toLowerCase().equals("png") || ext.toLowerCase().equals("jpg"))){
+            log.error("Request for thumbnail is not well-formed: no image extension");
+            return;
         }
 
+        File img = storageService.loadAvatar(manager + "/" + file + "." + ext).toFile();
+
+        if(!img.exists()){
+            log.warn("Could not serve avatars/" + manager + "/" + file + "." + ext + ", serving default");
+            img = storageService.loadAvatar(defaultAvatar).toFile();
+        }
+
+        sendResponse(response, img, ext);
+    }
+
+    @RequestMapping(value = "/answers/{manager}/{file}.{ext}", method = RequestMethod.GET)
+    public void getAnswer(HttpServletResponse response, @PathVariable String manager, @PathVariable String file, @PathVariable String ext){
+        if(!(ext.toLowerCase().equals("png") || ext.toLowerCase().equals("jpg"))){
+            log.error("Request for thumbnail is not well-formed: no image extension");
+            return;
+        }
+
+        File img = storageService.loadAnswer(manager + "/" + file + "." + ext).toFile();
+
+        if(!img.exists()){
+            log.warn("Could not serve answers/" + manager + "/" + file + "." + ext + ", serving default");
+            img = storageService.loadAnswer(defaultAnswer).toFile();
+        }
+
+        sendResponse(response, img, ext);
+    }
+
+    /**
+     * Sets some http response headers and then sends the file to the requesting user
+     *
+     * @param response
+     * @param file
+     * @param type
+     */
+    private void sendResponse(HttpServletResponse response, File file, String type){
+        response.setHeader("cache-control", "max-age=31104000");
+        response.setContentType("image/" + type);
+        response.setContentLengthLong(file.length());
+        response.setDateHeader("Expires", System.currentTimeMillis() + 604800000L); // expires in a week
+        // response.setDateHeader("Last-Modified", 0);
+        // TODO: set moar headers (maybe get a nice eTag, expires & last modified working)
         try {
-            response.setHeader("cache-control", "max-age=31104000");
-            // TODO: set moar headers (maybe get a nice eTag, expires & last modified working)
-            response.setContentType("image/" + type);
-            response.setContentLengthLong(img.length());
-            IOUtils.copy(new FileInputStream(img), response.getOutputStream());
+            IOUtils.copy(new FileInputStream(file), response.getOutputStream());
             response.flushBuffer();
         } catch (IOException e){
-            log.error("Could not serve thumbnails/" + manager + "/" + file + "." + type);
+            log.error("Could not serve " + file.getName());
         }
     }
 }
