@@ -1,6 +1,7 @@
 package at.qe.sepm.skeleton.model;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
@@ -20,10 +21,10 @@ public class QuestionSetPerformance implements Persistable<Integer>
 	@Id
 	private Integer id;
 	
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	private QuestionSet questionSet;
 	
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	private Player player;
 	
 	private int totalQuestions;

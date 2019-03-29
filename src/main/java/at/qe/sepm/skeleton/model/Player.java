@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -38,9 +39,10 @@ public class Player implements Persistable<Integer>
 	@OneToOne(optional = false, fetch = FetchType.EAGER)
 	private User user;
 	
+	@Column(nullable = true, length = 200)
 	private String avatarPath;
 	
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	private Manager creator;
 	
 	/**

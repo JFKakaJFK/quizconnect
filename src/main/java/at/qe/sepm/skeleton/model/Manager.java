@@ -37,7 +37,7 @@ public class Manager implements Persistable<Integer>
 	@Column(length = 200)
 	private String institution;
 	
-	@OneToMany(mappedBy = "creator", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "creator", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
 	private Set<Player> createdPlayers;
 	
 	@OneToMany(mappedBy = "author", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)

@@ -5,6 +5,8 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -34,9 +36,10 @@ public class QuestionSet implements Persistable<Integer>
 	@Column(length = 300)
 	private String description;
 	
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	private Manager author;
 	
+	@Enumerated(EnumType.STRING)
 	private QuestionSetDifficulty difficulty;
 	
 	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "questionSet", fetch = FetchType.EAGER)
