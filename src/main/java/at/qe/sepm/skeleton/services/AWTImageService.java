@@ -3,8 +3,6 @@ package at.qe.sepm.skeleton.services;
 import at.qe.sepm.skeleton.ui.controllers.ImageController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
@@ -16,17 +14,10 @@ import java.nio.file.Path;
 
 @Service
 public class AWTImageService implements ImageService {
-    private static final Logger log = LoggerFactory.getLogger(ImageController.class);
 
-    private float quality;
+    private static final Logger log = LoggerFactory.getLogger(ImageController.class);
     private static final String JPG = "jpg";
     private static final String PNG = "png";
-
-    @Autowired
-    public AWTImageService(@Value("${images.compression.quality}") String quality){
-        this.quality = Float.valueOf(quality);
-        System.out.println(quality);
-    }
 
     /**
      * Takes the path of an image as input and stores the resized image(aspect ratio is kept) to
