@@ -39,16 +39,16 @@
         </div>
     </div>
 
-    <form id="signupform">
+    <h:form id="signupform">
         <div class="container-fluid mt-5">
             <div class="form-group">
                 <label for="username">E-Mail</label>
-                <input type="text" class="form-control" id="username" name="username" placeholder="john.doe@mail.com" />
+                <input type="text" class="form-control" id="username" value="#{userBean.user.username}" name="username" placeholder="john.doe@mail.com" />
             </div>
 
             <div class="form-group">
                 <label for="reg_password">Password</label>
-                <input type="password" class="form-control" id="reg_password" name="reg_password" placeholder="******"/>
+                <input type="password" class="form-control" value="" id="reg_password" name="reg_password" placeholder="******"/>
 
                 <p id="password-strength-text"></p>
 
@@ -62,11 +62,12 @@
 
             <div class="row py-5 pb-md-5">
                 <div class="col text-center">
-                    <button type="submit" id="submit" class="btn btn-block btn-primary btn-lg">Sign Up!</button>
+                    <h:commandButton styleClass="btn btn-block btn-primary btn-lg" id="submit" value="Sign up!" action="#{userBean.createNewManager}"/>
                 </div>
             </div>
 
         </div>
-    </form>
+    </h:form>
+
 </h:body>
 </html>
