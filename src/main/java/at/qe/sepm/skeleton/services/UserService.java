@@ -1,15 +1,17 @@
 package at.qe.sepm.skeleton.services;
 
-import at.qe.sepm.skeleton.model.User;
-import at.qe.sepm.skeleton.repositories.UserRepository;
 import java.util.Collection;
 import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+
+import at.qe.sepm.skeleton.model.User;
+import at.qe.sepm.skeleton.repositories.UserRepository;
 
 /**
  * Service for accessing and manipulating user data.
@@ -30,7 +32,7 @@ public class UserService {
      *
      * @return
      */
-    @PreAuthorize("hasAuthority('ADMIN')")
+	@PreAuthorize("hasAuthority('MANAGER')")
     public Collection<User> getAllUsers() {
         return userRepository.findAll();
     }
@@ -41,7 +43,7 @@ public class UserService {
      * @param username the username to search for
      * @return the user with the given username
      */
-    @PreAuthorize("hasAuthority('ADMIN') or principal.username eq #username")
+	@PreAuthorize("hasAuthority('MANAGER') or principal.username eq #username")
     public User loadUser(String username) {
         return userRepository.findFirstByUsername(username);
     }
@@ -55,14 +57,10 @@ public class UserService {
      * @param user the user to save
      * @return the updated user
      */
-    @PreAuthorize("hasAuthority('ADMIN')")
+	@PreAuthorize("hasAuthority('MANAGER')")
     public User saveUser(User user) {
         if (user.isNew()) {
             user.setCreateDate(new Date());
-            user.setCreateUser(getAuthenticatedUser());
-        } else {
-            user.setUpdateDate(new Date());
-            user.setUpdateUser(getAuthenticatedUser());
         }
         return userRepository.save(user);
     }
@@ -72,7 +70,7 @@ public class UserService {
      *
      * @param user the user to delete
      */
-    @PreAuthorize("hasAuthority('ADMIN')")
+	@PreAuthorize("hasAuthority('MANAGER')")
     public void deleteUser(User user) {
         userRepository.delete(user);
         // :TODO: write some audit log stating who and when this user was permanently deleted.
