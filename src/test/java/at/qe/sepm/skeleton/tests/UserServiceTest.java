@@ -10,8 +10,10 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import at.qe.sepm.skeleton.model.Manager;
 import at.qe.sepm.skeleton.model.User;
 import at.qe.sepm.skeleton.model.UserRole;
+import at.qe.sepm.skeleton.services.ManagerService;
 import at.qe.sepm.skeleton.services.UserService;
 
 /**
@@ -28,6 +30,9 @@ public class UserServiceTest {
 
     @Autowired
     UserService userService;
+	
+	@Autowired
+	ManagerService managerService;
 
     @Test
 	@WithMockUser(username = "user1", authorities = { "MANAGER" })
@@ -121,11 +126,14 @@ public class UserServiceTest {
 		User adminUser = userService.loadUser("user1");
 		Assert.assertNotNull("Manager user could not be loaded from test data source", adminUser);
 
+		Manager manager = managerService.getManagerById(101);
+		
         User toBeCreatedUser = new User();
         toBeCreatedUser.setUsername("newuser");
         toBeCreatedUser.setPassword("passwd");
         toBeCreatedUser.setEnabled(true);
-		toBeCreatedUser.setRole(UserRole.MANAGER);
+		toBeCreatedUser.setManager(manager);
+		// toBeCreatedUser.setRole(UserRole.MANAGER);
         userService.saveUser(toBeCreatedUser);
 
         User freshlyCreatedUser = userService.loadUser("newuser");
@@ -136,7 +144,7 @@ public class UserServiceTest {
         Assert.assertNotNull("User \"newuser\" does not have a createDate defined after being saved", freshlyCreatedUser.getCreateDate());
     }
 
-    @Test(expected = org.springframework.orm.jpa.JpaSystemException.class)
+	@Test(expected = IllegalArgumentException.class)
 	@WithMockUser(username = "user1", authorities = { "MANAGER" })
     public void testExceptionForEmptyUsername() {
 		User adminUser = userService.loadUser("user1");
