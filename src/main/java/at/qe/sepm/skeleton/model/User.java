@@ -3,6 +3,7 @@ package at.qe.sepm.skeleton.model;
 import java.util.Date;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -35,10 +36,10 @@ public class User implements Persistable<String> {
 	
 	private boolean enabled;
 	
-	@OneToOne(optional = true, mappedBy = "user", fetch = FetchType.EAGER)
+	@OneToOne(optional = true, mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
 	private Player player;
 	
-	@OneToOne(optional = true, mappedBy = "user", fetch = FetchType.EAGER)
+	@OneToOne(optional = true, mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
 	private Manager manager;
 
 	@Enumerated(EnumType.STRING)
