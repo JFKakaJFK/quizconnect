@@ -31,7 +31,7 @@ public class Manager implements Persistable<Integer>
 	@OneToOne(optional = false, fetch = FetchType.EAGER)
 	private User user;
 	
-	@Column(length = 100)
+	@Column(nullable = false, length = 100)
 	private String email;
 	
 	@Column(length = 200)
