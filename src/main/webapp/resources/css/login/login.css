@@ -16,11 +16,29 @@ body {
 
 .form-control {
     background-color:transparent;
-    border-width: 1px;
+    border-width: 2px;
+    border-radius: 10px;
+    color: var(--gray-4);
 }
+
+.form-control textarea {
+    background-color: green;
+}
+
 
 .btn-primary {
     background: var(--gradient1);
     border: none;
     border-radius: 50px;
+}
+
+a {
+    color: var(--gray-4);
+    text-decoration: none;
+}
+
+a:focus {
+    color: var(--gray-4);
+    text-decoration: underline;
+    font-weight: 400;
 }
