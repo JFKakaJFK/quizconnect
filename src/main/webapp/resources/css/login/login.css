@@ -1,0 +1,26 @@
+:root {
+    --bg1: #303E4F;
+    --gray-4: #EFF2F5;
+    --gradient1: linear-gradient(35deg, rgba(23,162,173,1) 0%, rgba(9,189,90,1) 100%);
+}
+
+body {
+    background: var(--bg1);
+    color: var(--gray-4);
+    font-weight: 300;
+}
+
+.container-fluid {
+    max-width: 25%;
+}
+
+.form-control {
+    background-color:transparent;
+    border-width: 1px;
+}
+
+.btn-primary {
+    background: var(--gradient1);
+    border: none;
+    border-radius: 50px;
+}
