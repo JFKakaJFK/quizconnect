@@ -51,7 +51,7 @@ public class Manager implements Persistable<Integer>
 	public void setUser(User user)
 	{
 		this.user = user;
-		user.setRole(UserRole.MANAGER);
+		//user.setRole(UserRole.MANAGER);
 	}
 	
 	public String getEmail()

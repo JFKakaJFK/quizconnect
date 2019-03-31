@@ -62,7 +62,7 @@ public class Player implements Persistable<Integer>
 	public void setUser(User user)
 	{
 		this.user = user;
-		user.setRole(UserRole.PLAYER);
+		//user.setRole(UserRole.PLAYER);
 	}
 	
 	public String getAvatarPath()

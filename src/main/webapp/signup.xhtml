@@ -1,6 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:p="http://primefaces.org/ui"
       xmlns:ui="http://java.sun.com/jsf/facelets">
@@ -43,17 +44,17 @@
         <div class="container-fluid mt-5">
             <div class="form-group">
                 <label for="username">E-Mail</label>
-                <input type="text" class="form-control" id="username" value="#{userBean.user.username}" name="username" placeholder="john.doe@mail.com" />
+                <h:inputText styleClass="form-control" value="#{userBean.manager.email}" id="username" pt:placeholder="john.doe@mail.com" />
             </div>
 
             <div class="form-group">
                 <label for="reg_password">Password</label>
-                <input type="password" class="form-control" value="" id="reg_password" name="reg_password" placeholder="******"/>
+                <h:inputSecret styleClass="form-control" value="#{userBean.user.password}" id="reg_password" pt:placeholder="******"/>
 
                 <p id="password-strength-text"></p>
 
                 <label for="reg_repeatpassword">Repeat password</label>
-                <input type="password" class="form-control" id="reg_repeatpassword" name="reg_repeatpassword" placeholder="******"/>
+                <h:inputSecret class="form-control" id="reg_repeatpassword" pt:placeholder="******"/>
 
             </div>
 

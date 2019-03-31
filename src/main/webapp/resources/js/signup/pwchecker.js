@@ -7,7 +7,7 @@ window.onload=function() {
         4: "Strong"
     }
 
-    var password = document.getElementById('reg_password');
+    var password = document.getElementById('signupform:reg_password');
     var text = document.getElementById('password-strength-text');
 
     password.addEventListener('input', function () {

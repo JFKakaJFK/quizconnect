@@ -1,6 +1,9 @@
 package at.qe.sepm.skeleton.ui.beans;
 import at.qe.sepm.skeleton.model.User;
+import at.qe.sepm.skeleton.model.Manager;
+
 import at.qe.sepm.skeleton.model.UserRole;
+import at.qe.sepm.skeleton.services.ManagerService;
 import at.qe.sepm.skeleton.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,16 +30,15 @@ public class UserBean implements Serializable {
     private UserService userService;
 
     @Autowired
-    private SessionInfoBean sessionInfoBean;
-
-    @Autowired
     private PasswordBean passwordGenerator;
 
     private User user;
+    private Manager manager;
 
     @PostConstruct
     public void init() {
         user = new User();
+        manager = new Manager();
     }
 
 
@@ -44,10 +46,14 @@ public class UserBean implements Serializable {
      * Creates a new {@link User} and sends an email to the given address
      */
     public void createNewManager() {
-        user.setRole(UserRole.MANAGER);
+        manager.setInstitution("signup-test-institution");
+
+        user.setUsername(manager.getEmail());
+        user.setManager(manager);
         user.setEnabled(true);
-        userService.saveUser(user);
-        logger.info("Created and saved a new user");
+        userService.saveNewManager(user);
+
+        logger.info("Created and saved a new user: " + user.toString() + " with privileges: " + user.getRole());
     }
 
     public User getUser() {
@@ -56,5 +62,13 @@ public class UserBean implements Serializable {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Manager getManager() {
+        return manager;
+    }
+
+    public void setManager(Manager manager) {
+        this.manager = manager;
     }
 }
