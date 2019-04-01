@@ -1,0 +1,25 @@
+.section-sm {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr auto;
+    align-items: center;
+    justify-items: center;
+    width: 100%;
+    max-width: var(--breakpoint-lg);
+    margin: 0 auto;
+}
+
+@media only screen and (min-width: 768px) {
+
+    .section-sm {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.section-sm-text {
+    justify-self: start;
+}
+
+.section-sm-cta {
+    grid-column: span 2;
+}

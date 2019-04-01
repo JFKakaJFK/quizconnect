@@ -39,3 +39,8 @@ body {
 
 a { color: var(--gray-5); }
 a:hover { color: var(--gray-5); }
+
+svg {
+    width: 100%;
+    max-width: 100%;
+}
