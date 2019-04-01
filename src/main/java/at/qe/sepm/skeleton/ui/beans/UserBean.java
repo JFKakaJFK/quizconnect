@@ -1,10 +1,6 @@
 package at.qe.sepm.skeleton.ui.beans;
-import at.qe.sepm.skeleton.model.User;
 import at.qe.sepm.skeleton.model.Manager;
-
-import at.qe.sepm.skeleton.model.UserRole;
 import at.qe.sepm.skeleton.services.ManagerService;
-import at.qe.sepm.skeleton.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,47 +17,39 @@ import java.util.*;
  * @author Johannes Spies
  */
 @Component
-@Scope("session")
+@Scope("request")
 public class UserBean implements Serializable {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private UserService userService;
+    private ManagerService managerService;
 
     @Autowired
-    private PasswordBean passwordGenerator;
+    private PasswordBean passwordBean;
 
-    private User user;
+    private String password;
     private Manager manager;
 
     @PostConstruct
     public void init() {
-        user = new User();
         manager = new Manager();
     }
 
-
     /**
-     * Creates a new {@link User} and sends an email to the given address
+     * Creates a new {@link Manager} (and sends an email to the given address)
      */
     public void createNewManager() {
-        manager.setInstitution("signup-test-institution");
-
-        user.setUsername(manager.getEmail());
-        user.setManager(manager);
-        user.setEnabled(true);
-        userService.saveNewManager(user);
-
-        logger.info("Created and saved a new user: " + user.toString() + " with privileges: " + user.getRole());
+        managerService.saveNewManager(manager, passwordBean.encodePassword(password));
+        logger.info("Created and saved a new manager: " + manager.toString());
     }
 
-    public User getUser() {
-        return user;
+    public String getPassword() {
+        return password;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public Manager getManager() {
