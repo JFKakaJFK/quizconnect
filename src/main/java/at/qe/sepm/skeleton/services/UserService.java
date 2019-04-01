@@ -49,20 +49,20 @@ public class UserService {
     }
 
     /**
-     * Saves the user. This method will also set {@link User#createDate} for new
-     * entities or {@link User#updateDate} for updated entities. The user
-     * requesting this operation will also be stored as {@link User#createDate}
-     * or {@link User#updateUser} respectively.
-     *
-     * @param user the user to save
-     * @return the updated user
-     */
-	@PreAuthorize("hasAuthority('MANAGER')")
-    public User saveUser(User user) {
-        if (user.isNew()) {
-            user.setCreateDate(new Date());
+	 * Saves the {@link User}. Does not perform sanity checks (e.g. if either manager or player set).
+	 *
+	 * @param user
+	 *            the user to save
+	 * @return the updated user. Use for all further operations.
+	 */
+	public User saveUser(User user) throws IllegalArgumentException
+	{
+		if (user.isNew())
+		{
+			user.setCreateDate(new Date());
         }
-        return userRepository.save(user);
+		
+		return userRepository.save(user);
     }
 
     /**
