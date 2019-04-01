@@ -1,0 +1,18 @@
+body {
+    background: var(--bg1);
+    color: var(--gray-4);
+    font-weight: 300;
+}
+
+/* TODO fonts & stuff */
+
+.btn-primary {
+    background: var(--gradient1);
+    border: none;
+    border-radius: 50px;
+}
+
+svg {
+    width: 100%;
+    max-width: 100%;
+}

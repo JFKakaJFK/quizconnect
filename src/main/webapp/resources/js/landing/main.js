@@ -115,3 +115,5 @@ const options = {
 }
 
 particlesJS("particles-js", options);
+
+AOS.init();
