@@ -1,5 +1,4 @@
-@import "../base/base.css";
-@import "../base/vars.css";
+@import "../main.css";
 
 @import "particles.css";
 @import "hero.css";
