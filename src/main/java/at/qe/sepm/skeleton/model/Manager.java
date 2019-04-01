@@ -48,10 +48,14 @@ public class Manager implements Persistable<Integer>
 		return user;
 	}
 	
+	/**
+	 * Gets called automatically upon creation of the Manager. Should not be called manually!
+	 * 
+	 * @param user
+	 */
 	public void setUser(User user)
 	{
 		this.user = user;
-		//user.setRole(UserRole.MANAGER);
 	}
 	
 	public String getEmail()

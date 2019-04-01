@@ -85,6 +85,11 @@ public class User implements Persistable<String> {
 		return player;
 	}
 	
+	/**
+	 * Called automatically upon creation of a new {@link Player}. Should not be called manually!
+	 * 
+	 * @param player
+	 */
 	public void setPlayer(Player player)
 	{
 		if (this.manager != null)
@@ -98,6 +103,11 @@ public class User implements Persistable<String> {
 		return manager;
 	}
 	
+	/**
+	 * Called automatically upon creation of a new {@link Manager}. Should not be called manually!
+	 * 
+	 * @param manager
+	 */
 	public void setManager(Manager manager)
 	{
 		if (this.player != null)

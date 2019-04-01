@@ -59,10 +59,14 @@ public class Player implements Persistable<Integer>
 		return user;
 	}
 	
+	/**
+	 * Gets called automatically upon creation of the Player. Should not be called manually!
+	 * 
+	 * @param user
+	 */
 	public void setUser(User user)
 	{
 		this.user = user;
-		//user.setRole(UserRole.PLAYER);
 	}
 	
 	public String getAvatarPath()
