@@ -1,9 +1,9 @@
 package at.qe.sepm.skeleton.services;
 
-import at.qe.sepm.skeleton.model.Manager;
 import at.qe.sepm.skeleton.model.Question;
 import at.qe.sepm.skeleton.model.QuestionSet;
-import at.qe.sepm.skeleton.repositories.QuestionRepository;
+import at.qe.sepm.skeleton.model.QuestionSetDifficulty;
+import at.qe.sepm.skeleton.model.QuestionType;
 import at.qe.sepm.skeleton.repositories.QuestionSetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -18,7 +18,7 @@ import java.util.Set;
  * Service for accessing and manipulating {@link Question} entities.
  *
  * @author Johannes Koch
- *
+ * @return
  */
 @Component
 @Scope("application")
@@ -29,6 +29,15 @@ public class QuestionSetService {
 
     @Autowired
     QuestionService questionService;
+
+    /**
+     * Returns all {@link QuestionSet} with a certain {@link QuestionSetDifficulty}
+     *
+     * @param difficulty
+     */
+    public Collection<QuestionSet> getAllByDifficulty(QuestionSetDifficulty difficulty){
+        return questionSetRepositoryRepository.findByDifficulty(difficulty);
+    }
 
     /**
      * Finds all {@link QuestionSet}s where the name contains a search phrase
@@ -90,6 +99,13 @@ public class QuestionSetService {
      */
     @PreAuthorize("principal.username eq questionSet.author.user.username")
     public void deleteQuestionSet(QuestionSet questionSet){
+        Set<Question> questions = new HashSet<>(questionSet.getQuestions());
+        for(Question q: questions){
+            // TODO if type is file, delete all files
+            if(q.getType() == QuestionType.picture){
+                //...
+            }
+        }
         questionSetRepositoryRepository.delete(questionSet);
     }
 
