@@ -11,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import at.qe.sepm.skeleton.model.User;
+import at.qe.sepm.skeleton.model.UserRole;
 import at.qe.sepm.skeleton.repositories.UserRepository;
 
 /**
@@ -64,6 +65,25 @@ public class UserService {
 		
 		return userRepository.save(user);
     }
+	
+	/**
+	 * Saves a new User associated to a Manager. Allows saving of a new Manager without permissions.
+	 * 
+	 * @param user
+	 */
+	public void saveNewManager(User user) throws IllegalArgumentException
+	{
+		if (!user.isNew())
+			throw new IllegalArgumentException("Can only save new Users with saveNewManager!");
+		if (user.getManager() == null)
+			throw new IllegalArgumentException("Can only save Users with associated Manager using saveNewManager!");
+		if (user.getRole() != UserRole.MANAGER)
+			throw new IllegalArgumentException("Can only save Users with role MANAGER using saveNewManager!");
+		
+		user.setCreateDate(new Date());
+		
+		userRepository.save(user);
+	}
 
     /**
      * Deletes the user.

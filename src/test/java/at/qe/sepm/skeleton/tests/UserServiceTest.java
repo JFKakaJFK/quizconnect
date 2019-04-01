@@ -143,7 +143,7 @@ public class UserServiceTest {
         Assert.assertNotNull("User \"newuser\" does not have a createDate defined after being saved", freshlyCreatedUser.getCreateDate());
     }
 
-    @Test(expected = org.springframework.orm.jpa.JpaSystemException.class)
+	@Test(expected = IllegalArgumentException.class)
 	@WithMockUser(username = "user1", authorities = { "MANAGER" })
     public void testExceptionForEmptyUsername() {
 		User adminUser = userService.loadUser("user1");
