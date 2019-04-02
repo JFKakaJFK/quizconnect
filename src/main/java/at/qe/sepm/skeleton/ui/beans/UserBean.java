@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.faces.context.FacesContext;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
 
@@ -42,6 +44,25 @@ public class UserBean implements Serializable {
     public void createNewManager() {
         managerService.saveNewManager(manager, passwordBean.encodePassword(password));
         logger.info("Created and saved a new manager: " + manager.toString());
+        redirectRegistration();
+    }
+
+    //maybe better possibility for redirect?
+    /*@RequestMapping(value = "/signup.xhtml", method = RequestMethod.POST)
+    public String handle() {
+        // Save account ...
+        return "redirect:login.xhtml";
+    }
+    */
+
+
+    public void redirectRegistration() {
+        try {
+            FacesContext.getCurrentInstance().
+                    getExternalContext().redirect("/login.xhtml?registration_success");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public String getPassword() {

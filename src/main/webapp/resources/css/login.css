@@ -9,3 +9,7 @@
 #errorcontainer {
     text-align: center;
 }
+
+.hiddenonstart {
+    display: none;
+}
