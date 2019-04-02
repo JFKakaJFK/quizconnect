@@ -146,9 +146,6 @@ public class UserServiceTest {
 	@Test(expected = IllegalArgumentException.class)
 	@WithMockUser(username = "user1", authorities = { "MANAGER" })
     public void testExceptionForEmptyUsername() {
-		User adminUser = userService.loadUser("user1");
-		Assert.assertNotNull("Manager user could not be loaded from test data source", adminUser);
-
         User toBeCreatedUser = new User();
 		userService.saveUser(toBeCreatedUser);
     }

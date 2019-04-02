@@ -50,7 +50,7 @@ public class UserService {
     }
 
     /**
-	 * Saves the {@link User}. Does not perform sanity checks (e.g. if either manager or player set).
+	 * Saves the {@link User}. Performs some consistency checks, but does not check if User is associated with a Player / Manager.
 	 *
 	 * @param user
 	 *            the user to save
@@ -58,11 +58,16 @@ public class UserService {
 	 */
 	public User saveUser(User user) throws IllegalArgumentException
 	{
+		if (user.getUsername() == null)
+			throw new IllegalArgumentException("User username cannot be null!");
+		else if (user.getPassword() == null)
+			throw new IllegalArgumentException("User password cannot be null!");
+		
 		if (user.isNew())
 		{
 			user.setCreateDate(new Date());
         }
-		
+
 		return userRepository.save(user);
     }
 	
