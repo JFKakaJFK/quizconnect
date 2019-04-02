@@ -3,8 +3,11 @@
     position: relative;
 }
 
-.navbar-burger {
-    position: absolute;
-    left: 0;
-    top: 0;
+.navbar-burger svg {
+    width: 2rem;
+    height: 2rem;
+}
+
+.navbar-logo {
+    font-size: 2rem;
 }

@@ -87,6 +87,11 @@ html.pushbar_locked .pushbar_overlay{
 	line-height: 1;
 }
 
+.pushbar-close svg {
+	width: 2.5rem;
+	height: 2.5rem;
+}
+
 .pushbar-close span[data-pushbar-close]{
 	display: inline-block;
 	/* background: red; */
