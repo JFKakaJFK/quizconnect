@@ -89,7 +89,7 @@ html.pushbar_locked .pushbar_overlay{
 
 .pushbar-close span[data-pushbar-close]{
 	display: inline-block;
-	background: red;
+	/* background: red; */
 }
 
 .pushbar-nav {

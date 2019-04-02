@@ -43,4 +43,6 @@ a:hover { color: var(--gray-5); }
 svg {
     width: 100%;
     max-width: 100%;
+    color: inherit;
+    fill: currentColor;
 }
