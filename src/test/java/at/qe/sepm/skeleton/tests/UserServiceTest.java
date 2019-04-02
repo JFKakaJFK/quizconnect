@@ -10,8 +10,10 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import at.qe.sepm.skeleton.model.Manager;
 import at.qe.sepm.skeleton.model.User;
 import at.qe.sepm.skeleton.model.UserRole;
+import at.qe.sepm.skeleton.services.ManagerService;
 import at.qe.sepm.skeleton.services.UserService;
 
 /**
@@ -28,6 +30,9 @@ public class UserServiceTest {
 
     @Autowired
     UserService userService;
+	
+	@Autowired
+	ManagerService managerService;
 
     @Test
 	@WithMockUser(username = "user1", authorities = { "MANAGER" })
@@ -121,12 +126,14 @@ public class UserServiceTest {
 		User adminUser = userService.loadUser("user1");
 		Assert.assertNotNull("Manager user could not be loaded from test data source", adminUser);
 
+		Manager manager = managerService.getManagerById(101);
+		
         User toBeCreatedUser = new User();
         toBeCreatedUser.setUsername("newuser");
         toBeCreatedUser.setPassword("passwd");
         toBeCreatedUser.setEnabled(true);
-		toBeCreatedUser.setRole(UserRole.MANAGER);
-        userService.saveUser(toBeCreatedUser);
+		toBeCreatedUser.setManager(manager);
+		userService.saveUser(toBeCreatedUser);
 
         User freshlyCreatedUser = userService.loadUser("newuser");
         Assert.assertNotNull("New user could not be loaded from test data source after being saved", freshlyCreatedUser);
@@ -136,14 +143,14 @@ public class UserServiceTest {
         Assert.assertNotNull("User \"newuser\" does not have a createDate defined after being saved", freshlyCreatedUser.getCreateDate());
     }
 
-    @Test(expected = org.springframework.orm.jpa.JpaSystemException.class)
+	@Test(expected = IllegalArgumentException.class)
 	@WithMockUser(username = "user1", authorities = { "MANAGER" })
     public void testExceptionForEmptyUsername() {
 		User adminUser = userService.loadUser("user1");
 		Assert.assertNotNull("Manager user could not be loaded from test data source", adminUser);
 
         User toBeCreatedUser = new User();
-        userService.saveUser(toBeCreatedUser);
+		userService.saveUser(toBeCreatedUser);
     }
 
     @Test(expected = org.springframework.security.authentication.AuthenticationCredentialsNotFoundException.class)
@@ -175,19 +182,11 @@ public class UserServiceTest {
     }
 
     @Test(expected = org.springframework.security.access.AccessDeniedException.class)
-	@WithMockUser(username = "user2", authorities = { "PLAYER" })
-    public void testUnauthorizedSaveUser() {
-		User user = userService.loadUser("user2");
-		Assert.assertEquals("Call to userService.loadUser returned wrong user", "user2", user.getUsername());
-        userService.saveUser(user);
-    }
-
-    @Test(expected = org.springframework.security.access.AccessDeniedException.class)
-	@WithMockUser(username = "user2", authorities = { "PLAYER" })
+	@WithMockUser(username = "user3", authorities = { "PLAYER" })
     public void testUnauthorizedDeleteUser() {
-		User user = userService.loadUser("user2");
-		Assert.assertEquals("Call to userService.loadUser returned wrong user", "user2", user.getUsername());
-        userService.deleteUser(user);
+		User user = userService.loadUser("user3");
+		Assert.assertEquals("Call to userService.loadUser returned wrong user", "user3", user.getUsername());
+		userService.deleteUser(user);
     }
 
 }

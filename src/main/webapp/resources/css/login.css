@@ -1,0 +1,15 @@
+.container-fluid {
+    max-width: 25%;
+}
+
+#password-strength-text {
+    text-align: center;
+}
+
+#errorcontainer {
+    text-align: center;
+}
+
+.success_banner {
+    
+}
