@@ -1,0 +1,24 @@
+window.onload=function() {
+    var strength = {
+        0: "Worst",
+        1: "Bad",
+        2: "Weak",
+        3: "Good",
+        4: "Strong"
+    }
+
+    var password = document.getElementById('reg_password');
+    var text = document.getElementById('password-strength-text');
+
+    password.addEventListener('input', function () {
+        var val = password.value;
+        var result = zxcvbn(val);
+
+        // Update the text indicator
+        if (val !== "") {
+            text.innerHTML = "Strength: " + "<strong>" + strength[result.score] + "</strong>" + "<br/><span class='feedback'>" + result.feedback.warning + "<br/>" + result.feedback.suggestions + "</span";
+        } else {
+            text.innerHTML = "";
+        }
+    });
+}

@@ -1,23 +1,97 @@
-<ui:composition xmlns="http://www.w3c.org/1999/xhtml"
-                xmlns:f="http://java.sun.com/jsf/core"
-                xmlns:h="http://java.sun.com/jsf/html"
-                xmlns:ui="http://java.sun.com/jsf/facelets"
-                xmlns:ng="http://xmlns.jcp.org/jsf/passthrough"
-                xmlns:p="http://primefaces.org/ui"
-                template="/WEB-INF/templates/main.xhtml">
-    <ui:define name ="content">
-        <form id="login_form" action="#{request.contextPath}/login" method="post">
-            <h:panelGrid columns="2">
-                <p:outputLabel for="username" value="Username:"/>
-                <p:inputText id="username" type="text" required="true"/>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
 
-                <p:outputLabel for="password" value="Password:"/>
-                <p:inputText id="password" type="password" required="true"/>
+<h:head>
+    <title>Login</title>
+    <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
-                <button type="submit" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
-                    <span class="ui-button-text">Login</span>
-                </button>
-            </h:panelGrid>
-        </form>
-    </ui:define>
-</ui:composition>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"/>
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" type="text/css" href="resources/css/main.css"/>
+    <link rel="stylesheet" type="text/css" href="resources/css/login.css"/>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"/>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"/>
+    <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"/>
+    <script type="text/javascript" src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"/>
+</h:head>
+
+<h:body>
+
+    <script type="text/javascript">
+        window.onload = function () {
+            if (window.location.href.indexOf('registration=success') > -1) {
+                document.getElementById('success_banner')
+                    .innerHTML = '<img src="/resources/img/undraw_confirmed.png" alt="Successful registration" width="100%"/>';
+            }
+        }
+    </script>
+
+    <script type="text/javascript">
+        if (window.location.href.indexOf('registration=success') > -1) {
+            $.fn.slideFadeToggle = function (speed, easing, callback) {
+                return this.animate({opacity: 'toggle', height: 'toggle'}, speed, easing, callback);
+            };
+            setTimeout(function () {
+                $('#success_banner').slideFadeToggle(300);
+            }, 1500);
+        }
+    </script>
+
+    <div class="container-fluid" id="success_banner">
+    </div>
+
+
+    <div class="container pt-5">
+        <div class="row py-3">
+            <div class="col-lg">
+                <h1 class="display-3 text-center">QuizConnect</h1>
+                <h3 class="text-center">Fail together!</h3>
+            </div>
+        </div>
+    </div>
+
+    <form action="#{request.contextPath}/login" method="post">
+        <div class="container-fluid mt-5">
+            <div class="form-group">
+                <label for="username">E-Mail or username</label>
+                <h:inputText type="email" styleClass="form-control" id="username" name="username"
+                             pt:placeholder="john.doe@mail.com / user1234"/>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Passwort</label>
+                <h:inputSecret type="password" styleClass="form-control" id="password" name="password"
+                               pt:placeholder="******"/>
+            </div>
+
+            <div class="row py-5 pb-md-5">
+                <div class="col text-center">
+                    <button type="submit" id="submit" class="btn btn-block btn-primary btn-lg">Sign In</button>
+                </div>
+            </div>
+            <ui:fragment rendered="#{param['error'] ne null}">
+                <script type="text/javascript">
+                    $('#password').effect('shake');
+                </script>
+
+            </ui:fragment>
+
+            <div class="row">
+                <div class="col text-center">
+                    <a href="/signup.xhtml">Sign up</a>
+                </div>
+            </div>
+
+        </div>
+    </form>
+</h:body>
+</html>

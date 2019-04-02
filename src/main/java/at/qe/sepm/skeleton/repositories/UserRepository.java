@@ -1,10 +1,12 @@
 package at.qe.sepm.skeleton.repositories;
 
-import at.qe.sepm.skeleton.model.User;
-import at.qe.sepm.skeleton.model.UserRole;
 import java.util.List;
+
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import at.qe.sepm.skeleton.model.User;
+import at.qe.sepm.skeleton.model.UserRole;
 
 /**
  * Repository for managing {@link User} entities.
@@ -19,10 +21,7 @@ public interface UserRepository extends AbstractRepository<User, Long> {
 
     List<User> findByUsernameContaining(String username);
 
-    @Query("SELECT u FROM User u WHERE CONCAT(u.firstName, ' ', u.lastName) = :wholeName")
-    List<User> findByWholeNameConcat(@Param("wholeName") String wholeName);
-
-    @Query("SELECT u FROM User u WHERE :role MEMBER OF u.roles")
+	@Query("SELECT u FROM User u WHERE :role = u.role")
     List<User> findByRole(@Param("role") UserRole role);
 
 }
