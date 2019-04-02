@@ -10,6 +10,6 @@
     text-align: center;
 }
 
-.success_banner {
-    
+#success_banner img {
+    margin-top: 5em;
 }
