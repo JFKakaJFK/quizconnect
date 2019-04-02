@@ -20,6 +20,9 @@ import java.io.IOException;
 /**
  * This controller responds to requests to the avatar & answer endpoints and responds either
  * with the sought image or a default file.
+ *
+ *
+ * @author Johannes Koch
  */
 @Controller
 @RequestMapping
@@ -37,8 +40,16 @@ public class ImageController {
         this.storageService = storageService;
     }
 
+    /**
+     * Catches GET requests for the player avatars and returns corresponding file or default
+     *
+     * @param response
+     * @param manager
+     * @param file
+     * @param ext
+     */
     @RequestMapping(value = "/avatars/{manager}/{file}.{ext}", method = RequestMethod.GET)
-    public void getThumbnail(HttpServletResponse response, @PathVariable String manager, @PathVariable String file, @PathVariable String ext){
+    public void getAvatar(HttpServletResponse response, @PathVariable String manager, @PathVariable String file, @PathVariable String ext){
         if(!(ext.toLowerCase().equals("png") || ext.toLowerCase().equals("jpg"))){
             log.error("Request for thumbnail is not well-formed: no image extension");
             return;
@@ -54,6 +65,14 @@ public class ImageController {
         sendResponse(response, img, ext);
     }
 
+    /**
+     * Catches GET requests for the answer images and returns corresponding file or default
+     *
+     * @param response
+     * @param manager
+     * @param file
+     * @param ext
+     */
     @RequestMapping(value = "/answers/{manager}/{file}.{ext}", method = RequestMethod.GET)
     public void getAnswer(HttpServletResponse response, @PathVariable String manager, @PathVariable String file, @PathVariable String ext){
         if(!(ext.toLowerCase().equals("png") || ext.toLowerCase().equals("jpg"))){

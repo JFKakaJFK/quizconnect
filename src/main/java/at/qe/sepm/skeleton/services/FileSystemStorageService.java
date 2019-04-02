@@ -16,7 +16,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 /**
- * Service for storing, retrieving and deleting files
+ * Service for storing, retrieving and deleting answer pictures and avatars
  *
  * @author Johannes Koch
  */
@@ -34,6 +34,10 @@ public class FileSystemStorageService implements StorageService {
     private String avatarType;
     @Value("${storage.answers.imageType}")
     private String answerType;
+    @Value("${storage.avatars.default}")
+    private String defaultAvatar;
+    @Value("${storage.answers.default}")
+    private String defaultAnswer;
     private ImageService imageService;
 
     @Autowired
@@ -108,7 +112,7 @@ public class FileSystemStorageService implements StorageService {
     private String store(InputStream inputStream, String filename, String managerId, Path root, int size, String type){
         String extension = FilenameUtils.getExtension(filename);
 
-        Path tempFile;
+        Path tempFile = null;
         Path filePath;
         try {
             tempFile = Files.createTempFile(temp, "answer", "." + extension);
@@ -119,37 +123,45 @@ public class FileSystemStorageService implements StorageService {
         } catch (IOException e){
             log.error("Failed to store uploaded file in temporary directory");
             return null;
-        }
-
-        try {
-            Files.deleteIfExists(tempFile);
-        } catch (IOException e){
-            log.warn("Couldn't delete temporary file");
+        } finally {
+            try {
+                Files.deleteIfExists(tempFile);
+            } catch (IOException e){
+                log.warn("Couldn't delete temporary file");
+            }
         }
 
         return managerId + "/" + filePath.getFileName();
     }
 
     /**
-     * loads a stored avatar
+     * loads a stored avatar or returns a default
      *
      * @param avatar
      * @return
      */
     @Override
     public Path loadAvatar(String avatar) {
-        return avatars.resolve(avatar);
+        Path path = avatars.resolve(avatar);
+        if(Files.exists(path)){
+            return path;
+        }
+        return avatars.resolve(defaultAvatar);
     }
 
     /**
-     * loads a stored answer
+     * loads a stored answer or returns a default
      *
      * @param answer
      * @return
      */
     @Override
     public Path loadAnswer(String answer) {
-        return answers.resolve(answer);
+        Path path = answers.resolve(answer);
+        if(Files.exists(path)){
+            return path;
+        }
+        return answers.resolve(defaultAnswer);
     }
 
     /**
@@ -174,7 +186,7 @@ public class FileSystemStorageService implements StorageService {
     @Override
     public void deleteAnswer(String answer) {
         try {
-            Files.deleteIfExists(avatars.resolve(answer));
+            Files.deleteIfExists(answers.resolve(answer));
         } catch (IOException e){
             log.error("Could not delete avatar " + answer);
         }
