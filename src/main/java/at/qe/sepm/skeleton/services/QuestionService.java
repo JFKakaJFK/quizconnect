@@ -3,6 +3,8 @@ package at.qe.sepm.skeleton.services;
 import at.qe.sepm.skeleton.model.Question;
 import at.qe.sepm.skeleton.model.QuestionType;
 import at.qe.sepm.skeleton.repositories.QuestionRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,6 +21,8 @@ import java.util.Collection;
 @Component
 @Scope("application")
 public class QuestionService {
+
+    private Logger log = LoggerFactory.getLogger(QuestionSetPerformanceService.class);
 
     @Autowired
     QuestionRepository questionRepository;
@@ -126,6 +130,7 @@ public class QuestionService {
             //...
         }
         questionRepository.delete(question);
+        log.info("Deleted Question " + question.getId());
     }
 
 }

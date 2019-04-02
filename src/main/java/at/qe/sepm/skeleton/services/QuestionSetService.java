@@ -5,6 +5,8 @@ import at.qe.sepm.skeleton.model.QuestionSet;
 import at.qe.sepm.skeleton.model.QuestionSetDifficulty;
 import at.qe.sepm.skeleton.model.QuestionType;
 import at.qe.sepm.skeleton.repositories.QuestionSetRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,6 +25,8 @@ import java.util.Set;
 @Component
 @Scope("application")
 public class QuestionSetService {
+
+    private Logger log = LoggerFactory.getLogger(QuestionSetPerformanceService.class);
 
     @Autowired
     QuestionSetRepository questionSetRepositoryRepository;
@@ -107,6 +111,7 @@ public class QuestionSetService {
             }
         }
         questionSetRepositoryRepository.delete(questionSet);
+        log.info("Deleted QuestionSet " + questionSet.getId());
     }
 
 }
