@@ -59,7 +59,7 @@ public class UserBean implements Serializable {
     public void redirectRegistration() {
         try {
             FacesContext.getCurrentInstance().
-                    getExternalContext().redirect("/login.xhtml?registration_success");
+                    getExternalContext().redirect("/login.xhtml?registration=success");
         } catch (IOException e) {
             e.printStackTrace();
         }
