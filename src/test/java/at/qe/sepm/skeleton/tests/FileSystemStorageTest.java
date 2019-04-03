@@ -38,7 +38,7 @@ import java.nio.file.Paths;
 public class FileSystemStorageTest {
 
     @Autowired
-    FileSystemStorageService fileSystemStorageService;
+    private FileSystemStorageService fileSystemStorageService;
 
     @Value("${storage.avatars.imageType}")
     private String avatarType;

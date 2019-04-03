@@ -52,6 +52,7 @@ public class ImageAPIController {
     public void getAvatar(HttpServletResponse response, @PathVariable String manager, @PathVariable String file, @PathVariable String ext){
         if(!(ext.toLowerCase().equals("png") || ext.toLowerCase().equals("jpg"))){
             log.error("Request for thumbnail is not well-formed: no image extension");
+            sendError(response,400, "Invalid extension. Allowed: (png|jpg)");
             return;
         }
 
@@ -77,6 +78,7 @@ public class ImageAPIController {
     public void getAnswer(HttpServletResponse response, @PathVariable String manager, @PathVariable String file, @PathVariable String ext){
         if(!(ext.toLowerCase().equals("png") || ext.toLowerCase().equals("jpg"))){
             log.error("Request for thumbnail is not well-formed: no image extension");
+            sendError(response,400, "Invalid extension. Allowed: (png|jpg)");
             return;
         }
 
@@ -109,6 +111,23 @@ public class ImageAPIController {
             response.flushBuffer();
         } catch (IOException e){
             log.error("Could not serve " + file.getName());
+            response.reset();
+            sendError(response, 500, "Could not serve file");
+        }
+    }
+
+    /**
+     * Sends an error
+     *
+     * @param response
+     * @param status
+     * @param message
+     */
+    private void sendError(HttpServletResponse response, int status, String message){
+        try {
+            response.sendError(status, message);
+        } catch (IOException e){
+            log.error("Could not send HTTP " + status + ": " + message);
         }
     }
 }

@@ -40,14 +40,16 @@ public class AWTImageService implements ImageService {
         if(width <= 0 || height <= 0){
             throw new IllegalArgumentException("Dimensions must be positive and greater 0");
         }
+        if(!Files.exists(output)){
+            throw new IllegalArgumentException("Output path is must be valid");
+        }
         String ext;
         if(extension.toLowerCase().equals(JPG)){
             ext = JPG;
         } else if(extension.toLowerCase().equals(PNG)){
             ext = PNG;
         } else {
-            log.error("Invalid image type");
-            return null;
+            throw new IllegalArgumentException("Image extension must be 'jpg' or 'png'");
         }
         try {
             BufferedImage original = ImageIO.read(input.toFile());
@@ -58,7 +60,7 @@ public class AWTImageService implements ImageService {
 
             return result;
         } catch (IOException e){
-            log.error("");
+            log.error("Image resizing failed:" + e.getMessage());
             return null;
         }
     }
