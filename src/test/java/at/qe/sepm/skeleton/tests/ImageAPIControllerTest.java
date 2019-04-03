@@ -17,9 +17,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.io.File;
-import java.io.FileInputStream;
-
 /**
  * Some very basic tests for {@link ImageAPIController}.
  *
@@ -33,11 +30,8 @@ public class ImageAPIControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private StorageService storageService;
-
-    private File testFile;
-    private String manager;
+    private String testAvatar;
+    private String testAnswer;
 
     @Value("${storage.api.avatars}")
     private String avatars;
@@ -58,8 +52,8 @@ public class ImageAPIControllerTest {
             @Value("${storage.api.answers}") String answerEndpoint){
         this.avatars = "/" + avatarEndpoint;
         this.answers = "/" + answerEndpoint;
-        this.testFile = new File("src/test/resources/testImage1.jpg");
-        this.manager = "manager";
+        this.testAvatar = "manager/test_200x200.png";
+        this.testAnswer = "manager/test_500x500.png";
     }
 
     @Test
@@ -96,27 +90,17 @@ public class ImageAPIControllerTest {
 
     @Test
     public void storeAndRequestAvatarTest() throws Exception {
-        String testAvatar = storageService.storeAvatar(new FileInputStream(testFile), testFile.getName(), manager);
-
         this.mockMvc.perform(get(avatars + testAvatar))
                 .andExpect(status().isOk())
                 .andExpect(header().string("Content-Type", "image/" + avatarType))
                 .andExpect(header().string("Cache-Control", "max-age=31104000"));
-
-        // TODO: files are not deleted, because the request is tested async and this method is called too early
-        storageService.deleteAvatar(testAvatar);
     }
 
     @Test
     public void storeAndRequestAnswerTest() throws Exception {
-        String testAnswer = storageService.storeAnswer(new FileInputStream(testFile), testFile.getName(), manager);
-
         this.mockMvc.perform(get(answers + testAnswer))
                 .andExpect(status().isOk())
                 .andExpect(header().string("Content-Type", "image/" + answerType))
                 .andExpect(header().string("Cache-Control", "max-age=31104000"));
-
-
-        storageService.deleteAnswer(testAnswer);
     }
 }
