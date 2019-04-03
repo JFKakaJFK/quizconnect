@@ -30,7 +30,7 @@ Backend
 - [ ] QuizRoom Architecture Planning (@Lorenz)
 - [ ] Unit tests for Question Services (@Johannes K., @Simon)
 
-Frontend (@Andreas, @Johannes K., @Johannes, S. @Simon)
+Frontend (@Andreas, @Johannes K., @Johannes S., @Simon)
 
 - [ ] Home Views(Boilerplate)
 - [ ] Navigation(Boilerplate)
