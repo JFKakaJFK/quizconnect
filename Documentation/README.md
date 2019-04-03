@@ -6,9 +6,12 @@ See issue board for details.
 
 Backend
 
-- [ ] QuizRoom Architecture (@Lorenz)
+- [ ] QuizRoom Architecture Planning (@Lorenz)
 - [ ] Unit tests for Question Services (@Johannes K., @Simon)
 
-Frontend
+Frontend (@Andreas, @Johannes K., @Johannes, S. @Simon)
 
-- [ ] Manager & Player views[Home Views(Boilerplate) | Navigation(Boilerplate) | Player Profile w/out Stats | QuestionSet creation] (@Andreas, @Johannes K., @Johannes, S. @Simon)
+- [ ] Home Views(Boilerplate)
+- [ ] Navigation(Boilerplate)
+- [ ] Player Profiles w/out Stats
+- [ ] QuestionSet creation
