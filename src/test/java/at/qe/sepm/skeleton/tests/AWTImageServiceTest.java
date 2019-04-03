@@ -22,11 +22,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
- * Some very basic tests for {@link UserService}.
+ * Some very basic tests for {@link AWTImageService}.
  *
- * This class is part of the skeleton project provided for students of the
- * course "Softwaredevelopment and Project Management" offered by the University
- * of Innsbruck.
+ * @author Simon Triendl & Johanens Koch
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest

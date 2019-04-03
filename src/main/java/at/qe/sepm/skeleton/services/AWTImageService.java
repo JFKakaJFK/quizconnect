@@ -1,6 +1,6 @@
 package at.qe.sepm.skeleton.services;
 
-import at.qe.sepm.skeleton.ui.controllers.ImageController;
+import at.qe.sepm.skeleton.ui.controllers.ImageAPIController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ import java.nio.file.Path;
 @Service
 public class AWTImageService implements ImageService {
 
-    private static final Logger log = LoggerFactory.getLogger(ImageController.class);
+    private static final Logger log = LoggerFactory.getLogger(ImageAPIController.class);
     private static final String JPG = "jpg";
     private static final String PNG = "png";
 

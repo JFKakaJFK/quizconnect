@@ -28,11 +28,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * Some very basic tests for {@link at.qe.sepm.skeleton.services.FileSystemStorageService}.
+ * Some very basic tests for {@link FileSystemStorageService}.
  *
- * This class is part of the skeleton project provided for students of the
- * course "Softwaredevelopment and Project Management" offered by the University
- * of Innsbruck.
+ * @author Simon Triendl & Johanens Koch
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest

@@ -26,9 +26,9 @@ import java.io.IOException;
  */
 @Controller
 @RequestMapping
-public class ImageController {
+public class ImageAPIController {
 
-    private static final Logger log = LoggerFactory.getLogger(ImageController.class);
+    private static final Logger log = LoggerFactory.getLogger(ImageAPIController.class);
     private StorageService storageService;
     @Value("${storage.avatars.default}")
     private String defaultAvatar;
@@ -36,7 +36,7 @@ public class ImageController {
     private String defaultAnswer;
 
     @Autowired
-    public ImageController(StorageService storageService){
+    public ImageAPIController(StorageService storageService){
         this.storageService = storageService;
     }
 
