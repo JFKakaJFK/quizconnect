@@ -1,4 +1,8 @@
 /target/
 /src/main/webapp/WEB-INF/classes/
 .idea
+.classpath
 sepm-start.iml
+.project
+.settings/org.eclipse.core.resources.prefs
+.settings/org.eclipse.jdt.core.prefs

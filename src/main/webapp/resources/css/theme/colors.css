@@ -1,0 +1,69 @@
+:root {
+    --col-1-d: #303e4f;
+    --col-1-m: #4a607a;
+    --col-1-l: #919EAD;
+
+    --col-2-d: #247291;
+    --col-2-m: #2A86AB;
+    --col-2-l: #54A9CC;
+
+    --col-3-d: #17A2AD;
+    --col-3-m: #19B8C4;
+    --col-3-l: #53CAD4;
+
+    --col-4-d: #11B8A3;
+    --col-4-m: #13CFB8;
+    --col-4-l: #65E3D4;
+
+    --col-5-d: #09BD5A;
+    --col-5-m: #0AD464;
+    --col-5-l: #5DE59A;
+
+    --gray-1: #383D42;
+    --gray-2: #5A626B;
+    --gray-3: #7A8591;
+    --gray-4: #B3BECD;
+    --gray-5: #EFF2F5;
+
+    --accent-1: #C955DC;
+    --accent-2: #FB5BFF;
+    --accent-3: #FB78FF;
+
+    --danger: #FB78FF;
+    --alert: #53CAD4;
+    --info: #5DE59A;
+    --warning: #FFBF73;
+    --error: #E55D5D;
+
+    --bg: #303E4F;
+
+    --grad-d: linear-gradient(35deg, rgba(23,162,173,1) 0%, rgba(9,189,90,1) 100%);
+    --grad-m: linear-gradient(35deg, rgb(25, 184, 196) 0%, rgb(10, 212, 100) 100%);
+    --grad-l: linear-gradient(35deg, rgb(83, 202, 212) 0%, rgb(93, 229, 154) 100%);
+
+    /* Bootstrap overrides TODO: adjust needed ones? or just use ours and override when necessary? */
+    --blue: #007bff;
+    --indigo: #6610f2;
+    --purple: #6f42c1;
+    --pink: #e83e8c;
+    --red: #dc3545;
+    --orange: #fd7e14;
+    --yellow: #ffc107;
+    --green: #28a745;
+    --teal: #20c997;
+    --cyan: #17a2b8;
+    --white: #fff;
+    --gray: #6c757d;
+    --gray-dark: #343a40;
+    --primary: #007bff;
+    --secondary: #6c757d;
+    --success: #28a745;
+    --warning: #ffc107;
+    --light: #f8f9fa;
+    --dark: #343a40;
+    --breakpoint-xs: 0;
+    --breakpoint-sm: 576px;
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 992px;
+    --breakpoint-xl: 1200px;
+}

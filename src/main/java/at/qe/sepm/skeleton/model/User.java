@@ -2,22 +2,22 @@ package at.qe.sepm.skeleton.model;
 
 import java.util.Date;
 import java.util.Objects;
-import java.util.Set;
-import javax.persistence.CollectionTable;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
 import org.springframework.data.domain.Persistable;
 
 /**
- * Entity representing users.
+ * Entity representing users. Users must have either an associated Player or Manager. User role gets set automatically upon assigning a Manager or Player to the User.
  */
 @Entity
 public class User implements Persistable<String> {
@@ -28,29 +28,22 @@ public class User implements Persistable<String> {
     @Column(length = 100)
     private String username;
 
-    @ManyToOne(optional = false)
-    private User createUser;
     @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createDate;
-    @ManyToOne(optional = true)
-    private User updateUser;
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updateDate;
 
     private String password;
+	
+	private boolean enabled;
+	
+	@OneToOne(optional = true, mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+	private Player player;
+	
+	@OneToOne(optional = true, mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+	private Manager manager;
 
-    private String firstName;
-    private String lastName;
-    private String email;
-    private String phone;
-
-    boolean enabled;
-
-    @ElementCollection(targetClass = UserRole.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "User_UserRole")
-    @Enumerated(EnumType.STRING)
-    private Set<UserRole> roles;
+	@Enumerated(EnumType.STRING)
+	private UserRole role;
 
     public String getUsername() {
         return username;
@@ -67,64 +60,19 @@ public class User implements Persistable<String> {
     public void setPassword(String password) {
         this.password = password;
     }
+	
+	public boolean isEnabled()
+	{
+		return enabled;
+	}
 
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public Set<UserRole> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<UserRole> roles) {
-        this.roles = roles;
-    }
-
-    public User getCreateUser() {
-        return createUser;
-    }
-
-    public void setCreateUser(User createUser) {
-        this.createUser = createUser;
-    }
-
-    public Date getCreateDate() {
+	public void setEnabled(boolean enabled)
+	{
+		this.enabled = enabled;
+	}
+	
+	public Date getCreateDate()
+	{
         return createDate;
     }
 
@@ -132,23 +80,48 @@ public class User implements Persistable<String> {
         this.createDate = createDate;
     }
 
-    public User getUpdateUser() {
-        return updateUser;
-    }
+	public Player getPlayer()
+	{
+		return player;
+	}
+	
+	/**
+	 * Called automatically upon creation of a new {@link Player}. Should not be called manually!
+	 * 
+	 * @param player
+	 */
+	public void setPlayer(Player player)
+	{
+		if (this.manager != null)
+			throw new IllegalArgumentException("Cannot set Player with Manager already set!");
+		this.player = player;
+		this.role = UserRole.PLAYER;
+	}
+	
+	public Manager getManager()
+	{
+		return manager;
+	}
+	
+	/**
+	 * Called automatically upon creation of a new {@link Manager}. Should not be called manually!
+	 * 
+	 * @param manager
+	 */
+	public void setManager(Manager manager)
+	{
+		if (this.player != null)
+			throw new IllegalArgumentException("Cannot set Manager with Player already set!");
+		this.manager = manager;
+		this.role = UserRole.MANAGER;
+	}
 
-    public void setUpdateUser(User updateUser) {
-        this.updateUser = updateUser;
-    }
+	public UserRole getRole()
+	{
+		return role;
+	}
 
-    public Date getUpdateDate() {
-        return updateDate;
-    }
-
-    public void setUpdateDate(Date updateDate) {
-        this.updateDate = updateDate;
-    }
-
-    @Override
+	@Override
     public int hashCode() {
         int hash = 7;
         hash = 59 * hash + Objects.hashCode(this.username);
@@ -177,7 +150,7 @@ public class User implements Persistable<String> {
 
     @Override
     public String getId() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		return username;
     }
 
     @Override
