@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * Some very basic tests for {@link UserService}.
@@ -117,17 +118,14 @@ public class AWTImageServiceTest {
         Assert.assertTrue("Stored file has right path", Files.exists(testFolder.resolve(output.getFileName())));
         Assert.assertTrue("Stored file is non empty", output.toFile().length() > 0);
         Assert.assertEquals("File type matches", "jpg", FilenameUtils.getExtension(output.toString()));
-        Assert.assertEquals("Width is scaled probably", 200, bufferedOutput.getWidth());
-        Assert.assertEquals("Height is scaled probably", 300, bufferedOutput.getHeight());
+        BufferedImage img = ImageIO.read(output.toFile());
+        Assert.assertEquals("Width matches", 5000, img.getWidth());
+        Assert.assertEquals("Height matches", 1000, img.getHeight());
     }
 
     @Test
     public void testStoreAvatarWithScale100X205() throws IOException {
-        File testFile = new File("src/test/resources/testImage.jpg");
-        // is there a better way to get the path?
-        Path testFolder = folder.newFile("hack").toPath().getParent();
-
-        Path output = imageService.resizeImage(testFile.toPath(), testFolder, 100, 205, "png");
+        Path output = imageService.resizeImage(testFile1.toPath(), testFolder, 100, 205, "png");
 
         BufferedImage bufferedOutput = ImageIO.read(output.toFile());
 
@@ -141,17 +139,13 @@ public class AWTImageServiceTest {
 
     @Test
     public void testStoreAvatarInvalidType() throws IOException {
-        File testFile = new File("src/test/resources/testImage.jpg");
-        // is there a better way to get the path?
-        Path testFolder = folder.newFile("hack").toPath().getParent();
-
-        Path output = imageService.resizeImage(testFile.toPath(), testFolder, 100, 205, "gif");
+        Path output = imageService.resizeImage(testFile1.toPath(), testFolder, 100, 205, "gif");
 
 
         Assert.assertNull("Invalid Image Type", output);
     }
 
-    @Test (expected = RasterFormatException.class)
+    @Test (expected = IOException.class)
     public void testStoreAvatarInvalidWidth() throws IOException {
         File testFile = new File("src/test/resources/testImage.jpg");
         // is there a better way to get the path?
@@ -160,7 +154,7 @@ public class AWTImageServiceTest {
         Path output = imageService.resizeImage(testFile.toPath(), testFolder, -10, 205, "jpg");
     }
 
-    @Test (expected = RasterFormatException.class)
+    @Test (expected = IOException.class)
     public void testStoreAvatarInvalidHeight() throws IOException {
         File testFile = new File("src/test/resources/testImage.jpg");
         // is there a better way to get the path?
@@ -169,36 +163,29 @@ public class AWTImageServiceTest {
         Path output = imageService.resizeImage(testFile.toPath(), testFolder, 100, -205, "jpg");
     }
 
-    /*
+
     @Test
     public void testStoreAvatarInvalidOutputPath() throws IOException {
         File testFile = new File("src/test/resources/testImage.jpg");
         // is there a better way to get the path?
-        Path invalidPath = Paths.get("src/test/java");
+        Path invalidPath = Paths.get("src//test1/javax/thisAintRight/CONNEEEEEEEECT");
         //Path testFolder = folder.newFile("hack").toPath().getParent();
 
         Path output = imageService.resizeImage(testFile.toPath(), invalidPath, 100, 205, "jpg");
 
         Assert.assertNull("Invalid Path as argument", output);
     }
-     */
 
 
     @Test
     public void testStoreAvatarInvalidInputPath() throws IOException {
-        File testFile = new File("src/test/resources/testImage.jpg");
-        // is there a better way to get the path?
         Path invalidPath = Paths.get("src/test/java");
-        Path testFolder = folder.newFile("hack").toPath().getParent();
 
         Path output = imageService.resizeImage(invalidPath, testFolder, 100, 205, "jpg");
 
 
         Assert.assertNull("Invalid Image Type", output);
 
-        BufferedImage img = ImageIO.read(output.toFile());
-        Assert.assertEquals("Width matches", 5000, img.getWidth());
-        Assert.assertEquals("Height matches", 1000, img.getHeight());
     }
 
     @Test(expected = IllegalArgumentException.class)
