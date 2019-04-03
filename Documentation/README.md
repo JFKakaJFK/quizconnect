@@ -1,6 +1,6 @@
 # Tasks
 
-See issue board for details. Not all tasks achieved in a week may be listed, since weekly milestones are not updated.
+See issue board for details. Not all tasks achieved in a week may be listed(or assigned), since weekly milestones are not updated.
 
 ## 27.03 - 3.04
 
