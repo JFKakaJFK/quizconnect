@@ -3,8 +3,10 @@ package at.qe.sepm.skeleton.tests;
 
 import at.qe.sepm.skeleton.services.FileSystemStorageService;
 import at.qe.sepm.skeleton.services.ImageService;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.tomcat.jni.Directory;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -40,110 +42,163 @@ public class FileSystemStorageTest {
     @Autowired
     FileSystemStorageService fileSystemStorageService;
 
-    @Value("${storage.uploads.location}")
-    private String location;
-    @Value("${storage.uploads.temporary}")
-    private String temp;
-    @Value("${storage.thumbnails.location}")
-    private String thumbs;
-    @Value("${storage.prefixes.avatar}")
-    private String avatarPrefix;
-    @Value("${storage.prefixes.answer}")
-    private String answerPrefix;
-
-
-    /*
-    private Path temp;
-    private Path avatars;
-    private Path answers;
-    private int avatarSize;
-    private int answerSize;
     @Value("${storage.avatars.imageType}")
     private String avatarType;
     @Value("${storage.answers.imageType}")
     private String answerType;
+    private Path temp;
+    private Path avatars;
+    private Path answers;
+    @Value("${storage.avatars.default}")
+    private String defaultAvatar;
+    @Value("${storage.answers.default}")
+    private String defaultAnswer;
+
+    private File testFile;
+    private String manager;
 
     @Autowired
-    public void initProperties(
+    public void init(
             @Value("${storage.uploads.location}") String root,
             @Value("${storage.uploads.temporary}") String temp,
-            @Value("${storage.avatars.minResolution}") String avatarSize,
-            @Value("${storage.answers.minResolution}") String answerSize,
             @Value("${storage.api.avatars}") String avatarEndpoint,
-            @Value("${storage.api.answers}") String answerEndpoint) {
+            @Value("${storage.api.answers}") String answerEndpoint){
         this.temp = Paths.get(temp);
         this.avatars = Paths.get(root).resolve(avatarEndpoint);
         this.answers = Paths.get(root).resolve(answerEndpoint);
-        this.avatarSize = Integer.valueOf(avatarSize);
-        this.answerSize = Integer.valueOf(answerSize);
     }
-    */
+
+    @Before
+    public void setUp(){
+        testFile = new File("src/test/resources/testImage1.jpg");
+        manager = "manager";
+    }
+
+    @Test
+    public void testInit() throws IOException {
+        fileSystemStorageService.init();
+
+        Assert.assertTrue("Directory at locations exists", Files.exists(temp));
+        Assert.assertTrue("Directory at temp exists", Files.exists(answers));
+        Assert.assertTrue("Directory at thumbs exists", Files.exists(answers));
+    }
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
 
     @Test
     public void testStoreAvatar() throws IOException {
-        File testFile = new File("src/test/resources/testImage.jpg");
-        String manager = "manager";
-        String rightPath = Paths.get(thumbs).resolve(manager + "/" + avatarPrefix).toString();
-        String filename = testFile.getName();
+        String rightPath = avatars.toString();
         InputStream is = new FileInputStream(testFile);
 
+        String stored = fileSystemStorageService.storeAvatar(is, testFile.getName(), manager);
 
-        String stored = fileSystemStorageService.storeAvatar(is, filename, manager);
+        Assert.assertTrue("Stored file exists", Files.exists(avatars.resolve(stored)));
+        Assert.assertTrue("Stored file has right path", avatars.resolve(stored).toString().contains(rightPath));
+        Assert.assertTrue("Stored file is non empty", avatars.resolve(stored).toFile().length() > 0);
+        Assert.assertEquals("Stored file is of right type", avatarType, FilenameUtils.getExtension(stored));
 
-        Assert.assertTrue("Stored file exists", Files.exists(Paths.get(stored)));
-        Assert.assertTrue("Stored file has right path", stored.contains(rightPath));
-        Assert.assertTrue("Stored file is non empty", Paths.get(stored).toFile().length() > 0);
+        Files.deleteIfExists(avatars.resolve(stored));
     }
 
     @Test
     public void testStoreAnswer() throws IOException {
-        File testFile = new File("src/test/resources/testImage.jpg");
-        String manager = "manager";
-        // Not the right Path answers get stored in manage/answers
-        String rightPath = Paths.get(location).resolve(manager + "/" + answerPrefix).toString();
-        String filename = testFile.getName();
+        String rightPath = answers.toString();
         InputStream inputStream = new FileInputStream(testFile);
 
-        String stored = fileSystemStorageService.storeAnswer(inputStream, filename, manager);
+        String stored = fileSystemStorageService.storeAnswer(inputStream, testFile.getName(), manager);
 
-        Assert.assertTrue("Stored answer exists", Files.exists(Paths.get(location).resolve(stored)));
-        Assert.assertTrue("Stored answer has right path", Paths.get(location).resolve(stored).toString().contains(rightPath));
-        Assert.assertTrue("Stored file is non empty", Paths.get(location).resolve(stored).toString().length() > 0);
+        Assert.assertTrue("Stored answer exists", Files.exists(answers.resolve(stored)));
+        Assert.assertTrue("Stored answer has right path", answers.resolve(stored).toString().contains(rightPath));
+        Assert.assertTrue("Stored file is non empty", answers.resolve(stored).toFile().length() > 0);
+        Assert.assertEquals("Stored file is of right type", answerType, FilenameUtils.getExtension(stored));
 
+        Files.deleteIfExists(answers.resolve(stored));
     }
 
     @Test(expected = NullPointerException.class)
     public void testEmptyAvatar() throws IOException {
         File testFile = folder.newFile("testPic.jpg");
-        String manager = "manager";
-        String filename = testFile.getName();
         InputStream is = new FileInputStream(testFile);
 
-        fileSystemStorageService.storeAvatar(is, filename, manager);
+        fileSystemStorageService.storeAvatar(is, testFile.getName(), manager);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testEmptyAnswer() throws IOException {
+        File testFile = folder.newFile("testPic.jpg");
+        InputStream is = new FileInputStream(testFile);
+
+        fileSystemStorageService.storeAnswer(is, testFile.getName(), manager);
     }
 
     @Test
-    public void testInit() throws IOException {
-        Path locationPath = Paths.get(location);
-        Path tempPath = Paths.get(temp);
-        Path thumbsPath = Paths.get(thumbs);
+    public void testLoadAvatar() throws IOException {
+        InputStream inputStream = new FileInputStream(testFile);
 
-        fileSystemStorageService.init();
+        String stored = fileSystemStorageService.storeAvatar(inputStream,  testFile.getName(), manager);
 
-        Assert.assertTrue("Directory at locations exists", Files.exists(locationPath));
-        Assert.assertTrue("Directory at temp exists", Files.exists(tempPath));
-        Assert.assertTrue("Directory at thumbs exists", Files.exists(thumbsPath));
+        Path loaded = fileSystemStorageService.loadAvatar(stored);
+
+        Assert.assertTrue("Retrieved avatar exists", Files.exists(loaded));
+        Assert.assertTrue("Retrieved file is non empty", loaded.toFile().length() > 0);
+        Assert.assertEquals("Retrieved file is of right type", avatarType, FilenameUtils.getExtension(loaded.toString()));
+
+        Files.deleteIfExists(avatars.resolve(stored));
     }
+
+    @Test
+    public void testLoadDefaultAvatar() {
+        Path loaded = fileSystemStorageService.loadAvatar("QuizConnect");
+
+        Assert.assertTrue("Default exists", Files.exists(loaded));
+        Assert.assertEquals("Default filename matches", defaultAvatar, FilenameUtils.getName(loaded.toString()));
+        Assert.assertTrue("Default is non empty", loaded.toFile().length() > 0);
+    }
+
+    @Test
+    public void testLoadDefaultAnswer() {
+        Path loaded = fileSystemStorageService.loadAnswer("QuizConnect");
+
+        Assert.assertTrue("Default exists", Files.exists(loaded));
+        Assert.assertEquals("Default filename matches", defaultAnswer, FilenameUtils.getName(loaded.toString()));
+        Assert.assertTrue("Default is non empty", loaded.toFile().length() > 0);
+    }
+
+    @Test
+    public void testLoadAnswer() throws IOException {
+        InputStream inputStream = new FileInputStream(testFile);
+
+        String stored = fileSystemStorageService.storeAnswer(inputStream,  testFile.getName(), manager);
+
+        Path loaded = fileSystemStorageService.loadAnswer(stored);
+
+        Assert.assertTrue("Retrieved aanswer exists", Files.exists(loaded));
+        Assert.assertTrue("Retrieved file is non empty", loaded.toFile().length() > 0);
+        Assert.assertEquals("Retrieved file is of right type", answerType, FilenameUtils.getExtension(loaded.toString()));
+
+        Files.deleteIfExists(answers.resolve(stored));
+    }
+
     @Test
     public void testDeleteAvatar() throws IOException {
-        File testFile = folder.newFile("testFile.txt");
-        String pathToFile = testFile.getPath();
+        InputStream inputStream = new FileInputStream(testFile);
 
-        fileSystemStorageService.deleteAvatar(pathToFile);
+        String stored = fileSystemStorageService.storeAvatar(inputStream,  testFile.getName(), manager);
 
-        Assert.assertFalse("File was deleted", testFile.exists());
+        fileSystemStorageService.deleteAvatar(stored);
+
+        Assert.assertFalse("File was deleted", Files.exists(avatars.resolve(stored)));
+    }
+
+    @Test
+    public void testDeleteAnswer() throws IOException {
+        InputStream inputStream = new FileInputStream(testFile);
+
+        String stored = fileSystemStorageService.storeAnswer(inputStream,  testFile.getName(), manager);
+
+        fileSystemStorageService.deleteAnswer(stored);
+
+        Assert.assertFalse("File was deleted", Files.exists(answers.resolve(stored)));
     }
 }

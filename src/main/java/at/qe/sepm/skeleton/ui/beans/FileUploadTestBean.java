@@ -13,6 +13,8 @@ import java.io.IOException;
 
 /**
  * Bean for testing file storage functionality.
+ *
+ * @author Johannes Koch
  */
 @ManagedBean
 public class FileUploadTestBean {

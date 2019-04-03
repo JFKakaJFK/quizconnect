@@ -12,6 +12,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+/**
+ * Implementation of {@link ImageService} using the built in java AWT library
+ *
+ * @author Johannes Koch
+ */
 @Service
 public class AWTImageService implements ImageService {
 
@@ -32,6 +37,9 @@ public class AWTImageService implements ImageService {
      */
     @Override
     public Path resizeImage(Path input, Path output, int width, int height, String extension) {
+        if(width <= 0 || height <= 0){
+            throw new IllegalArgumentException("Dimensions must be positive and greater 0");
+        }
         String ext;
         if(extension.toLowerCase().equals(JPG)){
             ext = JPG;
@@ -100,7 +108,7 @@ public class AWTImageService implements ImageService {
             result = temp;
         } while (currentWidth != width && currentHeight != height);
 
-        if(g == null) { g.dispose(); }
+        if(g != null) { g.dispose(); }
 
         if(width != result.getWidth() || height != result.getHeight()){
             int x = 0;
@@ -110,6 +118,7 @@ public class AWTImageService implements ImageService {
             } else {
                 y = (currentHeight - height) / 2;
             }
+            // crop the image to the wanted size
             temp = result.getSubimage(x, y , width, height);
             BufferedImage copy = new BufferedImage(temp.getWidth(), temp.getHeight(), type);
             g = copy.createGraphics();
