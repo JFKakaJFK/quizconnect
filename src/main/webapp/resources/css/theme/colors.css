@@ -32,6 +32,8 @@
     --danger: #FB78FF;
     --alert: #53CAD4;
     --info: #5DE59A;
+    --warning: #FFBF73;
+    --error: #E55D5D;
 
     --bg: var(--col-1-d);
     --bar: var(--col-1-d);
