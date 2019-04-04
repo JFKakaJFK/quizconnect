@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://xmlns.jcp.org/jsf/core"
+      lang="en">
+<h:head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="../../resources/css/main.css" />
+    <title>In Game | QuizConnect</title>
+</h:head>
+
+<h:body>
+    <div data-pushbar-id="bar" class="pushbar from_left">
+        <div class="pushbar-close">
+                <span data-pushbar-close="" class="py-2 px-2 my-2 mx-3">
+                    <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M16.24 14.83a1 1 0 0 1-1.41 1.41L12 13.41l-2.83 2.83a1 1 0 0 1-1.41-1.41L10.59 12 7.76 9.17a1 1 0 0 1 1.41-1.41L12 10.59l2.83-2.83a1 1 0 0 1 1.41 1.41L13.41 12l2.83 2.83z"/></svg>
+                </span>
+        </div>
+
+        <h:form rendered="#{sessionInfoBean.hasRole('PLAYER')}">
+            <nav class="pushbar-nav pl-4 pr-3 py-4">
+                <ul class="list-unstyled">
+                    <li class="my-3">
+                        <a href="#">Home</a>
+                    </li>
+                    <li class="my-3">
+                        <a href="#">Join Game</a>
+                    </li>
+                    <li class="my-3">
+                        <a href="#">Create Game</a>
+                    </li>
+                    <li class="my-3">
+                        <h:link outcome="/players/profile" value="My Stats">
+                            <f:param name="id" value="#{sessionInfoBean.currentUser.player.id}"/>
+                        </h:link>
+                    </li>
+                    <li class="my-3">
+                        <a href="/players/all.xhtml">View Players</a>
+                    </li>
+                </ul>
+            </nav>
+        </h:form>
+
+        <h:form rendered="#{sessionInfoBean.hasRole('MANAGER')}">
+            <nav class="pushbar-nav pl-4 pr-3 py-4">
+                <ul class="list-unstyled">
+                    <li class="my-3">
+                        <a href="#">Home</a>
+                    </li>
+                    <li class="my-3">
+                        <a href="#">Question Sets</a>
+                    </li>
+                    <li class="my-3">
+                        <a href="/players/all.xhtml">Players</a>
+                    </li>
+                </ul>
+            </nav>
+        </h:form>
+
+        <a class="pushbar-logout" href="/logout">Logout</a>
+    </div>
+
+
+    <div class="pushbar_main_content">
+        <ui:include src="/WEB-INF/includes/navbar.xhtml" />
+
+        <main>
+            <ui:insert name="content" />
+        </main>
+    </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="../../resources/js/pushbar.js" />
+    <script type="text/javascript">
+        const pushbar = new Pushbar({
+            blur:true,
+            overlay:true,
+        });
+    </script>
+</h:body>
+</html>

@@ -45,6 +45,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.hasAnyAuthority("MANAGER")
                 .antMatchers("/player/**")
                 .hasAnyAuthority("PLAYER")
+                .antMatchers("/players/**")
+                .hasAnyAuthority("PLAYER", "MANAGER")
                 .antMatchers("/login/**")
                 .hasAnyAuthority("PLAYER", "MANAGER")
                 //If user doesn't have permission, forward him to login page

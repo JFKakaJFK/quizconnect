@@ -1,0 +1,26 @@
+.playerbox {
+    background: var(--gray-2);
+    width: auto;
+    display: flex;
+    box-sizing: border-box;
+}
+
+.playerbox-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: var(--bg);
+}
+
+.playerbox-avatar img {
+    max-width: 100px;
+    width: 90%;
+    height: auto;
+}
+
+.playerbox-info {
+
+}
