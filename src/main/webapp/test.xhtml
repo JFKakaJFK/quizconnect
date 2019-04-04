@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Title</title>
+</head>
+<body>
+    <h:form>
+        <h:link outcome="profile" value="Tests">
+            <f:param name="name" value="#{testBean.player}"/>
+        </h:link>
+
+        <h:commandLink value="test" action="#{profileBean.redirect}">
+            <f:param name="player" value="#{testBean.player}"/>
+        </h:commandLink>
+    </h:form>
+</body>
+</html>
