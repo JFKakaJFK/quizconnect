@@ -88,8 +88,8 @@ html.pushbar_locked .pushbar_overlay{
 }
 
 .pushbar-close svg {
-	width: 2.5rem;
-	height: 2.5rem;
+	width: 2rem;
+	height: 2rem;
 }
 
 .pushbar-close span[data-pushbar-close]{
@@ -103,7 +103,7 @@ html.pushbar_locked .pushbar_overlay{
 
 .pushbar-logout {
 	position: absolute;
-	bottom: 2rem;
+	bottom: 5rem; /* TODO maybe find a better hack */
 	left: 50%;
 	transform: translate(-50%, 0);
 }
