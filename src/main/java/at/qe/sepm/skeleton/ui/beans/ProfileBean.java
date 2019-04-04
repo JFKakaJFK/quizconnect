@@ -22,20 +22,14 @@ public class ProfileBean {
     @Autowired
     private PlayerService playerService;
 
-    @Autowired
-    private UserService userService;
-
     private Player player;
-    private String name;
-    private List<Player> players;
 
-    public String getName() {
-        return name;
+    public int getId(){
+        return 0;
     }
 
-    public void setName(String name) {
-        this.name = name;
-        this.player = userService.loadUser(name).getPlayer();
+    public void setId(int id) {
+        this.player = playerService.getPlayerById(id);
     }
 
     public Player getPlayer() {
@@ -44,18 +38,5 @@ public class ProfileBean {
 
     public void setPlayer(Player player) {
         this.player = player;
-    }
-
-    public String redirect(){
-        FacesContext fc = FacesContext.getCurrentInstance();
-        Map<String, String> params = fc.getExternalContext().getRequestParameterMap();
-
-        this.player = userService.loadUser(params.get("player")).getPlayer();
-
-        return "profile";
-    }
-
-    public List<Player> getPlayers() {
-        return new ArrayList<>(playerService.getAllPlayers());
     }
 }

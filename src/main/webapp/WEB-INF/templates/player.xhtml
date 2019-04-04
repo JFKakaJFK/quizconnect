@@ -3,9 +3,9 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://xmlns.jcp.org/jsf/core"
       lang="en">
-    <head>
+    <h:head>
         <!-- Required meta tags -->
         <meta charset="utf-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
@@ -14,9 +14,9 @@
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"/>
         <link rel="stylesheet" href="../../resources/css/main.css" />
         <title>In Game | QuizConnect</title>
-    </head>
+    </h:head>
 
-    <body>
+    <h:body>
         <div data-pushbar-id="bar" class="pushbar from_left">
             <div class="pushbar-close">
                 <span data-pushbar-close="" class="py-2 px-2 my-2 mx-3">
@@ -24,25 +24,29 @@
                 </span>
             </div>
 
-            <nav class="pushbar-nav pl-4 pr-3 py-4">
-                <ul class="list-unstyled">
-                    <li class="my-3">
-                        <a href="#">Home</a>
-                    </li>
-                    <li class="my-3">
-                        <a href="#">Join Game</a>
-                    </li>
-                    <li class="my-3">
-                        <a href="#">Create Game</a>
-                    </li>
-                    <li class="my-3">
-                        <a href="#">My Stats</a>
-                    </li>
-                    <li class="my-3">
-                        <a href="#">View Players</a>
-                    </li>
-                </ul>
-            </nav>
+            <h:form>
+                <nav class="pushbar-nav pl-4 pr-3 py-4">
+                    <ul class="list-unstyled">
+                        <li class="my-3">
+                            <a href="#">Home</a>
+                        </li>
+                        <li class="my-3">
+                            <a href="#">Join Game</a>
+                        </li>
+                        <li class="my-3">
+                            <a href="#">Create Game</a>
+                        </li>
+                        <li class="my-3">
+                            <h:link outcome="/player/profile" value="My Stats">
+                                <f:param name="id" value="#{sessionInfoBean.currentUser.player.id}"/>
+                            </h:link>
+                        </li>
+                        <li class="my-3">
+                            <a href="/player/all.xhtml">View Players</a>
+                        </li>
+                    </ul>
+                </nav>
+            </h:form>
 
             <a class="pushbar-logout" href="/logout">Logout</a>
         </div>
@@ -68,5 +72,5 @@
                 overlay:true,
             });
         </script>
-    </body>
+    </h:body>
 </html>
