@@ -35,7 +35,10 @@
     --warning: #FFBF73;
     --error: #E55D5D;
 
-    --bg: #303E4F;
+    --bg: var(--col-1-d);
+    --bar: var(--col-1-d);
+    --overlay: var(--col-1-m);
+    --navbar: var(--col-1-m);
 
     --grad-d: linear-gradient(35deg, rgba(23,162,173,1) 0%, rgba(9,189,90,1) 100%);
     --grad-m: linear-gradient(35deg, rgb(25, 184, 196) 0%, rgb(10, 212, 100) 100%);

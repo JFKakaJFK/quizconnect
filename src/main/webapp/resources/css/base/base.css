@@ -47,6 +47,8 @@ a:hover {
 svg {
     width: 100%;
     max-width: 100%;
+    color: inherit;
+    fill: currentColor;
 }
 
 .form-control {

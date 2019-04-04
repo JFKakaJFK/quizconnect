@@ -1,0 +1,13 @@
+.navbar {
+    background: var(--navbar);
+    position: relative;
+}
+
+.navbar-burger svg {
+    width: 2rem;
+    height: 2rem;
+}
+
+.navbar-logo {
+    font-size: 1.5rem;
+}
