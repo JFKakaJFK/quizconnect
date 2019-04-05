@@ -37,8 +37,18 @@
 
     --bg: var(--col-1-d);
     --bar: var(--col-1-d);
+
+    /* Template colors */
     --overlay: var(--col-1-m);
     --navbar: var(--col-1-m);
+
+    /* Player box colors */
+    --pb-bg: var(--gray-1);
+    --pb-fg: var(--gray-5);
+    --pb-ingame: var(--col-4-m);
+    --pb-actions: var(--gray-5);
+    --pb-actions-active: var(--col-2-m);
+    --pb-avatar: var(--gray-4);
 
     --grad-d: linear-gradient(35deg, rgba(23,162,173,1) 0%, rgba(9,189,90,1) 100%);
     --grad-m: linear-gradient(35deg, rgb(25, 184, 196) 0%, rgb(10, 212, 100) 100%);

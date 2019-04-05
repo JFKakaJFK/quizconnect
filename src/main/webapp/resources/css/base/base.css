@@ -49,6 +49,11 @@ svg {
     max-width: 100%;
     color: inherit;
     fill: currentColor;
+    stroke: none;
+}
+
+::selection {
+    background: var(--col-4-l);
 }
 
 .form-control {

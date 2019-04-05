@@ -1,6 +1,6 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:ui="http://java.sun.com/jsf/facelets"
-                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
                 template="/WEB-INF/templates/main.xhtml">
     <ui:define name ="content">
         <f:metadata>
@@ -9,15 +9,18 @@
         <h1 class="text-center display-4">#{profileBean.player == null ? "No player found" : profileBean.player.user.username}</h1>
         <p>Do some nice graphs w/ ApexCharts</p>
         <p>Player can change avatar here, manager can change everything here(if creator)</p>
-        <a href="/players/all.xhtml">All Players</a>
-        <div data-id="#{profileBean.player.id}">
-            <div>
-                <img src="#{avatarBean.getAvatar(profileBean.player.avatarPath)}" alt="avatar"/>
+        <h:form>
+            <h:commandLink action="/players/all.xhtml" value="View Players"/>
+            <div data-id="#{profileBean.player.id}">
+                <div>
+                    <img src="#{avatarBean.getAvatar(profileBean.player.avatarPath)}" alt="avatar"/>
+                </div>
+                <div>
+                    <h3>#{profileBean.player.user.username}</h3>
+                    <p>Rank: <span>DemiGod</span></p>
+                </div>
             </div>
-            <div>
-                <h3>#{profileBean.player.user.username}</h3>
-                <p>Rank: <span>DemiGod</span></p>
-            </div>
-        </div>
+
+        </h:form>
     </ui:define>
 </ui:composition>
