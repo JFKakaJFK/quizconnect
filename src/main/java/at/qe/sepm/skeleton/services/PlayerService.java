@@ -51,6 +51,18 @@ public class PlayerService
 	}
 	
 	/**
+	 * Returns a Collection of Players with their usernames containing usernameFragment.
+	 * 
+	 * @param usernameFragment
+	 * @return
+	 */
+	@PreAuthorize("hasAuthority('PLAYER') or hasAuthority('MANAGER')")
+	public Collection<Player> getPlayersWithUsernameContaining(String usernameFragment)
+	{
+		return playerRepository.findByUserUsernameContaining(usernameFragment);
+	}
+	
+	/**
 	 * Saves the {@link Player} to the database. Throws an IllegalArgumentException if any consistency checks fail.
 	 * 
 	 * @param player

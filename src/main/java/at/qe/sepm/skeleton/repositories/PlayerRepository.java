@@ -1,5 +1,7 @@
 package at.qe.sepm.skeleton.repositories;
 
+import java.util.List;
+
 import at.qe.sepm.skeleton.model.Player;
 
 /**
@@ -10,5 +12,5 @@ import at.qe.sepm.skeleton.model.Player;
  */
 public interface PlayerRepository extends AbstractRepository<Player, Integer>
 {
-	
+	List<Player> findByUserUsernameContaining(String fragment);
 }
