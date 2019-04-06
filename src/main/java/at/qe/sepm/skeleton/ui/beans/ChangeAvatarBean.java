@@ -11,14 +11,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.io.Serializable;
 
-@Controller
-@Scope("view")
+//@Controller
+// @Scope("view")
+@Component
 @Transactional
 public class ChangeAvatarBean implements Serializable {
 
@@ -40,9 +42,10 @@ public class ChangeAvatarBean implements Serializable {
      *
      * @param event
      */
+    @Transactional
     public void handleAvatarUpload(FileUploadEvent event){
         if(!Hibernate.isInitialized(player.getCreator())){
-            // Hibernate.initialize(player.getCreator()); // throws exception
+            Hibernate.initialize(player.getCreator()); // throws exception
         }
 
         if(filename != null){
@@ -50,7 +53,7 @@ public class ChangeAvatarBean implements Serializable {
         }
         try {
             UploadedFile upload = event.getFile();
-            filename = storageService.storeAvatar(upload.getInputstream(), upload.getFileName(), "123");
+            filename = storageService.storeAvatar(upload.getInputstream(), upload.getFileName(), player.getCreator().getId().toString());
             status = "Upload successful";
         } catch (IOException e){
             filename = null;
