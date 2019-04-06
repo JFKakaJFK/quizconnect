@@ -1,28 +1,29 @@
 package at.qe.sepm.skeleton.tests;
 
-import at.qe.sepm.skeleton.model.*;
-import at.qe.sepm.skeleton.repositories.QuestionSetRepository;
-import at.qe.sepm.skeleton.services.ManagerService;
-import at.qe.sepm.skeleton.services.QuestionService;
-import at.qe.sepm.skeleton.services.QuestionSetService;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
+        import at.qe.sepm.skeleton.model.*;
+        import at.qe.sepm.skeleton.repositories.QuestionRepository;
+        import at.qe.sepm.skeleton.services.ManagerService;
+        import at.qe.sepm.skeleton.services.QuestionService;
+        import at.qe.sepm.skeleton.services.QuestionSetService;
+        import org.junit.Assert;
+        import org.junit.Before;
+        import org.junit.Test;
+        import org.junit.runner.RunWith;
+        import org.springframework.beans.factory.annotation.Autowired;
+        import org.springframework.boot.test.context.SpringBootTest;
+        import org.springframework.security.test.context.support.WithMockUser;
+        import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+        import org.springframework.test.context.web.WebAppConfiguration;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+        import java.util.ArrayList;
+        import java.util.Collection;
+        import java.util.HashSet;
+        import java.util.Set;
 
 /**
- * Tests for the {@link QuestionService}
+ * Tests for the {@link QuestionSetService}
  */
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @WebAppConfiguration
@@ -35,30 +36,39 @@ public class QuestionServiceTest {
     QuestionSetService questionSetService;
 
     @Autowired
-    QuestionSetRepository questionSetRepository;
+    QuestionRepository questionRepository;
 
     @Autowired
     private ManagerService managerService;
 
     private Manager manager;
+    private QuestionSet questionSet;
 
     @Before
     @WithMockUser(username = "user1", authorities = { "MANAGER" })
     public void setUp(){
         manager = managerService.getManagerById(101);
-    }
 
-    private QuestionSet validQuestionSet(){
         QuestionSet questionSet = new QuestionSet();
 
         questionSet.setAuthor(manager);
         questionSet.setDescription("DasIstEineBeschreibung");
         questionSet.setName("DasTestSet");
-        //questionSet.setId(120);
+        questionSet.setDifficulty(QuestionSetDifficulty.easy);
+
+        this.questionSet = questionSetService.saveQuestionSet(questionSet);
+    }
+
+    private QuestionSet validQuestionSet() {
+        QuestionSet questionSet = new QuestionSet();
+
+        questionSet.setAuthor(manager);
+        questionSet.setDescription("DasIstEineBeschreibung");
+        questionSet.setName("DasTestSet");
         questionSet.setDifficulty(QuestionSetDifficulty.easy);
 
         Question question = new Question();
-        question.setRightAnswerString("Richtig");
+        question.setRightAnswerString("Correct");
         question.setType(QuestionType.text);
         question.setQuestionString("Is this a test?");
         question.setWrongAnswerString_1("Yes!");
@@ -75,6 +85,21 @@ public class QuestionServiceTest {
         return questionSet;
     }
 
+    private Question validQuestion() {
+        Question question = new Question();
+        question.setQuestionSet(questionSet);
+        question.setRightAnswerString("Correct");
+        question.setType(QuestionType.text);
+        question.setQuestionString("Is this a test?");
+        question.setWrongAnswerString_1("Yes!");
+        question.setWrongAnswerString_2("NO!");
+        question.setWrongAnswerString_3("Maybe!");
+        question.setWrongAnswerString_4("I dont know!");
+        question.setWrongAnswerString_5("Did not see that coming?!");
+
+        return question;
+    }
+
     private String getTooLongString(){
         ArrayList name = new ArrayList();
         for (int i = 0; i < 101; i++){
@@ -83,132 +108,247 @@ public class QuestionServiceTest {
         return name.toString();
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test (expected = IllegalArgumentException.class)
     @WithMockUser(username = "user1", authorities = { "MANAGER" })
-    public void testSaveQuestionSetNullSet() {
+    public void testSaveQuestionQuestionNull() {
+        Question testQuestion = null;
+
+        questionService.saveQuestion(testQuestion);
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    @WithMockUser(username = "user1", authorities = { "MANAGER" })
+    public void testSaveQuestionQuestionSetNull() {
+        Question testQuestion = validQuestion();
         QuestionSet testSet = null;
-        questionSetService.saveQuestionSet(testSet);
+        testQuestion.setQuestionSet(testSet);
+
+        questionService.saveQuestion(testQuestion);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test (expected = IllegalArgumentException.class)
     @WithMockUser(username = "user1", authorities = { "MANAGER" })
-    public void testSaveQuestionSetNullAuthor() {
+    public void testSaveQuestionQuestionSetNew() {
+        Question testQuestion = validQuestion();
+
         QuestionSet testSet = validQuestionSet();
-        testSet.setAuthor(null);
-        questionSetService.saveQuestionSet(testSet);
+        testQuestion.setQuestionSet(testSet);
+
+        questionService.saveQuestion(testQuestion);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test (expected = IllegalArgumentException.class)
     @WithMockUser(username = "user1", authorities = { "MANAGER" })
-    public void testSaveQuestionSetNullName() {
-        QuestionSet testSet = validQuestionSet();
-        testSet.setName(null);
-        questionSetService.saveQuestionSet(testSet);
+    public void testSaveQuestionQuestionTypeNull() {
+        Question testQuestion = validQuestion();
+        testQuestion.setType(null);
+
+        questionService.saveQuestion(testQuestion);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test (expected = IllegalArgumentException.class)
     @WithMockUser(username = "user1", authorities = { "MANAGER" })
-    public void testSaveQuestionSetTooLongName() {
-        QuestionSet testSet = validQuestionSet();
-        testSet.setName(getTooLongString());
-        questionSetService.saveQuestionSet(testSet);
+    public void testSaveQuestionQuestionStringNull() {
+        Question testQuestion = validQuestion();
+        testQuestion.setQuestionString(null);
+
+        questionService.saveQuestion(testQuestion);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test (expected = IllegalArgumentException.class)
     @WithMockUser(username = "user1", authorities = { "MANAGER" })
-    public void testSaveQuestionSetDescriptionNull() {
-        QuestionSet testSet = validQuestionSet();
-        testSet.setDescription(null);
-        questionSetService.saveQuestionSet(testSet);
+    public void testSaveQuestionQuestionStringTooLong() {
+        Question testQuestion = validQuestion();
+        testQuestion.setQuestionString(getTooLongString());
+
+        questionService.saveQuestion(testQuestion);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test (expected = IllegalArgumentException.class)
     @WithMockUser(username = "user1", authorities = { "MANAGER" })
-    public void testSaveQuestionSetDescriptionTooLong() {
-        QuestionSet testSet = validQuestionSet();
-        testSet.setName(getTooLongString());
-        questionSetService.saveQuestionSet(testSet);
+    public void testSaveQuestionAnswerStringNull() {
+        Question testQuestion = validQuestion();
+        testQuestion.setRightAnswerString(null);
+
+        questionService.saveQuestion(testQuestion);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test (expected = IllegalArgumentException.class)
     @WithMockUser(username = "user1", authorities = { "MANAGER" })
-    public void testSaveQuestionSetDifficultyNull() {
-        QuestionSet testSet = validQuestionSet();
-        testSet.setDifficulty(null);
-        questionSetService.saveQuestionSet(testSet);
+    public void testSaveQuestionAnswerStringTooLong() {
+        Question testQuestion = validQuestion();
+        testQuestion.setRightAnswerString(getTooLongString());
+
+        questionService.saveQuestion(testQuestion);
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    @WithMockUser(username = "user1", authorities = { "MANAGER" })
+    public void testSaveQuestionWrongAnswerString_1Null() {
+        Question testQuestion = validQuestion();
+        testQuestion.setWrongAnswerString_1(null);
+
+        questionService.saveQuestion(testQuestion);
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    @WithMockUser(username = "user1", authorities = { "MANAGER" })
+    public void testSaveQuestionWrongAnswerString_1TooLong() {
+        Question testQuestion = validQuestion();
+        testQuestion.setWrongAnswerString_1(getTooLongString());
+
+        questionService.saveQuestion(testQuestion);
+    }
+
+    /*
+    @Test (expected = IllegalArgumentException.class)
+    @WithMockUser(username = "user1", authorities = { "MANAGER" })
+    public void testSaveQuestionWrongAnswerString_2Null() {
+        Question testQuestion = validQuestion();
+        testQuestion.setWrongAnswerString_2(null);
+
+        questionService.saveQuestion(testQuestion);
+    }
+
+     */
+
+    @Test (expected = IllegalArgumentException.class)
+    @WithMockUser(username = "user1", authorities = { "MANAGER" })
+    public void testSaveQuestionWrongAnswerString_2TooLong() {
+        Question testQuestion = validQuestion();
+        testQuestion.setWrongAnswerString_2(getTooLongString());
+
+        questionService.saveQuestion(testQuestion);
+    }
+
+    /*
+    @Test (expected = IllegalArgumentException.class)
+    @WithMockUser(username = "user1", authorities = { "MANAGER" })
+    public void testSaveQuestionWrongAnswerString_3Null() {
+        Question testQuestion = validQuestion();
+        testQuestion.setWrongAnswerString_3(null);
+
+        questionService.saveQuestion(testQuestion);
+    }
+
+     */
+
+    @Test (expected = IllegalArgumentException.class)
+    @WithMockUser(username = "user1", authorities = { "MANAGER" })
+    public void testSaveQuestionWrongAnswerString_3TooLong() {
+        Question testQuestion = validQuestion();
+        testQuestion.setWrongAnswerString_3(getTooLongString());
+
+        questionService.saveQuestion(testQuestion);
+    }
+
+    /*
+    @Test (expected = IllegalArgumentException.class)
+    @WithMockUser(username = "user1", authorities = { "MANAGER" })
+    public void testSaveQuestionWrongAnswerString_4Null() {
+        Question testQuestion = validQuestion();
+        testQuestion.setWrongAnswerString_4(null);
+
+        questionService.saveQuestion(testQuestion);
+    }
+
+     */
+
+    @Test (expected = IllegalArgumentException.class)
+    @WithMockUser(username = "user1", authorities = { "MANAGER" })
+    public void testSaveQuestionWrongAnswerString_4TooLong() {
+        Question testQuestion = validQuestion();
+        testQuestion.setWrongAnswerString_4(getTooLongString());
+
+        questionService.saveQuestion(testQuestion);
+    }
+
+    /*
+    @Test (expected = IllegalArgumentException.class)
+    @WithMockUser(username = "user1", authorities = { "MANAGER" })
+    public void testSaveQuestionWrongAnswerString_5Null() {
+        Question testQuestion = validQuestion();
+        testQuestion.setWrongAnswerString_5(null);
+
+        questionService.saveQuestion(testQuestion);
+    }
+     */
+
+    @Test (expected = IllegalArgumentException.class)
+    @WithMockUser(username = "user1", authorities = { "MANAGER" })
+    public void testSaveQuestionWrongAnswerString_5TooLong() {
+        Question testQuestion = validQuestion();
+        testQuestion.setWrongAnswerString_5(getTooLongString());
+
+        questionService.saveQuestion(testQuestion);
     }
 
     @Test
     @WithMockUser(username = "user1", authorities = { "MANAGER" })
-    public void testSaveQuestionSetSaveSet() {
-        QuestionSet testSet = validQuestionSet();
-        QuestionSet saved = questionSetService.saveQuestionSet(testSet);
+    public void testGetAllByAnswerContaining() {
+        String correctString = "CorrectString";
+        String incorrectString = "NotRight";
 
-        Assert.assertTrue("QuestionSet is saved to DB", saved.getId() != null);
+        Question testQuestion1 = validQuestion();
+        Question testQuestion2 = validQuestion();
+        Question testQuestion3 = validQuestion();
+
+        testQuestion2.setRightAnswerString(correctString);
+        testQuestion3.setRightAnswerString(correctString);
+        testQuestion1.setRightAnswerString(incorrectString);
+
+        Collection<Question> testCollection = questionService.getAllByAnswerContaining(correctString);
+
+
+        Assert.assertEquals("Returning right Questions", testCollection.contains(testQuestion2), testCollection.contains(testQuestion3));
+        Assert.assertFalse("Wrong Question is not returned", testCollection.contains(testQuestion1));
     }
 
     @Test
     @WithMockUser(username = "user1", authorities = { "MANAGER" })
-    public void testSaveQuestionSetOverwriteSet() {
-        String changingString = "ThatChanged";
-        QuestionSet testSet = validQuestionSet();
-        questionSetService.saveQuestionSet(testSet);
-        testSet.setDescription(changingString);
-        QuestionSet saved = questionSetService.saveQuestionSet(testSet);
+    public void testGetAllByQuestionContaining() {
+        String correctString = "CorrectString";
+        String incorrectString = "NotRight";
 
-        Assert.assertEquals("QuestionSet is overwritten in DB", changingString,saved.getDescription());
-    }
+        Question testQuestion1 = validQuestion();
+        Question testQuestion2 = validQuestion();
+        Question testQuestion3 = validQuestion();
 
+        testQuestion2.setQuestionString(correctString);
+        testQuestion3.setQuestionString(correctString);
+        testQuestion1.setQuestionString(incorrectString);
 
-    @Test
-    @WithMockUser(username = "user1", authorities = { "MANAGER" })
-    public void testDeleteQuestionSet() {
-        QuestionSet testSet = validQuestionSet();
-        QuestionSet saved = questionSetService.saveQuestionSet(testSet);
-        questionSetService.deleteQuestionSet(testSet);
+        Collection<Question> testCollection = questionService.getAllByQuestionContaining(correctString);
 
-        Assert.assertNull("QuestionSet is deleted from DB", questionSetRepository.findOne(saved.getId()));
+        Assert.assertEquals("Returning right Questions", testCollection.contains(testQuestion2), testCollection.contains(testQuestion3));
+        Assert.assertFalse("Wrong Question is not returned", testCollection.contains(testQuestion1));
     }
 
     @Test
     @WithMockUser(username = "user1", authorities = { "MANAGER" })
-    public void testGetAllContaining() {
-        String testString = "RightName";
-        QuestionSet testSet1 = validQuestionSet();
-        QuestionSet testSet2 = validQuestionSet();
-        QuestionSet testSet3 = validQuestionSet();
-        testSet2.setName(testString);
-        testSet3.setName(testString);
+    public void testGetAllByType() {
+        Question testQuestion1 = validQuestion();
+        Question testQuestion2 = validQuestion();
+        Question testQuestion3 = validQuestion();
 
-        questionSetService.saveQuestionSet(testSet1);
-        questionSetService.saveQuestionSet(testSet2);
-        questionSetService.saveQuestionSet(testSet3);
+        testQuestion2.setType(QuestionType.text);
+        testQuestion3.setType(QuestionType.picture);
+        testQuestion1.setType(QuestionType.picture);
 
-        Collection<QuestionSet> testCollection = questionSetService.getAllContaining(testString);
+        Collection<Question> testCollection = questionService.getAllByType(QuestionType.picture);
 
-        Assert.assertEquals("Returning right QuestionSets", testCollection.contains(testSet3),testCollection.contains(testSet2));
-        Assert.assertFalse("Wrong QuestionSet is not returned", testCollection.contains(testSet1));
+        Assert.assertEquals("Returning right Questions", testCollection.contains(testQuestion2), testCollection.contains(testQuestion3));
+        Assert.assertFalse("Wrong Question is not returned", testCollection.contains(testQuestion1));
     }
 
     @Test
     @WithMockUser(username = "user1", authorities = { "MANAGER" })
-    public void testGetAllByDifficulty() {
-        QuestionSet testSet1 = validQuestionSet();
-        QuestionSet testSet2 = validQuestionSet();
-        QuestionSet testSet3 = validQuestionSet();
-        testSet2.setDifficulty(QuestionSetDifficulty.medium);
-        testSet3.setDifficulty(QuestionSetDifficulty.medium);
+    public void testDeleteQuestion() {
+        Question testQuestion = validQuestion();
+        Question saved = questionService.saveQuestion(testQuestion);
+        questionService.deleteQuestion(testQuestion);
 
-        questionSetService.saveQuestionSet(testSet1);
-        questionSetService.saveQuestionSet(testSet2);
-        questionSetService.saveQuestionSet(testSet3);
-
-        Collection<QuestionSet> testCollection = questionSetService.getAllByDifficulty(QuestionSetDifficulty.medium);
-
-        Assert.assertEquals("Returning right QuestionSets", testCollection.contains(testSet2), testCollection.contains(testSet3));
-        Assert.assertFalse("Wrong QuestionSet is not returned", testCollection.contains(testSet1));
-
+        Assert.assertNull("Question was deleted", questionRepository.findOne(saved.getId()));
     }
-
-
 }
+
