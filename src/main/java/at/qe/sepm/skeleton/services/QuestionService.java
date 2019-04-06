@@ -102,25 +102,17 @@ public class QuestionService {
         if(question.getWrongAnswerString_1().length() > 200){
             throw new IllegalArgumentException("Wrong Answer 1 is too long(MAX: 200Chars)");
         }
-        if(question.getWrongAnswerString_2() != null) {
-            if (question.getWrongAnswerString_2().length() > 200) {
-                throw new IllegalArgumentException("Wrong Answer 2 is too long(MAX: 200Chars)");
-            }
+        if(question.getWrongAnswerString_2() != null && question.getWrongAnswerString_2().length() > 200) {
+            throw new IllegalArgumentException("Wrong Answer 2 is too long(MAX: 200Chars)");
         }
-        if(question.getWrongAnswerString_3() != null) {
-            if (question.getWrongAnswerString_3().length() > 200) {
-                throw new IllegalArgumentException("Wrong Answer 3 is too long(MAX: 200Chars)");
-            }
+        if(question.getWrongAnswerString_3() != null && question.getWrongAnswerString_3().length() > 200) {
+            throw new IllegalArgumentException("Wrong Answer 3 is too long(MAX: 200Chars)");
         }
-        if(question.getWrongAnswerString_4() != null) {
-            if (question.getWrongAnswerString_4().length() > 200) {
-                throw new IllegalArgumentException("Wrong Answer 4 is too long(MAX: 200Chars)");
-            }
+        if(question.getWrongAnswerString_4() != null && question.getWrongAnswerString_4().length() > 200) {
+            throw new IllegalArgumentException("Wrong Answer 4 is too long(MAX: 200Chars)");
         }
-        if(question.getWrongAnswerString_5() != null) {
-            if (question.getWrongAnswerString_5().length() > 200) {
-                throw new IllegalArgumentException("Wrong Answer 5 is too long(MAX: 200Chars)");
-            }
+        if(question.getWrongAnswerString_5() != null && question.getWrongAnswerString_5().length() > 200) {
+            throw new IllegalArgumentException("Wrong Answer 5 is too long(MAX: 200Chars)");
         }
 
         return questionRepository.save(question);
