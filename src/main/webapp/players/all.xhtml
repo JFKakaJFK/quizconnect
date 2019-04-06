@@ -2,7 +2,9 @@
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:p="http://primefaces.org/ui"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pf="http://primefaces.org/ui"
                 template="/WEB-INF/templates/main.xhtml">
     <ui:define name ="content">
         <link rel="stylesheet" href="../resources/css/allplayers.css" />
@@ -10,50 +12,107 @@
         <p>Order by rank, search, ... per JS(Algolia?), show indicator who is online? or ingame</p>
         <p>Maybe an option to use primefaces to display a modal, allowing a manager player options?</p>
         <p>For manager: toggle only his players</p>
-        <h:form class="players px-3">
-            <ui:repeat value="#{allPlayersBean.players}" var="player">
 
-                <div class="playerbox py-3 px-3" data-ingame="#{false}" data-id="#{player.id}">
-                    <div class="playerbox-avatar mx-2 my-2">
-                        <img src="#{avatarBean.getAvatar(player.avatarPath)}" alt="avatar"/>
+        <h:form enctype="multipart/form-data">
+
+            <h:panelGroup layout="block" rendered="#{sessionInfoBean.hasRole('MANAGER')}">
+                <h:commandButton  p:class="btn btn-tertiary" value="Only show my players">
+                    <!-- TODO -->
+                </h:commandButton>
+            </h:panelGroup>
+
+            <h:panelGroup id="players" class="players px-3" layout="block">
+                <ui:repeat value="#{allPlayersBean.players}" var="player">
+
+                    <div class="playerbox py-3 px-3" data-ingame="#{randomOnlineTestBean.online}" data-id="#{player.id}"><!-- TODO: change online source -->
+                        <div class="playerbox-avatar mx-2 my-2">
+                            <h:graphicImage id="avatar#{player.id}" value="#{avatarBean.getAvatar(player.avatarPath)}" alt="avatar"/>
+                        </div>
+
+                        <div class="playerbox-info mx-2 my-2">
+                            <div class="playerbox-actions text-right">
+                                <h:commandLink actionListener="#{changeAvatarBean.setPlayer(player)}" p:class="ml-2" p:data-toggle="modal" p:data-target="#editPlayer" p:data-backdrop="static" rendered="#{sessionInfoBean.currentUserName eq player.user.username}">
+                                    <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M9 4.58V4c0-1.1.9-2 2-2h2a2 2 0 0 1 2 2v.58a8 8 0 0 1 1.92 1.11l.5-.29a2 2 0 0 1 2.74.73l1 1.74a2 2 0 0 1-.73 2.73l-.5.29a8.06 8.06 0 0 1 0 2.22l.5.3a2 2 0 0 1 .73 2.72l-1 1.74a2 2 0 0 1-2.73.73l-.5-.3A8 8 0 0 1 15 19.43V20a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-.58a8 8 0 0 1-1.92-1.11l-.5.29a2 2 0 0 1-2.74-.73l-1-1.74a2 2 0 0 1 .73-2.73l.5-.29a8.06 8.06 0 0 1 0-2.22l-.5-.3a2 2 0 0 1-.73-2.72l1-1.74a2 2 0 0 1 2.73-.73l.5.3A8 8 0 0 1 9 4.57zM7.88 7.64l-.54.51-1.77-1.02-1 1.74 1.76 1.01-.17.73a6.02 6.02 0 0 0 0 2.78l.17.73-1.76 1.01 1 1.74 1.77-1.02.54.51a6 6 0 0 0 2.4 1.4l.72.2V20h2v-2.04l.71-.2a6 6 0 0 0 2.41-1.4l.54-.51 1.77 1.02 1-1.74-1.76-1.01.17-.73a6.02 6.02 0 0 0 0-2.78l-.17-.73 1.76-1.01-1-1.74-1.77 1.02-.54-.51a6 6 0 0 0-2.4-1.4l-.72-.2V4h-2v2.04l-.71.2a6 6 0 0 0-2.41 1.4zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0-2a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/></svg>
+                                    <f:ajax execute="@form" render="save" />
+                                </h:commandLink>
+
+                                <h:link outcome="/players/profile" styleClass="ml-2">
+                                    <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-9a1 1 0 0 1 1 1v4a1 1 0 0 1-2 0v-4a1 1 0 0 1 1-1zm0-4a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+                                    <f:param name="id" value="#{player.id}"/>
+                                </h:link>
+                            </div>
+
+                            <div class="playerbox-info-row">
+                                <div class="stat stat-lg stat-left">
+                                    <h3 class="playerbox-info-name">#{player.user.username}</h3>
+                                    <p>username</p>
+                                </div>
+
+                                <div class="stat stat-sm stat-right">
+                                    <h3>#{"Beginner"}</h3>
+                                    <p>rank</p>
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
 
-                    <div class="playerbox-info mx-2 my-2">
-                        <div class="playerbox-actions text-right">
-                            <p:commandLink update="edit" oncomplete="PF('edit').show()" styleClass="ml-2" rendered="#{true}"> <!-- TODO render only if player is self or player is from current manager -->
-                                <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M9 4.58V4c0-1.1.9-2 2-2h2a2 2 0 0 1 2 2v.58a8 8 0 0 1 1.92 1.11l.5-.29a2 2 0 0 1 2.74.73l1 1.74a2 2 0 0 1-.73 2.73l-.5.29a8.06 8.06 0 0 1 0 2.22l.5.3a2 2 0 0 1 .73 2.72l-1 1.74a2 2 0 0 1-2.73.73l-.5-.3A8 8 0 0 1 15 19.43V20a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-.58a8 8 0 0 1-1.92-1.11l-.5.29a2 2 0 0 1-2.74-.73l-1-1.74a2 2 0 0 1 .73-2.73l.5-.29a8.06 8.06 0 0 1 0-2.22l-.5-.3a2 2 0 0 1-.73-2.72l1-1.74a2 2 0 0 1 2.73-.73l.5.3A8 8 0 0 1 9 4.57zM7.88 7.64l-.54.51-1.77-1.02-1 1.74 1.76 1.01-.17.73a6.02 6.02 0 0 0 0 2.78l.17.73-1.76 1.01 1 1.74 1.77-1.02.54.51a6 6 0 0 0 2.4 1.4l.72.2V20h2v-2.04l.71-.2a6 6 0 0 0 2.41-1.4l.54-.51 1.77 1.02 1-1.74-1.76-1.01.17-.73a6.02 6.02 0 0 0 0-2.78l-.17-.73 1.76-1.01-1-1.74-1.77 1.02-.54-.51a6 6 0 0 0-2.4-1.4l-.72-.2V4h-2v2.04l-.71.2a6 6 0 0 0-2.41 1.4zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0-2a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/></svg>
-                                <f:setPropertyActionListener value="#{player}" target="#{playerEditBean.player}" />
-                            </p:commandLink>
-                            <h:commandLink action="/players/profile" styleClass="ml-2" value="">
-                                <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-9a1 1 0 0 1 1 1v4a1 1 0 0 1-2 0v-4a1 1 0 0 1 1-1zm0-4a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
-                                <f:param name="id" value="#{player.id}"/>
+                </ui:repeat>
+            </h:panelGroup>
+
+
+            <div class="modal fade" id="editPlayer" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalCenterTitle">Change Avatar</h5>
+                            <h:commandLink actionListener="#{changeAvatarBean.abort}" p:class="close" p:aria-label="Close" p:data-dismiss="modal">
+                                <span aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M16.24 14.83a1 1 0 0 1-1.41 1.41L12 13.41l-2.83 2.83a1 1 0 0 1-1.41-1.41L10.59 12 7.76 9.17a1 1 0 0 1 1.41-1.41L12 10.59l2.83-2.83a1 1 0 0 1 1.41 1.41L13.41 12l2.83 2.83z"/></svg>
+                                </span>
+                                <f:ajax execute="@form" render="@none" />
                             </h:commandLink>
                         </div>
+                        <div class="modal-body">
 
-                        <div class="playerbox-info-row">
-                            <div class="stat stat-lg stat-left">
-                                <h3 class="playerbox-info-name">#{player.user.username}</h3>
-                                <p>username</p>
-                            </div>
+                            <pf:fileUpload fileUploadListener="#{changeAvatarBean.handleAvatarUpload}" multiple="false"
+                                           mode="advanced" required="true"
+                                           auto="true" sizeLimit="10000000"
+                                           allowTypes="/(\.|\/)(jpg|png)$/"
+                                           styleClass="avatar-upload pf-upload" />
 
-                            <div class="stat stat-sm stat-right">
-                                <h3>#{"Beginner"}</h3>
-                                <p>rank</p>
-                            </div>
+                            <!-- TODO: fix that the save button is not diabled if upload is aborted... -->
+                            <h:commandButton p:class="btn btn-tertiary" onclick="document.querySelector('.avatar-upload input').click()" value="Upload File">
+                                <f:ajax listener="#{changeAvatarBean.setDisabled(false)}" delay="1000" render="save" />
+                            </h:commandButton>
+
+                            <h:panelGroup id="status" layout="block">
+                                <h:outputText value="#{changeAvatarBean.status}" />
+                            </h:panelGroup>
+
                         </div>
-
+                        <div class="modal-footer">
+                            <h:commandButton actionListener="#{changeAvatarBean.abort}" p:class="btn btn-tertiary" p:data-dismiss="modal" value="Close">
+                                <f:ajax execute="@form" render="@none" />
+                            </h:commandButton>
+                            <h:commandButton id="save" actionListener="#{changeAvatarBean.saveAvatar}" p:class="btn btn-primary" value="Save" disabled="#{changeAvatarBean.disabled}" >
+                                <f:ajax execute="@form" listener="#{changeAvatarBean.setDisabled(true)}" render="players status @this" />
+                            </h:commandButton>
+                        </div>
                     </div>
-
                 </div>
+            </div>
 
-            </ui:repeat>
+            <h:commandButton p:id="poll" styleClass="jsf-ajax">
+                <f:ajax render="players"/>
+            </h:commandButton>
 
         </h:form>
 
-
-        <p:dialog header="#{playerEditBean.player.user.username}" widgetVar="edit" id="edit" modal="true" height="100">
-            <h1>TODO</h1>
-        </p:dialog>
+        <script>
+            const poll = document.querySelector('#poll');
+            setInterval(() => poll.click(), 10000); // 10s
+        </script>
 
     </ui:define>
 </ui:composition>

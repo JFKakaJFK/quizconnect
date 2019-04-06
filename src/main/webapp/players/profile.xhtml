@@ -6,11 +6,15 @@
         <f:metadata>
             <f:viewParam name="id" value="#{profileBean.id}"/>
         </f:metadata>
-        <h1 class="text-center display-4">#{profileBean.player == null ? "No player found" : profileBean.player.user.username}</h1>
-        <p>Do some nice graphs w/ ApexCharts</p>
-        <p>Player can change avatar here, manager can change everything here(if creator)</p>
+
+
+
         <h:form>
-            <h:commandLink action="/players/all.xhtml" value="View Players"/>
+            <h1 class="text-center display-4">#{profileBean.player == null ? "No player found" : profileBean.player.user.username}</h1>
+            <p>Do some nice graphs w/ ApexCharts</p>
+            <p>Player can change avatar here, manager can change everything here(if creator)</p>
+
+            <a href="/players/all.xhtml">View Players</a>
             <div data-id="#{profileBean.player.id}">
                 <div>
                     <img src="#{avatarBean.getAvatar(profileBean.player.avatarPath)}" alt="avatar"/>

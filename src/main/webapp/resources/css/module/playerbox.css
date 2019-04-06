@@ -34,19 +34,21 @@
 
 .playerbox-avatar {
     background: var(--pb-avatar);
+    box-sizing: content-box;
     width: 5rem;
     height: 5rem;
-    border-radius: 2.5rem;
+    border-radius: 50%;
     overflow: hidden;
+    transition: border .25s ease-in-out;
 }
 
 .playerbox[data-ingame="true"] .playerbox-avatar {
-    box-shadow: 0 0 0 4px var(--pb-ingame);
+    border: 4px solid var(--pb-ingame);
 }
 
 /* TODO: delete or set */
 .playerbox[data-ingame="false"] .playerbox-avatar {
-    box-shadow: 0 0 0 4px transparent;
+    border: 4px solid transparent;
 }
 
 .playerbox-avatar img {
