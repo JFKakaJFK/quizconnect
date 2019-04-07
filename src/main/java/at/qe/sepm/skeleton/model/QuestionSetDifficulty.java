@@ -8,5 +8,5 @@ package at.qe.sepm.skeleton.model;
  */
 public enum QuestionSetDifficulty
 {
-	easy, medium, hard
+	easy, hard
 }

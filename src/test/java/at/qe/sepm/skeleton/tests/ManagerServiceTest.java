@@ -16,6 +16,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import at.qe.sepm.skeleton.model.Manager;
+import at.qe.sepm.skeleton.model.User;
+import at.qe.sepm.skeleton.model.UserRole;
 import at.qe.sepm.skeleton.services.ManagerService;
 import at.qe.sepm.skeleton.services.UserService;
 
@@ -61,7 +63,7 @@ public class ManagerServiceTest
 	@DirtiesContext
 	@Test
 	@WithMockUser(username = "user1", authorities = { "MANAGER" })
-	public void testSaveManager()
+	public void testUpdateManager()
 	{
 		Manager manager = managerService.getManagerById(102);
 		assertNotNull("Manager not loaded!", manager);
@@ -75,9 +77,9 @@ public class ManagerServiceTest
 	}
 	
 	@DirtiesContext
-	@Test(expected = NullPointerException.class)
+	@Test(expected = IllegalArgumentException.class)
 	@WithMockUser(username = "user1", authorities = { "MANAGER" })
-	public void testSaveManagerNoUser()
+	public void testUpdateManagerNoUser()
 	{
 		Manager manager = managerService.getManagerById(101);
 		assertNotNull("Manager not loaded!", manager);
@@ -89,12 +91,85 @@ public class ManagerServiceTest
 	@DirtiesContext
 	@Test(expected = IllegalArgumentException.class)
 	@WithMockUser(username = "user1", authorities = { "MANAGER" })
-	public void testSaveManagerNoEmail()
+	public void testUpdateManagerNoEmail()
 	{
 		Manager manager = managerService.getManagerById(101);
 		assertNotNull("Manager not loaded!", manager);
 		
 		manager.setEmail(null);
+		managerService.saveManager(manager);
+	}
+	
+	@DirtiesContext
+	@Test
+	@WithMockUser(username = "user3", authorities = {})
+	public void testCreateManager()
+	{
+		Manager manager = new Manager();
+		manager.setEmail("newEmail");
+		manager.setInstitution("newInstitution");
+		
+		Manager savedManager = managerService.saveNewManager(manager, "pw");
+		assertNotNull("Saved manager is null!", savedManager);
+		
+		assertEquals("Manager email is wrong!", "newEmail", savedManager.getEmail());
+		assertEquals("Manager institution is wrong!", "newInstitution", savedManager.getInstitution());
+		
+		User user = savedManager.getUser();
+		assertNotNull("Manager user is null!", user);
+		
+		assertEquals("User role is wrong!", UserRole.MANAGER, user.getRole());
+		assertEquals("User username is wrong!", "newEmail", user.getUsername());
+		assertEquals("User password is wrong!", "pw", user.getPassword());
+	}
+	
+	@DirtiesContext
+	@Test(expected = IllegalArgumentException.class)
+	@WithMockUser(username = "user3", authorities = {})
+	public void testCreateManagerNoEmail()
+	{
+		Manager manager = new Manager();
+		manager.setInstitution("newInstitution");
+		
+		managerService.saveNewManager(manager, "pw");
+	}
+	
+	@DirtiesContext
+	@Test(expected = IllegalArgumentException.class)
+	@WithMockUser(username = "user3", authorities = {})
+	public void testCreateManagerNoPassword()
+	{
+		Manager manager = new Manager();
+		manager.setEmail("newEmail");
+		manager.setInstitution("newInstitution");
+		
+		managerService.saveNewManager(manager, null);
+	}
+	
+	@DirtiesContext
+	@Test(expected = IllegalArgumentException.class)
+	@WithMockUser(username = "user3", authorities = { "MANAGER" })
+	public void testCreateManagerAlreadyUser()
+	{
+		Manager manager = new Manager();
+		manager.setEmail("newEmail");
+		manager.setInstitution("newInstitution");
+		
+		User user = userService.loadUser("user1");
+		manager.setUser(user);
+		
+		managerService.saveNewManager(manager, "pw");
+	}
+	
+	@DirtiesContext
+	@Test(expected = IllegalArgumentException.class)
+	@WithMockUser(username = "user3", authorities = { "MANAGER" })
+	public void testCreateManagerWrongFunction()
+	{
+		Manager manager = new Manager();
+		manager.setEmail("newEmail");
+		manager.setInstitution("newInstitution");
+		
 		managerService.saveManager(manager);
 	}
 	

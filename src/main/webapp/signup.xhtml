@@ -1,72 +1,75 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:p="http://primefaces.org/ui"
-      xmlns:ui="http://java.sun.com/jsf/facelets">
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
 
 <h:head>
-    <title>Login</title>
+    <title>Sign up</title>
     <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
-    <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"/>
 
     <!-- Optional theme -->
-    <link rel="stylesheet" type="text/css" href="resources/css/login/login.css" />
+    <link rel="stylesheet" type="text/css" href="resources/css/main.css" />
+    <link rel="stylesheet" type="text/css" href="resources/css/login.css" />
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"/>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"/>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"/>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.2.0/zxcvbn.js"></script>
-    <script src="resources/js/signup/pwchecker.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"></script>
-    <script src="resources/js/signup/validation.js"></script>
-
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"/>
+    <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"/>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.2.0/zxcvbn.js"/>
+    <script type="text/javascript" src="resources/js/signup/pwchecker.js"/>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"/>
+    <script type="text/javascript" src="resources/js/signup/validation.js"/>
 </h:head>
 
 <h:body>
-    <div class="container pt-5 mt-5">
+    <div class="container pt-5 reduced-mobile-spacing">
         <div class="row py-3">
             <div class="col-lg">
-                <h1 class="display-3 text-center">QuizConnect</h1>
-                <h3 class="text-center">Fail together!</h3>
+                <h1 class="display-4 text-center">QuizConnect</h1>
             </div>
         </div>
     </div>
 
-    <form id="signupform">
-        <div class="container-fluid mt-5">
+    <h:form id="signupform" action="#{userBean.redirectRegistration}" method="post">
+        <div class="container-fluid mt-5 reduced-mobile-margin" id="responsive-formgroup">
+            <div class="form-group">
+                <label for="institution">Institution</label>
+                <h:inputText type="text" styleClass="form-control" value="#{userBean.manager.institution}" name="institution" id="institution" pt:id="institution" pt:placeholder="Universtität Innsbruck" pt:autocomplete="off"/>
+            </div>
+
             <div class="form-group">
                 <label for="username">E-Mail</label>
-                <input type="text" class="form-control" id="username" name="username" placeholder="john.doe@mail.com" />
+                <h:inputText type="text" styleClass="form-control" value="#{userBean.manager.email}" name="username" id="username" pt:id="username" pt:placeholder="john.doe@mail.com" autocomplete="username"/>
+                <h:inputText pt:id="email" pt:name="email" styleClass="state-hidden-input" type="text" value="me@example.test" autocomplete="username"/>
             </div>
 
             <div class="form-group">
                 <label for="reg_password">Password</label>
-                <input type="password" class="form-control" id="reg_password" name="reg_password" placeholder="******"/>
+                <h:inputSecret styleClass="form-control" value="#{userBean.password}" name="reg_password" id="reg_password" pt:id="reg_password" pt:placeholder="******" pt:autocomplete="new-password"/>
 
-                <p id="password-strength-text"></p>
+                <label for="confirm_password" class="mt-3">Repeat password</label>
+                <h:inputSecret class="form-control" name="confirm_password" id="confirm_password" pt:placeholder="******" pt:autocomplete="new-password"/>
 
-                <label for="reg_repeatpassword">Repeat password</label>
-                <input type="password" class="form-control" id="reg_repeatpassword" name="reg_repeatpassword" placeholder="******"/>
+                <p class="mt-3 state-warning" id="password-strength-text"></p>
 
             </div>
 
-            <div id="errorcontainer">
+            <div class="state-error" id="errorcontainer">
             </div>
 
             <div class="row py-5 pb-md-5">
                 <div class="col text-center">
-                    <button type="submit" id="submit" class="btn btn-block btn-primary btn-lg">Sign Up!</button>
+                    <h:commandButton styleClass="btn btn-block btn-primary btn-lg" id="submit" value="Sign up!" action="#{userBean.createNewManager}"/>
                 </div>
             </div>
 
         </div>
-    </form>
+    </h:form>
+
 </h:body>
 </html>
