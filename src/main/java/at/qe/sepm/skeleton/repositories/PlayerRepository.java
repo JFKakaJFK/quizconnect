@@ -1,5 +1,8 @@
 package at.qe.sepm.skeleton.repositories;
 
+import java.util.List;
+
+import at.qe.sepm.skeleton.model.Manager;
 import at.qe.sepm.skeleton.model.Player;
 
 /**
@@ -11,4 +14,7 @@ import at.qe.sepm.skeleton.model.Player;
 public interface PlayerRepository extends AbstractRepository<Player, Integer>
 {
 	Player findByUserUsername(String username);
+	
+	// replaces Manager.createdPlayers lazy loading
+	List<Player> findByCreator(Manager manager);
 }
