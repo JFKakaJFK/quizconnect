@@ -17,7 +17,7 @@ import javax.persistence.TemporalType;
 import org.springframework.data.domain.Persistable;
 
 /**
- * Entity representing users.
+ * Entity representing users. Users must have either an associated Player or Manager. User role gets set automatically upon assigning a Manager or Player to the User.
  */
 @Entity
 public class User implements Persistable<String> {
@@ -85,9 +85,35 @@ public class User implements Persistable<String> {
 		return player;
 	}
 	
+	/**
+	 * Called automatically upon creation of a new {@link Player}. Should not be called manually!
+	 * 
+	 * @param player
+	 */
+	public void setPlayer(Player player)
+	{
+		if (this.manager != null)
+			throw new IllegalArgumentException("Cannot set Player with Manager already set!");
+		this.player = player;
+		this.role = UserRole.PLAYER;
+	}
+	
 	public Manager getManager()
 	{
 		return manager;
+	}
+	
+	/**
+	 * Called automatically upon creation of a new {@link Manager}. Should not be called manually!
+	 * 
+	 * @param manager
+	 */
+	public void setManager(Manager manager)
+	{
+		if (this.player != null)
+			throw new IllegalArgumentException("Cannot set Manager with Player already set!");
+		this.manager = manager;
+		this.role = UserRole.MANAGER;
 	}
 
 	public UserRole getRole()
@@ -95,11 +121,6 @@ public class User implements Persistable<String> {
 		return role;
 	}
 
-	public void setRole(UserRole role)
-	{
-		this.role = role;
-	}
-	
 	@Override
     public int hashCode() {
         int hash = 7;

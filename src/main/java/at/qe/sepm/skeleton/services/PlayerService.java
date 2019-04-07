@@ -8,6 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
 import at.qe.sepm.skeleton.model.Player;
+import at.qe.sepm.skeleton.model.User;
 import at.qe.sepm.skeleton.repositories.PlayerRepository;
 
 /**
@@ -22,6 +23,9 @@ public class PlayerService
 {
 	@Autowired
 	private PlayerRepository playerRepository;
+	
+	@Autowired
+	UserService userService;
 	
 	/**
 	 * Returns a Collection of all {@link Player}s.
@@ -51,15 +55,67 @@ public class PlayerService
 	 * 
 	 * @param player
 	 * @throws IllegalArgumentException
+	 * @return new Player reference. Use for all further operations.
 	 */
-	public void savePlayer(Player player) throws IllegalArgumentException
+	public Player savePlayer(Player player) throws IllegalArgumentException
 	{
-		if (player.getUser() == null)
+		if (player.isNew())
+			throw new IllegalArgumentException("Player to be saved cannot be new! Use 'saveNewPlayer' to save a new Player!");
+		else if (player.getUser() == null)
 			throw new IllegalArgumentException("Player user cannot be null!");
-		else if (player.getCreator() == null)
-			throw new IllegalArgumentException("Player creator cannot be null!");
 		
-		playerRepository.save(player);
+		playerSanityChecks(player);
+		
+		return playerRepository.save(player);
+	}
+	
+	/**
+	 * Saves a new {@link Player} to the database. Automatically creates a new {@link User} for the player using username and password. Password is expected to be already encrypted. Performs consistency
+	 * checks which may throw IllegalArgumentExceptions. For re-saving / updating {@link Players} use the 'savePlayer' function.
+	 * 
+	 * @param player
+	 * @param username
+	 * @param password
+	 * @throws IllegalArgumentException
+	 * @return new Player reference. Use for all further operations.
+	 */
+	@PreAuthorize("hasAuthority('MANAGER')")
+	public Player saveNewPlayer(Player player, String username, String password) throws IllegalArgumentException
+	{
+		if (!player.isNew())
+			throw new IllegalArgumentException("Player to be saved must be new!");
+		else if (username == null)
+			throw new IllegalArgumentException("Player username cannot be null!");
+		else if (password == null)
+			throw new IllegalArgumentException("Player password cannot be null!");
+		
+		playerSanityChecks(player);
+		
+		User newUser = new User();
+		newUser.setUsername(username);
+		newUser.setPassword(password);
+		newUser.setEnabled(true);
+		User savedUser = userService.saveUser(newUser);
+		
+		player.setUser(savedUser); // set player user
+		Player savedPlayer = playerRepository.save(player); // save player to DB
+		
+		savedUser.setPlayer(savedPlayer); // automatically sets role
+		userService.saveUser(savedUser); // update user in DB
+		
+		return savedPlayer;
+	}
+	
+	/**
+	 * Performs sanity checks on the player. Throws an IllegalArgumentException if any checks fail, terminates otherwise.
+	 * 
+	 * @param player
+	 * @throws IllegalArgumentException
+	 */
+	private void playerSanityChecks(Player player) throws IllegalArgumentException
+	{
+		if (player.getCreator() == null)
+			throw new IllegalArgumentException("Player creator cannot be null!");
 	}
 	
 	/**

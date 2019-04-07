@@ -38,9 +38,26 @@ body {
 }
 
 a { color: var(--gray-5); }
-a:hover { color: var(--gray-5); }
+a:hover {
+    color: var(--gray-5);
+    text-decoration: underline;
+    font-weight: 400;
+}
 
 svg {
     width: 100%;
     max-width: 100%;
+    color: inherit;
+    fill: currentColor;
+}
+
+.form-control {
+    background-color:transparent;
+    border-width: 2px;
+    border-radius: 10px;
+    color: var(--gray-4);
+}
+
+input.error {
+    border-color: var(--error);
 }

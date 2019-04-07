@@ -1,0 +1,80 @@
+#responsive-formgroup {
+    max-width: 100%;
+    align-content: center;
+}
+
+
+/*
+  ##Device = Desktops
+  ##Screen = 1281px to higher resolution desktops
+*/
+@media (min-width: 1025px) {
+    #responsive-formgroup {
+        width: 25%;
+    }
+
+    #success_banner {
+        width: 25%;
+    }
+}
+
+/*
+  ##Device = Laptops, Desktops
+  ##Screen = B/w 1025px to 1280px
+*/
+@media (min-width: 1025px) and (max-width: 1280px) {
+    #responsive-formgroup {
+        width: 50%;
+    }
+
+    #success_banner {
+        width: 50%;
+    }
+}
+/*
+  ##Device = Tablets, Ipads (portrait)
+  ##Screen = B/w 768px to 1024px
+*/
+@media (min-width: 768px) and (max-width: 1024px) {
+    .reduced-mobile-padding {
+        padding-top: 1em!important;
+    }
+
+    .reduced-mobile-margin {
+        margin-top: 1em!important;
+    }
+
+    #success_banner {
+        width: 100%;
+    }
+}
+
+/*
+  ##Device = Low Resolution Tablets, Mobiles (Landscape)
+  ##Screen = B/w 481px to 767px
+*/
+@media (min-width: 320px) and (max-width: 767px) {
+    .reduced-mobile-spacing {
+        padding-top: 0em!important;
+    }
+
+    .reduced-mobile-margin {
+        margin-top: 1em!important;
+    }
+
+    #success_banner {
+        width: 100%;
+    }
+}
+
+#password-strength-text {
+    text-align: center;
+}
+
+#errorcontainer {
+    text-align: center;
+}
+
+#success_banner img {
+    margin-top: 5em;
+}

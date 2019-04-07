@@ -15,8 +15,10 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import at.qe.sepm.skeleton.model.Manager;
 import at.qe.sepm.skeleton.model.Player;
 import at.qe.sepm.skeleton.model.User;
+import at.qe.sepm.skeleton.model.UserRole;
 import at.qe.sepm.skeleton.services.PlayerService;
 import at.qe.sepm.skeleton.services.UserService;
 
@@ -63,7 +65,7 @@ public class PlayerServiceTest
 	@DirtiesContext
 	@Test
 	@WithMockUser(username = "user3", authorities = { "PLAYER" })
-	public void testSavePlayer()
+	public void testUpdatePlayer()
 	{
 		User user = userService.loadUser("user3");
 		assertNotNull("User not loaded!", user);
@@ -82,7 +84,7 @@ public class PlayerServiceTest
 	@DirtiesContext
 	@Test(expected = IllegalArgumentException.class)
 	@WithMockUser(username = "user3", authorities = { "PLAYER" })
-	public void testSavePlayerNoCreator()
+	public void testUpdatePlayerNoCreator()
 	{
 		User user = userService.loadUser("user3");
 		assertNotNull("User not loaded!", user);
@@ -95,9 +97,9 @@ public class PlayerServiceTest
 	}
 	
 	@DirtiesContext
-	@Test(expected = NullPointerException.class)
+	@Test(expected = IllegalArgumentException.class)
 	@WithMockUser(username = "user2", authorities = { "MANAGER" })
-	public void testSavePlayerNoUser()
+	public void testUpdatePlayerNoUser()
 	{
 		Player player = playerService.getPlayerById(202);
 		assertNotNull("Player not loaded!", player);
@@ -105,6 +107,82 @@ public class PlayerServiceTest
 		player.setUser(null);
 		
 		playerService.savePlayer(player);
+	}
+	
+	@DirtiesContext
+	@Test
+	@WithMockUser(username = "user2", authorities = { "MANAGER" })
+	public void testCreatePlayer()
+	{
+		Manager manager = userService.loadUser("user2").getManager();
+		assertNotNull("Manager not loaded!", manager);
+		
+		Player player = new Player();
+		player.setCreator(manager);
+		player.setAvatarPath("newAvatar OwO");
+		
+		Player savedPlayer = playerService.saveNewPlayer(player, "newUsername", "pw");
+		assertNotNull("Saved player is null!", savedPlayer);
+		
+		assertEquals("Saved player wrong creator!", manager, savedPlayer.getCreator());
+		assertEquals("Saved player wrong avatar!", "newAvatar OwO", savedPlayer.getAvatarPath());
+		
+		User user = savedPlayer.getUser();
+		assertNotNull("Saved player user is null!", user);
+		
+		assertEquals("User wrong role!", UserRole.PLAYER, user.getRole());
+		assertEquals("User wrong username!", "newUsername", user.getUsername());
+		assertEquals("User wrong password!", "pw", user.getPassword());
+	}
+	
+	@DirtiesContext
+	@Test(expected = org.springframework.security.access.AccessDeniedException.class)
+	@WithMockUser(username = "user3", authorities = { "PLAYER" })
+	public void testUnauthorizedCreatePlayer()
+	{
+		Player player = new Player();
+		playerService.saveNewPlayer(player, "username", "pw");
+	}
+	
+	@DirtiesContext
+	@Test(expected = IllegalArgumentException.class)
+	@WithMockUser(username = "user2", authorities = { "MANAGER" })
+	public void testCreatePlayerNoCreator()
+	{
+		Player player = new Player();
+		player.setAvatarPath("newAvatar OwO");
+		
+		playerService.saveNewPlayer(player, "username", "pw");
+	}
+	
+	@DirtiesContext
+	@Test(expected = IllegalArgumentException.class)
+	@WithMockUser(username = "user2", authorities = { "MANAGER" })
+	public void testCreatePlayerNoUsername()
+	{
+		Manager manager = userService.loadUser("user2").getManager();
+		assertNotNull("Manager not loaded!", manager);
+		
+		Player player = new Player();
+		player.setCreator(manager);
+		player.setAvatarPath("newAvatar OwO");
+		
+		playerService.saveNewPlayer(player, null, "pw");
+	}
+	
+	@DirtiesContext
+	@Test(expected = IllegalArgumentException.class)
+	@WithMockUser(username = "user2", authorities = { "MANAGER" })
+	public void testCreatePlayerNoPassword()
+	{
+		Manager manager = userService.loadUser("user2").getManager();
+		assertNotNull("Manager not loaded!", manager);
+		
+		Player player = new Player();
+		player.setCreator(manager);
+		player.setAvatarPath("newAvatar OwO");
+		
+		playerService.saveNewPlayer(player, "username", null);
 	}
 	
 	@DirtiesContext

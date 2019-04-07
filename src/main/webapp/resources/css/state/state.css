@@ -1,0 +1,19 @@
+.state-hidden-input {
+    display: none;
+}
+
+.state-warning {
+    color: var(--warning);
+}
+
+.state-error {
+    color: var(--error);
+}
+
+.form-control:focus {
+    color: var(--gray-4);
+    background-color: transparent;
+    border-color: var(--col-3-l);
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(83, 202, 212, 0.25);
+}

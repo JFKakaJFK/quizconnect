@@ -99,7 +99,7 @@ public class QuestionService {
         if(question.getWrongAnswerString_1() == null){
             throw new IllegalArgumentException("At least one wrong answer is required");
         }
-        if(question.getWrongAnswerString_1().length() > 200){
+        if(question.getWrongAnswerString_4() != null && question.getWrongAnswerString_1().length() > 200){
             throw new IllegalArgumentException("Wrong Answer 1 is too long(MAX: 200Chars)");
         }
         if(question.getWrongAnswerString_2() != null && question.getWrongAnswerString_2().length() > 200) {

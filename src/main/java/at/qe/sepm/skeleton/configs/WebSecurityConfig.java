@@ -28,8 +28,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
+        // TODO check why these 2 are set, if only for H2, remove
         http.csrf().disable();
-
         http.headers().frameOptions().disable(); // needed for H2 console
 
         http.logout()
@@ -55,7 +55,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.exceptionHandling().accessDeniedPage("/error/denied.xhtml");
 
-        http.sessionManagement().invalidSessionUrl("/error/invalid_session.xhtml");
+        http.sessionManagement().invalidSessionUrl("/");
 
     }
 
