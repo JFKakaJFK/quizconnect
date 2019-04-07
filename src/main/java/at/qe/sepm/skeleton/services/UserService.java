@@ -48,6 +48,17 @@ public class UserService {
     public User loadUser(String username) {
         return userRepository.findFirstByUsername(username);
     }
+	
+	/**
+	 * Returns true if a user with username exists, false otherwise.
+	 * 
+	 * @param username
+	 * @return
+	 */
+	public boolean existsUser(String username)
+	{
+		return userRepository.findFirstByUsername(username) != null;
+	}
 
     /**
 	 * Saves the {@link User}. Performs some consistency checks, but does not check if User is associated with a Player / Manager.
