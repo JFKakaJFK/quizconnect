@@ -51,6 +51,18 @@ public class PlayerService
 	}
 	
 	/**
+	 * Returns a {@link Player} by its username.
+	 * 
+	 * @param username
+	 * @return
+	 */
+	@PreAuthorize("hasAuthority('MANAGER') or hasAuthority('PLAYER')")
+	public Player getPlayerByUsername(String username)
+	{
+		return playerRepository.findByUserUsername(username);
+	}
+	
+	/**
 	 * Saves the {@link Player} to the database. Throws an IllegalArgumentException if any consistency checks fail.
 	 * 
 	 * @param player

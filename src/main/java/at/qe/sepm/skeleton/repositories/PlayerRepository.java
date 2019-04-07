@@ -10,5 +10,5 @@ import at.qe.sepm.skeleton.model.Player;
  */
 public interface PlayerRepository extends AbstractRepository<Player, Integer>
 {
-	
+	Player findByUserUsername(String username);
 }

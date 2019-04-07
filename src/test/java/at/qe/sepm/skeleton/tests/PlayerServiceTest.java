@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -60,6 +61,67 @@ public class PlayerServiceTest
 		Player player = playerService.getPlayerById(202);
 		assertNotNull("Player not loaded!", player);
 		assertEquals("Wrong Player loaded!", new Integer(202), player.getId());
+	}
+	
+	@Test
+	@WithMockUser(username = "user1", authorities = { "MANAGER" })
+	public void testGetPlayerByUsername()
+	{
+		Player player = playerService.getPlayerByUsername("user4");
+		assertNotNull("Player not loaded!", player);
+		assertEquals("Wrong Player loaded!", new Integer(202), player.getId());
+	}
+	
+	@Test
+	@WithMockUser(username = "user3", authorities = { "PLAYER" })
+	public void testGetLastPlayedWith1()
+	{
+		User user = userService.loadUser("user3");
+		Player player = user.getPlayer();
+		assertNotNull("Player not loaded!", player);
+		
+		List<String> players = player.getPlayedWithLast();
+		assertNotNull("List is null!", players);
+		assertEquals("Wrong number of last played with player names!", 3, players.size());
+	}
+	
+	@Test
+	@WithMockUser(username = "user1", authorities = { "MANAGER" })
+	public void testGetLastPlayedWith2()
+	{
+		Player player = playerService.getPlayerById(202);
+		
+		List<String> players = player.getPlayedWithLast();
+		assertNotNull("List is null!", players);
+		assertEquals("Wrong number of last played with player names!", 2, players.size());
+	}
+	
+	@Test
+	@WithMockUser(username = "user1", authorities = { "MANAGER" })
+	public void testGetLastPlayedWith3()
+	{
+		Player player = playerService.getPlayerById(203);
+		
+		List<String> players = player.getPlayedWithLast();
+		assertNotNull("List is null!", players);
+		assertEquals("Wrong number of last played with player names!", 0, players.size());
+	}
+	
+	@DirtiesContext
+	@Test
+	@WithMockUser(username = "user1", authorities = { "MANAGER" })
+	public void testAddPlayedWith()
+	{
+		Player player = playerService.getPlayerById(205);
+		Player player2 = playerService.getPlayerById(201);
+		player.addToPlayedWithLast(player2);
+		
+		playerService.savePlayer(player);
+		
+		Player player3 = playerService.getPlayerById(205);
+		assertNotNull("List is null!", player3.getPlayedWithLast());
+		assertEquals("Wrong number of last players saved!", 1, player3.getPlayedWithLast().size());
+		assertEquals("Wrong player name saved!", "user3", player3.getPlayedWithLast().get(0));
 	}
 	
 	@DirtiesContext
@@ -197,5 +259,8 @@ public class PlayerServiceTest
 		
 		Player player2 = playerService.getPlayerById(201);
 		assertNull("Player not deleted!", player2);
+		
+		Collection<Player> players = playerService.getAllPlayers();
+		assertEquals("Wrong number of players in DB!", 4, players.size());
 	}
 }
