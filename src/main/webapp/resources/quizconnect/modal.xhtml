@@ -11,7 +11,39 @@
       lang="en">
     <composite:interface>
 
-        <composite:attribute name="i" required="true" />
+        <!--====================================================================================
+
+        The modal component generates the structure for a
+        bootstrap modal. The modal supports adding actions
+        to all buttons. An extra button is needed to open the
+        modal. Needs to be whithin a h:form.
+
+        Params:
+        - ID sets the id of the outmost container, needed as reference for opening modal
+        - title sets the modal heading
+        - [disableConfirm] [ false(default) | true ] disables/enables the confirm button
+        - [abort] text of the abort button (default: Close)
+        - [confirm] text of the confirm button (default: Save changes)
+        - [closeAction] method with return type void, called when modal is closed via close icon
+        - [abortAction] method with return type void, called when abort button is clicked
+        - [confirmAction] method with return type void, called when confirm button is clicked
+        - [update] jsf ids of components to update, update will happen for each action
+
+
+        Example
+
+        <h:commandLink p:data-toggle="modal" p:data-target="#myModal" p:data-backdrop="static">
+            Open Modal
+            <f:ajax execute="@form" render="myModal" />
+        </h:commandLink>
+
+
+        <qc:modal ID="myModal" title="Modal Title" disableConfirm="true">
+            <h2>Modal content</h2>
+        </qc:modal>
+
+        ======================================================================================-->
+        <composite:attribute name="ID" required="true" />
         <composite:attribute name="title" required="true" />
 
         <composite:attribute name="disableConfirm" default="false" />
@@ -27,7 +59,7 @@
     </composite:interface>
 
     <composite:implementation>
-        <h:panelGroup layout="block" styleClass="modal fade" p:id="#{cc.attrs.i}" p:tabindex="-1" p:role="dialog" p:aria-labelledby="#{cc.attrs.id}" p:aria-hidden="true">
+        <h:panelGroup layout="block" styleClass="modal fade" p:id="#{cc.attrs.ID}" p:tabindex="-1" p:role="dialog" p:aria-labelledby="#{cc.attrs.ID}" p:aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
