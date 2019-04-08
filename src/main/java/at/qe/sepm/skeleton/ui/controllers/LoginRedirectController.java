@@ -18,15 +18,17 @@ public class LoginRedirectController {
     private SessionInfoBean sessionInfoBean;
 
     public void redirect() throws IOException {
-        User user = sessionInfoBean.getCurrentUser();
         ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+        if(sessionInfoBean.isLoggedIn()){
+            User user = sessionInfoBean.getCurrentUser();
 
-        if(user.getPlayer() != null){
-            ec.redirect("/player/home.xhtml");
-        } else if(user.getManager() != null){
-            ec.redirect("/secured/home.xhtml");
-        } else {
-            ec.redirect("/logout");
+            if(user.getPlayer() != null){
+                ec.redirect("/player/home.xhtml");
+            } else if(user.getManager() != null){
+                ec.redirect("/secured/home.xhtml");
+            } else {
+                ec.redirect("/logout");
+            }
         }
     }
 }

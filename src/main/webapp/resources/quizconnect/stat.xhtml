@@ -15,17 +15,14 @@
         a label.
 
         Params:
-        - [ID] sets the id of the outmost container
-          Note: it most likely will be better to enclose
-          multiple stat components whithin a named container
-          and call actions/rerenders on that container
+
         - value the value of the stat
         - label the description of the value
         - size [ sm | md(default) | lg ]
         - align [ left | center(default) | right ]
 
         ==============================================-->
-        <composite:attribute name="ID" />
+        <composite:attribute name="styleClass" default="" />
         <composite:attribute name="value" required="true" />
         <composite:attribute name="label" required="true" />
         <composite:attribute name="size" default="md" />
@@ -34,7 +31,7 @@
     </composite:interface>
 
     <composite:implementation>
-        <h:panelGroup id="#{cc.attrs.ID}" layout="block" styleClass="stat stat-#{cc.attrs.size} stat-#{cc.attrs.align}">
+        <h:panelGroup layout="block" styleClass="stat stat-#{cc.attrs.size} stat-#{cc.attrs.align} #{cc.attrs.styleClass}">
             <h3>#{cc.attrs.value}</h3>
             <p>#{cc.attrs.label}</p>
         </h:panelGroup>

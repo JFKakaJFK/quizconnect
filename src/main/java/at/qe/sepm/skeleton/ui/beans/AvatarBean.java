@@ -12,7 +12,7 @@ public class AvatarBean {
     private String avatars;
 
     public String getAvatar(String path) {
-        if(!path.matches(".*/.*\\.(png|jpg)")){
+        if(path == null || !path.matches(".*/.*\\.(png|jpg)")){
             return "/" + avatars + "default/avatar.png";
         }
         return "/" + avatars + path;

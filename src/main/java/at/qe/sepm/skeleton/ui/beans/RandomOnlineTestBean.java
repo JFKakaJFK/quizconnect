@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 @Scope("request")
 public class RandomOnlineTestBean {
 
+    // TODO delete bean
     public boolean getOnline(){
         return Math.random() < 0.5;
     }

@@ -28,7 +28,7 @@
             <nav class="pushbar-nav pl-4 pr-3 py-4">
                 <ul class="list-unstyled">
                     <li class="my-3">
-                        <a href="/player/home.xhtml">Home</a>
+                        <h:commandLink action="/player/home?faces-redirect=true" value="Home"/>
                     </li>
                     <li class="my-3">
                         <a href="#">Join Game</a>
@@ -37,12 +37,12 @@
                         <a href="#">Create Game</a>
                     </li>
                     <li class="my-3">
-                        <h:commandLink action="/players/profile" value="My Stats">
+                        <h:link outcome="/players/profile" value="My Stats">
                             <f:param name="id" value="#{sessionInfoBean.currentUser.player.id}"/>
-                        </h:commandLink>
+                        </h:link>
                     </li>
                     <li class="my-3">
-                        <a href="/players/all.xhtml">View Players</a>
+                        <h:commandLink action="/players/all?faces-redirect=true" value="View Players"/>
                     </li>
                 </ul>
             </nav>
@@ -52,13 +52,13 @@
             <nav class="pushbar-nav pl-4 pr-3 py-4">
                 <ul class="list-unstyled">
                     <li class="my-3">
-                        <a href="/secured/home.xhtml">Home</a>
+                        <h:commandLink action="/secured/home?faces-redirect=true" value="Home"/>
                     </li>
                     <li class="my-3">
-                        <a href="#">Question Sets</a>
+                        <h:commandLink action="/secured/home?faces-redirect=true" value="QuestionSets"/>
                     </li>
                     <li class="my-3">
-                        <a href="/players/all.xhtml">Players</a>
+                        <h:commandLink action="/players/all?faces-redirect=true" value="Players"/>
                     </li>
                 </ul>
             </nav>
