@@ -25,7 +25,7 @@
                                        p:class="ml-2" p:data-toggle="modal" p:data-target=".changeAvatar"
                                        p:data-backdrop="static">
                             <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M9 4.58V4c0-1.1.9-2 2-2h2a2 2 0 0 1 2 2v.58a8 8 0 0 1 1.92 1.11l.5-.29a2 2 0 0 1 2.74.73l1 1.74a2 2 0 0 1-.73 2.73l-.5.29a8.06 8.06 0 0 1 0 2.22l.5.3a2 2 0 0 1 .73 2.72l-1 1.74a2 2 0 0 1-2.73.73l-.5-.3A8 8 0 0 1 15 19.43V20a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-.58a8 8 0 0 1-1.92-1.11l-.5.29a2 2 0 0 1-2.74-.73l-1-1.74a2 2 0 0 1 .73-2.73l.5-.29a8.06 8.06 0 0 1 0-2.22l-.5-.3a2 2 0 0 1-.73-2.72l1-1.74a2 2 0 0 1 2.73-.73l.5.3A8 8 0 0 1 9 4.57zM7.88 7.64l-.54.51-1.77-1.02-1 1.74 1.76 1.01-.17.73a6.02 6.02 0 0 0 0 2.78l.17.73-1.76 1.01 1 1.74 1.77-1.02.54.51a6 6 0 0 0 2.4 1.4l.72.2V20h2v-2.04l.71-.2a6 6 0 0 0 2.41-1.4l.54-.51 1.77 1.02 1-1.74-1.76-1.01.17-.73a6.02 6.02 0 0 0 0-2.78l-.17-.73 1.76-1.01-1-1.74-1.77 1.02-.54-.51a6 6 0 0 0-2.4-1.4l-.72-.2V4h-2v2.04l-.71.2a6 6 0 0 0-2.41 1.4zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0-2a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/></svg>
-                            <f:ajax execute="@form" render="changeAvatar preview" />
+                            <f:ajax execute="@form" render="changeAvatar" />
                         </h:commandLink>
 
                     </qc:playerbox>
@@ -44,60 +44,63 @@
 
             <h:commandButton styleClass="btn btn-primary" action="#" value="Join Game"/>
 
-            <qc:modal id="changeAvatar" target="changeAvatar" title="Change Avatar" closeAction="#{changeAvatarBean.abort}" update="avatar changeAvatar">
-                <div class="modal-body">
+            <h:panelGroup id="changeAvatar">
+                <qc:modal target="changeAvatar" title="Change Avatar" closeAction="#{changeAvatarBean.abort}" update="@form">
+                    <div class="modal-body">
 
-                    <h:panelGroup layout="block" id="preview">
-                        <h:graphicImage p:id="preview" value="#{avatarBean.getAvatar((changeAvatarBean.filename == null ? sessionInfoBean.currentUser.player.avatarPath : changeAvatarBean.filename))}" alt="avatar" />
-                    </h:panelGroup>
+                        <h:panelGroup layout="block" id="preview">
+                            <h:graphicImage p:id="preview" value="#{avatarBean.getAvatar((changeAvatarBean.filename == null ? sessionInfoBean.currentUser.player.avatarPath : changeAvatarBean.filename))}" alt="avatar" />
+                        </h:panelGroup>
 
-                    <h:commandButton p:id="rerender" styleClass="jsf-hide">
-                        <f:ajax render="save preview" />
-                    </h:commandButton>
+                        <pf:fileUpload fileUploadListener="#{changeAvatarBean.handleAvatarUpload}" multiple="false"
+                                       mode="advanced" required="true"
+                                       auto="true" sizeLimit="10000000"
+                                       allowTypes="/(\.|\/)(jpg|png)$/"
+                                       styleClass="avatar-upload jsf-hide"
+                                       update="preview save"/>
 
-                    <script type="text/javascript">
-                        const rerender = document.getElementById('rerender');
-                        const img = document.getElementById('preview');
-                        const modal = document.getElementsByClassName('changeAvatar');
-                        let interval;
+                        <h:commandButton p:class="btn btn-tertiary" onclick="document.querySelector('.avatar-upload input').click()" value="Upload File">
+                            <f:ajax execute="@this" render="@none" onevent="startInterval"/>
+                        </h:commandButton>
 
-                        function startInterval(){
-                            //interval = setInterval(() => {rerender.click(); console.log("toc")}, 1000);
-                            setTimeout(stopInterval, 30000);
-                            console.log("started")
-                        }
+                    </div>
+                    <div class="modal-footer">
+                        <h:commandButton actionListener="#{changeAvatarBean.abort}" p:class="btn btn-tertiary" p:data-dismiss="modal" value="Cancel">
+                            <f:ajax execute="@form" render="@form" />
+                        </h:commandButton>
 
-                        function stopInterval() {
-                            clearInterval(interval);
-                            console.log("stopped")
-                        }
-                    </script>
+                        <h:commandButton id="save" actionListener="#{changeAvatarBean.saveAvatar}"
+                                         p:class="btn btn-primary" value="Save Changes"
+                                         p:data-dismiss="modal"
+                                         disabled="#{changeAvatarBean.disabled}" >
+                            <f:ajax execute="@form" render="@form" onevent="stopInterval" />
+                        </h:commandButton>
+                    </div>
+                </qc:modal>
+            </h:panelGroup>
 
-                    <pf:fileUpload fileUploadListener="#{changeAvatarBean.handleAvatarUpload}" multiple="false"
-                                   mode="advanced" required="true"
-                                   auto="true" sizeLimit="10000000"
-                                   allowTypes="/(\.|\/)(jpg|png)$/"
-                                   styleClass="avatar-upload jsf-hide"
-                                   update="preview save"/>
-
-
-                    <h:commandButton p:class="btn btn-tertiary" onclick="document.querySelector('.avatar-upload input').click()" value="Upload File">
-                        <f:ajax onevent="startInterval"/>
-                    </h:commandButton>
-
-                </div>
-                <div class="modal-footer">
-                    <h:commandButton actionListener="#{changeAvatarBean.abort}" p:class="btn btn-tertiary" p:data-dismiss="modal" value="Cancel" />
-
-                    <h:commandButton id="save" actionListener="#{changeAvatarBean.saveAvatar}"
-                                     p:class="btn btn-primary" value="Save Changes"
-                                     p:data-dismiss="modal"
-                                     disabled="#{changeAvatarBean.disabled}" >
-                        <f:ajax execute="@form" render="avatar" onevent="stopInterval" />
-                    </h:commandButton>
-                </div>
-            </qc:modal>
+            <h:commandButton p:id="rerender" styleClass="jsf-hide">
+                <f:ajax execute="@this" render="save preview" />
+            </h:commandButton>
 
         </h:form>
+
+        <script type="text/javascript">
+            const rerender = document.getElementById('rerender');
+            const img = document.getElementById('preview');
+            const modal = document.getElementsByClassName('changeAvatar');
+            let interval;
+
+            function startInterval(){
+                //interval = setInterval(() => {rerender.click(); console.log("toc")}, 1000);
+                setTimeout(stopInterval, 30000);
+                console.log("started")
+            }
+
+            function stopInterval() {
+                clearInterval(interval);
+                console.log("stopped")
+            }
+        </script>
     </ui:define>
 </ui:composition>

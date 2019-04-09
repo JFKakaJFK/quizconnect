@@ -70,6 +70,7 @@ public class ChangeAvatarBean implements Serializable {
     public void abort(){
         if(filename != null){
             storageService.deleteAvatar(filename);
+            filename = null;
         }
     }
 
