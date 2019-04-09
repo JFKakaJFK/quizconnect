@@ -19,25 +19,20 @@
         modal. Needs to be whithin a h:form.
 
         Params:
-        - ID sets the id of the outmost container, needed as reference for opening modal
+        - target sets the class of the outmost container, needed as reference for opening modal
         - title sets the modal heading
-        - [disableConfirm] [ false(default) | true ] disables/enables the confirm button
-        - [abort] text of the abort button (default: Close)
-        - [confirm] text of the confirm button (default: Save changes)
         - [closeAction] method with return type void, called when modal is closed via close icon
-        - [abortAction] method with return type void, called when abort button is clicked
-        - [confirmAction] method with return type void, called when confirm button is clicked
         - [update] jsf ids of components to update, update will happen for each action
 
         Example
 
-        <h:commandLink p:data-toggle="modal" p:data-target="#myModal" p:data-backdrop="static">
+        <h:commandLink p:data-toggle="modal" p:data-target=".myModal" p:data-backdrop="static">
             Open Modal
-            <f:ajax execute="@form" render="myModal" />
+            <f:ajax execute="@form" render="jsfId" />
         </h:commandLink>
 
 
-        <qc:modal ID="myModal" title="Modal Title" disableConfirm="true">
+        <qc:modal id="jsfId" target="myModal" title="Modal Title" disableConfirm="true">
             <div class="modal-body">
                 <h2>Modal content</h2>
             </div>
@@ -47,27 +42,17 @@
         </qc:modal>
 
         ======================================================================================-->
-        <cc:attribute name="ID" required="true" />
+        <cc:attribute name="target" required="true" />
         <cc:attribute name="title" required="true" />
-        <cc:attribute name="styleClass" default=""/>
-
         <cc:attribute name="closeAction" method-signature="void action()" default="#{QCModalController.defaultAction}" />
         <cc:attribute name="update" default="@none" />
-
-        <cc:attribute name="disableConfirm" default="false" />
-
-        <cc:attribute name="abort" default="Close" />
-        <cc:attribute name="confirm" default="Save changes" />
-        <cc:attribute name="closeAction" method-signature="void action()" default="#{QCModalController.defaultAction}" />
-        <cc:attribute name="abortAction" method-signature="void action()" default="#{QCModalController.defaultAction}" />
-        <cc:attribute name="confirmAction" method-signature="void action()" default="#{QCModalController.defaultAction}" />
 
     </cc:interface>
 
     <cc:implementation>
-        <h:panelGroup layout="block" styleClass="modal fade #{cc.attrs.styleClass}" p:id="#{cc.attrs.ID}" p:tabindex="-1" p:role="dialog" p:aria-labelledby="#{cc.attrs.ID}" p:aria-hidden="true">
+        <div class="modal fade #{cc.attrs.target}" tabindex="-1" role="dialog" aria-labelledby="#{cc.attrs.target}" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
+                <div id="#{cc.clientId}" class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">#{cc.attrs.title}</h5>
 
@@ -79,23 +64,12 @@
                         </h:commandLink>
 
                     </div>
-                    <div class="modal-body">
-                        <cc:insertChildren />
-                    </div>
-                    <div class="modal-footer">
 
-                        <h:commandButton actionListener="#{cc.attrs.abortAction}" p:class="btn btn-tertiary" p:data-dismiss="modal" value="#{cc.attrs.abort}">
-                            <f:ajax execute="@form" render="#{cc.attrs.update}" />
-                        </h:commandButton>
+                    <cc:insertChildren />
 
-                        <h:commandButton actionListener="#{cc.attrs.confirmAction}" p:class="btn btn-primary" value="#{cc.attrs.confirm}" disabled="#{cc.attrs.disableConfirm}" >
-                            <f:ajax execute="@form" render="#{cc.attrs.update}" />
-                        </h:commandButton>
-
-                    </div>
                 </div>
             </div>
-        </h:panelGroup>
+        </div>
     </cc:implementation>
 
 </html>

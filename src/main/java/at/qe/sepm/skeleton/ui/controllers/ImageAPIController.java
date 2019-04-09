@@ -12,9 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 
 
 /**
@@ -106,8 +104,8 @@ public class ImageAPIController {
         response.setDateHeader("Expires", System.currentTimeMillis() + 604800000L); // expires in a week
         // response.setDateHeader("Last-Modified", 0);
         // TODO: set moar headers (maybe get a nice eTag, expires & last modified working)
-        try {
-            IOUtils.copy(new FileInputStream(file), response.getOutputStream());
+        try(InputStream is = new FileInputStream(file); OutputStream os = response.getOutputStream()) {
+            IOUtils.copy(is, os);
             response.flushBuffer();
         } catch (IOException e){
             log.error("Could not serve " + file.getName());

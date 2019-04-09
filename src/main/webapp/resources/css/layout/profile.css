@@ -1,0 +1,12 @@
+.stats,
+.qs-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+@media only screen and (min-width: 700px) {
+    .stats,
+    .qs-stats {
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+    }
+}

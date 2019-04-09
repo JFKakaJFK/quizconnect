@@ -9,6 +9,7 @@
 @import "module/module.css";
 @import "module/pushbar.css";
 @import "module/navbar.css";
-@import "module/stat.css";
+@import "../quizconnect/styles/playerbox.css";
+@import "../quizconnect/styles/stat.css";
 
 @import "state/state.css";

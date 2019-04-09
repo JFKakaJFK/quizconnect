@@ -77,31 +77,31 @@
 }
 
 @media only screen and (min-width: 320px){
-    .playerbox-info-name h3 {
+    .players .playerbox-info-name h3 {
         max-width: 40vw;
     }
 }
 
 @media only screen and (min-width: 768px){
-    .playerbox-info-name h3 {
+    .players .playerbox-info-name h3 {
         max-width: 18.5vw;
     }
 }
 
 @media only screen and (min-width: 1072px){
-    .playerbox-info-name h3 {
+    .players .playerbox-info-name h3 {
         max-width: 125px;
     }
 }
 
 @media only screen and (min-width: 1200px){
-    .playerbox-info-name h3 {
+    .players .playerbox-info-name h3 {
         max-width: 12.5vw;
     }
 }
 
 @media only screen and (min-width: 1440px){
-    .playerbox-info-name h3 {
+    .players .playerbox-info-name h3 {
         max-width: 200px;
     }
 }

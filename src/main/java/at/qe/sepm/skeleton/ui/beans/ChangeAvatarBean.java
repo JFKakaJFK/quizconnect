@@ -34,7 +34,6 @@ public class ChangeAvatarBean implements Serializable {
     private String filename = null;
     private String status = "";
     private Player player;
-    private boolean disabled = true;
 
     /**
      * Catches a fileupload and stores file
@@ -84,12 +83,10 @@ public class ChangeAvatarBean implements Serializable {
     }
 
     public boolean getDisabled(){
-        return disabled;
+        return filename == null;
     }
 
-    public void setDisabled(boolean bool){
-        this.disabled = bool;
-    }
+    public void setDisabled(boolean bool){}
 
     public String getStatus() {
         return status;
@@ -98,4 +95,13 @@ public class ChangeAvatarBean implements Serializable {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    public String getFilename() {
+        if(filename == null && player != null){
+            return player.getAvatarPath();
+        }
+        return filename;
+    }
+
+    public void setFilename(String filename) {}
 }
