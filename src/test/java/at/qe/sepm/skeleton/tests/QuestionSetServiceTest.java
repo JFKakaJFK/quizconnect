@@ -197,14 +197,15 @@ public class QuestionSetServiceTest {
         QuestionSet testSet1 = validQuestionSet();
         QuestionSet testSet2 = validQuestionSet();
         QuestionSet testSet3 = validQuestionSet();
-        testSet2.setDifficulty(QuestionSetDifficulty.medium);
-        testSet3.setDifficulty(QuestionSetDifficulty.medium);
+        testSet1.setDifficulty(QuestionSetDifficulty.hard);
+        testSet2.setDifficulty(QuestionSetDifficulty.easy);
+        testSet3.setDifficulty(QuestionSetDifficulty.easy);
 
         questionSetService.saveQuestionSet(testSet1);
         questionSetService.saveQuestionSet(testSet2);
         questionSetService.saveQuestionSet(testSet3);
 
-        Collection<QuestionSet> testCollection = questionSetService.getAllByDifficulty(QuestionSetDifficulty.medium);
+        Collection<QuestionSet> testCollection = questionSetService.getAllByDifficulty(QuestionSetDifficulty.easy);
 
         Assert.assertEquals("Returning right QuestionSets", testCollection.contains(testSet2), testCollection.contains(testSet3));
         Assert.assertFalse("Wrong QuestionSet is not returned", testCollection.contains(testSet1));

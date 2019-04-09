@@ -56,15 +56,18 @@ public class QuestionSetPerformanceService {
             questionSetPerformance = new QuestionSetPerformance();
             questionSetPerformance.setQuestionSet(questionSet);
             questionSetPerformance.setPlayer(player);
-            // other values will be inititalized per default
+            // other values will be inititalized per defaull
             log.info("Created new QuestionSetPerformance for Player " + player.getId() + " and QuestionSet " + questionSet.getId());
         } else {
+            // not testable at all
             if(questionSetPerformance.isNew()){
                 throw new IllegalArgumentException("Damn you're a magician! You found something in the DB which was NOT stored there...");
             }
+            // null not testable since NullpointerException are thrown in Line 60
             if(questionSetPerformance.getPlayer() ==  null || questionSetPerformance.getPlayer().isNew()){
                 throw new IllegalArgumentException("QuestionSetPerformance must have an associated Player");
             }
+            // also unnecessary since in Line 53 and 60 this gets checked
             if(questionSetPerformance.getQuestionSet() == null || questionSetPerformance.getQuestionSet().isNew()){
                 throw new IllegalArgumentException("QuestionSetPerformance must have an associated QuestionSet");
             }

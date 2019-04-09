@@ -1,9 +1,6 @@
 package at.qe.sepm.skeleton.model;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 import org.springframework.data.domain.Persistable;
 
@@ -19,6 +16,7 @@ public class QuestionSetPerformance implements Persistable<Integer>
 	private static final long serialVersionUID = 1L;
 	
 	@Id
+	@GeneratedValue
 	private Integer id;
 	
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)
