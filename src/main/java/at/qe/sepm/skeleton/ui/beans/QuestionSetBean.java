@@ -1,9 +1,6 @@
 package at.qe.sepm.skeleton.ui.beans;
 
-import at.qe.sepm.skeleton.model.Question;
-import at.qe.sepm.skeleton.model.QuestionSet;
-import at.qe.sepm.skeleton.model.User;
-import at.qe.sepm.skeleton.model.UserRole;
+import at.qe.sepm.skeleton.model.*;
 import at.qe.sepm.skeleton.services.QuestionService;
 import at.qe.sepm.skeleton.services.QuestionSetService;
 import org.slf4j.Logger;
@@ -13,6 +10,9 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.faces.context.FacesContext;
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,8 +23,8 @@ import java.util.Set;
  */
 
 @Component
-@Scope("session")
-public class QuestionSetBean {
+@Scope("view")
+public class QuestionSetBean implements Serializable {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
@@ -43,20 +43,22 @@ public class QuestionSetBean {
 
     @PostConstruct
     public void init() {
-        question = new Question();
         questionSet = new QuestionSet();
+        questionSet.setDifficulty(QuestionSetDifficulty.easy);
         questions = new HashSet<Question>();
         currentUser = sessionInfoBean.getCurrentUser();
     }
 
     public void clearQuestion() {
         question = new Question();
+        question.setType(QuestionType.text);
 
     }
 
     public void saveNewQuestion() {
         questions.add(question);
         question.setQuestionSet(questionSet);
+        logger.info("questionSet=" + question.getQuestionSet() + "; type=" + question.getType() + ", questionString='" + question.getQuestionString() + ", rightAnswerString='" + question.getRightAnswerString());
         questionService.saveQuestion(question);
         logger.info("Created a new question with ID: " + question.getId());
         clearQuestion();
@@ -67,7 +69,22 @@ public class QuestionSetBean {
             questionSet.setAuthor(currentUser.getManager());
             questionSet.setQuestions(questions);
             questionSetService.saveQuestionSet(questionSet);
-            logger.info("Created a new QuestionSet with ID: " + questionSet.getId() + "by manager:" + questionSet.getAuthor());
+            logger.info("Created a new QuestionSet with ID: " + questionSet.getId() + " by manager:" + questionSet.getAuthor());
+
+            // creates a new question initialized to easy
+            clearQuestion();
+        }
+    }
+
+    public void exitCreateQuestionSet() {
+        saveNewQuestion();
+        logger.info("Added a total of " + questions.size() + " questions to QuestionSet with name: " + questionSet.getName());
+
+        try {
+            FacesContext.getCurrentInstance().
+                    getExternalContext().redirect("/");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
