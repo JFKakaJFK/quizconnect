@@ -32,7 +32,7 @@ public class PlayerService
 	 * 
 	 * @return
 	 */
-	@PreAuthorize("hasAuthority('MANAGER')")
+	//@PreAuthorize("hasAuthority('MANAGER')")
 	public Collection<Player> getAllPlayers()
 	{
 		return playerRepository.findAll();
@@ -44,10 +44,22 @@ public class PlayerService
 	 * @param id
 	 * @return
 	 */
-	@PreAuthorize("hasAuthority('MANAGER')")
+	//@PreAuthorize("hasAuthority('MANAGER')")
 	public Player getPlayerById(int id)
 	{
 		return playerRepository.findOne(id);
+	}
+	
+	/**
+	 * Returns a Collection of Players with their usernames containing usernameFragment.
+	 * 
+	 * @param usernameFragment
+	 * @return
+	 */
+	@PreAuthorize("hasAuthority('PLAYER') or hasAuthority('MANAGER')")
+	public Collection<Player> getPlayersWithUsernameContaining(String usernameFragment)
+	{
+		return playerRepository.findByUserUsernameContaining(usernameFragment);
 	}
 	
 	/**

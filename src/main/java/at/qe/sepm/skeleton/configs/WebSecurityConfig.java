@@ -40,17 +40,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/error/**")
                 .permitAll()
-				// Only access with manager role
-				.antMatchers("/manager/**").hasAnyAuthority("MANAGER")
                 //Permit access only for some roles
                 .antMatchers("/secured/**")
-				.hasAnyAuthority("PLAYER", "MANAGER")
+				.hasAnyAuthority("MANAGER")
+                .antMatchers("/player/**")
+                .hasAnyAuthority("PLAYER")
+                .antMatchers("/players/**")
+                .hasAnyAuthority("PLAYER", "MANAGER")
+                .antMatchers("/login/**")
+                .hasAnyAuthority("PLAYER", "MANAGER")
                 //If user doesn't have permission, forward him to login page
                 .and()
                 .formLogin()
                 .loginPage("/login.xhtml")
                 .loginProcessingUrl("/login")
-                .defaultSuccessUrl("/secured/welcome.xhtml");
+                .defaultSuccessUrl("/login/redirect.xhtml");
         // :TODO: user failureUrl(/login.xhtml?error) and make sure that a corresponding message is displayed
 
         http.exceptionHandling().accessDeniedPage("/error/denied.xhtml");

@@ -3,6 +3,7 @@ package at.qe.sepm.skeleton.tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 import java.util.Collection;
 
@@ -60,6 +61,47 @@ public class PlayerServiceTest
 		Player player = playerService.getPlayerById(202);
 		assertNotNull("Player not loaded!", player);
 		assertEquals("Wrong Player loaded!", new Integer(202), player.getId());
+	}
+	
+	@Test
+	@WithMockUser(username = "user1", authorities = { "MANAGER" })
+	public void testGetPlayersByUsernameContaining1()
+	{
+		Collection<Player> players = playerService.getPlayersWithUsernameContaining("user");
+		assertNotNull("Collection is null!", players);
+		assertEquals("Wrong number of players found!", 5, players.size());
+		
+		for (Player player : players)
+		{
+			if (!player.getUser().getUsername().contains("user"))
+			{
+				fail("Player loaded with username not containing the string!");
+			}
+		}
+	}
+	
+	@Test
+	@WithMockUser(username = "user3", authorities = { "PLAYER" })
+	public void testGetPlayersByUsernameContaining2()
+	{
+		Collection<Player> players = playerService.getPlayersWithUsernameContaining("4");
+		assertNotNull("Collection is null!", players);
+		assertEquals("Wrong number of players found!", 1, players.size());
+		
+		for (Player player : players)
+		{
+			if (!player.getUser().getUsername().contains("user"))
+			{
+				fail("Player loaded with username not containing the string!");
+			}
+		}
+	}
+	
+	@Test(expected = org.springframework.security.access.AccessDeniedException.class)
+	@WithMockUser(username = "user0", authorities = {})
+	public void testGetPlayersByUsernameContainingUnauthorized()
+	{
+		Collection<Player> players = playerService.getPlayersWithUsernameContaining("user");
 	}
 	
 	@DirtiesContext
