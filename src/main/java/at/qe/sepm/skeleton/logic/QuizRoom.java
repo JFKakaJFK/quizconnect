@@ -25,10 +25,12 @@ public class QuizRoom
 	private final long activityTimeStep = 500; // time between player activity checks
 	private final long activityDuration = 30000; // time until an activity ping invalidates
 	private final long timeoutDuration = 10000; // time until player gets kicked after no activity
-	private final long aliveTimeStep = 500; // expected time between alive pings
+	private final long aliveTimeStep = 500; // time between alive ping checks
 	private final long aliveDuration = 1000; // maximum time between alive pings
+	private final long timerSyncTimeStep = 1000; // time between timer sync calls to players
 	
 	private int pin;
+	private QuizRoomManager manager;
 	private List<Player> players;
 	private int maxPlayers;
 	private RoomDifficulty difficulty;
@@ -36,6 +38,8 @@ public class QuizRoom
 	private Timer timerFrameUpdate;
 	
 	private List<QuestionSet> questionSets;
+	
+	int temp = 0;
 	
 	/**
 	 * Initializes a new QR.
@@ -47,10 +51,12 @@ public class QuizRoom
 	 * @param gameMode
 	 * @param qSets
 	 */
-	public QuizRoom(ThreadPoolTaskScheduler scheduler, int pin, int maxPlayers, RoomDifficulty difficulty, GameMode gameMode, List<QuestionSet> qSets)
+	public QuizRoom(ThreadPoolTaskScheduler scheduler, QuizRoomManager manager, int pin, int maxPlayers, RoomDifficulty difficulty, GameMode gameMode,
+			List<QuestionSet> qSets)
 	{
-		LOGGER.debug("QR [" + pin + "] started.");
+		LOGGER.debug("QuizRoom [" + pin + "] started.");
 		this.pin = pin;
+		this.manager = manager;
 		this.maxPlayers = maxPlayers;
 		this.difficulty = difficulty;
 		this.gameMode = gameMode;
@@ -76,12 +82,27 @@ public class QuizRoom
 	 */
 	public void onFrameUpdate(long deltaTime)
 	{
+		// LOGGER.debug("frame call after " + timerFrameUpdate.getElapsedTime() + " ms.");
 		if (deltaTime > 2 * frameTimeStep)
 		{
 			LOGGER.debug("large delay in frameUpdate call of QR [" + pin + "] (" + deltaTime + "ms)");
 		}
 		
-		// LOGGER.debug("frame call after " + timerFrameUpdate.getElapsedTime() + " ms.");
+		temp++;
+		if (temp > 200)
+			onRoomClose();
+		
+	}
+	
+	/**
+	 * Called just before the room is closed. Cleans up the class.
+	 */
+	private void onRoomClose()
+	{
+		timerFrameUpdate.stop();
+		manager.removeRoom(pin);
+
+		LOGGER.debug("QuizRoom [" + pin + "] closed after " + timerFrameUpdate.getElapsedTime() + " ms.");
 	}
 	
 }

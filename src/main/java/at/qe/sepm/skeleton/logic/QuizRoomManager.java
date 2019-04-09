@@ -63,7 +63,7 @@ public class QuizRoomManager implements ApplicationListener<ContextRefreshedEven
 		// throw new IllegalArgumentException("QuizRoom question sets must contain at least one set!");
 		
 		int newPin = generatePin();
-		QuizRoom newRoom = new QuizRoom(taskScheduler, newPin, maxPlayers, difficulty, gameMode, qSets);
+		QuizRoom newRoom = new QuizRoom(taskScheduler, this, newPin, maxPlayers, difficulty, gameMode, qSets);
 		rooms.put(newPin, newRoom);
 		
 		return newPin;

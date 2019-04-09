@@ -37,7 +37,6 @@ public class Timer
 		LOGGER.debug("Timer thread start");
 		sFuture = scheduler.scheduleAtFixedRate(
 				() -> {
-					LOGGER.debug("call");
 					long now = new Date().getTime();
 					long delta = now - lastTime;
 					lastTime = now;
