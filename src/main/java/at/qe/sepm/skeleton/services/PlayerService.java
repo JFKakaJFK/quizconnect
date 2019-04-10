@@ -96,7 +96,7 @@ public class PlayerService
 	
 	/**
 	 * Saves a new {@link Player} to the database. Automatically creates a new {@link User} for the player using username and password. Password is expected to be already encrypted. Performs consistency
-	 * checks which may throw IllegalArgumentExceptions. For re-saving / updating {@link Players} use the 'savePlayer' function.
+	 * checks which may throw IllegalArgumentExceptions. For re-saving / updating {@link Player}s use the 'savePlayer' function.
 	 * 
 	 * @param player
 	 * @param username

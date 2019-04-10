@@ -11,6 +11,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * Service for accessing and manipulating {@link QuestionSetPerformance} entities.
  *
@@ -25,6 +27,17 @@ public class QuestionSetPerformanceService {
 
     @Autowired
     QuestionSetPerformanceRepository questionSetPerformanceRepository;
+
+    /**
+     * Returns all {@link QuestionSetPerformance}s of a {@link Player}
+     *
+     * @param player
+     * @return
+     */
+    @PreAuthorize("hasAnyAuthority('MANAGER', 'PLAYER')")
+    public List<QuestionSetPerformance> getQuestionSetPerformancesOfPlayer(Player player){
+        return questionSetPerformanceRepository.findByPlayer(player);
+    }
 
     /**
      * Returns the {@link QuestionSetPerformance} of a {@link Player} and a {@link QuestionSet}
