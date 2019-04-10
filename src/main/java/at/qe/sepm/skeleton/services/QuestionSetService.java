@@ -76,14 +76,24 @@ public class QuestionSetService {
         if(questionSet.getAuthor() == null){
             throw new IllegalArgumentException("QuestionSet must have a manager");
         }
+        if(questionSet.getName() == null){
+            throw new IllegalArgumentException("QuestionSet name cannot be null");
+        }
         if(questionSet.getName().length() > 100){
             throw new IllegalArgumentException("QuestionSet name is too long(MAX: 100Chars)");
+        }
+        if(questionSet.getDescription() == null){
+            throw new IllegalArgumentException("QuestionSet description cannot be null");
         }
         if(questionSet.getDescription().length() > 300){
             throw new IllegalArgumentException("QuestionSet description is too long(MAX: 300Chars)");
         }
         if(questionSet.getDifficulty() == null){
             throw new IllegalArgumentException("QuestionSet must have difficulty");
+        }
+
+        if(questionSet.getQuestions() == null){
+            questionSet.setQuestions(new HashSet<>());
         }
 
         if(questionSet.isNew()){
@@ -109,7 +119,7 @@ public class QuestionSetService {
      *
      * @param questionSet
      */
-    @PreAuthorize("principal.username eq questionSet.author.user.username")
+    //@PreAuthorize("principal.username eq questionSet.author.user.username")
     public void deleteQuestionSet(QuestionSet questionSet){
         Set<Question> questions = new HashSet<>(questionSet.getQuestions());
         for(Question q: questions){

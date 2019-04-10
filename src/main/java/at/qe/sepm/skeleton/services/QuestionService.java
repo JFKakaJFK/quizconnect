@@ -99,19 +99,19 @@ public class QuestionService {
         if(question.getWrongAnswerString_1() == null){
             throw new IllegalArgumentException("At least one wrong answer is required");
         }
-        if(question.getWrongAnswerString_1().length() > 200){
+        if(question.getWrongAnswerString_4() != null && question.getWrongAnswerString_1().length() > 200){
             throw new IllegalArgumentException("Wrong Answer 1 is too long(MAX: 200Chars)");
         }
-        if(question.getWrongAnswerString_2().length() > 200){
+        if(question.getWrongAnswerString_2() != null && question.getWrongAnswerString_2().length() > 200) {
             throw new IllegalArgumentException("Wrong Answer 2 is too long(MAX: 200Chars)");
         }
-        if(question.getWrongAnswerString_3().length() > 200){
+        if(question.getWrongAnswerString_3() != null && question.getWrongAnswerString_3().length() > 200) {
             throw new IllegalArgumentException("Wrong Answer 3 is too long(MAX: 200Chars)");
         }
-        if(question.getWrongAnswerString_4().length() > 200){
+        if(question.getWrongAnswerString_4() != null && question.getWrongAnswerString_4().length() > 200) {
             throw new IllegalArgumentException("Wrong Answer 4 is too long(MAX: 200Chars)");
         }
-        if(question.getWrongAnswerString_5().length() > 200){
+        if(question.getWrongAnswerString_5() != null && question.getWrongAnswerString_5().length() > 200) {
             throw new IllegalArgumentException("Wrong Answer 5 is too long(MAX: 200Chars)");
         }
 
@@ -123,7 +123,7 @@ public class QuestionService {
      *
      * @param question
      */
-    @PreAuthorize("principal.username eq question.questionSet.author.user.username")
+    //@PreAuthorize("principal.username eq question.questionSet.author.user.username")
     public void deleteQuestion(Question question){
         // TODO if type is file, delete all files
         if(question.getType() == QuestionType.picture){
