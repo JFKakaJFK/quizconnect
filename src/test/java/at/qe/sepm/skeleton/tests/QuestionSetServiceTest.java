@@ -230,5 +230,15 @@ public class QuestionSetServiceTest {
 
     }
 
+    @Test
+    @WithMockUser(username = "user1", authorities = { "MANAGER" })
+    public void testGetQuestionSetOfQuestion(){
+        // Initializing still missing 
+        QuestionSet checkSet;
+        Question testQuestion;
+
+        Assert.assertNotNull("QuestionSet is not null", questionSetService.getQuestionSetOfQuestion(testQuestion));
+        Assert.assertTrue("Right QuestionSet was loaded from DB", checkSet.equals(questionSetService.getQuestionSetOfQuestion(testQuestion)));
+    }
 
 }

@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 import at.qe.sepm.skeleton.model.Manager;
+import at.qe.sepm.skeleton.model.QuestionSetPerformance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -28,7 +29,7 @@ public class PlayerService
 	
 	@Autowired
 	UserService userService;
-	
+
 	/**
 	 * Returns a Collection of all {@link Player}s.
 	 * 

@@ -33,6 +33,15 @@ public class QuestionSetService {
     QuestionService questionService;
 
     /**
+     * Returns the QuestionSet of a Question
+     * @param question
+     * @return
+     */
+    public QuestionSet getQuestionSetOfQuestion(Question question) {
+        return questionSetRepositoryRepository.findByQuestions(question);
+    }
+
+    /**
      * Returns all {@link QuestionSet}s of a {@link Manager}
      *
      * @param manager
