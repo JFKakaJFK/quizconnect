@@ -1,11 +1,14 @@
 package at.qe.sepm.skeleton.tests;
 
+import java.util.List;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import at.qe.sepm.skeleton.model.*;
-import at.qe.sepm.skeleton.repositories.QuestionRepository;
 import at.qe.sepm.skeleton.repositories.QuestionSetRepository;
 import at.qe.sepm.skeleton.services.ManagerService;
 import at.qe.sepm.skeleton.services.QuestionService;
 import at.qe.sepm.skeleton.services.QuestionSetService;
+import at.qe.sepm.skeleton.services.UserService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,6 +31,9 @@ import java.util.Set;
 @SpringBootTest
 @WebAppConfiguration
 public class QuestionSetServiceTest {
+
+    @Autowired
+    UserService userService;
 
     @Autowired
     QuestionService questionService;
@@ -82,6 +88,17 @@ public class QuestionSetServiceTest {
             name.add("Too");
         }
         return name.toString();
+    }
+
+    @Test
+    @WithMockUser(username = "user1", authorities = { "MANAGER" })
+    public void testGetQuestionSetsOfManager()
+    {
+        User m = userService.loadUser("user1");
+
+        List<QuestionSet> questionSets = questionSetService.getQuestionSetsOfManager(m.getManager());
+        Assert.assertNotNull("QuestionSets not loaded!", questionSets);
+        Assert.assertTrue("Wrong number of Players loaded",questionSets.size() > 0);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -145,7 +162,7 @@ public class QuestionSetServiceTest {
         QuestionSet testSet = validQuestionSet();
         QuestionSet saved = questionSetService.saveQuestionSet(testSet);
 
-        Assert.assertTrue("QuestionSet is saved to DB", saved.getId() != null);
+        Assert.assertNotNull("QuestionSet is saved to DB", saved.getId());
     }
 
     @Test
@@ -212,5 +229,15 @@ public class QuestionSetServiceTest {
 
     }
 
+    @Test
+    @WithMockUser(username = "user1", authorities = { "MANAGER" })
+    public void testGetQuestionSetOfQuestion(){
+        // Initializing still missing
+        Question testQuestion = questionService.getAllByType(QuestionType.text).iterator().next();
+        QuestionSet checkSet = questionSetService.getQuestionSetOfQuestion(testQuestion);
+
+        Assert.assertNotNull("QuestionSet is not null", questionSetService.getQuestionSetOfQuestion(testQuestion));
+        Assert.assertTrue("Right QuestionSet was loaded from DB", checkSet.equals(questionSetService.getQuestionSetOfQuestion(testQuestion)));
+    }
 
 }

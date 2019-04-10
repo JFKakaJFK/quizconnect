@@ -8,6 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
 import at.qe.sepm.skeleton.model.Manager;
+import at.qe.sepm.skeleton.model.Player;
 import at.qe.sepm.skeleton.model.User;
 import at.qe.sepm.skeleton.repositories.ManagerRepository;
 
@@ -48,6 +49,18 @@ public class ManagerService
 	public Manager getManagerById(int id)
 	{
 		return managerRepository.findOne(id);
+	}
+	
+	/**
+	 * Returns the creator {@link Manager} of a {@link Player}.
+	 * 
+	 * @param player
+	 * @return
+	 */
+	@PreAuthorize("hasAuthority('PLAYER') or hasAuthority('MANAGER')")
+	public Manager getManagerOfPlayer(Player player)
+	{
+		return managerRepository.findByCreatedPlayers(player);
 	}
 	
 	/**

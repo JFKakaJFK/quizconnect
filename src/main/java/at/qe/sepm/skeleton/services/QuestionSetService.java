@@ -1,9 +1,6 @@
 package at.qe.sepm.skeleton.services;
 
-import at.qe.sepm.skeleton.model.Question;
-import at.qe.sepm.skeleton.model.QuestionSet;
-import at.qe.sepm.skeleton.model.QuestionSetDifficulty;
-import at.qe.sepm.skeleton.model.QuestionType;
+import at.qe.sepm.skeleton.model.*;
 import at.qe.sepm.skeleton.repositories.QuestionSetRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -33,6 +31,25 @@ public class QuestionSetService {
 
     @Autowired
     QuestionService questionService;
+
+    /**
+     * Returns the QuestionSet of a Question
+     * @param question
+     * @return
+     */
+    public QuestionSet getQuestionSetOfQuestion(Question question) {
+        return questionSetRepositoryRepository.findByQuestions(question);
+    }
+
+    /**
+     * Returns all {@link QuestionSet}s of a {@link Manager}
+     *
+     * @param manager
+     * @return
+     */
+    public List<QuestionSet> getQuestionSetsOfManager(Manager manager){
+        return questionSetRepositoryRepository.findByAuthor(manager);
+    }
 
     /**
      * Returns all {@link QuestionSet} with a certain {@link QuestionSetDifficulty}

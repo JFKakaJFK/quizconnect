@@ -1,5 +1,7 @@
 package at.qe.sepm.skeleton.repositories;
 
+import java.util.List;
+
 import at.qe.sepm.skeleton.model.Player;
 import at.qe.sepm.skeleton.model.QuestionSet;
 import at.qe.sepm.skeleton.model.QuestionSetPerformance;
@@ -13,4 +15,7 @@ import at.qe.sepm.skeleton.model.QuestionSetPerformance;
 public interface QuestionSetPerformanceRepository extends AbstractRepository<QuestionSetPerformance, Integer>
 {
 	QuestionSetPerformance findByPlayerAndQuestionSet(Player player, QuestionSet questionSet);
+	
+	// replaces Player.qSetPerformances lazy loading
+	List<QuestionSetPerformance> findByPlayer(Player player);
 }
