@@ -38,14 +38,14 @@
             <div class="form-group">
                 <label for="setName">Set name</label>
                 <h:inputText type="text" styleClass="form-control" value="#{questionSetBean.questionSet.name}"
-                             name="setName" id="setName" pt:autocomplete="off"/>
+                             name="setName" id="setName" pt:autocomplete="off" pt:required="true"/>
 
                 <label for="setDesc">Description</label>
                 <h:inputText type="text" styleClass="form-control" value="#{questionSetBean.questionSet.description}"
                              name="setDesc" id="setDesc" pt:autocomplete="off"/>
 
                 <label for="setDiff">Difficulty</label>
-                <h:selectOneRadio styleClass="btn-group-toggle" value="#{questionSetBean.questionSet.difficulty}" id="setDiff">
+                <h:selectOneRadio styleClass="btn-group-toggle" value="#{questionSetBean.questionSet.difficulty}" id="setDiff" pt:required="true">
                     <f:selectItem itemValue="easy" itemLabel="Easy"/>
                     <f:selectItem itemValue="hard" itemLabel="Hard"/>
                 </h:selectOneRadio>
@@ -64,16 +64,16 @@
             <div class="form-group">
                 <label for="question">Question</label>
                 <h:inputText type="text" styleClass="form-control" value="#{questionSetBean.question.questionString}"
-                             name="question" id="question" pt:autocomplete="off"/>
+                             name="question" id="question" pt:autocomplete="off" pt:required="true"/>
+                <h:message for="question" styleClass="state-error"/>
 
                 <label for="corrAnswer">Correct answer</label>
                 <h:inputText type="text" styleClass="form-control" value="#{questionSetBean.question.rightAnswerString}"
-                             name="corrAnswer" id="corrAnswer" pt:autocomplete="off"/>
+                             name="corrAnswer" id="corrAnswer" pt:autocomplete="off" pt:required="true"/>
 
                 <label for="wrongAnswer1">Wrong answer #1</label>
                 <h:inputText type="text" styleClass="form-control"
-                             value="#{questionSetBean.question.wrongAnswerString_1}" name="wrongAnswer1"
-                             id="wrongAnswer1" pt:autocomplete="off"/>
+                             value="#{questionSetBean.question.wrongAnswerString_1}" name="wrongAnswer1" pt:required="true" id="wrongAnswer1" pt:autocomplete="off"/>
 
                 <label for="wrongAnswer2">Wrong answer #2</label>
                 <h:inputText type="text" styleClass="form-control"
@@ -86,12 +86,15 @@
                              id="wrongAnswer3" pt:autocomplete="off"/>
 
                 <label for="type">Type</label>
-                <h:selectOneRadio styleClass="btn-group-toggle" value="#{questionSetBean.question.type}" id="type">
+                <h:selectOneRadio styleClass="btn-group-toggle" value="#{questionSetBean.question.type}" id="type" pt:required="true">
                     <f:selectItem itemValue="text" itemLabel="Text"/>
                     <f:selectItem itemValue="picture" itemLabel="Picture"/>
                 </h:selectOneRadio>
 
-                <h:commandButton styleClass="btn btn-block btn-primary btn-lg" value="Save question and add another one" action="#{questionSetBean.saveNewQuestion}" >
+                <h:commandButton styleClass="btn btn-block btn-primary btn-lg" pt:id="submitNew" value="Save question and add another one" action="#{questionSetBean.saveNewQuestion}" >
+                </h:commandButton>
+
+                <h:commandButton styleClass="btn btn-block btn-tertiary btn-lg" pt:id="submitCancel" value="Save question and return to overview" action="#{questionSetBean.exitCreateQuestionSet}" >
                 </h:commandButton>
             </div>
         </h:form>

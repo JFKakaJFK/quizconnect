@@ -35,7 +35,7 @@ public class PlayerService
 	 * 
 	 * @return
 	 */
-	@PreAuthorize("hasAuthority('MANAGER')")
+	//@PreAuthorize("hasAuthority('MANAGER')")
 	public Collection<Player> getAllPlayers()
 	{
 		return playerRepository.findAll();
@@ -58,7 +58,7 @@ public class PlayerService
 	 * @param id
 	 * @return
 	 */
-	@PreAuthorize("hasAuthority('MANAGER')")
+	//@PreAuthorize("hasAuthority('MANAGER')")
 	public Player getPlayerById(int id)
 	{
 		return playerRepository.findOne(id);

@@ -1,0 +1,22 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/WEB-INF/templates/main.xhtml">
+    <ui:define name ="content">
+        <h1 class="text-center display-4">Create Player</h1>
+
+        <h:form>
+            USERNAME
+            <h:inputText type="text" id="username" styleClass="form-control" value="#{createPlayerBean.username}">
+                <f:validateLength for="username" minimum="3" maximum="100" />
+            </h:inputText>
+            PW
+            <h:inputSecret styleClass="form-control" value="#{createPlayerBean.password}" />
+
+            <h:commandButton styleClass="btn btn-block btn-primary btn-lg" value="Create" action="#{createPlayerBean.createNewPlayer}"/>
+
+        </h:form>
+
+    </ui:define>
+</ui:composition>

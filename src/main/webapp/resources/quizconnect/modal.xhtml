@@ -3,13 +3,13 @@
         PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:composite="http://java.sun.com/jsf/composite"
+      xmlns:cc="http://java.sun.com/jsf/composite"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xml:lang="en"
       lang="en">
-    <composite:interface>
+    <cc:interface name="modal">
 
         <!--====================================================================================
 
@@ -29,7 +29,6 @@
         - [confirmAction] method with return type void, called when confirm button is clicked
         - [update] jsf ids of components to update, update will happen for each action
 
-
         Example
 
         <h:commandLink p:data-toggle="modal" p:data-target="#myModal" p:data-backdrop="static">
@@ -39,27 +38,34 @@
 
 
         <qc:modal ID="myModal" title="Modal Title" disableConfirm="true">
-            <h2>Modal content</h2>
+            <div class="modal-body">
+                <h2>Modal content</h2>
+            </div>
+            <div class="modal-footer">
+                footer buttons
+            </div>
         </qc:modal>
 
         ======================================================================================-->
-        <composite:attribute name="ID" required="true" />
-        <composite:attribute name="title" required="true" />
+        <cc:attribute name="ID" required="true" />
+        <cc:attribute name="title" required="true" />
+        <cc:attribute name="styleClass" default=""/>
 
-        <composite:attribute name="disableConfirm" default="false" />
+        <cc:attribute name="closeAction" method-signature="void action()" default="#{QCModalController.defaultAction}" />
+        <cc:attribute name="update" default="@none" />
 
-        <composite:attribute name="abort" default="Close" />
-        <composite:attribute name="confirm" default="Save changes" />
-        <composite:attribute name="closeAction" method-signature="void action()" default="#{QCModalController.defaultAction}" />
-        <composite:attribute name="abortAction" method-signature="void action()" default="#{QCModalController.defaultAction}" />
-        <composite:attribute name="confirmAction" method-signature="void action()" default="#{QCModalController.defaultAction}" />
+        <cc:attribute name="disableConfirm" default="false" />
 
-        <composite:attribute name="update" default="@none" />
+        <cc:attribute name="abort" default="Close" />
+        <cc:attribute name="confirm" default="Save changes" />
+        <cc:attribute name="closeAction" method-signature="void action()" default="#{QCModalController.defaultAction}" />
+        <cc:attribute name="abortAction" method-signature="void action()" default="#{QCModalController.defaultAction}" />
+        <cc:attribute name="confirmAction" method-signature="void action()" default="#{QCModalController.defaultAction}" />
 
-    </composite:interface>
+    </cc:interface>
 
-    <composite:implementation>
-        <h:panelGroup layout="block" styleClass="modal fade" p:id="#{cc.attrs.ID}" p:tabindex="-1" p:role="dialog" p:aria-labelledby="#{cc.attrs.ID}" p:aria-hidden="true">
+    <cc:implementation>
+        <h:panelGroup layout="block" styleClass="modal fade #{cc.attrs.styleClass}" p:id="#{cc.attrs.ID}" p:tabindex="-1" p:role="dialog" p:aria-labelledby="#{cc.attrs.ID}" p:aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -69,11 +75,12 @@
                             <span aria-hidden="true">
                                 <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M16.24 14.83a1 1 0 0 1-1.41 1.41L12 13.41l-2.83 2.83a1 1 0 0 1-1.41-1.41L10.59 12 7.76 9.17a1 1 0 0 1 1.41-1.41L12 10.59l2.83-2.83a1 1 0 0 1 1.41 1.41L13.41 12l2.83 2.83z"/></svg>
                             </span>
+                            <f:ajax execute="@form" render="#{cc.attrs.update}" />
                         </h:commandLink>
 
                     </div>
                     <div class="modal-body">
-                        <composite:insertChildren />
+                        <cc:insertChildren />
                     </div>
                     <div class="modal-footer">
 
@@ -89,5 +96,6 @@
                 </div>
             </div>
         </h:panelGroup>
-    </composite:implementation>
+    </cc:implementation>
+
 </html>
