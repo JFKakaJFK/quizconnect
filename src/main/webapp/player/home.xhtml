@@ -55,12 +55,12 @@
                         <pf:fileUpload fileUploadListener="#{changeAvatarBean.handleAvatarUpload}" multiple="false"
                                        mode="advanced" required="true"
                                        auto="true" sizeLimit="10000000"
-                                       allowTypes="/(\.|\/)(jpg|png)$/"
+                                       allowTypes="/(\.|\/)(jpe?g|png)$/"
                                        styleClass="avatar-upload jsf-hide"
                                        update="preview save"/>
 
                         <h:commandButton p:class="btn btn-tertiary" onclick="document.querySelector('.avatar-upload input').click()" value="Upload File">
-                            <f:ajax execute="@this" render="@none" onevent="startInterval"/>
+                            <f:ajax execute="@this" render="@none" />
                         </h:commandButton>
 
                     </div>
@@ -73,34 +73,13 @@
                                          p:class="btn btn-primary" value="Save Changes"
                                          p:data-dismiss="modal"
                                          disabled="#{changeAvatarBean.disabled}" >
-                            <f:ajax execute="@form" render="@form" onevent="stopInterval" />
+                            <f:ajax execute="@form" render="@form" />
                         </h:commandButton>
                     </div>
                 </qc:modal>
             </h:panelGroup>
 
-            <h:commandButton p:id="rerender" styleClass="jsf-hide">
-                <f:ajax execute="@this" render="save preview" />
-            </h:commandButton>
-
         </h:form>
 
-        <script type="text/javascript">
-            const rerender = document.getElementById('rerender');
-            const img = document.getElementById('preview');
-            const modal = document.getElementsByClassName('changeAvatar');
-            let interval;
-
-            function startInterval(){
-                //interval = setInterval(() => {rerender.click(); console.log("toc")}, 1000);
-                setTimeout(stopInterval, 30000);
-                console.log("started")
-            }
-
-            function stopInterval() {
-                clearInterval(interval);
-                console.log("stopped")
-            }
-        </script>
     </ui:define>
 </ui:composition>

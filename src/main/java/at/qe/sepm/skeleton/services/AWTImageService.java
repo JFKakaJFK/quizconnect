@@ -21,8 +21,12 @@ import java.nio.file.Path;
 public class AWTImageService implements ImageService {
 
     private static final Logger log = LoggerFactory.getLogger(ImageAPIController.class);
+    // Supported img types: https://docs.oracle.com/javase/7/docs/api/javax/imageio/package-summary.html
+    // sadly jpg & jpeg have intolerable artifacts and gif file sizes are enormous (and gif -> mp4 probably is a pain with java)
+    // private static final String JPEG = "jpeg";
     private static final String JPG = "jpg";
     private static final String PNG = "png";
+
 
     /**
      * Takes the path of an image as input and stores the resized image(aspect ratio is kept) to

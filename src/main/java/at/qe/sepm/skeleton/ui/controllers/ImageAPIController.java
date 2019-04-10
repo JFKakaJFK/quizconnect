@@ -76,7 +76,7 @@ public class ImageAPIController {
     public void getAnswer(HttpServletResponse response, @PathVariable String manager, @PathVariable String file, @PathVariable String ext){
         if(!(ext.toLowerCase().equals("png") || ext.toLowerCase().equals("jpg"))){
             log.error("Request for thumbnail is not well-formed: no image extension");
-            sendError(response,400, "Invalid extension. Allowed: (png|jpg)");
+            sendError(response,400, "Invalid extension. Allowed: (png|jpg|jpeg)");
             return;
         }
 

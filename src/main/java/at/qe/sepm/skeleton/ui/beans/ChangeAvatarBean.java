@@ -32,7 +32,6 @@ public class ChangeAvatarBean implements Serializable {
     }
 
     private String filename = null;
-    private String status = "";
     private Player player;
 
     /**
@@ -48,22 +47,24 @@ public class ChangeAvatarBean implements Serializable {
         try {
             UploadedFile upload = event.getFile();
             filename = storageService.storeAvatar(upload.getInputstream(), upload.getFileName(), "1232"); // TODO player.getCreator().getId().toString());
-            status = "Upload successful";
         } catch (IOException e){
             filename = null;
-            status = "Upload failed";
         }
     }
 
     public void saveAvatar(){
         if(filename == null){
-            status = "No file";
             return;
         }
-        status = "Avatar changed successfully";
+
+        String old = player.getAvatarPath();
 
         player.setAvatarPath(filename);
         playerService.savePlayer(player);
+
+        if(old != null){
+            storageService.deleteAvatar(old);
+        }
         filename = null;
     }
 
@@ -80,7 +81,6 @@ public class ChangeAvatarBean implements Serializable {
 
     public void setPlayer(Player player) {
         this.player = player;
-        status = "";
     }
 
     public boolean getDisabled(){
@@ -88,14 +88,6 @@ public class ChangeAvatarBean implements Serializable {
     }
 
     public void setDisabled(boolean bool){}
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
 
     public String getFilename() {
         if(filename == null && player != null){
