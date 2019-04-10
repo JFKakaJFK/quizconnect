@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"/>
     <link rel="stylesheet" href="../../resources/css/main.css" />
     <title>In Game | QuizConnect</title>
+    <ui:insert name="css"/>
 </h:head>
 
 <h:body>
@@ -56,7 +57,7 @@
                         <h:commandLink action="/secured/home?faces-redirect=true" value="Home"/>
                     </li>
                     <li class="my-3">
-                        <h:commandLink action="/secured/home?faces-redirect=true" value="QuestionSets"/>
+                        <h:commandLink action="/secured/questionSet.xhtml?faces-redirect=true" value="QuestionSets"/>
                     </li>
                     <li class="my-3">
                         <h:commandLink action="/players/all?faces-redirect=true" value="Players"/>
