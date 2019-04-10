@@ -13,8 +13,7 @@ import javax.annotation.PostConstruct;
 import javax.faces.context.FacesContext;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Bean to help to create a new QuestionSet
@@ -36,10 +35,17 @@ public class QuestionSetBean implements Serializable {
     @Autowired
     private SessionInfoBean sessionInfoBean;
 
+    private List<String> types = Arrays.asList("text", "picture");
+    private List<String> difficulty = Arrays.asList("easy", "hard");
+
     private User currentUser;
     private QuestionSet questionSet;
     private Set<Question> questions;
     private Question question;
+
+
+
+    private Set<Question> savedQuestionSets;
 
     @PostConstruct
     public void init() {
@@ -82,7 +88,7 @@ public class QuestionSetBean implements Serializable {
 
         try {
             FacesContext.getCurrentInstance().
-                    getExternalContext().redirect("/");
+                    getExternalContext().redirect("/secured/home.xhtml");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -102,5 +108,17 @@ public class QuestionSetBean implements Serializable {
 
     public void setQuestionSet(QuestionSet questionSet) {
         this.questionSet = questionSet;
+    }
+
+    public Set<Question> getSavedQuestionSets() {
+        return savedQuestionSets;
+    }
+
+    public List<String> getTypes() {
+        return types;
+    }
+
+    public List<String> getDifficulty() {
+        return difficulty;
     }
 }
