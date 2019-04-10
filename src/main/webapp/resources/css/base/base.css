@@ -67,3 +67,7 @@ svg {
 input.error {
     border-color: var(--error);
 }
+
+input:invalid {
+    border-color: var(--error);
+}
