@@ -1,6 +1,10 @@
 package at.qe.sepm.skeleton.model;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 import org.springframework.data.domain.Persistable;
 

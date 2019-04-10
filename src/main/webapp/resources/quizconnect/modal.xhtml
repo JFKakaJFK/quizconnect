@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:composite="http://java.sun.com/jsf/composite"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xml:lang="en"
+      lang="en">
+    <composite:interface>
+
+        <!--====================================================================================
+
+        The modal component generates the structure for a
+        bootstrap modal. The modal supports adding actions
+        to all buttons. An extra button is needed to open the
+        modal. Needs to be whithin a h:form.
+
+        Params:
+        - ID sets the id of the outmost container, needed as reference for opening modal
+        - title sets the modal heading
+        - [disableConfirm] [ false(default) | true ] disables/enables the confirm button
+        - [abort] text of the abort button (default: Close)
+        - [confirm] text of the confirm button (default: Save changes)
+        - [closeAction] method with return type void, called when modal is closed via close icon
+        - [abortAction] method with return type void, called when abort button is clicked
+        - [confirmAction] method with return type void, called when confirm button is clicked
+        - [update] jsf ids of components to update, update will happen for each action
+
+
+        Example
+
+        <h:commandLink p:data-toggle="modal" p:data-target="#myModal" p:data-backdrop="static">
+            Open Modal
+            <f:ajax execute="@form" render="myModal" />
+        </h:commandLink>
+
+
+        <qc:modal ID="myModal" title="Modal Title" disableConfirm="true">
+            <h2>Modal content</h2>
+        </qc:modal>
+
+        ======================================================================================-->
+        <composite:attribute name="ID" required="true" />
+        <composite:attribute name="title" required="true" />
+
+        <composite:attribute name="disableConfirm" default="false" />
+
+        <composite:attribute name="abort" default="Close" />
+        <composite:attribute name="confirm" default="Save changes" />
+        <composite:attribute name="closeAction" method-signature="void action()" default="#{QCModalController.defaultAction}" />
+        <composite:attribute name="abortAction" method-signature="void action()" default="#{QCModalController.defaultAction}" />
+        <composite:attribute name="confirmAction" method-signature="void action()" default="#{QCModalController.defaultAction}" />
+
+        <composite:attribute name="update" default="@none" />
+
+    </composite:interface>
+
+    <composite:implementation>
+        <h:panelGroup layout="block" styleClass="modal fade" p:id="#{cc.attrs.ID}" p:tabindex="-1" p:role="dialog" p:aria-labelledby="#{cc.attrs.ID}" p:aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">#{cc.attrs.title}</h5>
+
+                        <h:commandLink actionListener="#{cc.attrs.closeAction}" p:class="close" p:aria-label="Close" p:data-dismiss="modal">
+                            <span aria-hidden="true">
+                                <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M16.24 14.83a1 1 0 0 1-1.41 1.41L12 13.41l-2.83 2.83a1 1 0 0 1-1.41-1.41L10.59 12 7.76 9.17a1 1 0 0 1 1.41-1.41L12 10.59l2.83-2.83a1 1 0 0 1 1.41 1.41L13.41 12l2.83 2.83z"/></svg>
+                            </span>
+                        </h:commandLink>
+
+                    </div>
+                    <div class="modal-body">
+                        <composite:insertChildren />
+                    </div>
+                    <div class="modal-footer">
+
+                        <h:commandButton actionListener="#{cc.attrs.abortAction}" p:class="btn btn-tertiary" p:data-dismiss="modal" value="#{cc.attrs.abort}">
+                            <f:ajax execute="@form" render="#{cc.attrs.update}" />
+                        </h:commandButton>
+
+                        <h:commandButton actionListener="#{cc.attrs.confirmAction}" p:class="btn btn-primary" value="#{cc.attrs.confirm}" disabled="#{cc.attrs.disableConfirm}" >
+                            <f:ajax execute="@form" render="#{cc.attrs.update}" />
+                        </h:commandButton>
+
+                    </div>
+                </div>
+            </div>
+        </h:panelGroup>
+    </composite:implementation>
+</html>
