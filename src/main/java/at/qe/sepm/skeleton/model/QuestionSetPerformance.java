@@ -48,7 +48,8 @@ public class QuestionSetPerformance implements Persistable<Integer>
 	{
 		this.id = id;
 	}
-	
+
+	@Deprecated // TODO remove deprecated
 	public QuestionSet getQuestionSet()
 	{
 		return questionSet;
@@ -58,7 +59,8 @@ public class QuestionSetPerformance implements Persistable<Integer>
 	{
 		this.questionSet = questionSet;
 	}
-	
+
+	@Deprecated // TODO remove deprecated
 	public Player getPlayer()
 	{
 		return player;

@@ -5,11 +5,14 @@
 @import "base/base.css";
 
 @import "layout/layout.css";
+@import "layout/box.css";
 
 @import "module/module.css";
 @import "module/pushbar.css";
 @import "module/navbar.css";
+
 @import "../quizconnect/styles/playerbox.css";
 @import "../quizconnect/styles/stat.css";
+@import "../quizconnect/styles/modal.css";
 
 @import "state/state.css";

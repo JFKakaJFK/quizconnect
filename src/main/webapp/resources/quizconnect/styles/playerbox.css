@@ -24,10 +24,27 @@
 /* Boxes */
 
 .playerbox {
+    --border: 2px;
+    --border-online: 3px;
     background: var(--pb-bg);
     display: flex;
     align-items: center;
     justify-content: flex-start;
+    box-sizing: border-box;
+    border: var(--border) solid transparent;
+    background-clip: padding-box;
+    border-radius: 16px;
+    position: relative;
+}
+
+.playerbox:before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0; bottom: 0; left: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: var(--col-1-m);
+    margin: calc(0px - var(--border));
 }
 
 /* Avatar */
@@ -43,12 +60,12 @@
 }
 
 .playerbox[data-ingame="true"] .playerbox-avatar {
-    border: 4px solid var(--pb-ingame);
+    border: var(--border-online) solid var(--pb-ingame);
 }
 
 /* TODO: delete or set */
 .playerbox[data-ingame="false"] .playerbox-avatar {
-    border: 4px solid var(--pb-bg);
+    border: var(--border-online) solid var(--pb-bg);
 }
 
 .playerbox-avatar img {

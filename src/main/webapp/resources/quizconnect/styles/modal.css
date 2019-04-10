@@ -1,13 +1,19 @@
 .modal {
-
+    --border-radius: 16px;
 }
 
 .modal-dialog {
 
 }
 
-.modal-header {
+.modal-content {
+    background: transparent;
+}
 
+.modal-header {
+    background: var(--col-1-m);
+    border-bottom: 0;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
 }
 
 .modal-title {
@@ -15,9 +21,11 @@
 }
 
 .modal-body {
-
+    background: var(--col-1-d);
 }
 
 .modal-footer {
-
+    border-top: 0;
+    background: var(--col-1-m);
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
 }

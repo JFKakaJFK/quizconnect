@@ -1,0 +1,105 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+
+<h:head>
+    <title>Sign up</title>
+    <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"/>
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" type="text/css" href="resources/css/main.css"/>
+    <link rel="stylesheet" type="text/css" href="resources/css/login.css"/>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"/>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"/>
+    <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"/>
+</h:head>
+
+<h:body>
+    <div class="container pt-5 reduced-mobile-spacing">
+        <div class="row py-3">
+            <div class="col-lg">
+                <h1 class="display-4 text-center">Create a new QuestionSet</h1>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid mt-5 reduced-mobile-margin" id="responsive-formgroup">
+        <h:form id="questionSetForm" rendered="#{questionSetBean.questionSet.name == null}">
+
+            <div class="form-group">
+                <label for="setName">Set name</label>
+                <h:inputText type="text" styleClass="form-control" value="#{questionSetBean.questionSet.name}"
+                             name="setName" id="setName" pt:autocomplete="off"/>
+
+                <label for="setDesc">Description</label>
+                <h:inputText type="text" styleClass="form-control" value="#{questionSetBean.questionSet.description}"
+                             name="setDesc" id="setDesc" pt:autocomplete="off"/>
+
+                <label for="setDiff">Difficulty</label>
+                <h:selectOneRadio styleClass="btn-group-toggle" value="#{questionSetBean.questionSet.difficulty}" id="setDiff">
+                    <f:selectItem itemValue="easy" itemLabel="Easy"/>
+                    <f:selectItem itemValue="hard" itemLabel="Hard"/>
+                </h:selectOneRadio>
+            </div>
+
+            <div class="row py-5 pb-md-5">
+                <div class="col text-center">
+                    <h:commandButton styleClass="btn btn-block btn-primary btn-lg" id="saveQuestion"
+                                     action="#{questionSetBean.saveNewQuestionSet}" value="Step 2: Add questions"/>
+                </div>
+            </div>
+
+        </h:form>
+
+        <h:form id="questionForm" rendered="#{questionSetBean.questionSet.name != null}">
+            <div class="form-group">
+                <label for="question">Question</label>
+                <h:inputText type="text" styleClass="form-control" value="#{questionSetBean.question.questionString}"
+                             name="question" id="question" pt:autocomplete="off"/>
+
+                <label for="corrAnswer">Correct answer</label>
+                <h:inputText type="text" styleClass="form-control" value="#{questionSetBean.question.rightAnswerString}"
+                             name="corrAnswer" id="corrAnswer" pt:autocomplete="off"/>
+
+                <label for="wrongAnswer1">Wrong answer #1</label>
+                <h:inputText type="text" styleClass="form-control"
+                             value="#{questionSetBean.question.wrongAnswerString_1}" name="wrongAnswer1"
+                             id="wrongAnswer1" pt:autocomplete="off"/>
+
+                <label for="wrongAnswer2">Wrong answer #2</label>
+                <h:inputText type="text" styleClass="form-control"
+                             value="#{questionSetBean.question.wrongAnswerString_2}" name="wrongAnswer2"
+                             id="wrongAnswer2" pt:autocomplete="off"/>
+
+                <label for="wrongAnswer3">Wrong answer #3</label>
+                <h:inputText type="text" styleClass="form-control"
+                             value="#{questionSetBean.question.wrongAnswerString_3}" name="wrongAnswer3"
+                             id="wrongAnswer3" pt:autocomplete="off"/>
+
+                <label for="type">Type</label>
+                <h:selectOneRadio styleClass="btn-group-toggle" value="#{questionSetBean.question.type}" id="type">
+                    <f:selectItem itemValue="text" itemLabel="Text"/>
+                    <f:selectItem itemValue="picture" itemLabel="Picture"/>
+                </h:selectOneRadio>
+
+                <h:commandButton styleClass="btn btn-block btn-primary btn-lg" value="Save question and add another one" action="#{questionSetBean.saveNewQuestion}" >
+                </h:commandButton>
+            </div>
+        </h:form>
+
+
+
+    </div>
+
+
+</h:body>
+</html>

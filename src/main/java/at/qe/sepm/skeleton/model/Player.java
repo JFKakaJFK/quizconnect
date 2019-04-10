@@ -1,15 +1,14 @@
 package at.qe.sepm.skeleton.model;
 
-import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -41,16 +40,17 @@ public class Player implements Persistable<Integer>
 	
 	@Column(nullable = true, length = 200)
 	private String avatarPath;
-	
+
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	private Manager creator;
 	
 	/**
-	 * List of Players the Player played with recently. Number of players limited by maxPlayedWithLast. Sorted from least recently (index 0) to most recently played with.
+	 * List of player usernames the Player played with recently. Number of players limited by maxPlayedWithLast. Sorted from least recently (index 0) to most recently played with.
 	 */
-	@ManyToMany(cascade = CascadeType.DETACH, fetch = FetchType.LAZY)
-	private List<Player> playedWithLast;
-	
+	@ElementCollection(fetch = FetchType.EAGER)
+	private List<String> playedWithLast;
+
+	@Deprecated // TODO remove deprecated
 	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "player", fetch = FetchType.LAZY)
 	private List<QuestionSetPerformance> qSetPerformances;
 	
@@ -78,7 +78,8 @@ public class Player implements Persistable<Integer>
 	{
 		this.avatarPath = avatarPath;
 	}
-	
+
+	@Deprecated // TODO remove deprecated
 	public Manager getCreator()
 	{
 		return creator;
@@ -94,31 +95,29 @@ public class Player implements Persistable<Integer>
 	 * 
 	 * @return
 	 */
-	public Iterator<Player> getPlayedWithLast()
+	public List<String> getPlayedWithLast()
 	{
-		return playedWithLast.iterator();
+		return playedWithLast;
 	}
 	
 	/**
-	 * Adds the players to the list of players the player played with recently, removing duplicates and limits the number to maxPlayedWithLast.
+	 * Adds the players' usernames to the list of players the player played with recently, removing duplicates and limits the number to maxPlayedWithLast.
 	 * 
-	 * @param players
+	 * @param player
 	 */
-	public void addToPlayedWithLast(List<Player> players)
+	public void addToPlayedWithLast(Player player)
 	{
-		for (Player player : players)
+		String username = player.getUser().getUsername();
+		if (playedWithLast.contains(username))
 		{
-			if (playedWithLast.contains(player))
-			{
-				playedWithLast.remove(player); // remove from last position
-			}
-			else if (playedWithLast.size() > maxPlayedWithLast)
-			{
-				playedWithLast.remove(0); // remove least recently played with
-			}
-			
-			playedWithLast.add(player); // add new player at end of list (= most recently played with)
+			playedWithLast.remove(username); // remove from last position
 		}
+		else if (playedWithLast.size() > maxPlayedWithLast)
+		{
+			playedWithLast.remove(0); // remove least recently played with
+		}
+		
+		playedWithLast.add(username); // add new player at end of list (= most recently played with)
 	}
 	
 	public List<QuestionSetPerformance> getqSetPerformances()

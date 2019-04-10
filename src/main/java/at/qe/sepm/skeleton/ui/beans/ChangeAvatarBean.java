@@ -1,6 +1,7 @@
 package at.qe.sepm.skeleton.ui.beans;
 
 import at.qe.sepm.skeleton.model.Player;
+import at.qe.sepm.skeleton.services.ManagerService;
 import at.qe.sepm.skeleton.services.PlayerService;
 import at.qe.sepm.skeleton.services.StorageService;
 import org.primefaces.event.FileUploadEvent;
@@ -12,6 +13,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 
 @Controller
@@ -22,13 +24,16 @@ public class ChangeAvatarBean implements Serializable {
 
     private StorageService storageService;
     private PlayerService playerService;
+    private ManagerService managerService;
 
     @Autowired
-    public ChangeAvatarBean(StorageService storageService, PlayerService playerService){
+    public ChangeAvatarBean(StorageService storageService, PlayerService playerService, ManagerService managerService){
         assert storageService != null;
         assert playerService != null;
+        assert managerService != null;
         this.storageService = storageService;
         this.playerService = playerService;
+        this.managerService = managerService;
     }
 
     private String filename = null;
@@ -44,9 +49,9 @@ public class ChangeAvatarBean implements Serializable {
         if(filename != null){
             storageService.deleteAvatar(filename);
         }
-        try {
-            UploadedFile upload = event.getFile();
-            filename = storageService.storeAvatar(upload.getInputstream(), upload.getFileName(), "1232"); // TODO player.getCreator().getId().toString());
+        UploadedFile upload = event.getFile();
+        try(InputStream is = upload.getInputstream()) {
+            filename = storageService.storeAvatar(is, upload.getFileName(), managerService.getManagerOfPlayer(player).getUser().getUsername());
         } catch (IOException e){
             filename = null;
         }

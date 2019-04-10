@@ -70,7 +70,8 @@ public class QuestionSet implements Persistable<Integer>
 	{
 		this.description = description;
 	}
-	
+
+	@Deprecated // TODO remove deprecated
 	public Manager getAuthor()
 	{
 		return author;

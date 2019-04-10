@@ -13,7 +13,7 @@
         </f:metadata>
 
         <h:form>
-            <h:commandLink action="all?faces-redirect=true">
+            <h:commandLink action="all?faces-redirect=true" styleClass="back-btn">
                 <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M5.41 11H21a1 1 0 0 1 0 2H5.41l5.3 5.3a1 1 0 0 1-1.42 1.4l-7-7a1 1 0 0 1 0-1.4l7-7a1 1 0 0 1 1.42 1.4L5.4 11z"/></svg>All Players
             </h:commandLink>
 
@@ -28,21 +28,21 @@
                     <qc:playerbox player="#{profileBean.player}" online="#{randomOnlineTestBean.online}" rank="Beginner" />
                 </h:panelGroup>
 
-                <div class="stats">
+                <div class="stats box">
                     <qc:stat value="#{'2454'}" label="highscore" />
                     <qc:stat value="#{'52%'}" label="accuracy" />
                     <qc:stat value="#{'14'}" label="games played" />
                     <qc:stat value="#{'24'}" label="questions answered" />
                 </div>
 
-                <h:panelGroup layout="block" id="qs-stats" styleClass="qs-stats">
+                <h:panelGroup layout="block" id="qs-stats" styleClass="qs-stats box">
                     <qc:stat value="#{'Silicon Valley Trivia'}" label="questionset" />
                     <qc:stat value="#{'2454'}" label="highscore" />
                     <qc:stat value="#{'52%'}" label="accuracy" />
                     <qc:stat value="#{'14'}" label="times played" />
                 </h:panelGroup>
 
-                <h:panelGroup layout="block" id="qs-chart" styleClass="qs-chart">
+                <h:panelGroup layout="block" id="qs-chart" styleClass="qs-chart box">
                     <p>Do some nice graphs w/ ApexCharts</p>
                 </h:panelGroup>
             </h:panelGroup>
