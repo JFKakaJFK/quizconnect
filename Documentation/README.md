@@ -27,22 +27,30 @@ Other
 
 Backend
 
-- [ ] QuizRoom Architecture Planning (@Lorenz)
-- [ ] Unit tests for Question Services (@Johannes K., @Simon)
+- [x] QuizRoom Architecture Planning (@Lorenz)
+- [x] Unit tests for Question Services (@Johannes K., @Simon)
 
 Frontend (@Andreas, @Johannes K., @Johannes S., @Simon)
 
-- [ ] Home Views(Boilerplate)
-- [ ] Navigation(Boilerplate)
-- [ ] Player Profiles w/out Stats
-- [ ] QuestionSet creation
+- [x] Home Views(Boilerplate)
+- [x] Navigation(Boilerplate)
+- [x] Player Profiles w/out Stats
+- [x] QuestionSet creation
 
 Other
 
-## 10.04 - 17.04
+## 10.04 - 8.05
 
 Backend
 
+- [ ] Spielalgorithmus
+- [ ] 
+
 Frontend
+
+- [ ] CSS
+- [ ] Selenium Tests
+- - [ ] Selenium
+- - [ ] Selenium
 
 Other
