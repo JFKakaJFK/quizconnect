@@ -97,9 +97,8 @@ public class QuestionSetServiceTest {
         User m = userService.loadUser("user1");
 
         List<QuestionSet> questionSets = questionSetService.getQuestionSetsOfManager(m.getManager());
-        // TODO check if test fails because of no qsets in db or bug
-        assertNotNull("QuestionSets not loaded!", questionSets);
-        //assertEquals("Wrong number of Players loaded", 3, questionSets.size());
+        Assert.assertNotNull("QuestionSets not loaded!", questionSets);
+        Assert.assertTrue("Wrong number of Players loaded",questionSets.size() > 0);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -233,9 +232,9 @@ public class QuestionSetServiceTest {
     @Test
     @WithMockUser(username = "user1", authorities = { "MANAGER" })
     public void testGetQuestionSetOfQuestion(){
-        // Initializing still missing 
-        QuestionSet checkSet;
-        Question testQuestion;
+        // Initializing still missing
+        Question testQuestion = questionService.getAllByType(QuestionType.text).iterator().next();
+        QuestionSet checkSet = questionSetService.getQuestionSetOfQuestion(testQuestion);
 
         Assert.assertNotNull("QuestionSet is not null", questionSetService.getQuestionSetOfQuestion(testQuestion));
         Assert.assertTrue("Right QuestionSet was loaded from DB", checkSet.equals(questionSetService.getQuestionSetOfQuestion(testQuestion)));

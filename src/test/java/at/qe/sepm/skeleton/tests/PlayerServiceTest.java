@@ -45,7 +45,7 @@ public class PlayerServiceTest
 	public void testLoadAllPlayers()
 	{
 		Collection<Player> players = playerService.getAllPlayers();
-		assertEquals("Wrong number of players loaded!", 5, players.size());
+		assertEquals("Wrong number of players loaded!", 6, players.size());
 		
 		for (Player player : players)
 		{
@@ -273,6 +273,6 @@ public class PlayerServiceTest
 		assertNull("Player not deleted!", player2);
 		
 		Collection<Player> players = playerService.getAllPlayers();
-		assertEquals("Wrong number of players in DB!", 4, players.size());
+		assertEquals("Wrong number of players in DB!", 5, players.size());
 	}
 }

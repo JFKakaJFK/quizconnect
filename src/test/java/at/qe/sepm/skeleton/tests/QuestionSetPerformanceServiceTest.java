@@ -4,6 +4,7 @@ import at.qe.sepm.skeleton.model.*;
 import at.qe.sepm.skeleton.repositories.QuestionRepository;
 import at.qe.sepm.skeleton.repositories.QuestionSetPerformanceRepository;
 import at.qe.sepm.skeleton.services.*;
+import com.sun.xml.internal.bind.v2.TODO;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -53,15 +54,14 @@ public class QuestionSetPerformanceServiceTest {
     private QuestionSetPerformance questionSetPerformance;
 
     @Test
-    @WithMockUser(username = "user3", authorities = { "PLAYER" })
+    @WithMockUser(username = "user1", authorities = { "MANAGER" })
     public void testGetQuestionSetPerfsOfPlayer()
     {
         User p = userService.loadUser("user3");
-
+        // TODO add QSetPerf and test again
         List<QuestionSetPerformance> perfs = questionSetPerformanceService.getQuestionSetPerformancesOfPlayer(p.getPlayer());
-        // TODO check if test fails because of no perfs in db or bug
         Assert.assertNotNull("QuestionSets not loaded!", perfs);
-        //assertEquals("Wrong number of Players loaded", 3, questionSets.size());
+        //Assert.assertEquals("Wrong number of Players loaded", 3, questionSets.size());
     }
 
     @Before
