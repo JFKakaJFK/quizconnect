@@ -40,7 +40,7 @@ public class Player implements Persistable<Integer>
 	
 	@Column(nullable = true, length = 200)
 	private String avatarPath;
-	
+
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	private Manager creator;
 	
@@ -49,7 +49,8 @@ public class Player implements Persistable<Integer>
 	 */
 	@ElementCollection(fetch = FetchType.EAGER)
 	private List<String> playedWithLast;
-	
+
+	@Deprecated // TODO remove deprecated
 	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "player", fetch = FetchType.LAZY)
 	private List<QuestionSetPerformance> qSetPerformances;
 	
@@ -77,7 +78,8 @@ public class Player implements Persistable<Integer>
 	{
 		this.avatarPath = avatarPath;
 	}
-	
+
+	@Deprecated // TODO remove deprecated
 	public Manager getCreator()
 	{
 		return creator;
@@ -101,7 +103,7 @@ public class Player implements Persistable<Integer>
 	/**
 	 * Adds the players' usernames to the list of players the player played with recently, removing duplicates and limits the number to maxPlayedWithLast.
 	 * 
-	 * @param players
+	 * @param player
 	 */
 	public void addToPlayedWithLast(Player player)
 	{

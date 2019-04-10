@@ -71,6 +71,18 @@ public class PlayerServiceTest
 		assertNotNull("Player not loaded!", player);
 		assertEquals("Wrong Player loaded!", new Integer(202), player.getId());
 	}
+
+	@Test
+	@WithMockUser(username = "user1", authorities = { "MANAGER" })
+	public void testGetPlayersOfManager()
+	{
+		User m = userService.loadUser("user1");
+
+		List<Player> players = playerService.getPlayersOfManager(m.getManager());
+		assertNotNull("Players not loaded!", players);
+		assertEquals("Wrong number of Players loaded", 3, players.size());
+
+	}
 	
 	@Test
 	@WithMockUser(username = "user3", authorities = { "PLAYER" })

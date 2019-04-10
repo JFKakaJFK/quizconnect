@@ -1,7 +1,9 @@
 package at.qe.sepm.skeleton.services;
 
 import java.util.Collection;
+import java.util.List;
 
+import at.qe.sepm.skeleton.model.Manager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -36,6 +38,17 @@ public class PlayerService
 	public Collection<Player> getAllPlayers()
 	{
 		return playerRepository.findAll();
+	}
+
+	/**
+	 * Returns all {@link Player}s of the {@link Manager}
+	 *
+	 * @param manager
+	 * @return
+	 */
+	@PreAuthorize("hasAuthority('MANAGER')")
+	public List<Player> getPlayersOfManager(Manager manager){
+		return playerRepository.findByCreator(manager);
 	}
 	
 	/**
