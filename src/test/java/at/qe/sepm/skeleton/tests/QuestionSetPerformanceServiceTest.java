@@ -2,7 +2,9 @@ package at.qe.sepm.skeleton.tests;
 
 import at.qe.sepm.skeleton.model.*;
 import at.qe.sepm.skeleton.repositories.QuestionRepository;
+import at.qe.sepm.skeleton.repositories.QuestionSetPerformanceRepository;
 import at.qe.sepm.skeleton.services.*;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,6 +39,9 @@ public class QuestionSetPerformanceServiceTest {
     @Autowired
     private ManagerService managerService;
 
+    @Autowired
+    private QuestionSetPerformanceRepository questionSetPerformanceRepository;
+
     private Manager manager;
     private QuestionSet questionSet;
     private Player player;
@@ -65,7 +70,7 @@ public class QuestionSetPerformanceServiceTest {
 
         testPerformance.setPlayCount(42);
         testPerformance.setPlayer(player);
-        testPerformance.setRightAnswers(7);
+        testPerformance.setRightAnswers(70);
         testPerformance.setQuestionSet(questionSet);
         testPerformance.setTotalQuestions(420);
 
@@ -76,17 +81,36 @@ public class QuestionSetPerformanceServiceTest {
 
      */
 
-    @Test //(expected = IllegalArgumentException.class)
+    @Test
     @WithMockUser(username = "user1", authorities = { "MANAGER" })
-    public void testUpdatePlayerStatsQuestionSetPerformanceNull() {
-        //questionSetPerformanceService.updatePlayerStats(questionSet, player, 45, 436);
+    public void testGetQuestionSetPerformanceByPlayerAndQuestionSet() {
+        QuestionSetPerformance questionSetPerformanceTest1;
+        questionSetPerformanceTest1 = questionSetPerformanceService.updatePlayerStats(questionSet, player, 45, 436);
 
-        Player nullPlayer = null;
+        QuestionSetPerformance questionSetPerformanceTest2;
+        questionSetPerformanceTest2 = questionSetPerformanceService.getQuestionSetPerformanceByPlayerAndQuestionSet(player, questionSet);
 
-        questionSetPerformanceService.updatePlayerStats(questionSet, nullPlayer, 45, 436);
+        Assert.assertTrue("QuestionSetPerf gets loaded correctly", questionSetPerformanceTest1.getId().equals(questionSetPerformanceTest2.getId()));
     }
 
+    // Pretty useless test
+    @Test
+    @WithMockUser(username = "user1", authorities = { "MANAGER" })
+    public  void testUpdatePlayerStats() {
+        //questionSetPerformanceRepository.save(questionSetPerformance);
 
+        QuestionSetPerformance questionSetPerformanceTest1;
+        questionSetPerformanceTest1 = questionSetPerformanceService.updatePlayerStats(questionSet, player, 420, 70);
+        //QuestionSetPerformance questionSetPerformanceTest2;
+        //questionSetPerformanceTest2 = questionSetPerformanceService.updatePlayerStats(questionSet, player, 42, 436);
+
+        int correctTotal = questionSetPerformanceTest1.getTotalQuestions(); //+ questionSetPerformance.getTotalQuestions();
+        int correctRight = questionSetPerformanceTest1.getRightAnswers(); //+ questionSetPerformance.getRightAnswers();
+
+        Assert.assertEquals("Checks if Total is correct", correctTotal, questionSetPerformanceTest1.getTotalQuestions());
+        Assert.assertEquals("Checks if PlayCount is correct", 1, questionSetPerformanceTest1.getPlayCount());
+        Assert.assertEquals("Checks if RightAnswer is correct", correctRight, questionSetPerformanceTest1.getRightAnswers());
+    }
 
 
 
