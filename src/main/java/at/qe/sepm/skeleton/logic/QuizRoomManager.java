@@ -15,6 +15,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Controller;
 
+import at.qe.sepm.skeleton.model.Player;
 import at.qe.sepm.skeleton.model.QuestionSet;
 
 /**
@@ -47,13 +48,18 @@ public class QuizRoomManager implements ApplicationListener<ContextRefreshedEven
 	}
 	
 	/**
-	 * Creates a new {@link QuizRoom} with the specified settings. Returns the pin of the QR.
+	 * Creates a new {@link QuizRoom} with the specified settings. Returns the pin
+	 * of the QR.
 	 * 
 	 * @param maxPlayers
+	 *            Maximum number of {@link Player}s in the QuizRoom.
 	 * @param difficulty
+	 *            Difficulty of the QuizRoom.
 	 * @param gameMode
+	 *            Game mode of the QuizRoom.
 	 * @param qSets
-	 * @return pin of the new QR.
+	 *            List of QuestionSets to be used by the QuizRoom.
+	 * @return Pin of the new QuizRoom.
 	 */
 	public int createRoom(int maxPlayers, RoomDifficulty difficulty, GameMode gameMode, List<QuestionSet> qSets) throws IllegalArgumentException
 	{
@@ -67,6 +73,38 @@ public class QuizRoomManager implements ApplicationListener<ContextRefreshedEven
 		rooms.put(newPin, newRoom);
 		
 		return newPin;
+	}
+	
+	/**
+	 * Used by a {@link Player} to join a {@link QuizRoom}.
+	 * 
+	 * @param roomPin
+	 *            The pin of the QuizRoom to join.
+	 * @param player
+	 *            The Player to join the room.
+	 * @param roomAction
+	 *            Interface provided by the Player to the QuizRoom for QuizRoom to
+	 *            Player communication.
+	 * @return The IPlayerAction interface used for Player to QuizRoom
+	 *         communication.
+	 * @throws IllegalArgumentException
+	 *             Thrown if the QuizRoom doesn't exist, if the roomAction interface
+	 *             is invalid, or if the QuizRoom is already full.
+	 */
+	public IPlayerAction joinRoom(int roomPin, Player player, IRoomAction roomAction) throws IllegalArgumentException
+	{
+		if (!rooms.containsKey(roomPin))
+			throw new IllegalArgumentException("QuizRoom (pin " + roomPin + ") does not exist!");
+		else if (roomAction == null)
+			throw new IllegalArgumentException("roomAction interface provided cannot be null!");
+		
+		QuizRoom quizRoom = rooms.get(roomPin);
+		
+		boolean full = quizRoom.addPlayer(player, roomAction);
+		if (full)
+			throw new IllegalArgumentException("QuizRoom already full!");
+
+		return quizRoom;
 	}
 	
 	/**
