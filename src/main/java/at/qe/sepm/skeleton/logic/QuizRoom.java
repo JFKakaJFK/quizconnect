@@ -1,5 +1,6 @@
 package at.qe.sepm.skeleton.logic;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,6 +40,7 @@ public class QuizRoom implements IPlayerAction
 	private RoomDifficulty difficulty;
 	private GameMode gameMode;
 	private Timer timerFrameUpdate;
+	private volatile List<DelayedAction> delayQueue;
 	
 	private List<QuestionSet> questionSets;
 	
@@ -75,6 +77,7 @@ public class QuizRoom implements IPlayerAction
 		
 		players = new LinkedList<>();
 		playerInterfaces = new HashMap<>(maxPlayers);
+		delayQueue = new LinkedList<>();
 		
 		// create and start frame timer
 		timerFrameUpdate = new Timer(scheduler, new ITimedAction()
@@ -88,7 +91,7 @@ public class QuizRoom implements IPlayerAction
 	}
 	
 	/**
-	 * Gets called one every frameTimeStep ms by timerFrameUpdate.
+	 * Gets called once every frameTimeStep ms by timerFrameUpdate.
 	 * 
 	 * @param deltaTime
 	 */
@@ -99,7 +102,9 @@ public class QuizRoom implements IPlayerAction
 		{
 			LOGGER.debug("large delay in frameUpdate call of QR [" + pin + "] (" + deltaTime + "ms)");
 		}
+		checkDelayQueue();
 		
+		// temporary automatic close of QR after 10 sec.
 		temp++;
 		if (temp > 200)
 			onRoomClose();
@@ -112,11 +117,45 @@ public class QuizRoom implements IPlayerAction
 	 * @param f
 	 *            Function to be executed on all Player interfaces.
 	 */
-	private void eventCall(Consumer<IRoomAction> f)
+	private synchronized void eventCall(Consumer<IRoomAction> f)
 	{
 		for (IRoomAction action : playerInterfaces.values())
 		{
 			f.accept(action);
+		}
+	}
+	
+	/**
+	 * Adds the action to the queue to be executed at execTime.
+	 * 
+	 * @param action
+	 */
+	private synchronized void addDelayedAction(DelayedAction action) throws IllegalArgumentException
+	{
+		if (action == null || action.action == null)
+			throw new IllegalArgumentException("DelayAction is invalid!");
+		
+		for (int i = 0; i < delayQueue.size(); i++)
+		{
+			if (delayQueue.get(i).execTime > action.execTime)
+			{
+				delayQueue.add(i, action);
+				return;
+			}
+		}
+		delayQueue.add(action);
+	}
+	
+	/**
+	 * Called every frameUpdate, executes delayed action at around the right time (max. execTime + frameTimeStep).
+	 */
+	private synchronized void checkDelayQueue()
+	{
+		long now = new Date().getTime();
+		while (delayQueue.size() > 0 && delayQueue.get(0).execTime <= now)
+		{
+			delayQueue.get(0).action.run();
+			delayQueue.remove(0);
 		}
 	}
 	
@@ -129,7 +168,7 @@ public class QuizRoom implements IPlayerAction
 	 *            Interface for communication to the Player.
 	 * @return True if join successful, false if room is full.
 	 */
-	public boolean addPlayer(Player player, IRoomAction roomAction)
+	public synchronized boolean addPlayer(Player player, IRoomAction roomAction)
 	{
 		if (players.size() == maxPlayers)
 		{

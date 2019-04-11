@@ -34,7 +34,7 @@ public class Timer
 		this.action = action;
 		this.timeStep = timeStep;
 		
-		LOGGER.debug("Timer thread start");
+		// LOGGER.debug("Timer thread start");
 		sFuture = scheduler.scheduleAtFixedRate(
 				() -> {
 					long now = new Date().getTime();
