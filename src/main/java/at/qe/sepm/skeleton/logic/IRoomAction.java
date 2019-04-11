@@ -48,8 +48,10 @@ public interface IRoomAction
 	 * 
 	 * @param p
 	 *            The Player who left.
+	 * @param reason
+	 *            Reason for the Player leaving (e.g. 'disconnected', 'kicked').
 	 */
-	public void onPlayerLeave(Player p);
+	public void onPlayerLeave(Player p, String reason);
 	
 	/**
 	 * Called when the current score of the QR changes.

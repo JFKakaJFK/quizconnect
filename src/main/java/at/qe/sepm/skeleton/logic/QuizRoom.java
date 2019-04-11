@@ -1,5 +1,6 @@
 package at.qe.sepm.skeleton.logic;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 import at.qe.sepm.skeleton.model.Player;
+import at.qe.sepm.skeleton.model.Question;
 import at.qe.sepm.skeleton.model.QuestionSet;
 
 /**
@@ -31,18 +33,36 @@ public class QuizRoom implements IPlayerAction
 	private final long aliveTimeStep = 500; // time between alive ping checks
 	private final long aliveDuration = 1000; // maximum time between alive pings
 	private final long timerSyncTimeStep = 1000; // time between timer sync calls to players
+	private final long roomStartDelay = 5000; // time between all Players ready and game start
+	
+	private final int defaultNumberJokers = 1; // number of jokers to start with
 	
 	private int pin;
-	private QuizRoomManager manager;
-	private List<Player> players;
-	private HashMap<Player, IRoomAction> playerInterfaces;
 	private int maxPlayers;
+	private QuizRoomManager manager;
 	private RoomDifficulty difficulty;
 	private GameMode gameMode;
-	private Timer timerFrameUpdate;
-	private volatile List<DelayedAction> delayQueue;
-	
 	private List<QuestionSet> questionSets;
+	private Timer timerFrameUpdate;
+	
+	private volatile List<Question> questionsPoolEasy;
+	private volatile List<Question> questionsPoolHard;
+	private volatile int completedQuestions;
+	
+	private volatile List<Player> players; // players in the room
+	private volatile HashMap<Player, IRoomAction> playerInterfaces; // interfaces for each player
+	private volatile List<DelayedAction> delayQueue; // queue of delayed actions
+	
+	private volatile int score; // current room score
+	private volatile int numReshuffleJokers; // number of jokers available
+	private volatile List<ActiveQuestion> activeQuestions; // list of currently active questions
+	private volatile HashMap<Player, ActiveQuestion> playerQuestions; // map for storing assigned questions of players
+	private volatile HashMap<Player, List<ActiveQuestion>> playerAnswers; // map for storing assigned answers of players
+	private volatile HashMap<Player, Long> playerActivityTimestamps; // map for storing activity time stamps of players
+	private volatile HashMap<Player, Long> playerAlivePingTimestamps; // map for storing alive ping time stamps of players
+	
+	private volatile List<Player> readyPlayers; // list of players who declared themselves ready
+	private volatile boolean wfpMode; // true if the room is in 'waiting for players' mode
 	
 	int temp = 0;
 	
@@ -79,6 +99,21 @@ public class QuizRoom implements IPlayerAction
 		playerInterfaces = new HashMap<>(maxPlayers);
 		delayQueue = new LinkedList<>();
 		
+		numReshuffleJokers = defaultNumberJokers;
+		completedQuestions = 0;
+		score = 0;
+		
+		activeQuestions = new LinkedList<>();
+		playerQuestions = new HashMap<>(maxPlayers);
+		playerAnswers = new HashMap<>(maxPlayers);
+		playerActivityTimestamps = new HashMap<>(maxPlayers);
+		playerAlivePingTimestamps = new HashMap<>(maxPlayers);
+		
+		readyPlayers = new LinkedList<>();
+		wfpMode = true;
+		
+		loadQuestions();
+		
 		// create and start frame timer
 		timerFrameUpdate = new Timer(scheduler, new ITimedAction()
 		{
@@ -88,6 +123,14 @@ public class QuizRoom implements IPlayerAction
 				onFrameUpdate(delta);
 			}
 		}, frameTimeStep);
+	}
+	
+	/**
+	 * Called on QuizRoom creation; Loads all Questions contained in the QuestionSets to be used into the respective pools.
+	 */
+	private void loadQuestions()
+	{
+		// TODO question loading
 	}
 	
 	/**
@@ -103,6 +146,13 @@ public class QuizRoom implements IPlayerAction
 			LOGGER.debug("large delay in frameUpdate call of QR [" + pin + "] (" + deltaTime + "ms)");
 		}
 		checkDelayQueue();
+		
+		if (!wfpMode) // disable during wfp mode
+		{
+			// check activity time stamps for inactive players
+			
+			// check alive ping time stamps for disconnected players
+		}
 		
 		// temporary automatic close of QR after 10 sec.
 		temp++;
@@ -186,6 +236,44 @@ public class QuizRoom implements IPlayerAction
 	}
 	
 	/**
+	 * Removes a Player from the QuizRoom. May be called due to Player disconnecting, or afk kick.
+	 * 
+	 * @param player
+	 *            Player to be removed.
+	 * @param reason
+	 *            Reason for the removal (e.g. 'disconnected', 'kicked')
+	 */
+	public synchronized void removePlayer(Player player, String reason)
+	{
+		playerInterfaces.remove(player);
+		
+		eventCall(x -> {
+			x.onPlayerLeave(player, reason);
+		});
+		
+		players.remove(player);
+	}
+	
+	/**
+	 * Called roomStartDelay ms after all Players have readied up.
+	 */
+	private void onGameStart()
+	{
+		readyPlayers = null;
+		
+		long now = new Date().getTime();
+		for (Player player : players)
+		{
+			playerActivityTimestamps.put(player, now);
+			playerAlivePingTimestamps.put(player, now);
+		}
+		
+		wfpMode = false;
+		
+		// TODO distribute questions to all players
+	}
+	
+	/**
 	 * Called just before the room is closed. Cleans up the class.
 	 */
 	private void onRoomClose()
@@ -199,36 +287,36 @@ public class QuizRoom implements IPlayerAction
 	@Override
 	public int getRoomPin()
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		return pin;
 	}
 	
 	@Override
-	public List<Player> getRoomPlayers()
+	public synchronized List<Player> getRoomPlayers()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		List<Player> ps = new ArrayList<>(players.size());
+		for (Player player : players)
+		{
+			ps.add(player);
+		}
+		return ps;
 	}
 	
 	@Override
 	public int getRoomPlayerCount()
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		return players.size();
 	}
 	
 	@Override
 	public RoomDifficulty getRoomDifficulty()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return difficulty;
 	}
 	
 	@Override
 	public GameMode getRoomMode()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return gameMode;
 	}
 	
 	@Override
@@ -241,29 +329,46 @@ public class QuizRoom implements IPlayerAction
 	@Override
 	public int getRoomScore()
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		return score;
 	}
 	
 	@Override
-	public List<Player> getRoomReadyPlayers()
+	public synchronized List<Player> getRoomReadyPlayers()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		List<Player> ps = new ArrayList<>(readyPlayers.size());
+		for (Player player : readyPlayers)
+		{
+			ps.add(player);
+		}
+		return ps;
 	}
 	
 	@Override
 	public long getAlivePingTimeStep()
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		return aliveTimeStep;
 	}
 	
 	@Override
 	public void readyUp(Player p)
 	{
-		// TODO Auto-generated method stub
+		// player already ready?
+		if (readyPlayers.contains(p))
+			return;
 		
+		readyPlayers.add(p);
+		
+		// are all players ready?
+		if (readyPlayers.size() == players.size())
+		{
+			addDelayedAction(new DelayedAction(new Date().getTime() + roomStartDelay, () -> {
+				onGameStart();
+			}));
+		}
+		
+		eventCall(x -> {
+			x.onReadyUp(p, readyPlayers.size());
+		});
 	}
 	
 	@Override
