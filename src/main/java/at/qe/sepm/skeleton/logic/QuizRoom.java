@@ -14,6 +14,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import at.qe.sepm.skeleton.model.Player;
 import at.qe.sepm.skeleton.model.Question;
 import at.qe.sepm.skeleton.model.QuestionSet;
+import at.qe.sepm.skeleton.model.QuestionSetDifficulty;
 
 /**
  * Class representing a QuizRoom containing all major logic required.
@@ -45,9 +46,13 @@ public class QuizRoom implements IPlayerAction
 	private List<QuestionSet> questionSets;
 	private Timer timerFrameUpdate;
 	
-	private volatile List<Question> questionsPoolEasy;
-	private volatile List<Question> questionsPoolHard;
-	private volatile int completedQuestions;
+	private volatile long activityCheckTime; // ms since last activity check
+	private volatile long aliveCheckTime; // ms since last alive check
+	private volatile long timerSyncTime; // ms since last timer sync
+	
+	private volatile List<Question> questionsPoolEasy; // list of all unused easy questions
+	private volatile List<Question> questionsPoolHard; // list of all unused hard questions
+	private volatile int completedQuestions; // total number of answered questions
 	
 	private volatile List<Player> players; // players in the room
 	private volatile HashMap<Player, IRoomAction> playerInterfaces; // interfaces for each player
@@ -99,6 +104,10 @@ public class QuizRoom implements IPlayerAction
 		playerInterfaces = new HashMap<>(maxPlayers);
 		delayQueue = new LinkedList<>();
 		
+		activityCheckTime = 0;
+		aliveCheckTime = 0;
+		timerSyncTime = 0;
+		
 		numReshuffleJokers = defaultNumberJokers;
 		completedQuestions = 0;
 		score = 0;
@@ -130,7 +139,19 @@ public class QuizRoom implements IPlayerAction
 	 */
 	private void loadQuestions()
 	{
-		// TODO question loading
+		questionsPoolEasy = new LinkedList<>();
+		questionsPoolHard = new LinkedList<>();
+		
+		for (QuestionSet qSet : questionSets)
+		{
+			for (Question q : qSet.getQuestions())
+			{
+				if (qSet.getDifficulty() == QuestionSetDifficulty.easy)
+					questionsPoolEasy.add(q);
+				else if (qSet.getDifficulty() == QuestionSetDifficulty.hard)
+					questionsPoolHard.add(q);
+			}
+		}
 	}
 	
 	/**
@@ -149,10 +170,30 @@ public class QuizRoom implements IPlayerAction
 		
 		if (!wfpMode) // disable during wfp mode
 		{
-			// check activity time stamps for inactive players
+			aliveCheckTime += deltaTime;
+			if (aliveCheckTime >= aliveTimeStep)
+			{
+				checkPlayerAlivePings();
+				aliveCheckTime = 0;
+			}
 			
-			// check alive ping time stamps for disconnected players
+			activityCheckTime += deltaTime;
+			if (activityCheckTime >= activityTimeStep)
+			{
+				checkPlayerActivity();
+				activityCheckTime = 0;
+			}
+			
+			timerSyncTime += deltaTime;
+			if (timerSyncTime >= timerSyncTimeStep)
+			{
+				synchonizeTimers();
+				timerSyncTime = 0;
+			}
+
 		}
+		
+		checkQuestionTimes(deltaTime);
 		
 		// temporary automatic close of QR after 10 sec.
 		temp++;
@@ -162,7 +203,7 @@ public class QuizRoom implements IPlayerAction
 	}
 	
 	/**
-	 * Executes f for each Player in the QuizRoom.
+	 * Executes function f on the interface of each Player in the QuizRoom.
 	 * 
 	 * @param f
 	 *            Function to be executed on all Player interfaces.
@@ -210,6 +251,45 @@ public class QuizRoom implements IPlayerAction
 	}
 	
 	/**
+	 * Called every frameUpdate, reduces remaining time and checks for all ActiveQuestions if time has run out.
+	 */
+	private synchronized void checkQuestionTimes(long deltaTime)
+	{
+		for (int i = activeQuestions.size() - 1; i >= 0; i--)
+		{
+			activeQuestions.get(i).timeRemaining -= deltaTime;
+			if (activeQuestions.get(i).timeRemaining <= 0)
+			{
+				removeQuestion(activeQuestions.get(i));
+			}
+		}
+	}
+	
+	/**
+	 * Called every activityTimeStep ms, checks for each Player if the last activity time stamp is more than activityDuration ms ago.
+	 */
+	private synchronized void checkPlayerActivity()
+	{
+		// TODO implement activity check
+	}
+	
+	/**
+	 * Called every aliveTimeStep ms, checks for each Player if the last alive ping is more than aliveDuration ms ago.
+	 */
+	private synchronized void checkPlayerAlivePings()
+	{
+		// TODO implement alive check
+	}
+	
+	/**
+	 * Called every timerSyncTimeStep, calls the onTimerSync event on all Players, sending the current remaining time on the Question timer.
+	 */
+	private synchronized void synchonizeTimers()
+	{
+		// TODO implement timer sync
+	}
+	
+	/**
 	 * Called by the {@link QuizRoomManager} if a Player tries to join the QuizRoom.
 	 * 
 	 * @param player
@@ -236,12 +316,12 @@ public class QuizRoom implements IPlayerAction
 	}
 	
 	/**
-	 * Removes a Player from the QuizRoom. May be called due to Player disconnecting, or afk kick.
+	 * Removes a Player from the QuizRoom. May be called due to Player leaving, or afk kick.
 	 * 
 	 * @param player
 	 *            Player to be removed.
 	 * @param reason
-	 *            Reason for the removal (e.g. 'disconnected', 'kicked')
+	 *            Reason for the removal (e.g. 'left', 'kicked', 'disconnected')
 	 */
 	public synchronized void removePlayer(Player player, String reason)
 	{
@@ -270,7 +350,11 @@ public class QuizRoom implements IPlayerAction
 		
 		wfpMode = false;
 		
-		// TODO distribute questions to all players
+		// distribute questions to all players
+		for (int i = 0; i < players.size(); i++)
+		{
+			distributeQuestion();
+		}
 	}
 	
 	/**
@@ -282,6 +366,24 @@ public class QuizRoom implements IPlayerAction
 		manager.removeRoom(pin);
 
 		LOGGER.debug("QuizRoom [" + pin + "] closed after " + timerFrameUpdate.getElapsedTime() + " ms.");
+	}
+	
+	/**
+	 * Takes a random unused question and assigns it to players with open slots. Question selection is dependent on room difficulty and passed time.
+	 */
+	private synchronized void distributeQuestion()
+	{
+		// TODO question distribution algorithm
+	}
+	
+	/**
+	 * Removes the ActiveQuestion from all Players involved (question + answers).
+	 * 
+	 * @param q
+	 */
+	private synchronized void removeQuestion(ActiveQuestion q)
+	{
+		// TODO question removal
 	}
 	
 	@Override
@@ -320,10 +422,14 @@ public class QuizRoom implements IPlayerAction
 	}
 	
 	@Override
-	public List<String> getRoomQuestionSets()
+	public synchronized List<String> getRoomQuestionSets()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		List<String> QSstrings = new ArrayList<>(questionSets.size());
+		for (QuestionSet questionSet : questionSets)
+		{
+			QSstrings.add(questionSet.getName());
+		}
+		return QSstrings;
 	}
 	
 	@Override
@@ -350,7 +456,7 @@ public class QuizRoom implements IPlayerAction
 	}
 	
 	@Override
-	public void readyUp(Player p)
+	public synchronized void readyUp(Player p)
 	{
 		// player already ready?
 		if (readyPlayers.contains(p))
@@ -395,15 +501,13 @@ public class QuizRoom implements IPlayerAction
 	@Override
 	public void leaveRoom(Player p)
 	{
-		// TODO Auto-generated method stub
-		
+		removePlayer(p, "left");
 	}
 	
 	@Override
-	public void sendAlivePing(Player p)
+	public synchronized void sendAlivePing(Player p)
 	{
-		// TODO Auto-generated method stub
-		
+		playerAlivePingTimestamps.put(p, new Date().getTime());
 	}
 	
 }

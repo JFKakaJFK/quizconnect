@@ -64,7 +64,7 @@ public interface IPlayerAction
 	 */
 	
 	/**
-	 * Marks the {@link Player} as ready. Ready status can't be revoked after calling this. Only works during 'waiting for players' stage.
+	 * Marks the {@link Player} as ready. Ready status can't be revoked after calling this. Only works during 'waiting for players' stage. Synchronized across Players.
 	 * 
 	 * @param p
 	 *            The Player making the call.
@@ -101,7 +101,7 @@ public interface IPlayerAction
 	public void cancelTimeout(Player p);
 	
 	/**
-	 * Called if the {@link Player} leaves the QuizRoom naturally (i.e. not disconnected). No more calls from this Player to the QuizRoom are permitted after calling this. Synchronized across Players.
+	 * Called if the {@link Player} leaves the QuizRoom naturally (i.e. not kicked). No more calls from this Player to the QuizRoom are permitted after calling this. Synchronized across Players.
 	 * 
 	 * @param p
 	 *            The Player making the call.
