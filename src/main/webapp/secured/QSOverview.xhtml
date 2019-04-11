@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/WEB-INF/templates/main.xhtml">
+    <ui:define name="css">
+        <link rel="stylesheet" type="text/css" href="/resources/css/QSOverview.css"/>
+    </ui:define>
+
+    <ui:define name="content">
+        <div class="container pt-5 reduced-mobile-spacing">
+            <div class="row py-3">
+                <div class="col-lg">
+                    <h1 class="display-4 text-center">Overview Question-Sets</h1>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid mt-5 reduced-mobile-margin" id="responsive-formgroup">
+            <h:outputText value="#{QSOverviewBean.questionSets.size()}"></h:outputText>
+        </div>
+
+        <ui:repeat value="#{QSOverviewBean.questionSets}" var="questionSet">
+            <div class="container-fluid w-50 p-3 mt-5 reduced-mobile-margin" id="question-panel">
+                <div class="container-fluid text-center">
+                    <h:outputText value="#{questionSet.name}"></h:outputText>
+                </div>
+
+                <div class="container-fluid text-center">
+                    <h:outputText value="#{questionSet.description}"></h:outputText>
+                </div>
+
+                <div class="container-fluid text-center">
+                    <h:outputText value="#{questionSet.difficulty}"></h:outputText>
+                </div>
+
+                <div class="container-fluid text-center">
+                    <h:outputText value="#{questionSet.questions.size()}"></h:outputText>
+                </div>
+
+
+                <h:form id="ffileform" enctype="multipart/form-data">
+                    <h:inputFile value="#{fileUploadBean.file}">
+                        <f:ajax execute="@this" render="@this" />
+                    </h:inputFile>
+                </h:form>
+
+            </div>
+        </ui:repeat>
+
+    </ui:define>
+</ui:composition>
