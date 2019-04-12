@@ -14,13 +14,14 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"/>
+    <link rel="stylesheet" type="text/css" href="resources/css/main.css" />
 
     <title>Title</title>
 </h:head>
 <h:body>
-    <qc:stat ID="hookForJSFAjax" label="accuracy" value="#{1034}%" size="lg" align="left" />
+    <qc:stat label="accuracy" value="#{1034}%" size="lg" align="left" />
 
-    <h:form>
+    <h:form id="test">
 
         <h:commandLink p:class="ml-2" p:data-toggle="modal" p:data-target="#myModal" p:data-backdrop="static">
             Open Modal
@@ -28,11 +29,12 @@
         </h:commandLink>
 
 
-        <qc:modal ID="myModal" title="Modal Title" disableConfirm="true">
+        <qc:modal target="myModal" title="This is a nice Title" disableConfirm="true" confirm="Confirm" abort="Abort">
             <h2>Modal content</h2>
         </qc:modal>
 
     </h:form>
+
 
 
     <!-- Optional JavaScript -->
