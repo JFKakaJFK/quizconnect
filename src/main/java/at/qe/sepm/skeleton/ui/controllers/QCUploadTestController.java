@@ -14,5 +14,7 @@ public class QCUploadTestController {
         System.out.println("UPLOAD - START");
         System.out.println(file.getOriginalFilename());
         System.out.println("END");
+
+        // TODO: IMPORTANT: do file validation here
     }
 }

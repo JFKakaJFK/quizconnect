@@ -27,18 +27,21 @@
     - target ... name of requested file (used for POST
                  request parameter name & as id)
     - endpoint ... POST request is sent to endpoint
+    - accept ... HTML5 input[type="file"] accept attr
+    - styleClass ... HTML class
 
     ==============================================-->
 
     <cc:attribute name="formId" required="true" />
     <cc:attribute name="target" required="true" />
     <cc:attribute name="endpoint" required="true" />
+    <cc:attribute name="accept" required="false" default="*/*" />
     <cc:attribute name="styleClass" required="false" default=""/>
 
 </cc:interface>
 
 <cc:implementation>
-    <input type="file" name="#{cc.attrs.target}" id="#{cc.attrs.target}" class="#{cc.attrs.styleClass}"/>
+    <input type="file" accept="#{cc.attrs.accept}" name="#{cc.attrs.target}" id="#{cc.attrs.target}" class="#{cc.attrs.styleClass}"/>
     <h:outputScript>
         QCUpload.upload('##{cc.attrs.target}', '#{cc.attrs.endpoint}', '##{cc.attrs.formId}');
     </h:outputScript>
