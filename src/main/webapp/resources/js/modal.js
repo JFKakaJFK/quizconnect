@@ -1,4 +1,11 @@
 $('#questionForm').submit(function(e){
+    console.log('invoked modal.js');
     e.preventDefault();
-    $("#questionModal").modal();
+    console.log('prevented Default from modal.js');
+    $("#questionModal").modal({
+        show : true,
+        keyboard : false,
+        backdrop : 'static'
+    });
+    console.log('show modal');
 });

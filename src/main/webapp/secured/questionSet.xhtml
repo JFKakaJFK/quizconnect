@@ -132,10 +132,25 @@
 
 
                 <h:commandButton styleClass="btn btn-block btn-primary btn-lg" pt:id="submitNew"
-                                 value="Save" action="#{questionSetBean.saveNewQuestion}" pt:type="submit" pt:data-backdrop="static" >
+                                 value="Save" pt:type="submit">
                 </h:commandButton>
 
-                <qc:modal target="questionModal" modaltype="question" title="Another one?" abort="No" confirm="Yes" confirmAction="#{questionSetBean.clearQuestion}" abortAction="#{questionSetBean.exitCreateQuestionSet}" update="@form">
+                <script type="text/javascript">
+                    $('#questionForm').submit(function(e){
+                        console.log('invoked modal.js from inline script');
+                        e.preventDefault();
+                        console.log('prevented Default from modal.js from inline script');
+                        $("#questionModal").modal({
+                            show : true,
+                            keyboard : false,
+                            backdrop : 'static'
+                        });
+                        console.log('show modal from inline script');
+                    });
+
+                </script>
+
+                <qc:modal target="questionModal" closable="false" modaltype="question" title="Another one?" abort="No" confirm="Yes" confirmAction="#{questionSetBean.saveNewQuestion}" abortAction="#{questionSetBean.exitCreateQuestionSet}" update="@form">
                     <h2>Do you want to add another question?</h2>
                 </qc:modal>
             </h:form>
