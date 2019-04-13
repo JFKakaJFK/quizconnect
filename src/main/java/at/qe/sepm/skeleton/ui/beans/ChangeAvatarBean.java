@@ -4,8 +4,8 @@ import at.qe.sepm.skeleton.model.Player;
 import at.qe.sepm.skeleton.services.ManagerService;
 import at.qe.sepm.skeleton.services.PlayerService;
 import at.qe.sepm.skeleton.services.StorageService;
-import org.primefaces.event.FileUploadEvent;
-import org.primefaces.model.UploadedFile;
+//import org.primefaces.event.FileUploadEvent;
+//import org.primefaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,11 +39,13 @@ public class ChangeAvatarBean implements Serializable {
     private String filename = null;
     private Player player;
 
+
     /**
      * Catches a fileupload and stores file
      *
      * @param event
      */
+    /*
     public void handleAvatarUpload(FileUploadEvent event){
 
         if(filename != null){
@@ -56,6 +58,7 @@ public class ChangeAvatarBean implements Serializable {
             filename = null;
         }
     }
+    */
 
     public void saveAvatar(){
         if(filename == null){

@@ -1,0 +1,8 @@
+{-
+Use recursion to implement a function allTrue that, given a list of
+boolean values, checks whether they are all true.
+Example: allTrue [True,False,True] = False
+-}
+
+allTrue [] = True
+allTrue (x:xs) = if x then allTrue xs else False

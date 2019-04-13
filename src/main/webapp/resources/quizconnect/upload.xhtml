@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://java.sun.com/jsf/composite"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xml:lang="en"
+      lang="en">
+<cc:interface>
+
+    <!--=============================================
+
+    !!!!!!!!!!!!       IMPORTANT         !!!!!!!!!!!!
+
+    1. h:form needs id
+    2. h:form needs enctype="multipart/form-data"
+    3. QCUpload.js needs to be imported
+    4. The backing bean must have a @RequestMapping
+       on the [endpoint] (e.g. '/avatars') and expect
+       a parameter with name [target]
+    5. formId & target should be unique
+
+    ===============    ATTRIBUTES    ================
+
+    - formId ... id of the h:form
+    - target ... name of requested file (used for POST
+                 request parameter name & as id)
+    - endpoint ... POST request is sent to endpoint
+    - accept ... HTML5 input[type="file"] accept attr
+    - styleClass ... HTML class
+
+    ==============================================-->
+
+    <cc:attribute name="formId" required="true" />
+    <cc:attribute name="target" required="true" />
+    <cc:attribute name="endpoint" required="true" />
+    <cc:attribute name="accept" required="false" default="*/*" />
+    <cc:attribute name="styleClass" required="false" default=""/>
+
+</cc:interface>
+
+<cc:implementation>
+    <input type="file" accept="#{cc.attrs.accept}" name="#{cc.attrs.target}" id="#{cc.attrs.target}" class="#{cc.attrs.styleClass}"/>
+    <h:outputScript>
+        QCUpload.upload('##{cc.attrs.target}', '#{cc.attrs.endpoint}', '##{cc.attrs.formId}');
+    </h:outputScript>
+</cc:implementation>
+</html>
