@@ -56,18 +56,19 @@ public class QuestionSetBean implements Serializable {
     }
 
     public void clearQuestion() {
+        logger.info("clear question invoked");
         question = new Question();
         question.setType(QuestionType.text);
 
     }
 
     public void saveNewQuestion() {
+        logger.info("Save new question invoked");
         questions.add(question);
         question.setQuestionSet(questionSet);
         logger.info("questionSet=" + question.getQuestionSet() + "; type=" + question.getType() + ", questionString='" + question.getQuestionString() + ", rightAnswerString='" + question.getRightAnswerString());
         questionService.saveQuestion(question);
         logger.info("Created a new question with ID: " + question.getId());
-        clearQuestion();
     }
 
     public void saveNewQuestionSet() {
