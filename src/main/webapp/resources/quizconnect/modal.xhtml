@@ -44,15 +44,25 @@
         ======================================================================================-->
         <cc:attribute name="target" required="true" />
         <cc:attribute name="title" required="true" />
+        <cc:attribute name="disableConfirm" default="false" />
+
+
         <cc:attribute name="closeAction" method-signature="void action()" default="#{QCModalController.defaultAction}" />
         <cc:attribute name="update" default="@none" />
+
+        <cc:attribute name="abort" default="Close" />
+        <cc:attribute name="confirm" default="Save changes" />
+        <cc:attribute name="closeAction" method-signature="void action()" default="#{QCModalController.defaultAction}" />
+        <cc:attribute name="abortAction" method-signature="void action()" default="#{QCModalController.defaultAction}" />
+        <cc:attribute name="confirmAction" method-signature="void action()" default="#{QCModalController.defaultAction}" />
+
 
     </cc:interface>
 
     <cc:implementation>
-        <div class="modal fade #{cc.attrs.target}" tabindex="-1" role="dialog" aria-labelledby="#{cc.attrs.target}" aria-hidden="true">
+        <h:panelGroup layout="block" styleClass="modal fade" p:id="#{cc.attrs.target}" p:tabindex="-1" p:role="dialog" p:aria-labelledby="#{cc.attrs.id}" p:aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
-                <div id="#{cc.clientId}" class="modal-content">
+                <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">#{cc.attrs.title}</h5>
 
@@ -60,16 +70,27 @@
                             <span aria-hidden="true">
                                 <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M16.24 14.83a1 1 0 0 1-1.41 1.41L12 13.41l-2.83 2.83a1 1 0 0 1-1.41-1.41L10.59 12 7.76 9.17a1 1 0 0 1 1.41-1.41L12 10.59l2.83-2.83a1 1 0 0 1 1.41 1.41L13.41 12l2.83 2.83z"/></svg>
                             </span>
-                            <f:ajax execute="@form" render="#{cc.attrs.update}" />
                         </h:commandLink>
 
                     </div>
+                    <div class="modal-body">
+                        <cc:insertChildren />
+                    </div>
+                    <div class="modal-footer">
 
-                    <cc:insertChildren />
+                        <h:commandButton actionListener="#{cc.attrs.abortAction}" p:class="btn btn-tertiary" p:data-dismiss="modal" value="#{cc.attrs.abort}">
+                            <f:ajax execute="@form" render="#{cc.attrs.update}" />
+                        </h:commandButton>
 
+                        <h:commandButton actionListener="#{cc.attrs.confirmAction}" p:class="btn btn-primary" value="#{cc.attrs.confirm}" disabled="#{cc.attrs.disableConfirm}" >
+                            <f:ajax execute="@form" render="#{cc.attrs.update}" />
+                        </h:commandButton>
+
+                    </div>
                 </div>
             </div>
-        </div>
+        </h:panelGroup>
     </cc:implementation>
+
 
 </html>
