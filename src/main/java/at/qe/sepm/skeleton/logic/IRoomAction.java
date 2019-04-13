@@ -64,10 +64,14 @@ public interface IRoomAction
 	/**
 	 * Called every timerSyncTimeStep ms to synchronize the remaining time on the current Player question.
 	 * 
+	 * @param p
+	 *            Player the timer synchronized.
+	 * @param q
+	 *            Question of the Player to be synchronized.
 	 * @param currentTime
 	 *            The time remaining on the current ActiveQuestion in ms.
 	 */
-	public void onTimerSync(long currentTime);
+	public void onTimerSync(Player p, ActiveQuestion q, long currentTime);
 	
 	/**
 	 * Called when the AFK timeout for the Player starts due to missing activity pings.
@@ -79,40 +83,51 @@ public interface IRoomAction
 	
 	/**
 	 * Called when the Player gets kicked from the QR. No more calls to the {@link IPlayerAction} interface are allowed after this event from the Player.
+	 * 
+	 * @param p
+	 *            Player to be kicked.
 	 */
-	public void onKick();
+	public void onKick(Player p);
 	
 	/**
 	 * Called when the QR assigns the Player a new Question. MIGHT NEED TO BE ADJUSTED TO ACCOMODATE REVERSE GAMEMODE!
 	 * 
+	 * @param p
+	 *            Player to have the Question assigned to.
 	 * @param q
 	 *            The ActiveQuestion assigned to the Player.
 	 */
-	public void assignQuestion(ActiveQuestion q);
+	public void assignQuestion(Player p, ActiveQuestion q);
 	
 	/**
 	 * Called when the QR assigns the Player a new Question answer. MIGHT NEED TO BE ADJUSTED TO ACCOMODATE REVERSE GAMEMODE!
 	 * 
+	 * @param p
+	 *            Player to have the answer assigned to.
 	 * @param q
 	 *            The ActiveQuestion assigned to the Player. To be used when making answer calls in IPlayerAction.
 	 * @param index
 	 *            Index of the Answer to be used. (e.g. 0 = right answer, 1 = wrong answer 1, 2 = wrong answer 2, ...)
 	 */
-	public void assignAnswer(ActiveQuestion q, int index);
+	public void assignAnswer(Player p, ActiveQuestion q, int index);
 	
 	/**
 	 * Called when the QR unassigns the Question from the Player. Player has no active question after this call.
 	 * 
+	 * @param p
+	 *            Player to have the Question removed.
 	 * @param q
 	 *            The ActiveQuesiton unassigned from the Player.
 	 */
-	public void removeQuestion(ActiveQuestion q);
+	public void removeQuestion(Player p, ActiveQuestion q);
 	
 	/**
 	 * Called when the QR unassigns ALL Answers associated with the ActiveQuestion from the Player.
 	 * 
+	 * @param p
+	 *            Player to have all answers of the Question removed from.
 	 * @param q
 	 *            The ActiveQuestion from which all Answers are unassigned from the Player.
 	 */
-	public void removeAnswer(ActiveQuestion q);
+	public void removeAnswer(Player p, ActiveQuestion q);
 }

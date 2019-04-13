@@ -55,7 +55,7 @@ public class QuizRoom implements IPlayerAction
 	private volatile int completedQuestions; // total number of answered questions
 	
 	private volatile List<Player> players; // players in the room
-	private volatile HashMap<Player, IRoomAction> playerInterfaces; // interfaces for each player
+	private IRoomAction playerInterface; // interface for all players
 	private volatile List<DelayedAction> delayQueue; // queue of delayed actions
 	
 	private volatile int score; // current room score
@@ -69,7 +69,6 @@ public class QuizRoom implements IPlayerAction
 	private volatile List<Player> readyPlayers; // list of players who declared themselves ready
 	private volatile boolean wfpMode; // true if the room is in 'waiting for players' mode
 	
-	int temp = 0;
 	
 	/**
 	 * Initializes a new QR.
@@ -90,7 +89,7 @@ public class QuizRoom implements IPlayerAction
 	 *            QuestionSets to be used by the room.
 	 */
 	public QuizRoom(ThreadPoolTaskScheduler scheduler, QuizRoomManager manager, int pin, int maxPlayers, RoomDifficulty difficulty, GameMode gameMode,
-			List<QuestionSet> qSets)
+			List<QuestionSet> qSets, IRoomAction roomAction)
 	{
 		LOGGER.debug("QuizRoom [" + pin + "] started.");
 		this.pin = pin;
@@ -101,7 +100,7 @@ public class QuizRoom implements IPlayerAction
 		this.questionSets = qSets;
 		
 		players = new LinkedList<>();
-		playerInterfaces = new HashMap<>(maxPlayers);
+		playerInterface = roomAction;
 		delayQueue = new LinkedList<>();
 		
 		activityCheckTime = 0;
@@ -194,26 +193,20 @@ public class QuizRoom implements IPlayerAction
 		}
 		
 		checkQuestionTimes(deltaTime);
-		
-		// temporary automatic close of QR after 10 sec.
-		temp++;
-		if (temp > 200)
-			onRoomClose();
-		
 	}
 	
 	/**
-	 * Executes function f on the interface of each Player in the QuizRoom.
+	 * Executes function f on the Player interface for the QuizRoom.
 	 * 
 	 * @param f
-	 *            Function to be executed on all Player interfaces.
+	 *            Function to be executed on all Players.
 	 */
 	private synchronized void eventCall(Consumer<IRoomAction> f)
 	{
-		for (IRoomAction action : playerInterfaces.values())
-		{
-			f.accept(action);
-		}
+		f.accept(playerInterface);
+		/*
+		 * for (IRoomAction action : playerInterfaces.values()) { f.accept(action); }
+		 */
 	}
 	
 	/**
@@ -294,11 +287,9 @@ public class QuizRoom implements IPlayerAction
 	 * 
 	 * @param player
 	 *            Player to join the room.
-	 * @param roomAction
-	 *            Interface for communication to the Player.
 	 * @return True if join successful, false if room is full.
 	 */
-	public synchronized boolean addPlayer(Player player, IRoomAction roomAction)
+	public synchronized boolean addPlayer(Player player)
 	{
 		if (players.size() == maxPlayers)
 		{
@@ -306,7 +297,6 @@ public class QuizRoom implements IPlayerAction
 		}
 		
 		players.add(player);
-		playerInterfaces.put(player, roomAction);
 		
 		eventCall(x -> {
 			x.onPlayerJoin(player);
@@ -325,8 +315,6 @@ public class QuizRoom implements IPlayerAction
 	 */
 	public synchronized void removePlayer(Player player, String reason)
 	{
-		playerInterfaces.remove(player);
-		
 		eventCall(x -> {
 			x.onPlayerLeave(player, reason);
 		});
