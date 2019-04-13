@@ -1,0 +1,29 @@
+.back-btn {
+    padding: 1rem 1rem 0;
+    display: block;
+}
+
+.back-btn svg {
+    width: initial;
+    margin-right: 0.4rem;
+}
+
+.overview-grid {
+    display: grid;
+    grid-gap: 1rem;
+    box-sizing: border-box;
+    padding: 1rem;
+}
+
+.overview,
+.qs-overview {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+@media only screen and (min-width: 700px) {
+    .overview,
+    .qs-overview {
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+    }
+}

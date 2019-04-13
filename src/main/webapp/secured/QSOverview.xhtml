@@ -5,8 +5,10 @@
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:qc="http://java.sun.com/jsf/composite/quizconnect"
                 template="/WEB-INF/templates/main.xhtml">
-    <ui:define name="css">
+
+    <ui:define name="site-specific-css">
         <link rel="stylesheet" type="text/css" href="/resources/css/QSOverview.css"/>
     </ui:define>
 
@@ -23,33 +25,28 @@
             <h:outputText value="#{QSOverviewBean.questionSets.size()}"></h:outputText>
         </div>
 
-        <ui:repeat value="#{QSOverviewBean.questionSets}" var="questionSet">
-            <div class="container-fluid w-50 p-3 mt-5 reduced-mobile-margin" id="question-panel">
-                <div class="container-fluid text-center">
-                    <h:outputText value="#{questionSet.name}"></h:outputText>
+
+        <h:form>
+            <h:commandLink action="all?faces-redirect=true" styleClass="back-btn">
+                <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M5.41 11H21a1 1 0 0 1 0 2H5.41l5.3 5.3a1 1 0 0 1-1.42 1.4l-7-7a1 1 0 0 1 0-1.4l7-7a1 1 0 0 1 1.42 1.4L5.4 11z"/></svg>All Players
+            </h:commandLink>
+
+            <h:panelGroup layout="block" styleClass="container" rendered="#{QSOverviewBean.questionSets == null}">
+                <h1 class="display-4">No QuestionSets found</h1>
+                <h:commandButton styleClass="btn btn-primary" action="all?faces-redirect=true" value="All Players"/>
+            </h:panelGroup>
+
+            <h:panelGroup layout="block" rendered="#{QSOverviewBean.questionSets != null}" styleClass="overview-grid">
+                <div class="qset box">
+                    <ui:repeat value="#{QSOverviewBean.questionSets}" var="questionSet">
+                    <qc:qset value="#{questionSet.name}" label="name" />
+                    <qc:qset value="#{questionSet.description}" label="description" />
+                    <qc:qset value="#{questionSet.questions.size()}" label="questions" />
+                    </ui:repeat>
                 </div>
+            </h:panelGroup>
 
-                <div class="container-fluid text-center">
-                    <h:outputText value="#{questionSet.description}"></h:outputText>
-                </div>
-
-                <div class="container-fluid text-center">
-                    <h:outputText value="#{questionSet.difficulty}"></h:outputText>
-                </div>
-
-                <div class="container-fluid text-center">
-                    <h:outputText value="#{questionSet.questions.size()}"></h:outputText>
-                </div>
-
-
-                <h:form id="ffileform" enctype="multipart/form-data">
-                    <h:inputFile value="#{fileUploadBean.file}">
-                        <f:ajax execute="@this" render="@this" />
-                    </h:inputFile>
-                </h:form>
-
-            </div>
-        </ui:repeat>
+        </h:form>
 
     </ui:define>
 </ui:composition>
