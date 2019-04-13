@@ -1,6 +1,6 @@
 package at.qe.sepm.skeleton.services;
 
-import org.primefaces.model.UploadedFile;
+//import org.primefaces.model.UploadedFile;
 
 import java.io.IOException;
 import java.io.InputStream;
