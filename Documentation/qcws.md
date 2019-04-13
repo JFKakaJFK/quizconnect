@@ -89,6 +89,7 @@ On page load:
 1. Client wants QR info
 2. `getRoomPin` is triggered
 3. Request
+
   ```json
   {
     "event": "getRoomPin",
@@ -105,6 +106,7 @@ On page load:
 1. Answer is clicked
 2. `answerQuestion` event is triggered
 3. Via WS the request is sent:
+  
   ```json
   {
     "event": "answerQuestion",
@@ -119,12 +121,14 @@ But needed for stats in lobby...
 - `getRoomPin`
   - returns the pin of the Room
   - Request
+    
     ```json
     {
       "event": "getRoomPin",
     }
     ```
   - Response
+    
     ```json
     {
       "event": "getRoomPin",
@@ -133,12 +137,14 @@ But needed for stats in lobby...
     ```
 - `getRoomDifficulty`
   - Request
+    
     ```json
     {
       "event": "getRoomDifficulty",
     }
     ```
   - Response
+    
     ```json
     {
       "event": "getRoomDifficulty",
@@ -147,12 +153,14 @@ But needed for stats in lobby...
     ```
 - `getRoomMode`
   - Request
+    
     ```json
     {
       "event": "getRoomMode",
     }
     ```
   - Response
+    
     ```json
     {
       "event": "getRoomMode",
@@ -161,12 +169,14 @@ But needed for stats in lobby...
     ```
 - `getRoomQuestionSets`
   - Request
+    
     ```json
     {
       "event": "getRoomQuestionSets",
     }
     ```
   - Response
+    
     ```json
     {
       "event": "getRoomQuestionSets",
@@ -178,12 +188,14 @@ But needed for stats in lobby...
     ```
 - `getRoomScore`
   - Request
+    
     ```json
     {
       "event": "getRoomScore",
     }
     ```
   - Response
+    
     ```json
     {
       "event": "getRoomScore",
@@ -192,12 +204,14 @@ But needed for stats in lobby...
     ```
 - `getAlivePingTimeStep` (ms)
   - Request
+    
     ```json
     {
       "event": "getAlivePingTimeStep",
     }
     ```
   - Response
+    
     ```json
     {
       "event": "getAlivePingTimeStep",
@@ -210,12 +224,14 @@ With WS Connection
 - `getGameInfo`
   - returns all game info needed for Lobby, called once when joined
   - Request
+    
     ```json
     {
       "event": "getGameInfo",
     }
     ```
 - Response
+    
     ```json
     {
       "event": "getGameInfo",
@@ -239,12 +255,14 @@ With WS Connection
   - **NOTE:** `"ready"` & `"num"` are currently not in the specs
     -> Abstraction layer
   - Request
+    
     ```json
     {
       "event": "getRoomPlayers",
     }
     ```
   - Response
+    
     ```json
     {
       "event": "getRoomPlayers",
@@ -274,12 +292,14 @@ With WS Connection
 - `getRoomPlayerCount`
   - **NOTE:** would be `@Deprecated` if `getRoomPlayers` was adjusted
   - Request
+    
     ```json
     {
       "event": "getRoomPlayerCount",
     }
     ```
   - Response
+    
     ```json
     {
       "event": "getRoomPlayerCount",
@@ -291,12 +311,14 @@ With WS Connection
   - **NOTE:** would be `@Deprecated` if `getRoomPlayers` was adjusted
     -> Abstraction layer
   - Request
+    
     ```json
     {
       "event": "getRoomReadyPlayers",
     }
     ```
   - Response
+    
     ```json
     {
       "event": "getRoomReadyPlayers",
@@ -318,6 +340,7 @@ Game Events
 - `readyUp`
   - Changes a `Player`s ready state, triggered on Player action
   - Request
+    
     ```json
     {
       "event": "readyUp",
@@ -329,6 +352,7 @@ Game Events
   - A question is answered
   - TODO: Method has wrong signature... ???
   - Request
+    
     ```json
     {
       "event": "answerQuestion",
@@ -341,6 +365,7 @@ Game Events
 - `useJoker`
   - Reshuflle will be triggered, triggered on Player action (player local state gets updated, joker is disabled)
   - Request
+    
     ```json
     {
       "event": "useJoker",
@@ -351,6 +376,7 @@ Game Events
 - `leaveRoom`
   - Reshuflle will be triggered
   - Request
+    
     ```json
     {
       "event": "leaveRoom",
@@ -361,6 +387,7 @@ Game Events
 - `cancelTimeout`
   - only send if server initiated timeout for player && Player inactive (= Timeout in X Seconds modal not averted)
   - Request
+    
     ```json
     {
       "event": "cancelTimeout",
@@ -371,6 +398,7 @@ Game Events
 - `sendAlivePing`
   - Sent periodically, use smaller interval than `getAlivePingTimeStep`|`getGameInfo` dictates -> latency (e.g. `setInterval(sendAlivePing, (ALIVE_TIME_STEP - 500));` (pings > 500ms may be disconnected))
   - Request
+    
     ```json
     {
       "event": "sendAlivePing",
@@ -386,6 +414,7 @@ Requests now sent by server(request probably wrong name since its an event that 
 - `onReadyUp`
   - BROADCAST, sent if player ready status changes("ready" -> "not ready" possible? if yes should be `onReadyStateChange`)
   - Request
+    
     ```json
     {
       "event": "onReadyUp",
@@ -397,6 +426,7 @@ Requests now sent by server(request probably wrong name since its an event that 
 - `onPlayerJoin`
   - BROADCAST, sent if new player joins
   - Request
+    
     ```json
     {
       "event": "onPlayerJoin",
@@ -413,6 +443,7 @@ Requests now sent by server(request probably wrong name since its an event that 
   - BROADCAST, sent if all players ready  
     -> frontend clears lobby screen and displays game UI placeholder boxes
   - Request
+    
     ```json
     {
       "event": "onGameStart",
@@ -423,6 +454,7 @@ Requests now sent by server(request probably wrong name since its an event that 
   - BROADCAST, sent if game ends (triggers UI change(&WS disconnect?), only score & btn to home view)
   - final score is gotten by abstraction (via Client event `getRoomScore`)
   - Request
+    
     ```json
     {
       "event": "onGameEnd",
@@ -433,6 +465,7 @@ Requests now sent by server(request probably wrong name since its an event that 
 - `onJokerUse`
   - BROADCAST, subtracts 1 of `jokersLeft` (More than 1 joker? if not maybe use bool?)
   - Request
+    
     ```json
     {
       "event": "onJokerUser",
@@ -443,6 +476,7 @@ Requests now sent by server(request probably wrong name since its an event that 
   - BROADCAST, updates local state (removes player) & shows notification that player left (reshuffle may be incoming)
   - TODO: send full player? or just id?
   - Request
+    
     ```json
     {
       "event": "onPlayerLeave",
@@ -454,17 +488,20 @@ Requests now sent by server(request probably wrong name since its an event that 
 - `onScoreChange`
   - BROADCAST, updates local state & displays new Score
   - Request
+   
     ```json
     {
       "event": "onScoreChange",
       "score": 43,
     }
     ```
+    
   - no Response
 - `onTimerSync`
   - BROADCAST, TODO? Question id??? In later game states, the timers will differ for each question
   - local remaining time is changed to server time (will cause delay of ~Ping?)
   - Request
+    
     ```json
     {
       "event": "onTimerSync",
@@ -476,6 +513,7 @@ Requests now sent by server(request probably wrong name since its an event that 
   - ONLY to 1 player | or playerId gets added
   - display modal (Kicked in x seconds), any action triggers `cancelTimeout`
   - Request
+    
     ```json
     {
       "event": "onTimeoutStart",
@@ -487,6 +525,7 @@ Requests now sent by server(request probably wrong name since its an event that 
   - ONLY to 1 player, others get `onPlayerLeave` | or playerId gets added
   - redirect to home
   - Request
+    
     ```json
     {
       "event": "onKick",
@@ -497,6 +536,7 @@ Requests now sent by server(request probably wrong name since its an event that 
   - BROADCAST
   - redirect to home
   - Request
+   
     ```json
     {
       "event": "assignQuestion",
@@ -538,6 +578,7 @@ Requests now sent by server(request probably wrong name since its an event that 
 - `removeQuestion`
   - BROADCAST, all players which show the question/answer to the question display placeholder and delet question from local state
   - Request
+   
     ```json
     {
       "event": "removeQuestion",
