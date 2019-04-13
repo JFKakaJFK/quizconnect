@@ -61,15 +61,18 @@ public class QuizRoomManager implements ApplicationListener<ContextRefreshedEven
 	 *            List of QuestionSets to be used by the QuizRoom.
 	 * @return Pin of the new QuizRoom.
 	 */
-	public int createRoom(int maxPlayers, RoomDifficulty difficulty, GameMode gameMode, List<QuestionSet> qSets) throws IllegalArgumentException
+	public int createRoom(int maxPlayers, RoomDifficulty difficulty, GameMode gameMode, List<QuestionSet> qSets, IRoomAction roomAction)
+			throws IllegalArgumentException
 	{
 		if (maxPlayers < minimumPlayers)
 			throw new IllegalArgumentException("QuizRoom max players cannot less than " + minimumPlayers + "!");
+		else if (roomAction == null)
+			throw new IllegalArgumentException("roomAction interface provided cannot be null!");
 		// else if (qSets == null || qSets.size() == 0)
 		// throw new IllegalArgumentException("QuizRoom question sets must contain at least one set!");
 		
 		int newPin = generatePin();
-		QuizRoom newRoom = new QuizRoom(taskScheduler, this, newPin, maxPlayers, difficulty, gameMode, qSets);
+		QuizRoom newRoom = new QuizRoom(taskScheduler, this, newPin, maxPlayers, difficulty, gameMode, qSets, roomAction);
 		rooms.put(newPin, newRoom);
 		
 		return newPin;
@@ -91,16 +94,14 @@ public class QuizRoomManager implements ApplicationListener<ContextRefreshedEven
 	 *             Thrown if the QuizRoom doesn't exist, if the roomAction interface
 	 *             is invalid, or if the QuizRoom is already full.
 	 */
-	public IPlayerAction joinRoom(int roomPin, Player player, IRoomAction roomAction) throws IllegalArgumentException
+	public IPlayerAction joinRoom(int roomPin, Player player) throws IllegalArgumentException
 	{
 		if (!rooms.containsKey(roomPin))
 			throw new IllegalArgumentException("QuizRoom (pin " + roomPin + ") does not exist!");
-		else if (roomAction == null)
-			throw new IllegalArgumentException("roomAction interface provided cannot be null!");
 		
 		QuizRoom quizRoom = rooms.get(roomPin);
 		
-		boolean full = quizRoom.addPlayer(player, roomAction);
+		boolean full = quizRoom.addPlayer(player);
 		if (full)
 			throw new IllegalArgumentException("QuizRoom already full!");
 
@@ -146,6 +147,6 @@ public class QuizRoomManager implements ApplicationListener<ContextRefreshedEven
 		if (!DEBUG)
 			return;
 		LOGGER.debug("start");
-		int pin = createRoom(10, RoomDifficulty.easy, GameMode.normal, null);
+		// int pin = createRoom(10, RoomDifficulty.easy, GameMode.normal, null);
 	}
 }
