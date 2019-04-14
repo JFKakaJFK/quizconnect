@@ -21,10 +21,6 @@
             </div>
         </div>
 
-        <div class="container-fluid mt-5 reduced-mobile-margin" id="responsive-formgroup">
-            <h:outputText value="#{QSOverviewBean.questionSets.size()}"></h:outputText>
-        </div>
-
 
         <h:form>
             <h:commandLink action="all?faces-redirect=true" styleClass="back-btn">
@@ -36,14 +32,17 @@
                 <h:commandButton styleClass="btn btn-primary" action="all?faces-redirect=true" value="All Players"/>
             </h:panelGroup>
 
-            <h:panelGroup layout="block" rendered="#{QSOverviewBean.questionSets != null}" styleClass="overview-grid">
-                <div class="qset box">
+            <h:panelGroup layout="block" rendered="#{QSOverviewBean.questionSets != null}" styleClass="boxes px-3">
                     <ui:repeat value="#{QSOverviewBean.questionSets}" var="questionSet">
-                    <qc:qset value="#{questionSet.name}" label="name" />
-                    <qc:qset value="#{questionSet.description}" label="description" />
-                    <qc:qset value="#{questionSet.questions.size()}" label="questions" />
+                    <qc:generic-box size="sm">
+                        <h3>#{questionSet.name}</h3>
+                        <h3>#{questionSet.description}</h3>
+                        <div class="row">
+                            <h3 class="col-md-6">#{questionSet.difficulty}</h3>
+                            <h3 class="col-md-6">#{questionSet.questions.size()}</h3>
+                        </div>
+                    </qc:generic-box>
                     </ui:repeat>
-                </div>
             </h:panelGroup>
 
         </h:form>

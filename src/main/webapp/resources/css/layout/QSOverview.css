@@ -8,7 +8,7 @@
     margin-right: 0.4rem;
 }
 
-.overview-grid {
+.box-grid {
     display: grid;
     grid-gap: 1rem;
     box-sizing: border-box;
@@ -16,14 +16,14 @@
 }
 
 .overview,
-.qs-overview {
+.box-overview {
     display: grid;
     grid-template-columns: 1fr 1fr;
 }
 
 @media only screen and (min-width: 700px) {
     .overview,
-    .qs-overview {
+    .box-overview {
         grid-template-columns: 1fr 1fr 1fr 1fr;
     }
 }

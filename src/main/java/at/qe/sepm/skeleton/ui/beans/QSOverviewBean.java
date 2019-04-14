@@ -52,7 +52,8 @@ public class QSOverviewBean implements Serializable {
 
     public List<QuestionSet> getQuestionSets(){
         if(questionSets == null) {
-            this.questionSets = questionSetService.getQuestionSetsOfManager(currentUser.getManager());
+            this.questionSets = new ArrayList<>(questionSetService.getAllContaining("Test"));
+            //this.questionSets = questionSetService.getQuestionSetsOfManager(currentUser.getManager());
         }
         return questionSets;
     }
