@@ -5,24 +5,17 @@ import at.qe.sepm.skeleton.model.Player;
 import at.qe.sepm.skeleton.services.ManagerService;
 import at.qe.sepm.skeleton.services.PlayerService;
 import at.qe.sepm.skeleton.services.StorageService;
-//import org.primefaces.event.FileUploadEvent;
-//import org.primefaces.model.UploadedFile;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.context.annotation.SessionScope;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.ManagedBean;
 import javax.faces.context.FacesContext;
 import java.io.*;
 
@@ -73,8 +66,8 @@ public class ChangeAvatarBean implements Serializable {
             return new ResponseEntity(HttpStatus.I_AM_A_TEAPOT);
         } finally {
             // TODO update Modal DOM here
-            // FacesContext.getCurrentInstance().getPartialViewContext().getRenderIds().add("modal");
-            // FacesContext.getCurrentInstance().getPartialViewContext().getRenderIds().add("preview");
+            FacesContext.getCurrentInstance().getPartialViewContext().getRenderIds().add(":formId:body");
+            FacesContext.getCurrentInstance().getPartialViewContext().getRenderIds().add(":formId:footer");
         }
 
         return new ResponseEntity(HttpStatus.OK);
@@ -94,9 +87,6 @@ public class ChangeAvatarBean implements Serializable {
             storageService.deleteAvatar(old);
         }
         filename = null;
-        // TODO update DOM here
-        //FacesContext.getCurrentInstance().getPartialViewContext().getRenderIds().add("avatar");
-
     }
 
     public void abort(){
