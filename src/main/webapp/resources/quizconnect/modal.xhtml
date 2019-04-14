@@ -45,9 +45,8 @@
         <cc:attribute name="target" required="true" />
         <cc:attribute name="title" required="true" />
         <cc:attribute name="disableConfirm" default="false" />
+        <cc:attribute name="closeOnConfirm" default="false" required="#{false}" type="java.lang.Boolean" />
 
-
-        <cc:attribute name="closeAction" method-signature="void action()" default="#{QCModalController.defaultAction}" />
         <cc:attribute name="update" default="@none" />
 
         <cc:attribute name="abort" default="Close" />
@@ -56,13 +55,12 @@
         <cc:attribute name="abortAction" method-signature="void action()" default="#{QCModalController.defaultAction}" />
         <cc:attribute name="confirmAction" method-signature="void action()" default="#{QCModalController.defaultAction}" />
 
-
     </cc:interface>
 
     <cc:implementation>
         <h:panelGroup layout="block" styleClass="modal fade" p:id="#{cc.attrs.target}" p:tabindex="-1" p:role="dialog" p:aria-labelledby="#{cc.attrs.id}" p:aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
+                <div id="#{cc.clientId}" class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">#{cc.attrs.title}</h5>
 
@@ -82,7 +80,7 @@
                             <f:ajax execute="@form" render="#{cc.attrs.update}" />
                         </h:commandButton>
 
-                        <h:commandButton actionListener="#{cc.attrs.confirmAction}" p:class="btn btn-primary" value="#{cc.attrs.confirm}" disabled="#{cc.attrs.disableConfirm}" >
+                        <h:commandButton actionListener="#{cc.attrs.confirmAction}" p:class="btn btn-primary" p:data-dismiss="#{cc.attrs.closeOnConfirm ? 'modal' : ''}" value="#{cc.attrs.confirm}" disabled="#{cc.attrs.disableConfirm}" >
                             <f:ajax execute="@form" render="#{cc.attrs.update}" />
                         </h:commandButton>
 

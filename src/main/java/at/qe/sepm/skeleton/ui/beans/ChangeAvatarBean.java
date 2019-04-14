@@ -1,23 +1,32 @@
 package at.qe.sepm.skeleton.ui.beans;
 
+import at.qe.sepm.skeleton.model.Manager;
 import at.qe.sepm.skeleton.model.Player;
 import at.qe.sepm.skeleton.services.ManagerService;
 import at.qe.sepm.skeleton.services.PlayerService;
 import at.qe.sepm.skeleton.services.StorageService;
 //import org.primefaces.event.FileUploadEvent;
 //import org.primefaces.model.UploadedFile;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.annotation.SessionScope;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
+import javax.annotation.ManagedBean;
+import javax.faces.context.FacesContext;
+import java.io.*;
 
 @Controller
-@Scope("view")
 public class ChangeAvatarBean implements Serializable {
 
     private static final Logger log = LoggerFactory.getLogger(ChangeAvatarBean.class);
@@ -43,22 +52,33 @@ public class ChangeAvatarBean implements Serializable {
     /**
      * Catches a fileupload and stores file
      *
-     * @param event
+     * @param file
+     * @return
      */
-    /*
-    public void handleAvatarUpload(FileUploadEvent event){
+    @RequestMapping(value = "/upload/avatars", method = RequestMethod.POST)
+    public ResponseEntity handleFileUpload(@RequestParam("file") MultipartFile file) {
+        if(file == null){
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
 
         if(filename != null){
             storageService.deleteAvatar(filename);
         }
-        UploadedFile upload = event.getFile();
-        try(InputStream is = upload.getInputstream()) {
-            filename = storageService.storeAvatar(is, upload.getFileName(), managerService.getManagerOfPlayer(player).getUser().getUsername());
+        try(InputStream is = file.getInputStream()) {
+            Manager manager = managerService.getManagerOfPlayer(player);
+            filename = storageService.storeAvatar(is, file.getOriginalFilename(), String.valueOf(manager.getId()));
         } catch (IOException e){
             filename = null;
+            log.error("Exception while saving Avatar");
+            return new ResponseEntity(HttpStatus.I_AM_A_TEAPOT);
+        } finally {
+            // TODO update Modal DOM here
+            // FacesContext.getCurrentInstance().getPartialViewContext().getRenderIds().add("modal");
+            // FacesContext.getCurrentInstance().getPartialViewContext().getRenderIds().add("preview");
         }
+
+        return new ResponseEntity(HttpStatus.OK);
     }
-    */
 
     public void saveAvatar(){
         if(filename == null){
@@ -74,6 +94,9 @@ public class ChangeAvatarBean implements Serializable {
             storageService.deleteAvatar(old);
         }
         filename = null;
+        // TODO update DOM here
+        //FacesContext.getCurrentInstance().getPartialViewContext().getRenderIds().add("avatar");
+
     }
 
     public void abort(){
