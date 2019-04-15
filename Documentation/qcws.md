@@ -439,7 +439,7 @@ Requests now sent by server(request probably wrong name since its an event that 
     }
     ```
   - no Response
-- `onPlayerJoin`
+- `onGameStart`
   - BROADCAST, sent if all players ready  
     -> frontend clears lobby screen and displays game UI placeholder boxes
   - Request
@@ -452,13 +452,11 @@ Requests now sent by server(request probably wrong name since its an event that 
   - no Response
 - `onGameEnd`
   - BROADCAST, sent if game ends (triggers UI change(&WS disconnect?), only score & btn to home view)
-  - final score is gotten by abstraction (via Client event `getRoomScore`)
   - Request
     
     ```json
     {
       "event": "onGameEnd",
-      "finalScore": 43,
     }
     ```
   - no Response
