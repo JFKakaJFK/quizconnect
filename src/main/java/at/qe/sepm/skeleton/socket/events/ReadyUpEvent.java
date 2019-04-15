@@ -3,25 +3,24 @@ package at.qe.sepm.skeleton.socket.events;
 import at.qe.sepm.skeleton.model.Player;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
-@JsonRootName("readyUp")
 public class ReadyUpEvent extends ServerEvent {
 
-    private PlayerJSON player;
+    private int playerId;
     private int totalReady;
 
     public ReadyUpEvent(){}
 
     public ReadyUpEvent(Player p, int totalReady){
-        this.player = new PlayerJSON(p);
+        this.playerId = p.getId();
         this.totalReady = totalReady;
     }
 
-    public PlayerJSON getPlayer() {
-        return player;
+    public int getPlayerId() {
+        return playerId;
     }
 
-    public void setPlayer(PlayerJSON player) {
-        this.player = player;
+    public void setPlayerId(int playerId) {
+        this.playerId = playerId;
     }
 
     public int getTotalReady() {

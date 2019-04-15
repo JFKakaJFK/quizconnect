@@ -25,12 +25,18 @@ public class JoinGameController {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     private SessionInfoBean sessionInfoBean;
     private QuizRoomManager quizRoomManager;
+    private QRWebSocketConnection qrWebSocketConnection;
 
     @Autowired
-    public JoinGameController(SessionInfoBean sessionInfoBean, QuizRoomManager quizRoomManager){
+    public JoinGameController(SessionInfoBean sessionInfoBean,
+                              QuizRoomManager quizRoomManager,
+                              QRWebSocketConnection qrWebSocketConnection){
         assert sessionInfoBean != null;
+        assert quizRoomManager != null;
+        assert qrWebSocketConnection != null;
         this.sessionInfoBean = sessionInfoBean;
         this.quizRoomManager = quizRoomManager;
+        this.qrWebSocketConnection = qrWebSocketConnection;
     }
 
 
@@ -43,8 +49,10 @@ public class JoinGameController {
                 logger.error("Failed to send Error");
             }
         }
+        int PIN = Integer.valueOf(pin);
         Player p  = sessionInfoBean.getCurrentUser().getPlayer();
-        quizRoomManager.joinRoom(Integer.valueOf(pin), p);
+        IPlayerAction qr = quizRoomManager.joinRoom(PIN, p);
+        qrWebSocketConnection.addGame(PIN, qr, p);
         response.setStatus(200);
         logger.info("Player " + p.getUser().getUsername() + " joined room " + pin);
     }

@@ -7,13 +7,17 @@ public class PlayerJSON {
     private int id;
     private String username;
     private String avatar;
+    private boolean ready;
 
-    public PlayerJSON(){}
+    public PlayerJSON(){
+        this.ready = false;
+    }
 
-    public PlayerJSON(Player p){
+    public PlayerJSON(Player p, boolean ready){
         this.id = p.getId();
         this.username = p.getUser().getUsername();
         this.avatar = p.getAvatarPath();
+        this.ready = ready;
     }
 
     public int getId() {
@@ -38,5 +42,13 @@ public class PlayerJSON {
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+
+    public boolean isReady() {
+        return ready;
+    }
+
+    public void setReady(boolean ready) {
+        this.ready = ready;
     }
 }

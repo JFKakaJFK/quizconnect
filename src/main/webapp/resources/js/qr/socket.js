@@ -10,6 +10,7 @@ const PIN = 10;
 
 /* SERVER EVENTS */
 const KICK = 'onKick';
+const GAMEEND = 'onGameEnd';
 // TODO
 
 const handleServerEvent = (response) => {
@@ -21,6 +22,11 @@ const handleServerEvent = (response) => {
   switch (event){
       case KICK:
           console.log("event of type kick");
+          break;
+      case GAMEEND:
+          disconnect();
+          // TODO change view with current(=final) score
+          console.log("disconnected");
           break;
       default:
           console.log("TODO handle correctly")
@@ -40,7 +46,6 @@ const disconnect = () => {
     }
 };
 
-const sendEvent = () => {
-    stompClient.send(`${WS_TARGET}/${PIN}`, {}, JSON.stringify({event: "testEvent"}));
+const sendEvent = (event) => {
+    stompClient.send(`${WS_TARGET}/${PIN}`, {}, JSON.stringify(event));
 };
-
