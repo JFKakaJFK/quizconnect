@@ -268,7 +268,7 @@ public class QuizRoom implements IPlayerAction
 		{
 			if (playerActivityTimestamps.get(player) < tooLong)
 			{
-				playerInterface.onTimeoutStart(player, timeoutDuration);
+				playerInterface.onTimeoutStart(pin, player, timeoutDuration);
 				addDelayedAction(new DelayedAction(timeoutDuration, () -> {
 					kickPlayerIfNoActivity(player);
 				}));
@@ -284,7 +284,7 @@ public class QuizRoom implements IPlayerAction
 		long tooLong = (new Date().getTime()) - activityDuration;
 		if (playerActivityTimestamps.get(player) < tooLong)
 		{
-			playerInterface.onKick(player);
+			playerInterface.onKick(pin, player);
 			removePlayer(player, "kicked for AFK");
 		}
 	}
@@ -312,7 +312,7 @@ public class QuizRoom implements IPlayerAction
 	{
 		for (ActiveQuestion activeQuestion : activeQuestions)
 		{
-			playerInterface.onTimerSync(activeQuestion.playerQuestion, activeQuestion, activeQuestion.timeRemaining);
+			playerInterface.onTimerSync(pin, activeQuestion.playerQuestion, activeQuestion, activeQuestion.timeRemaining);
 		}
 	}
 	
@@ -335,7 +335,7 @@ public class QuizRoom implements IPlayerAction
 		playerAnswers.put(player, new LinkedList<>());
 		
 		eventCall(x -> {
-			x.onPlayerJoin(player);
+			x.onPlayerJoin(pin, player);
 		});
 		
 		return true;
@@ -352,7 +352,7 @@ public class QuizRoom implements IPlayerAction
 	private synchronized void removePlayer(Player player, String reason)
 	{
 		eventCall(x -> {
-			x.onPlayerLeave(player, reason);
+			x.onPlayerLeave(pin, player, reason);
 		});
 		
 		// TODO redistribute question / answers of player who left
@@ -505,7 +505,7 @@ public class QuizRoom implements IPlayerAction
 		}
 		
 		eventCall(x -> {
-			x.onReadyUp(p, readyPlayers.size());
+			x.onReadyUp(pin, p, readyPlayers.size());
 		});
 	}
 	
