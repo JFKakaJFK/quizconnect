@@ -43,7 +43,7 @@
 
 
                     <ui:repeat value="#{QSOverviewBean.questionSets}" var="i_questionSet" >
-                        <qc:generic-box size="sm" styleClass="#{i_questionSet.author.id}xxx#{sessionInfoBean.currentUser.manager.id}xxx#{QSOverviewBean.currentManager == i_questionSet.author}" showDelete="#{QSOverviewBean.currentManager == i_questionSet.author}" deleteAction="#{QSOverviewBean.deleteQuestionSet(questionSet)}">
+                        <qc:generic-box size="sm" showDelete="#{sessionInfoBean.currentUser.manager == i_questionSet.author}" deleteAction="#{QSOverviewBean.deleteQuestionSet(i_questionSet)}">
                             <h3>#{i_questionSet.name}</h3>
                             <h3>#{i_questionSet.description}</h3>
                             <div class="row">

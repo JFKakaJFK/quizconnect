@@ -40,12 +40,8 @@
 
     <composite:implementation>
         <h:panelGroup layout="block" styleClass="box box-#{cc.attrs.size} box-#{cc.attrs.align} #{cc.attrs.styleClass}">
-            <c:if test="#{cc.attrs.showEdit}">
-                <h:commandLink id="editLink" action="#{cc.attrs.editAction}"><i class="#{cc.attrs.editIcon}"></i></h:commandLink>
-            </c:if>
-            <c:if test="#{cc.attrs.showDelete}">
-                <h:commandLink id="deleteLink" action="#{cc.attrs.deleteAction}"><i class="#{cc.attrs.deleteIcon}"></i></h:commandLink>
-            </c:if>
+                <h:commandLink rendered="#{cc.attrs.showEdit}" id="editLink" action="#{cc.attrs.editAction}"><i class="#{cc.attrs.editIcon}"></i></h:commandLink>
+                <h:commandLink rendered="#{cc.attrs.showDelete}" id="deleteLink" action="#{cc.attrs.deleteAction}"><i class="#{cc.attrs.deleteIcon}"></i></h:commandLink>
             <composite:insertChildren/>
         </h:panelGroup>
     </composite:implementation>
