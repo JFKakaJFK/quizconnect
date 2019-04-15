@@ -64,12 +64,11 @@
                     <h:graphicImage p:id="preview" value="#{avatarBean.getAvatar((changeAvatarBean.filename == null ? sessionInfoBean.currentUser.player.avatarPath : changeAvatarBean.filename))}" alt="avatar" />
                 </div>
 
-                <qc:upload id="file" target="file" endpoint="/upload/avatars" formId="formId" accept="image/*" styleClass="jsf-hide" />
+                <qc:upload id="file" target="file"
+                           endpoint="/upload/avatars" formId="formId"
+                           accept="image/*" update=":formId:modal:body :formId:modal:footer"
+                           styleClass="jsf-hide" />
                 <label for="file" class="btn btn-primary">Upload Avatar</label>
-
-                <h:commandButton value="TEST">
-                    <f:ajax execute="@this" render="body footer" />
-                </h:commandButton>
 
             </qc:modal>
 

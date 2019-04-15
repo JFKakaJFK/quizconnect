@@ -19,6 +19,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.faces.context.FacesContext;
 import java.io.*;
 
+// TODO jdoc
+
 @Controller
 public class ChangeAvatarBean implements Serializable {
 
@@ -64,10 +66,6 @@ public class ChangeAvatarBean implements Serializable {
             filename = null;
             log.error("Exception while saving Avatar");
             return new ResponseEntity(HttpStatus.I_AM_A_TEAPOT);
-        } finally {
-            // TODO update Modal DOM here
-            FacesContext.getCurrentInstance().getPartialViewContext().getRenderIds().add(":formId:body");
-            FacesContext.getCurrentInstance().getPartialViewContext().getRenderIds().add(":formId:footer");
         }
 
         return new ResponseEntity(HttpStatus.OK);
