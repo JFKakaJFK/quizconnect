@@ -76,10 +76,12 @@ public interface IRoomAction
 	/**
 	 * Called when the AFK timeout for the Player starts due to missing activity pings.
 	 * 
+	 * @param p
+	 *            Player to have the afk timeout start.
 	 * @param timeoutTime
 	 *            Time until inactivity kick occurs in ms.
 	 */
-	public void onTimeoutStart(long timeoutTime);
+	public void onTimeoutStart(Player p, long timeoutTime);
 	
 	/**
 	 * Called when the Player gets kicked from the QR. No more calls to the {@link IPlayerAction} interface are allowed after this event from the Player.
