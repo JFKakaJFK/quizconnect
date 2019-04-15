@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:composite="http://java.sun.com/jsf/composite"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:qc="http://java.sun.com/jsf/composite/quizconnect"
+      xml:lang="en"
+      lang="en">
+    <composite:interface>
+
+        <!--=============================================
+
+        The playerbox component displays a box wit a little
+        information about the player.
+
+        - player the player of the box
+        - online [ true | false ]
+        - rank (default: Beginner)
+
+        ==============================================-->
+        <composite:attribute name="player" type="at.qe.sepm.skeleton.model.Player" required="true" />
+        <composite:attribute name="online" default="false" />
+        <composite:attribute name="rank" default="None" />
+
+    </composite:interface>
+
+    <composite:implementation>
+        <div id="#{cc.clientId}" class="playerbox py-3 px-3" data-ingame="#{cc.attrs.online}" data-id="#{cc.attrs.player.id}"><!-- TODO: change online source -->
+            <div class="playerbox-avatar mx-2 my-2">
+                <h:graphicImage value="#{avatarBean.getAvatar(cc.attrs.player.avatarPath)}" alt="avatar"/>
+            </div>
+
+            <div class="playerbox-info mx-2 my-2">
+                <div class="playerbox-actions text-right">
+                    <composite:insertChildren/>
+                </div>
+
+                <div class="playerbox-info-row">
+                    <qc:stat value="#{cc.attrs.player.user.username}"
+                             label="username"
+                             align="left"
+                             size="lg"
+                             styleClass="playerbox-info-name" />
+
+                    <qc:stat value="#{cc.attrs.rank}"
+                             label="rank"
+                             size="sm"
+                             align="right" />
+                </div>
+
+            </div>
+        </div>
+    </composite:implementation>
+</html>

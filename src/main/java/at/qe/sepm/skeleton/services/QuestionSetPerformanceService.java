@@ -11,6 +11,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * Service for accessing and manipulating {@link QuestionSetPerformance} entities.
  *
@@ -25,6 +27,17 @@ public class QuestionSetPerformanceService {
 
     @Autowired
     QuestionSetPerformanceRepository questionSetPerformanceRepository;
+
+    /**
+     * Returns all {@link QuestionSetPerformance}s of a {@link Player}
+     *
+     * @param player
+     * @return
+     */
+    @PreAuthorize("hasAnyAuthority('MANAGER', 'PLAYER')")
+    public List<QuestionSetPerformance> getQuestionSetPerformancesOfPlayer(Player player){
+        return questionSetPerformanceRepository.findByPlayer(player);
+    }
 
     /**
      * Returns the {@link QuestionSetPerformance} of a {@link Player} and a {@link QuestionSet}
@@ -56,15 +69,18 @@ public class QuestionSetPerformanceService {
             questionSetPerformance = new QuestionSetPerformance();
             questionSetPerformance.setQuestionSet(questionSet);
             questionSetPerformance.setPlayer(player);
-            // other values will be inititalized per default
+            // other values will be inititalized per defaull
             log.info("Created new QuestionSetPerformance for Player " + player.getId() + " and QuestionSet " + questionSet.getId());
         } else {
+            // not testable at all
             if(questionSetPerformance.isNew()){
                 throw new IllegalArgumentException("Damn you're a magician! You found something in the DB which was NOT stored there...");
             }
+            // null not testable since NullpointerException are thrown in Line 60
             if(questionSetPerformance.getPlayer() ==  null || questionSetPerformance.getPlayer().isNew()){
                 throw new IllegalArgumentException("QuestionSetPerformance must have an associated Player");
             }
+            // also unnecessary since in Line 53 and 60 this gets checked
             if(questionSetPerformance.getQuestionSet() == null || questionSetPerformance.getQuestionSet().isNew()){
                 throw new IllegalArgumentException("QuestionSetPerformance must have an associated QuestionSet");
             }

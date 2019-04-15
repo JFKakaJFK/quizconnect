@@ -4,8 +4,10 @@
 <html xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:qc="http://java.sun.com/jsf/composite/quizconnect" xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
       lang="en">
-    <head>
+    <h:head>
         <!-- Required meta tags -->
         <meta charset="utf-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
@@ -14,9 +16,9 @@
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"/>
         <link rel="stylesheet" href="../../resources/css/main.css" />
         <title>In Game | QuizConnect</title>
-    </head>
+    </h:head>
 
-    <body>
+    <h:body>
         <div data-pushbar-id="bar" class="pushbar from_left">
             <div class="pushbar-close">
                 <span data-pushbar-close="" class="py-2 px-2 my-2 mx-3">
@@ -27,7 +29,12 @@
             <nav class="pushbar-nav pl-4 pr-3 py-4">
                 <ul class="list-unstyled">
                     <li class="my-3">
-                        <a href="#">Leave Game</a>
+                        <h:form>
+                            <h:commandLink p:data-toggle="modal" p:data-target="#leave" p:data-backdrop="static">
+                                Leave Game
+                                <f:ajax execute="@form" render="leave" />
+                            </h:commandLink>
+                        </h:form>
                     </li>
                 </ul>
             </nav>
@@ -42,6 +49,15 @@
             </main>
         </div>
 
+        <h:form>
+            <qc:modal ID="leave"
+                      title="Leave Game"
+                      disableConfirm="true">
+                <!-- TODO leave action -->
+                <h2>Are you sure? Things will happen</h2>
+            </qc:modal>
+        </h:form>
+
         <!-- Optional JavaScript -->
         <!-- jQuery first, then Popper.js, then Bootstrap JS -->
         <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
@@ -54,5 +70,5 @@
                 overlay:true,
             });
         </script>
-    </body>
+    </h:body>
 </html>

@@ -22,14 +22,6 @@ public class CustomServletContextInitializer implements ServletContextInitialize
     public void onStartup(ServletContext sc) throws ServletException {
         sc.setInitParameter("javax.faces.DEFAULT_SUFFIX", ".xhtml");
         sc.setInitParameter("javax.faces.PROJECT_STAGE", "Development");
-        sc.setInitParameter("primefaces.UPLOADER", "commons");
     }
 
-    @Bean
-    public FilterRegistrationBean FileUploadFilter() {
-        FilterRegistrationBean registration = new FilterRegistrationBean();
-        registration.setFilter(new org.primefaces.webapp.filter.FileUploadFilter());
-        registration.setName("PrimeFaces FileUpload Filter");
-        return registration;
-    }
 }

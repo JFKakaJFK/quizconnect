@@ -1,0 +1,40 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pf="http://primefaces.org/ui"
+                xmlns:qc="http://java.sun.com/jsf/composite/quizconnect"
+                template="/WEB-INF/templates/main.xhtml">
+    <ui:define name ="content">
+        <link rel="stylesheet" href="../resources/css/allplayers.css" />
+        <h1>All Players</h1>
+        <p>Order by rank, search, show indicator who is online? or ingame</p>
+        <p>For manager: toggle only his players</p>
+        <!-- TODO: remove avatar changing, move it to player home screen, only search & filter here -->
+
+        <h:form enctype="multipart/form-data">
+
+            <h:panelGroup layout="block" rendered="#{sessionInfoBean.hasRole('MANAGER')}">
+                <h:commandButton  p:class="btn btn-tertiary" value="Only show my players">
+                    <!-- TODO -->
+                </h:commandButton>
+            </h:panelGroup>
+
+            <h:panelGroup id="players" class="players px-3" layout="block">
+                <ui:repeat value="#{allPlayersBean.players}" var="player">
+
+                    <qc:playerbox player="#{player}" online="#{randomOnlineTestBean.online}" rank="Beginner">
+                        <h:link outcome="profile" styleClass="ml-2">
+                            <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-9a1 1 0 0 1 1 1v4a1 1 0 0 1-2 0v-4a1 1 0 0 1 1-1zm0-4a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+                            <f:param name="id" value="#{player.id}"/>
+                        </h:link>
+                    </qc:playerbox>
+
+                </ui:repeat>
+            </h:panelGroup>
+
+        </h:form>
+
+    </ui:define>
+</ui:composition>

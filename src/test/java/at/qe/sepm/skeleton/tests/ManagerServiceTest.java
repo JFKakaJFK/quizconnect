@@ -16,9 +16,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import at.qe.sepm.skeleton.model.Manager;
+import at.qe.sepm.skeleton.model.Player;
 import at.qe.sepm.skeleton.model.User;
 import at.qe.sepm.skeleton.model.UserRole;
 import at.qe.sepm.skeleton.services.ManagerService;
+import at.qe.sepm.skeleton.services.PlayerService;
 import at.qe.sepm.skeleton.services.UserService;
 
 /**
@@ -36,6 +38,9 @@ public class ManagerServiceTest
 	ManagerService managerService;
 	
 	@Autowired
+	PlayerService playerService;
+	
+	@Autowired
 	UserService userService;
 	
 	@Test
@@ -43,7 +48,7 @@ public class ManagerServiceTest
 	public void testLoadAllManagers()
 	{
 		Collection<Manager> managers = managerService.getAllManagers();
-		assertEquals("Wrong number of managers loaded!", 2, managers.size());
+		assertEquals("Wrong number of managers loaded!", 3, managers.size());
 		
 		for (Manager manager : managers)
 		{
@@ -58,6 +63,18 @@ public class ManagerServiceTest
 		Manager manager = managerService.getManagerById(101);
 		assertNotNull("Manager not loaded!", manager);
 		assertEquals("Wrong Manager loaded!", new Integer(101), manager.getId());
+	}
+	
+	@Test
+	@WithMockUser(username = "user1", authorities = { "MANAGER" })
+	public void testGetManagerOfPlayer()
+	{
+		Player player = playerService.getPlayerById(201);
+		assertNotNull("Player not loaded!", player);
+		
+		Manager manager = managerService.getManagerOfPlayer(player);
+		assertNotNull("Manager not loaded!", manager);
+		assertEquals("Wrong manager loaded!", new Integer(101), manager.getId());
 	}
 	
 	@DirtiesContext
