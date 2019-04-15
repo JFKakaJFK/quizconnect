@@ -75,10 +75,7 @@ let state = {
 
 ## Client Events
 
-`@Deprecated`, probably one WS channel for whole room or requestmapping API
-Each clent has his own channel to the quizroom. In this channel he can send `Player` events.
-
-Endpoint: `/qr/{PIN}/{Player.id}`
+Endpoint: `/qr/events/{PIN}`
 
 For each of the possible events, there is a `JS` function to trigger the WS call. Some of them will be triggered by `JS` `EventListener`s, others on page load. The response is then mapped by event and the right eventHandler function gets called.
 
@@ -115,111 +112,6 @@ On page load:
   ```
 4. The response gets mapped to eventHandler
 5. handler may cause DOM updates
-
-**Before WS connection is established** -> Either by bean/requestmapping ?
-But needed for stats in lobby...
-- `getRoomPin`
-  - returns the pin of the Room
-  - Request
-    
-    ```json
-    {
-      "event": "getRoomPin",
-    }
-    ```
-  - Response
-    
-    ```json
-    {
-      "event": "getRoomPin",
-      "pin": 120323,
-    }
-    ```
-- `getRoomDifficulty`
-  - Request
-    
-    ```json
-    {
-      "event": "getRoomDifficulty",
-    }
-    ```
-  - Response
-    
-    ```json
-    {
-      "event": "getRoomDifficulty",
-      "difficulty": "easy",
-    }
-    ```
-- `getRoomMode`
-  - Request
-    
-    ```json
-    {
-      "event": "getRoomMode",
-    }
-    ```
-  - Response
-    
-    ```json
-    {
-      "event": "getRoomMode",
-      "mode": "normal",
-    }
-    ```
-- `getRoomQuestionSets`
-  - Request
-    
-    ```json
-    {
-      "event": "getRoomQuestionSets",
-    }
-    ```
-  - Response
-    
-    ```json
-    {
-      "event": "getRoomQuestionSets",
-      "questionSets": [
-        "Silicon Valley Trivia",
-        "Bitcoin or Shitcoin?",
-      ],
-    }
-    ```
-- `getRoomScore`
-  - Request
-    
-    ```json
-    {
-      "event": "getRoomScore",
-    }
-    ```
-  - Response
-    
-    ```json
-    {
-      "event": "getRoomScore",
-      "score": "42",
-    }
-    ```
-- `getAlivePingTimeStep` (ms)
-  - Request
-    
-    ```json
-    {
-      "event": "getAlivePingTimeStep",
-    }
-    ```
-  - Response
-    
-    ```json
-    {
-      "event": "getAlivePingTimeStep",
-      "alivePingInterval": "30000",
-    }
-    ```
-
-With WS Connection
 
 - `getGameInfo`
   - returns all game info needed for Lobby, called once when joined
@@ -306,31 +198,7 @@ With WS Connection
       "num": 3,
     }
     ```
-- `getRoomPlayers`
-  - returns players in the room
-  - **NOTE:** would be `@Deprecated` if `getRoomPlayers` was adjusted
-    -> Abstraction layer
-  - Request
-    
-    ```json
-    {
-      "event": "getRoomReadyPlayers",
-    }
-    ```
-  - Response
-    
-    ```json
-    {
-      "event": "getRoomReadyPlayers",
-      "players": [
-        {
-          "id": 123,
-          "name": "user4",
-          "avatar": "/avatars/user1/923486742842334_200x200.png",
-        },
-      ]
-    }
-    ```
+
 Game Events
 
 **NOTE:** Depending on the layer, id either is needed or not
