@@ -46,14 +46,16 @@ public class QSOverviewBean implements Serializable {
     private SessionInfoBean sessionInfoBean;
 
     private User currentUser;
+    private Manager currentManager;
     private List<QuestionSet> questionSets;
 
     private Part uploadedFile;
 
     @PostConstruct
     public void init() {
-        this.questionSets = new ArrayList<>(questionSetService.getAllContaining("Test"));
+        this.questionSets = new ArrayList<>(questionSetService.getAllQuestionSets());
         currentUser = sessionInfoBean.getCurrentUser();
+        currentManager = sessionInfoBean.getCurrentUser().getManager();
     }
 
     public List<QuestionSet> getQuestionSets(){
@@ -75,6 +77,15 @@ public class QSOverviewBean implements Serializable {
         //TODO: edit functionality
     }
 
+    public User getCurrentUser() {
+        logger.info("user with name: " + currentUser.getUsername());
+        return currentUser;
+    }
+
+    public Manager getCurrentManager() {
+        logger.info("manager with id: " + currentManager.getId());
+        return currentManager;
+    }
 
     /*
     public Part getUploadedFile() {
