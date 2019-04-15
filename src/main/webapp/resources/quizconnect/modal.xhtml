@@ -7,6 +7,7 @@
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:jsf="http://xmlns.jcp.org/jsf"
       xml:lang="en"
       lang="en">
     <cc:interface name="modal">
@@ -45,9 +46,8 @@
         <cc:attribute name="target" required="true" />
         <cc:attribute name="title" required="true" />
         <cc:attribute name="disableConfirm" default="false" />
+        <cc:attribute name="closeOnConfirm" default="false" required="#{false}" type="java.lang.Boolean" />
 
-
-        <cc:attribute name="closeAction" method-signature="void action()" default="#{QCModalController.defaultAction}" />
         <cc:attribute name="update" default="@none" />
 
         <cc:attribute name="abort" default="Close" />
@@ -56,11 +56,13 @@
         <cc:attribute name="abortAction" method-signature="void action()" default="#{QCModalController.defaultAction}" />
         <cc:attribute name="confirmAction" method-signature="void action()" default="#{QCModalController.defaultAction}" />
 
+        <cc:attribute name="footerId" default="modal-footer" />
+        <cc:attribute name="bodyId" default="modal-body" />
 
     </cc:interface>
 
     <cc:implementation>
-        <h:panelGroup layout="block" styleClass="modal fade" p:id="#{cc.attrs.target}" p:tabindex="-1" p:role="dialog" p:aria-labelledby="#{cc.attrs.id}" p:aria-hidden="true">
+        <div class="modal fade" id="#{cc.attrs.target}" tabindex="-1" role="dialog" aria-labelledby="#{cc.attrs.id}" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -70,26 +72,27 @@
                             <span aria-hidden="true">
                                 <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M16.24 14.83a1 1 0 0 1-1.41 1.41L12 13.41l-2.83 2.83a1 1 0 0 1-1.41-1.41L10.59 12 7.76 9.17a1 1 0 0 1 1.41-1.41L12 10.59l2.83-2.83a1 1 0 0 1 1.41 1.41L13.41 12l2.83 2.83z"/></svg>
                             </span>
+                            <f:ajax execute="@form" render="#{cc.attrs.update}" />
                         </h:commandLink>
 
                     </div>
-                    <div class="modal-body">
+                    <div jsf:id="#{cc.attrs.bodyId}" class="modal-body">
                         <cc:insertChildren />
                     </div>
-                    <div class="modal-footer">
+                    <div jsf:id="#{cc.attrs.footerId}" class="modal-footer">
 
                         <h:commandButton actionListener="#{cc.attrs.abortAction}" p:class="btn btn-tertiary" p:data-dismiss="modal" value="#{cc.attrs.abort}">
                             <f:ajax execute="@form" render="#{cc.attrs.update}" />
                         </h:commandButton>
 
-                        <h:commandButton actionListener="#{cc.attrs.confirmAction}" p:class="btn btn-primary" value="#{cc.attrs.confirm}" disabled="#{cc.attrs.disableConfirm}" >
+                        <h:commandButton actionListener="#{cc.attrs.confirmAction}" p:class="btn btn-primary" p:data-dismiss="#{cc.attrs.closeOnConfirm ? 'modal' : ''}" value="#{cc.attrs.confirm}" disabled="#{cc.attrs.disableConfirm}" >
                             <f:ajax execute="@form" render="#{cc.attrs.update}" />
                         </h:commandButton>
 
                     </div>
                 </div>
             </div>
-        </h:panelGroup>
+        </div>
     </cc:implementation>
 
 

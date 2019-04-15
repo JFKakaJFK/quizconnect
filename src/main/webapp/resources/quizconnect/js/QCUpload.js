@@ -3,7 +3,7 @@
 class QCUpload {
     constructor(){}
 
-    static upload(target, endpoint, formId){
+    static upload(target, endpoint, formId, click = null){
         const elem = document.querySelector(target);
         const form = document.querySelector(formId);
 
@@ -21,7 +21,18 @@ class QCUpload {
             fetch(endpoint, {
                 method: 'POST',
                 body: formData,
-            }).catch(error => console.error(error))
+            }).then(response => {
+                if(click !== ''){
+                    document.querySelector(click).click();
+                }
+                return response;
+            }
+            ).catch(error => {
+                console.error(error);
+                if(click !== ''){
+                    document.querySelector(click).click();
+                }
+            })
         });
     }
 }
