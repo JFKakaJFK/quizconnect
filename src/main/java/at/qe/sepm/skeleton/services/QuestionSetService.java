@@ -1,7 +1,10 @@
 package at.qe.sepm.skeleton.services;
 
-import at.qe.sepm.skeleton.model.*;
-import at.qe.sepm.skeleton.repositories.QuestionSetRepository;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +12,12 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import at.qe.sepm.skeleton.model.Manager;
+import at.qe.sepm.skeleton.model.Question;
+import at.qe.sepm.skeleton.model.QuestionSet;
+import at.qe.sepm.skeleton.model.QuestionSetDifficulty;
+import at.qe.sepm.skeleton.model.QuestionType;
+import at.qe.sepm.skeleton.repositories.QuestionSetRepository;
 
 /**
  * Service for accessing and manipulating {@link Question} entities.
@@ -32,6 +37,16 @@ public class QuestionSetService {
     @Autowired
     QuestionService questionService;
 
+	/**
+	 * Returns all QuestionSets in the database.
+	 * 
+	 * @return
+	 */
+	public List<QuestionSet> getAllQuestionSets()
+	{
+		return questionSetRepositoryRepository.findAll();
+	}
+	
     /**
      * Returns the QuestionSet of a Question
      * @param question
