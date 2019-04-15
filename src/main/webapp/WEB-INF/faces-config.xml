@@ -7,4 +7,12 @@
         <el-resolver>org.springframework.web.jsf.el.SpringBeanFacesELResolver</el-resolver>
     </application>
 
+    <render-kit>
+        <renderer>
+            <component-family>javax.faces.Messages</component-family>
+            <renderer-type>javax.faces.Messages</renderer-type>
+            <renderer-class>at.qe.sepm.skeleton.ui.renderer.BootstrapMessagesRenderer</renderer-class>
+        </renderer>
+    </render-kit>
+
 </faces-config>

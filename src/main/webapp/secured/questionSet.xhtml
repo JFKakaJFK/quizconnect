@@ -6,10 +6,9 @@
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:ui="http://java.sun.com/jsf/facelets"
-                xmlns:p="http://primefaces.org/ui"
-                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough" xmlns:qc="http://java.sun.com/jsf/composite/quizconnect"
                 template="/WEB-INF/templates/main.xhtml">
-    <ui:define name="css">
+    <ui:define name="site-specific-css">
         <link rel="stylesheet" type="text/css" href="/resources/css/login.css"/>
     </ui:define>
 
@@ -133,29 +132,32 @@
 
 
                 <h:commandButton styleClass="btn btn-block btn-primary btn-lg" pt:id="submitNew"
-                                 value="Save question and add another one"
-                                 action="#{questionSetBean.saveNewQuestion}">
-                </h:commandButton>
-
-                <h:commandButton styleClass="btn btn-block btn-tertiary btn-lg" pt:id="submitCancel"
-                                 value="Save question and return to overview"
-                                 action="#{questionSetBean.exitCreateQuestionSet}">
+                                 value="Save" pt:type="submit">
                 </h:commandButton>
 
                 <script type="text/javascript">
-                    const inputs = document.querySelectorAll("input, select, textarea");
-
-                    inputs.forEach(input => {
-                        input.addEventListener(
-                            "invalid",
-                            event => {
-                                input.classList.add("error");
-                            },
-                            false
-                        );
+                    $('#questionForm').submit(function(e){
+                        console.log('invoked modal.js from inline script');
+                        e.preventDefault();
+                        console.log('prevented Default from modal.js from inline script');
+                        $("#questionModal").modal({
+                            show : true,
+                            keyboard : false,
+                            backdrop : 'static'
+                        });
+                        console.log('show modal from inline script');
                     });
+
                 </script>
+
+                <qc:modal target="questionModal" closable="false" modaltype="question" title="Another one?" abort="No" confirm="Yes" confirmAction="#{questionSetBean.saveNewQuestion}" abortAction="#{questionSetBean.exitCreateQuestionSet}" update="@form">
+                    <h2>Do you want to add another question?</h2>
+                </qc:modal>
             </h:form>
         </div>
+    </ui:define>
+
+    <ui:define name="site-specific-javascript">
+        <script type="text/javascript" src="/resources/js/modal.js"/>
     </ui:define>
 </ui:composition>

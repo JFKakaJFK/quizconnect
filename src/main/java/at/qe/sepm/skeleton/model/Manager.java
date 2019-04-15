@@ -28,7 +28,7 @@ public class Manager implements Persistable<Integer>
 	@GeneratedValue
 	private Integer id;
 	
-	@OneToOne(optional = false, fetch = FetchType.EAGER)
+	@OneToOne(optional = false, fetch = FetchType.LAZY)
 	private User user;
 	
 	@Column(nullable = false, length = 100)

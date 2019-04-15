@@ -29,3 +29,19 @@
     background: var(--col-1-m);
     border-radius: 0 0 var(--border-radius) var(--border-radius);
 }
+
+.modal-warning .modal-header, .modal-warning .modal-body, .modal-warning .modal-footer {
+    background-color: var(--warning);
+}
+
+.modal-error .modal-header, .modal-error .modal-body, .modal-error .modal-footer {
+    background-color: var(--error);
+}
+
+.modal-success .modal-header, .modal-success .modal-body, .modal-success .modal-footer {
+    background-color: var(--success);
+}
+
+.modal-question .modal-header, .modal-question .modal-body, .modal-question .modal-footer {
+    background-color: var(--warning);
+}

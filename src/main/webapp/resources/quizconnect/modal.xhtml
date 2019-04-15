@@ -8,92 +8,111 @@
       xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:jsf="http://xmlns.jcp.org/jsf"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
       xml:lang="en"
       lang="en">
-    <cc:interface name="modal">
+<cc:interface name="modal">
 
-        <!--====================================================================================
+    <!--====================================================================================
 
-        The modal component generates the structure for a
-        bootstrap modal. The modal supports adding actions
-        to all buttons. An extra button is needed to open the
-        modal. Needs to be whithin a h:form.
+    The modal component generates the structure for a
+    bootstrap modal. The modal supports adding actions
+    to all buttons. An extra button is needed to open the
+    modal. Needs to be whithin a h:form.
 
-        Params:
-        - target sets the class of the outmost container, needed as reference for opening modal
-        - title sets the modal heading
-        - [closeAction] method with return type void, called when modal is closed via close icon
-        - [update] jsf ids of components to update, update will happen for each action
+    Params:
+    - target sets the class of the outmost container, needed as reference for opening modal
+    - title sets the modal heading
+    - [closeAction] method with return type void, called when modal is closed via close icon
+    - [update] jsf ids of components to update, update will happen for each action
 
-        Example
+    Example
 
-        <h:commandLink p:data-toggle="modal" p:data-target=".myModal" p:data-backdrop="static">
-            Open Modal
-            <f:ajax execute="@form" render="jsfId" />
-        </h:commandLink>
+    <h:commandLink p:data-toggle="modal" p:data-target=".myModal" p:data-backdrop="static">
+        Open Modal
+        <f:ajax execute="@form" render="jsfId" />
+    </h:commandLink>
 
 
-        <qc:modal id="jsfId" target="myModal" title="Modal Title" disableConfirm="true">
-            <div class="modal-body">
-                <h2>Modal content</h2>
-            </div>
-            <div class="modal-footer">
-                footer buttons
-            </div>
-        </qc:modal>
+    <qc:modal id="jsfId" target="myModal" title="Modal Title" disableConfirm="true">
+        <div class="modal-body">
+            <h2>Modal content</h2>
+        </div>
+        <div class="modal-footer">
+            footer buttons
+        </div>
+    </qc:modal>
 
-        ======================================================================================-->
-        <cc:attribute name="target" required="true" />
-        <cc:attribute name="title" required="true" />
-        <cc:attribute name="disableConfirm" default="false" />
-        <cc:attribute name="closeOnConfirm" default="false" required="#{false}" type="java.lang.Boolean" />
+    ======================================================================================-->
+    <cc:attribute name="target" required="true" />
+    <cc:attribute name="title" required="true" />
+    <cc:attribute name="disableConfirm" default="false" />
+    <cc:attribute name="closeOnConfirm" default="#{true}" required="false" type="java.lang.Boolean" />
+    <cc:attribute name="update" default="@none" />
+    <cc:attribute name="modaltype" default=""/>
+    <cc:attribute name="closable" default="true"/>
 
-        <cc:attribute name="update" default="@none" />
 
-        <cc:attribute name="abort" default="Close" />
-        <cc:attribute name="confirm" default="Save changes" />
-        <cc:attribute name="closeAction" method-signature="void action()" default="#{QCModalController.defaultAction}" />
-        <cc:attribute name="abortAction" method-signature="void action()" default="#{QCModalController.defaultAction}" />
-        <cc:attribute name="confirmAction" method-signature="void action()" default="#{QCModalController.defaultAction}" />
+    <cc:attribute name="footerId" default="modal-footer" />
+    <cc:attribute name="bodyId" default="modal-body" />
+    
+    <cc:attribute name="abort" default="Close"/>
+    <cc:attribute name="confirm" default="Save changes"/>
+    <cc:attribute name="closeAction" method-signature="void action()" default="#{QCModalController.defaultAction}"/>
+    <cc:attribute name="abortAction" method-signature="void action()" default="#{QCModalController.defaultAction}"/>
+    <cc:attribute name="confirmAction" method-signature="void action()" default="#{QCModalController.defaultAction}"/>
+    
+</cc:interface>
 
-        <cc:attribute name="footerId" default="modal-footer" />
-        <cc:attribute name="bodyId" default="modal-body" />
+<cc:implementation>
+    <div class="modal fade" id="#{cc.attrs.target}" tabindex="-1" role="dialog" aria-labelledby="#{cc.attrs.id}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-#{cc.attrs.modaltype}" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">#{cc.attrs.title}</h5>
 
-    </cc:interface>
-
-    <cc:implementation>
-        <div class="modal fade" id="#{cc.attrs.target}" tabindex="-1" role="dialog" aria-labelledby="#{cc.attrs.id}" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">#{cc.attrs.title}</h5>
-
-                        <h:commandLink actionListener="#{cc.attrs.closeAction}" p:class="close" p:aria-label="Close" p:data-dismiss="modal">
+                    <c:if test="#{cc.attrs.closable}">
+                        <h:commandLink actionListener="#{cc.attrs.closeAction}" p:class="close" p:aria-label="Close"
+                                       p:data-dismiss="modal">
                             <span aria-hidden="true">
-                                <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M16.24 14.83a1 1 0 0 1-1.41 1.41L12 13.41l-2.83 2.83a1 1 0 0 1-1.41-1.41L10.59 12 7.76 9.17a1 1 0 0 1 1.41-1.41L12 10.59l2.83-2.83a1 1 0 0 1 1.41 1.41L13.41 12l2.83 2.83z"/></svg>
+                                <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui"
+                                                                                      d="M16.24 14.83a1 1 0 0 1-1.41 1.41L12 13.41l-2.83 2.83a1 1 0 0 1-1.41-1.41L10.59 12 7.76 9.17a1 1 0 0 1 1.41-1.41L12 10.59l2.83-2.83a1 1 0 0 1 1.41 1.41L13.41 12l2.83 2.83z"/></svg>
                             </span>
                             <f:ajax execute="@form" render="#{cc.attrs.update}" />
                         </h:commandLink>
+                    </c:if>
 
+                </div>
+                
+                <div jsf:id="#{cc.attrs.bodyId}" class="modal-body">
+                    <div class="text-center">
+                        <c:if test="#{cc.attrs.modaltype == 'warning'}"><i class="fas fa-exclamation fa-4x mb-3"></i></c:if>
+                        <c:if test="#{cc.attrs.modaltype == 'success'}"><i class="fas fa-check fa-4x mb-3"></i></c:if>
+                        <c:if test="#{cc.attrs.modaltype == 'error'}"><i class="fas fa-times fa-4x mb-3"></i></c:if>
+                        <c:if test="#{cc.attrs.modaltype == 'question'}"><i class="fas fa-question fa-4x mb-3"></i></c:if>
+                        <cc:insertChildren/>
                     </div>
-                    <div jsf:id="#{cc.attrs.bodyId}" class="modal-body">
-                        <cc:insertChildren />
-                    </div>
-                    <div jsf:id="#{cc.attrs.footerId}" class="modal-footer">
+                </div>
 
-                        <h:commandButton actionListener="#{cc.attrs.abortAction}" p:class="btn btn-tertiary" p:data-dismiss="modal" value="#{cc.attrs.abort}">
-                            <f:ajax execute="@form" render="#{cc.attrs.update}" />
-                        </h:commandButton>
+                <div jsf:id="#{cc.attrs.footerId}" class="modal-footer">
 
-                        <h:commandButton actionListener="#{cc.attrs.confirmAction}" p:class="btn btn-primary" p:data-dismiss="#{cc.attrs.closeOnConfirm ? 'modal' : ''}" value="#{cc.attrs.confirm}" disabled="#{cc.attrs.disableConfirm}" >
-                            <f:ajax execute="@form" render="#{cc.attrs.update}" />
-                        </h:commandButton>
+                    <h:commandButton actionListener="#{cc.attrs.abortAction}" p:class="btn btn-tertiary"
+                                     p:data-dismiss="modal" value="#{cc.attrs.abort}">
+                        <f:ajax execute="@form" render="#{cc.attrs.update}"/>
+                    </h:commandButton>
 
-                    </div>
+                    <h:commandButton actionListener="#{cc.attrs.confirmAction}" 
+                                p:class="btn btn-primary" 
+                                p:data-dismiss="#{cc.attrs.closeOnConfirm ? 'modal' : ''}" 
+                                value="#{cc.attrs.confirm}" 
+                                disabled="#{cc.attrs.disableConfirm}" >
+                        <f:ajax execute="@form" render="#{cc.attrs.update}" />
+                    </h:commandButton>
+
                 </div>
             </div>
         </div>
-    </cc:implementation>
-
+    </div>
+</cc:implementation>
 
 </html>

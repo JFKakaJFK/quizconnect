@@ -22,7 +22,7 @@ import java.util.*;
  */
 
 @Component
-@Scope("view")
+@Scope("session")
 public class QuestionSetBean implements Serializable {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -43,8 +43,6 @@ public class QuestionSetBean implements Serializable {
     private Set<Question> questions;
     private Question question;
 
-
-
     private Set<Question> savedQuestionSets;
 
     @PostConstruct
@@ -56,12 +54,19 @@ public class QuestionSetBean implements Serializable {
     }
 
     public void clearQuestion() {
+        logger.info("clearQuestion invoked");
         question = new Question();
         question.setType(QuestionType.text);
+    }
 
+    public void clearQuestionSet() {
+        logger.info("clearQuestionSet invoked");
+        questionSet = new QuestionSet();
+        questionSet.setDifficulty(QuestionSetDifficulty.easy);
     }
 
     public void saveNewQuestion() {
+        logger.info("saveNewQuestion invoked");
         questions.add(question);
         question.setQuestionSet(questionSet);
         logger.info("questionSet=" + question.getQuestionSet() + "; type=" + question.getType() + ", questionString='" + question.getQuestionString() + ", rightAnswerString='" + question.getRightAnswerString());
@@ -71,13 +76,14 @@ public class QuestionSetBean implements Serializable {
     }
 
     public void saveNewQuestionSet() {
+        logger.info("saveNewQuestionSet invoked");
         if (currentUser.getRole() == UserRole.MANAGER) {
             questionSet.setAuthor(currentUser.getManager());
             questionSet.setQuestions(questions);
             questionSetService.saveQuestionSet(questionSet);
             logger.info("Created a new QuestionSet with ID: " + questionSet.getId() + " by manager:" + questionSet.getAuthor());
 
-            // creates a new question initialized to easy
+            // creates a new question initialized to type text
             clearQuestion();
         }
     }
@@ -92,6 +98,9 @@ public class QuestionSetBean implements Serializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        //as this is session scoped, reset the QuestionSet so another one can be created
+        clearQuestionSet();
     }
 
     public Question getQuestion() {
