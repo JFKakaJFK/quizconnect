@@ -490,7 +490,7 @@ Requests now sent by server(request probably wrong name since its an event that 
     ```json
     {
       "event": "onScoreChange",
-      "score": 43,
+      "newScore": 43,
     }
     ```
     
