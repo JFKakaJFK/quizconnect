@@ -189,10 +189,10 @@ public class QuizRoom implements IPlayerAction
 				synchonizeTimers();
 				timerSyncTime = 0;
 			}
-
+			
+			checkQuestionTimes(deltaTime);
 		}
 		
-		checkQuestionTimes(deltaTime);
 	}
 	
 	/**
@@ -244,7 +244,7 @@ public class QuizRoom implements IPlayerAction
 	}
 	
 	/**
-	 * Called every frameUpdate, reduces remaining time and checks for all ActiveQuestions if time has run out.
+	 * Called every frameUpdate, reduces remaining time and checks for all ActiveQuestions if time has run out. Removes a Question from all Players associated if time has run out.
 	 */
 	private synchronized void checkQuestionTimes(long deltaTime)
 	{
@@ -263,15 +263,46 @@ public class QuizRoom implements IPlayerAction
 	 */
 	private synchronized void checkPlayerActivity()
 	{
-		// TODO implement activity check
+		long tooLong = (new Date().getTime()) - activityDuration;
+		for (Player player : players)
+		{
+			if (playerActivityTimestamps.get(player) < tooLong)
+			{
+				playerInterface.onTimeoutStart(pin, player, timeoutDuration);
+				addDelayedAction(new DelayedAction(timeoutDuration, () -> {
+					kickPlayerIfNoActivity(player);
+				}));
+			}
+		}
 	}
 	
 	/**
-	 * Called every aliveTimeStep ms, checks for each Player if the last alive ping is more than aliveDuration ms ago.
+	 * Called delayed if an activity check fails on a player. If still no activity / timeout cancel detected kick player
+	 */
+	private synchronized void kickPlayerIfNoActivity(Player player)
+	{
+		long tooLong = (new Date().getTime()) - activityDuration;
+		if (playerActivityTimestamps.get(player) < tooLong)
+		{
+			playerInterface.onKick(pin, player);
+			removePlayer(player, "kicked for AFK");
+		}
+	}
+	
+	/**
+	 * Called every aliveTimeStep ms, checks for each Player if the last alive ping is more than aliveDuration ms ago. Removes the player if no activity is detected.
 	 */
 	private synchronized void checkPlayerAlivePings()
 	{
-		// TODO implement alive check
+		long tooLong = (new Date().getTime()) - aliveDuration;
+		for (int i = players.size() - 1; i >= 0; i--)
+		{
+			Player player = players.get(i);
+			if (playerAlivePingTimestamps.get(player) < tooLong)
+			{
+				removePlayer(player, "disconnected");
+			}
+		}
 	}
 	
 	/**
@@ -279,7 +310,10 @@ public class QuizRoom implements IPlayerAction
 	 */
 	private synchronized void synchonizeTimers()
 	{
-		// TODO implement timer sync
+		for (ActiveQuestion activeQuestion : activeQuestions)
+		{
+			playerInterface.onTimerSync(pin, activeQuestion.playerQuestion, activeQuestion, activeQuestion.timeRemaining);
+		}
 	}
 	
 	/**
@@ -297,29 +331,38 @@ public class QuizRoom implements IPlayerAction
 		}
 		
 		players.add(player);
+		playerQuestions.put(player, null);
+		playerAnswers.put(player, new LinkedList<>());
 		
 		eventCall(x -> {
-			x.onPlayerJoin(player);
+			x.onPlayerJoin(pin, player);
 		});
 		
 		return true;
 	}
 	
 	/**
-	 * Removes a Player from the QuizRoom. May be called due to Player leaving, or afk kick.
+	 * Removes a Player from the QuizRoom. May be called due to Player leaving, or afk kick. Makes the onPlayerLeave event call.
 	 * 
 	 * @param player
 	 *            Player to be removed.
 	 * @param reason
 	 *            Reason for the removal (e.g. 'left', 'kicked', 'disconnected')
 	 */
-	public synchronized void removePlayer(Player player, String reason)
+	private synchronized void removePlayer(Player player, String reason)
 	{
 		eventCall(x -> {
-			x.onPlayerLeave(player, reason);
+			x.onPlayerLeave(pin, player, reason);
 		});
 		
+		// TODO redistribute question / answers of player who left
+		
 		players.remove(player);
+		playerQuestions.remove(player);
+		playerAnswers.remove(player);
+		
+		playerActivityTimestamps.remove(player);
+		playerAlivePingTimestamps.remove(player);
 	}
 	
 	/**
@@ -332,6 +375,7 @@ public class QuizRoom implements IPlayerAction
 		long now = new Date().getTime();
 		for (Player player : players)
 		{
+			// initialize timestamps
 			playerActivityTimestamps.put(player, now);
 			playerAlivePingTimestamps.put(player, now);
 		}
@@ -461,7 +505,7 @@ public class QuizRoom implements IPlayerAction
 		}
 		
 		eventCall(x -> {
-			x.onReadyUp(p, readyPlayers.size());
+			x.onReadyUp(pin, p, readyPlayers.size());
 		});
 	}
 	
@@ -473,17 +517,18 @@ public class QuizRoom implements IPlayerAction
 	}
 	
 	@Override
-	public void useJoker(Player p)
+	public synchronized void useJoker(Player p)
 	{
 		// TODO Auto-generated method stub
 		
 	}
 	
 	@Override
-	public void cancelTimeout(Player p)
+	public synchronized void cancelTimeout(Player p)
 	{
-		// TODO Auto-generated method stub
-		
+		long tooLong = (new Date().getTime()) - activityDuration;
+		if (playerActivityTimestamps.get(p) < tooLong)
+			playerActivityTimestamps.put(p, new Date().getTime());
 	}
 	
 	@Override
