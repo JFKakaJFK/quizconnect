@@ -1,5 +1,6 @@
 package at.qe.sepm.skeleton.logic;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -39,6 +40,7 @@ public class QuizRoom implements IPlayerAction
 	
 	private final int defaultNumberJokers = 1; // number of jokers to start with
 	private final int playerAnswerSlots = 6;
+	private final int maxQuestions = 30; // maximum number of questions until game ends
 	
 	private int pin;
 	private int maxPlayers;
@@ -55,7 +57,6 @@ public class QuizRoom implements IPlayerAction
 	private volatile List<Question> questionsPoolEasy; // list of all unused easy questions
 	private volatile List<Question> questionsPoolHard; // list of all unused hard questions
 	private volatile int completedQuestions; // total number of answered questions
-	private int maxQuestions; // maximum number of questions until game ends
 	
 	private volatile List<Player> players; // players in the room
 	private IRoomAction playerInterface; // interface for all players
@@ -408,14 +409,16 @@ public class QuizRoom implements IPlayerAction
 	 */
 	private synchronized void distributeQuestion()
 	{
-		Question question = selectQuestion();
-		if (question == null)
+		AbstractMap.SimpleEntry<Question, QuestionSetDifficulty> pair = selectQuestion();
+		if (pair == null)
 		{
 			eventCall(x -> {
 				x.onGameEnd(pin);
 			});
 			onRoomClose();
 		}
+		
+		Question question = pair.getKey();
 		
 		List<Player> questionFreePlayers = new ArrayList<>(); // players with no questions
 		List<Player> answerFreePlayers = new ArrayList<>(); // players with open answer slots (multiple slots open = multiple times in list)
@@ -476,7 +479,7 @@ public class QuizRoom implements IPlayerAction
 		}
 		
 		// TODO compute question time depending on already answered questions + difficulty of Q + Room
-		long qTime = 60;
+		long qTime = computeQuestionTime(pair.getValue());
 		
 		ActiveQuestion newActive = new ActiveQuestion(question, qPlayer, raPlayer, waPlayers, qTime);
 		
@@ -495,9 +498,9 @@ public class QuizRoom implements IPlayerAction
 	}
 	
 	/**
-	 * Returns a Question at random from either the easy or the hard pool (depending on emptiness / difficulty) or null if game end reached.
+	 * Returns a Question (+ its difficulty) at random from either the easy or the hard pool (depending on emptiness / difficulty) or null if game end reached.
 	 */
-	private Question selectQuestion()
+	private AbstractMap.SimpleEntry<Question, QuestionSetDifficulty> selectQuestion()
 	{
 		Random random = new Random();
 		int bound = difficulty == RoomDifficulty.easy ? 66 : 33;
@@ -538,7 +541,37 @@ public class QuizRoom implements IPlayerAction
 			questionsPoolHard.remove(index);
 		}
 		
-		return question;
+		return new AbstractMap.SimpleEntry<Question, QuestionSetDifficulty>(question, easy ? QuestionSetDifficulty.easy : QuestionSetDifficulty.hard);
+	}
+	
+	/**
+	 * Computes the answer time for a question based on the room difficulty, question difficulty, player count, completed questions count, and some constants.
+	 * 
+	 * @param questionDifficulty
+	 * @return
+	 */
+	private long computeQuestionTime(QuestionSetDifficulty questionDifficulty)
+	{
+		long playerBonus = 2000; // ms added for each player in the room
+		double scaleFactor = 0.3; // factor affecting time reduction towards end of game
+		
+		long base = 0;
+		if (difficulty == RoomDifficulty.easy)
+		{
+			if (questionDifficulty == QuestionSetDifficulty.easy)
+				base = 30000;
+			else
+				base = 45000;
+		}
+		else
+		{
+			if (questionDifficulty == QuestionSetDifficulty.easy)
+				base = 20000;
+			else
+				base = 30000;
+		}
+
+		return (long) (base - (((completedQuestions / (double) maxQuestions) * scaleFactor) * base) + (players.size() * playerBonus));
 	}
 	
 	/**
