@@ -1,4 +1,4 @@
 "use strict";
 
-let state = {};
+//let state = {};
 console.log("js loaded");
