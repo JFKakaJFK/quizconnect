@@ -483,17 +483,15 @@ public class QuizRoom implements IPlayerAction
 		activeQuestions.add(newActive);
 		
 		playerQuestions.put(qPlayer, newActive);
-		playerInterface.assignQuestion(pin, qPlayer, newActive);
 		
 		playerAnswers.get(raPlayer).add(newActive);
-		playerInterface.assignAnswer(pin, raPlayer, newActive, 0);
 		
 		for (int i = 0; i < waPlayers.size(); i++)
 		{
 			playerAnswers.get(waPlayers.get(i)).add(newActive);
-			playerInterface.assignAnswer(pin, waPlayers.get(i), newActive, i + 1);
 		}
 
+		playerInterface.assignQuestion(pin, newActive);
 	}
 	
 	/**
