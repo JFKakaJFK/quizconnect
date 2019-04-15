@@ -1,4 +1,10 @@
-# QRWebSocketConnetion
+# QuizConnect Game Frontend
+
+Options(Since WS needed, lobby + ingame need to be 1 page):
+
+1. Join per JSF .xhtml page, redirect to pure HTML5 + JS(ES7+) + CSS3 (pin + playerId need to be passed on (GET Parameter?))
+2. Multiple pure HTML5 sites, information needed will be passed on using `LocalStorage` or `SessionStorage`
+3. One bit HTML5 page with 4 states(join|lobby|ingame|end), each state renders different layout
 
 Each client requests game info & players on lobby join and keeps an instance of the game state locally. The game state gets updated by the server, which is the single source of truth. Player events can trigger server events, which in turn update all players local states. UI is dictated by local game state, (partial) rerender on state changes. (Write JS functions to rerender parts of view)
 
@@ -179,23 +185,6 @@ On page load:
           "ready": "false",
         },
       ]
-    }
-    ```
-- `getRoomPlayerCount`
-  - **NOTE:** would be `@Deprecated` if `getRoomPlayers` was adjusted
-  - Request
-    
-    ```json
-    {
-      "event": "getRoomPlayerCount",
-    }
-    ```
-  - Response
-    
-    ```json
-    {
-      "event": "getRoomPlayerCount",
-      "num": 3,
     }
     ```
 
