@@ -6,6 +6,7 @@
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:qc="http://java.sun.com/jsf/composite/quizconnect"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
                 template="/WEB-INF/templates/main.xhtml">
 
     <ui:define name="site-specific-css">
@@ -21,8 +22,7 @@
             </div>
         </div>
 
-
-        <h:form>
+        <h:form id="formOverview-QSets">
             <h:commandLink action="all?faces-redirect=true" styleClass="back-btn">
                 <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M5.41 11H21a1 1 0 0 1 0 2H5.41l5.3 5.3a1 1 0 0 1-1.42 1.4l-7-7a1 1 0 0 1 0-1.4l7-7a1 1 0 0 1 1.42 1.4L5.4 11z"/></svg>All Players
             </h:commandLink>
@@ -32,9 +32,11 @@
                 <h:commandButton styleClass="btn btn-primary" action="all?faces-redirect=true" value="All Players"/>
             </h:panelGroup>
 
-            <h:panelGroup layout="block" rendered="#{QSOverviewBean.questionSets != null}" styleClass="boxes px-3">
+
+
+            <h:panelGroup id="overview-QSets" layout="block" rendered="#{QSOverviewBean.questionSets != null}" styleClass="boxes px-3">
                     <ui:repeat value="#{QSOverviewBean.questionSets}" var="questionSet">
-                    <qc:generic-box size="sm">
+                    <qc:generic-box size="sm" settings="#{QSOverviewBean.deleteQuestionSet(questionSet)}" icon="fas fa-trash" >
                         <h3>#{questionSet.name}</h3>
                         <h3>#{questionSet.description}</h3>
                         <div class="row">
