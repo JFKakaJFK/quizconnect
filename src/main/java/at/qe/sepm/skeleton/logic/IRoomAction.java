@@ -53,8 +53,10 @@ public interface IRoomAction
 	 * 
 	 * @param pin
 	 *            Pin of the QuizRoom making the call.
+	 * @param remaining
+	 *            Number of Jokers remaining.
 	 */
-	public void onJokerUse(int pin);
+	public void onJokerUse(int pin, int remaining);
 	
 	/**
 	 * Called when a Player leaves the QR either actively or from being kicked.

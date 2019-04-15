@@ -58,6 +58,11 @@ public interface IPlayerAction
 	 * Returns the expected time between alive pings in ms.
 	 */
 	public long getAlivePingTimeStep();
+	
+	/**
+	 * Returns the number of Jokers remaining in the QR.
+	 */
+	public int getNumberOfJokers();
 
 	/*
 	 * ### ALL FUNCTIONS BENEATH THIS POINT MUST PROVIDE A REFERENCE TO THE PLAYER WHO MAKES THE CALL! NECCESSARY TO DIFFERENTIATE PLAYERS IN THE QUIZROOM. ###
