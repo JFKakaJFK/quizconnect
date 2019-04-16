@@ -237,7 +237,7 @@ const getRoomPlayers = () => {
 };
 
 const readyUp = () => {
-    sendEvent({event: READY_UP, playerId: state.id});
+    sendEvent({event: READY, playerId: state.id});
 };
 
 // TODO or handle by onclick event
