@@ -64,7 +64,9 @@ public class CSVImportBean implements Serializable {
     @RequestMapping(value = "/upload/csv", method = RequestMethod.POST)
     public ResponseEntity handleFileUpload(@RequestParam("file") MultipartFile file) {
         logger.info("Process csv called!");
-        this.file = file;
+        this.file = file; // i weis nit ob des reicht, oder ob die referenz nach methoedenaufruf inaktiv wird und du
+        // dir nit im /temp ordner (oder app.properites.storage.temp oder so) a temporäre
+        // kopie machen mussch wenns später konsumieren willsch
         if (file == null) {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
