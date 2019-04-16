@@ -77,16 +77,17 @@ public interface IPlayerAction
 	public void readyUp(Player p);
 	
 	/**
-	 * Called when the {@link Player} chooses the index'th answer of {@link ActiveQuestion} q. Player has to have q currently assigned. Counts as activity. Synchronized across Players.
+	 * Called when the {@link Player} chooses the index'th answer of {@link Question} with id questionId. Player has to have the Question currently assigned. Counts as activity. Synchronized across
+	 * Players.
 	 * 
 	 * @param p
 	 *            The Player making the call.
-	 * @param q
-	 *            The ActiveQuestion to be answered.
+	 * @param questionId
+	 *            The id of the Question to be answered.
 	 * @param index
 	 *            Index of the Answer to be used. (e.g. 0 = right answer, 1 = wrong answer 1, 2 = wrong answer 2, ...); see {@link IRoomAction}.assignAnswer for more info.
 	 */
-	public void answerQuestion(Player p, ActiveQuestion q, int index);
+	public void answerQuestion(Player p, int questionId, int index);
 	
 	/**
 	 * Called when the {@link Player} chooses to use a Joker. Only works if a Joker is still available. Counts as activity. Synchronized across Players.
