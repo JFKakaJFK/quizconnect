@@ -1,7 +1,6 @@
 package at.qe.sepm.skeleton.socket.events;
 
 import at.qe.sepm.skeleton.logic.ActiveQuestion;
-import at.qe.sepm.skeleton.model.Player;
 import at.qe.sepm.skeleton.model.Question;
 import at.qe.sepm.skeleton.model.QuestionType;
 
@@ -30,7 +29,17 @@ public class AssignQuestionEvent extends ServerEvent {
         this.answers = new ArrayList<>();
 
         answers.add(new AnswerJSON(0, q.getRightAnswerString(), aq.playerAnswer.getId()));
-        // TODO init list w/ wrong answers
+        if(aq.playersWrongAnswers == null || aq.playersWrongAnswers.size() == 0) return;
+        answers.add(new AnswerJSON(1, q.getWrongAnswerString_1(), aq.playersWrongAnswers.get(1).getId()));
+        if(aq.playersWrongAnswers.size() == 1) return;
+        answers.add(new AnswerJSON(2, q.getWrongAnswerString_2(), aq.playersWrongAnswers.get(2).getId()));
+        if(aq.playersWrongAnswers.size() == 2) return;
+        answers.add(new AnswerJSON(3, q.getWrongAnswerString_3(), aq.playersWrongAnswers.get(3).getId()));
+        if(aq.playersWrongAnswers.size() == 3) return;
+        answers.add(new AnswerJSON(4, q.getWrongAnswerString_4(), aq.playersWrongAnswers.get(4).getId()));
+        if(aq.playersWrongAnswers.size() == 4) return;
+        answers.add(new AnswerJSON(5, q.getWrongAnswerString_5(), aq.playersWrongAnswers.get(5).getId()));
+
     }
 
     public int getQuestionId() {

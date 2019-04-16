@@ -9,8 +9,8 @@ public class PlayerJoinEvent extends ServerEvent {
 
     public PlayerJoinEvent(){ }
 
-    public PlayerJoinEvent(Player p){
-        this.player = new PlayerJSON(p, false);
+    public PlayerJoinEvent(Player p, String pathPrefix){
+        this.player = new PlayerJSON(p, pathPrefix);
     }
 
     public PlayerJSON getPlayer() {

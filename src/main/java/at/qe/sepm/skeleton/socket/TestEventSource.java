@@ -6,6 +6,7 @@ import at.qe.sepm.skeleton.model.*;
 import at.qe.sepm.skeleton.socket.events.GenericServerEvent;
 import at.qe.sepm.skeleton.socket.events.ServerEvent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
@@ -55,7 +56,7 @@ public class TestEventSource {
         return new ActiveQuestion(q, getRandomPlayer(), getRandomPlayer(), players, 20000);
     }
 
-    // @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRate = 5000)
     public void createEvent(){
         switch (counter){
             case 0:
@@ -74,7 +75,7 @@ public class TestEventSource {
                 qrWebSocketConnection.onGameEnd(pin);
                 break;
             case 5:
-                qrWebSocketConnection.onJokerUse(pin);
+                qrWebSocketConnection.onJokerUse(pin, 7);
                 break;
             case 6:
                 qrWebSocketConnection.onScoreChange(pin, new Random().nextInt());
@@ -89,10 +90,10 @@ public class TestEventSource {
                 qrWebSocketConnection.onKick(pin, getRandomPlayer());
                 break;
             case 10:
-                qrWebSocketConnection.assignQuestion(pin, getRandomPlayer(), getRandomActiveQuestion());
+                qrWebSocketConnection.assignQuestion(pin, getRandomActiveQuestion());
                 break;
             default:
-                qrWebSocketConnection.removeQuestion(pin, getRandomPlayer(), getRandomActiveQuestion());
+                qrWebSocketConnection.removeQuestion(pin, getRandomActiveQuestion());
         }
         counter++;
         counter %= 12;

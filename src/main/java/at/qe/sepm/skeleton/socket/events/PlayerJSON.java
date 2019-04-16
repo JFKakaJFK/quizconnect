@@ -13,11 +13,14 @@ public class PlayerJSON {
         this.ready = false;
     }
 
-    public PlayerJSON(Player p, boolean ready){
+    public PlayerJSON(Player p, String pathPrefix){
         this.id = p.getId();
         this.username = p.getUser().getUsername();
-        this.avatar = p.getAvatarPath();
-        this.ready = ready;
+        this.ready = false;
+        String path = p.getAvatarPath();
+        this.avatar = "/" + pathPrefix + ( path == null || !path.matches(".*/.*\\.(png|jpg)")
+                ? "default/avatar.png" : path );
+
     }
 
     public int getId() {
