@@ -15,4 +15,10 @@
         </renderer>
     </render-kit>
 
+    <converter>
+        <converter-id>selectOneMenuConverter</converter-id>
+        <converter-class>at.qe.sepm.skeleton.ui.converter.SelectOneMenuConverter</converter-class>
+    </converter>
+
+
 </faces-config>
