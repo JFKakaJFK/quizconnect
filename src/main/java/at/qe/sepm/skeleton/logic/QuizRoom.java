@@ -1,10 +1,12 @@
 package at.qe.sepm.skeleton.logic;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 import java.util.function.Consumer;
 
 import org.slf4j.Logger;
@@ -37,6 +39,8 @@ public class QuizRoom implements IPlayerAction
 	private final long roomStartDelay = 5000; // time between all Players ready and game start
 	
 	private final int defaultNumberJokers = 1; // number of jokers to start with
+	private final int playerAnswerSlots = 6;
+	private final int maxQuestions = 30; // maximum number of questions until game ends
 	
 	private int pin;
 	private int maxPlayers;
@@ -53,6 +57,7 @@ public class QuizRoom implements IPlayerAction
 	private volatile List<Question> questionsPoolEasy; // list of all unused easy questions
 	private volatile List<Question> questionsPoolHard; // list of all unused hard questions
 	private volatile int completedQuestions; // total number of answered questions
+	private volatile int correctlyAnsweredQuestions; // number of correctly answered questions
 	
 	private volatile List<Player> players; // players in the room
 	private IRoomAction playerInterface; // interface for all players
@@ -62,7 +67,7 @@ public class QuizRoom implements IPlayerAction
 	private volatile int numReshuffleJokers; // number of jokers available
 	private volatile List<ActiveQuestion> activeQuestions; // list of currently active questions
 	private volatile HashMap<Player, ActiveQuestion> playerQuestions; // map for storing assigned questions of players
-	private volatile HashMap<Player, List<ActiveQuestion>> playerAnswers; // map for storing assigned answers of players
+	private volatile HashMap<Player, List<ActiveQuestion>> playerAnswers; // map for storing assigned answers of players, both right and wrong
 	private volatile HashMap<Player, Long> playerActivityTimestamps; // map for storing activity time stamps of players
 	private volatile HashMap<Player, Long> playerAlivePingTimestamps; // map for storing alive ping time stamps of players
 	
@@ -109,6 +114,7 @@ public class QuizRoom implements IPlayerAction
 		
 		numReshuffleJokers = defaultNumberJokers;
 		completedQuestions = 0;
+		correctlyAnsweredQuestions = 0;
 		score = 0;
 		
 		activeQuestions = new LinkedList<>();
@@ -235,7 +241,7 @@ public class QuizRoom implements IPlayerAction
 	 */
 	private synchronized void checkDelayQueue()
 	{
-		long now = new Date().getTime();
+		long now = new Date().getTime() + 10; // offset by 10ms to make up for 'just missed' calls
 		while (delayQueue.size() > 0 && delayQueue.get(0).execTime <= now)
 		{
 			delayQueue.get(0).action.run();
@@ -252,7 +258,8 @@ public class QuizRoom implements IPlayerAction
 		{
 			activeQuestions.get(i).timeRemaining -= deltaTime;
 			if (activeQuestions.get(i).timeRemaining <= 0)
-			{
+			{ // question time elapsed, remove
+				completedQuestions++;
 				removeQuestion(activeQuestions.get(i));
 			}
 		}
@@ -355,7 +362,7 @@ public class QuizRoom implements IPlayerAction
 			x.onPlayerLeave(pin, player, reason);
 		});
 		
-		// TODO redistribute question / answers of player who left
+		removeQuestion(playerQuestions.get(player));
 		
 		players.remove(player);
 		playerQuestions.remove(player);
@@ -375,7 +382,7 @@ public class QuizRoom implements IPlayerAction
 		long now = new Date().getTime();
 		for (Player player : players)
 		{
-			// initialize timestamps
+			// initialize time stamps
 			playerActivityTimestamps.put(player, now);
 			playerAlivePingTimestamps.put(player, now);
 		}
@@ -394,6 +401,8 @@ public class QuizRoom implements IPlayerAction
 	 */
 	private void onRoomClose()
 	{
+		// TODO update player stats
+		
 		timerFrameUpdate.stop();
 		manager.removeRoom(pin);
 
@@ -401,11 +410,173 @@ public class QuizRoom implements IPlayerAction
 	}
 	
 	/**
-	 * Takes a random unused question and assigns it to players with open slots. Question selection is dependent on room difficulty and passed time.
+	 * Takes a random unused question and assigns it to players with open slots. Question selection is dependent on room difficulty and available questions.
 	 */
 	private synchronized void distributeQuestion()
 	{
-		// TODO question distribution algorithm
+		AbstractMap.SimpleEntry<Question, QuestionSetDifficulty> pair = selectQuestion();
+		if (pair == null)
+		{
+			eventCall(x -> {
+				x.onGameEnd(pin);
+			});
+			onRoomClose();
+		}
+		
+		Question question = pair.getKey();
+		
+		List<Player> questionFreePlayers = new ArrayList<>(); // players with no questions
+		List<Player> answerFreePlayers = new ArrayList<>(); // players with open answer slots (multiple slots open = multiple times in list)
+		for (Player player : players)
+		{
+			if (playerQuestions.get(player) == null)
+			{
+				questionFreePlayers.add(player);
+			}
+			if (playerAnswers.get(player).size() < playerAnswerSlots)
+			{
+				for (int i = 0; i < playerAnswers.get(player).size(); i++)
+					answerFreePlayers.add(player);
+			}
+		}
+		
+		if (questionFreePlayers.size() == 0 || answerFreePlayers.size() == 0)
+		{
+			LOGGER.error("### ERROR ### no question / answer free players available in distributeQuestion!");
+			return;
+		}
+		
+		Random random = new Random();
+		// question assignment
+		int qIndex = random.nextInt(questionFreePlayers.size());
+		Player qPlayer = questionFreePlayers.get(qIndex);
+		
+		// answers assignment (depending on number of right + wrong answers already assigned to players)
+		int raIndex = random.nextInt(answerFreePlayers.size());
+		Player raPlayer = answerFreePlayers.get(raIndex);
+		answerFreePlayers.remove(raIndex);
+		
+		List<Player> waPlayers = new ArrayList<>();
+		Player p;
+		for (int i = 0; i < 5; i++)
+		{
+			String qString = null;
+			if (i == 0)
+				qString = question.getWrongAnswerString_1();
+			else if (i == 1)
+				qString = question.getWrongAnswerString_2();
+			else if (i == 2)
+				qString = question.getWrongAnswerString_3();
+			else if (i == 3)
+				qString = question.getWrongAnswerString_4();
+			else if (i == 4)
+				qString = question.getWrongAnswerString_5();
+			
+			if (answerFreePlayers.size() > 0 && qString != null && qString != "")
+			{
+				int index = random.nextInt(answerFreePlayers.size());
+				p = answerFreePlayers.get(index);
+				answerFreePlayers.remove(index);
+				waPlayers.add(p);
+			}
+			else
+				break;
+		}
+		
+		long qTime = computeQuestionTime(pair.getValue());
+		
+		ActiveQuestion newActive = new ActiveQuestion(question, qPlayer, raPlayer, waPlayers, qTime);
+		
+		activeQuestions.add(newActive);
+		
+		playerQuestions.put(qPlayer, newActive);
+		
+		playerAnswers.get(raPlayer).add(newActive);
+		
+		for (int i = 0; i < waPlayers.size(); i++)
+		{
+			playerAnswers.get(waPlayers.get(i)).add(newActive);
+		}
+
+		// event call
+		playerInterface.assignQuestion(pin, newActive);
+	}
+	
+	/**
+	 * Returns a Question (+ its difficulty) at random from either the easy or the hard pool (depending on emptiness / difficulty) or null if game end reached.
+	 */
+	private AbstractMap.SimpleEntry<Question, QuestionSetDifficulty> selectQuestion()
+	{
+		Random random = new Random();
+		int bound = difficulty == RoomDifficulty.easy ? 66 : 33;
+		
+		boolean easy;
+		if ((completedQuestions >= maxQuestions) || (questionsPoolEasy.size() == 0 && questionsPoolHard.size() == 0))
+		{ // game complete state reached
+			return null;
+		}
+		else if (questionsPoolEasy.size() == 0)
+		{ // have to select hard one
+			easy = false;
+		}
+		else if (questionsPoolHard.size() == 0)
+		{ // have to select easy one
+			easy = true;
+		}
+		else if (random.nextInt(100) < bound)
+		{ // select easy question
+			easy = true;
+		}
+		else
+		{ // select hard question
+			easy = false;
+		}
+		
+		Question question;
+		if (easy)
+		{
+			int index = random.nextInt(questionsPoolEasy.size());
+			question = questionsPoolEasy.get(index);
+			questionsPoolEasy.remove(index);
+		}
+		else
+		{
+			int index = random.nextInt(questionsPoolHard.size());
+			question = questionsPoolHard.get(index);
+			questionsPoolHard.remove(index);
+		}
+		
+		return new AbstractMap.SimpleEntry<Question, QuestionSetDifficulty>(question, easy ? QuestionSetDifficulty.easy : QuestionSetDifficulty.hard);
+	}
+	
+	/**
+	 * Computes the answer time for a question based on the room difficulty, question difficulty, player count, completed questions count, and some constants.
+	 * 
+	 * @param questionDifficulty
+	 * @return
+	 */
+	private long computeQuestionTime(QuestionSetDifficulty questionDifficulty)
+	{
+		long playerBonus = 2000; // ms added for each player in the room
+		double scaleFactor = 0.3; // factor affecting time reduction towards end of game
+		
+		long base = 0;
+		if (difficulty == RoomDifficulty.easy)
+		{
+			if (questionDifficulty == QuestionSetDifficulty.easy)
+				base = 30000;
+			else
+				base = 45000;
+		}
+		else
+		{
+			if (questionDifficulty == QuestionSetDifficulty.easy)
+				base = 20000;
+			else
+				base = 30000;
+		}
+
+		return (long) (base - (((completedQuestions / (double) maxQuestions) * scaleFactor) * base) + (players.size() * playerBonus));
 	}
 	
 	/**
@@ -415,7 +586,21 @@ public class QuizRoom implements IPlayerAction
 	 */
 	private synchronized void removeQuestion(ActiveQuestion q)
 	{
-		// TODO question removal
+		playerQuestions.put(q.playerQuestion, null);
+		List<ActiveQuestion> qs = playerAnswers.get(q.playerAnswer);
+		qs.remove(q);
+		playerAnswers.put(q.playerAnswer, qs);
+		for (Player player : q.playersWrongAnswers)
+		{
+			qs = playerAnswers.get(player);
+			qs.remove(q);
+			playerAnswers.put(player, qs);
+		}
+		
+		activeQuestions.remove(q);
+		
+		// event call
+		playerInterface.removeQuestion(pin, q);
 	}
 	
 	@Override
@@ -512,15 +697,60 @@ public class QuizRoom implements IPlayerAction
 	@Override
 	public void answerQuestion(Player p, ActiveQuestion q, int index)
 	{
-		// TODO Auto-generated method stub
+		if (!activeQuestions.contains(q))
+		{
+			LOGGER.debug(
+					"### WARNING ### Answer Question call from Player " + p.getId() + " on already removed ActiveQuestion (qid: " + q.question.getId() + ")");
+			return;
+		}
+		if (!playerAnswers.get(p).contains(q))
+		{
+			LOGGER.debug(
+					"### WARNING ### Answer Question call from Player " + p.getId() + " Question not assigned to Player! (qid: " + q.question.getId() + ")");
+			return;
+		}
 		
+		completedQuestions++;
+		
+		// check if right answer
+		if (q.playerAnswer == p)
+		{
+			score += 100;
+			correctlyAnsweredQuestions++;
+		}
+		else
+		{
+			score -= 50;
+		}
+		removeQuestion(q);
+		eventCall(x -> x.onScoreChange(pin, score));
+		
+		distributeQuestion();
 	}
 	
 	@Override
 	public synchronized void useJoker(Player p)
 	{
-		// TODO Auto-generated method stub
+		if (numReshuffleJokers <= 0) // ignore if no jokers remaining
+		{
+			return;
+		}
+		numReshuffleJokers--;
+		eventCall(x -> x.onJokerUse(pin, numReshuffleJokers));
 		
+		for (int i = activeQuestions.size() - 1; i >= 0; i--)
+		{
+			ActiveQuestion aq = activeQuestions.get(i);
+			removeQuestion(aq);
+		}
+		
+		// wait 1 second, then assign new questions to all players
+		addDelayedAction(new DelayedAction(1000, () -> {
+			for (int i = 0; i < players.size(); i++)
+			{
+				distributeQuestion();
+			}
+		}));
 	}
 	
 	@Override
@@ -541,6 +771,12 @@ public class QuizRoom implements IPlayerAction
 	public synchronized void sendAlivePing(Player p)
 	{
 		playerAlivePingTimestamps.put(p, new Date().getTime());
+	}
+	
+	@Override
+	public int getNumberOfJokers()
+	{
+		return numReshuffleJokers;
 	}
 	
 }

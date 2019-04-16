@@ -53,8 +53,10 @@ public interface IRoomAction
 	 * 
 	 * @param pin
 	 *            Pin of the QuizRoom making the call.
+	 * @param remaining
+	 *            Number of Jokers remaining.
 	 */
-	public void onJokerUse(int pin);
+	public void onJokerUse(int pin, int remaining);
 	
 	/**
 	 * Called when a Player leaves the QR either actively or from being kicked.
@@ -115,52 +117,23 @@ public interface IRoomAction
 	public void onKick(int pin, Player p);
 	
 	/**
-	 * Called when the QR assigns the Player a new Question. MIGHT NEED TO BE ADJUSTED TO ACCOMODATE REVERSE GAMEMODE!
+	 * Called when the QR assigns a new Question. MIGHT NEED TO BE ADJUSTED TO ACCOMODATE REVERSE GAMEMODE!
 	 * 
 	 * @param pin
 	 *            Pin of the QuizRoom making the call.
-	 * @param p
-	 *            Player to have the Question assigned to.
 	 * @param q
-	 *            The ActiveQuestion assigned to the Player.
+	 *            The ActiveQuestion assigned.
 	 */
-	public void assignQuestion(int pin, Player p, ActiveQuestion q);
+	public void assignQuestion(int pin, ActiveQuestion q);
 	
 	/**
-	 * Called when the QR assigns the Player a new Question answer. MIGHT NEED TO BE ADJUSTED TO ACCOMODATE REVERSE GAMEMODE!
+	 * Called when the QR unassigns the Question. One Player has no active question after this call.
 	 * 
 	 * @param pin
 	 *            Pin of the QuizRoom making the call.
-	 * @param p
-	 *            Player to have the answer assigned to.
-	 * @param q
-	 *            The ActiveQuestion assigned to the Player. To be used when making answer calls in IPlayerAction.
-	 * @param index
-	 *            Index of the Answer to be used. (e.g. 0 = right answer, 1 = wrong answer 1, 2 = wrong answer 2, ...)
-	 */
-	public void assignAnswer(int pin, Player p, ActiveQuestion q, int index);
-	
-	/**
-	 * Called when the QR unassigns the Question from the Player. Player has no active question after this call.
-	 * 
-	 * @param pin
-	 *            Pin of the QuizRoom making the call.
-	 * @param p
-	 *            Player to have the Question removed.
 	 * @param q
 	 *            The ActiveQuesiton unassigned from the Player.
 	 */
-	public void removeQuestion(int pin, Player p, ActiveQuestion q);
+	public void removeQuestion(int pin, ActiveQuestion q);
 	
-	/**
-	 * Called when the QR unassigns ALL Answers associated with the ActiveQuestion from the Player.
-	 * 
-	 * @param pin
-	 *            Pin of the QuizRoom making the call.
-	 * @param p
-	 *            Player to have all answers of the Question removed from.
-	 * @param q
-	 *            The ActiveQuestion from which all Answers are unassigned from the Player.
-	 */
-	public void removeAnswer(int pin, Player p, ActiveQuestion q);
 }
