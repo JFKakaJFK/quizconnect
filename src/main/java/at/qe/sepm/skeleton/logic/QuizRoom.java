@@ -57,6 +57,7 @@ public class QuizRoom implements IPlayerAction
 	private volatile List<Question> questionsPoolEasy; // list of all unused easy questions
 	private volatile List<Question> questionsPoolHard; // list of all unused hard questions
 	private volatile int completedQuestions; // total number of answered questions
+	private volatile int correctlyAnsweredQuestions; // number of correctly answered questions
 	
 	private volatile List<Player> players; // players in the room
 	private IRoomAction playerInterface; // interface for all players
@@ -113,6 +114,7 @@ public class QuizRoom implements IPlayerAction
 		
 		numReshuffleJokers = defaultNumberJokers;
 		completedQuestions = 0;
+		correctlyAnsweredQuestions = 0;
 		score = 0;
 		
 		activeQuestions = new LinkedList<>();
@@ -256,7 +258,8 @@ public class QuizRoom implements IPlayerAction
 		{
 			activeQuestions.get(i).timeRemaining -= deltaTime;
 			if (activeQuestions.get(i).timeRemaining <= 0)
-			{
+			{ // question time elapsed, remove
+				completedQuestions++;
 				removeQuestion(activeQuestions.get(i));
 			}
 		}
@@ -398,6 +401,8 @@ public class QuizRoom implements IPlayerAction
 	 */
 	private void onRoomClose()
 	{
+		// TODO update player stats
+		
 		timerFrameUpdate.stop();
 		manager.removeRoom(pin);
 
@@ -435,6 +440,12 @@ public class QuizRoom implements IPlayerAction
 			}
 		}
 		
+		if (questionFreePlayers.size() == 0 || answerFreePlayers.size() == 0)
+		{
+			LOGGER.error("### ERROR ### no question / answer free players available in distributeQuestion!");
+			return;
+		}
+		
 		Random random = new Random();
 		// question assignment
 		int qIndex = random.nextInt(questionFreePlayers.size());
@@ -447,12 +458,6 @@ public class QuizRoom implements IPlayerAction
 		
 		List<Player> waPlayers = new ArrayList<>();
 		Player p;
-		
-		int f1Index = random.nextInt(answerFreePlayers.size());
-		p = answerFreePlayers.get(f1Index);
-		answerFreePlayers.remove(f1Index);
-		waPlayers.add(p);
-		
 		for (int i = 0; i < 5; i++)
 		{
 			String qString = null;
@@ -478,7 +483,6 @@ public class QuizRoom implements IPlayerAction
 				break;
 		}
 		
-		// TODO compute question time depending on already answered questions + difficulty of Q + Room
 		long qTime = computeQuestionTime(pair.getValue());
 		
 		ActiveQuestion newActive = new ActiveQuestion(question, qPlayer, raPlayer, waPlayers, qTime);
@@ -494,6 +498,7 @@ public class QuizRoom implements IPlayerAction
 			playerAnswers.get(waPlayers.get(i)).add(newActive);
 		}
 
+		// event call
 		playerInterface.assignQuestion(pin, newActive);
 	}
 	
@@ -581,8 +586,21 @@ public class QuizRoom implements IPlayerAction
 	 */
 	private synchronized void removeQuestion(ActiveQuestion q)
 	{
-		// TODO question removal
-		completedQuestions++;
+		playerQuestions.put(q.playerQuestion, null);
+		List<ActiveQuestion> qs = playerAnswers.get(q.playerAnswer);
+		qs.remove(q);
+		playerAnswers.put(q.playerAnswer, qs);
+		for (Player player : q.playersWrongAnswers)
+		{
+			qs = playerAnswers.get(player);
+			qs.remove(q);
+			playerAnswers.put(player, qs);
+		}
+		
+		activeQuestions.remove(q);
+		
+		// event call
+		playerInterface.removeQuestion(pin, q);
 	}
 	
 	@Override
@@ -679,15 +697,60 @@ public class QuizRoom implements IPlayerAction
 	@Override
 	public void answerQuestion(Player p, ActiveQuestion q, int index)
 	{
-		// TODO Auto-generated method stub
+		if (!activeQuestions.contains(q))
+		{
+			LOGGER.debug(
+					"### WARNING ### Answer Question call from Player " + p.getId() + " on already removed ActiveQuestion (qid: " + q.question.getId() + ")");
+			return;
+		}
+		if (!playerAnswers.get(p).contains(q))
+		{
+			LOGGER.debug(
+					"### WARNING ### Answer Question call from Player " + p.getId() + " Question not assigned to Player! (qid: " + q.question.getId() + ")");
+			return;
+		}
 		
+		completedQuestions++;
+		
+		// check if right answer
+		if (q.playerAnswer == p)
+		{
+			score += 100;
+			correctlyAnsweredQuestions++;
+		}
+		else
+		{
+			score -= 50;
+		}
+		removeQuestion(q);
+		eventCall(x -> x.onScoreChange(pin, score));
+		
+		distributeQuestion();
 	}
 	
 	@Override
 	public synchronized void useJoker(Player p)
 	{
-		// TODO Auto-generated method stub
+		if (numReshuffleJokers <= 0) // ignore if no jokers remaining
+		{
+			return;
+		}
+		numReshuffleJokers--;
+		eventCall(x -> x.onJokerUse(pin, numReshuffleJokers));
 		
+		for (int i = activeQuestions.size() - 1; i >= 0; i--)
+		{
+			ActiveQuestion aq = activeQuestions.get(i);
+			removeQuestion(aq);
+		}
+		
+		// wait 1 second, then assign new questions to all players
+		addDelayedAction(new DelayedAction(1000, () -> {
+			for (int i = 0; i < players.size(); i++)
+			{
+				distributeQuestion();
+			}
+		}));
 	}
 	
 	@Override
