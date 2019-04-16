@@ -56,7 +56,7 @@ public class TestEventSource {
         return new ActiveQuestion(q, getRandomPlayer(), getRandomPlayer(), players, 20000);
     }
 
-    @Scheduled(fixedRate = 5000)
+    // @Scheduled(fixedRate = 5000)
     public void createEvent(){
         switch (counter){
             case 0:

@@ -4,6 +4,8 @@ public class ClientEvent {
 
     private String event;
     private int playerId;
+    private int questionId;
+    private int answerId;
 
 
     public ClientEvent(){}
@@ -22,5 +24,21 @@ public class ClientEvent {
 
     public void setPlayerId(int playerId) {
         this.playerId = playerId;
+    }
+
+    public int getQuestionId() {
+        return questionId;
+    }
+
+    public void setQuestionId(int questionId) {
+        this.questionId = questionId;
+    }
+
+    public int getAnswerId() {
+        return answerId;
+    }
+
+    public void setAnswerId(int answerId) {
+        this.answerId = answerId;
     }
 }

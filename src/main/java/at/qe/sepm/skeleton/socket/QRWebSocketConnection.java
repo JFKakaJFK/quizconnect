@@ -174,6 +174,7 @@ public class QRWebSocketConnection implements IRoomAction {
     private final String ALIVE_PING = "sendAlivePing";
 
     private final String SUCCESS = "success";
+    private final String ERROR = "error";
 
     public ServerEvent handleGetGameInfo(int pin){
         IPlayerAction qr = rooms.get(pin);
@@ -208,41 +209,65 @@ public class QRWebSocketConnection implements IRoomAction {
 
     public ServerEvent handleReadyUp(int pin, ClientEvent event){
         IPlayerAction qr = rooms.get(pin);
-        qr.readyUp(players.get(pin).get(event.getPlayerId()));
+        Player p = players.get(pin).get(event.getPlayerId());
+        if(p == null){
+            return new GenericServerEvent(ERROR);
+        }
+        qr.readyUp(p);
         return new GenericServerEvent(SUCCESS);
     }
 
     public ServerEvent handleAnswerQuestion(int pin, ClientEvent event){
-        // TODO
         IPlayerAction qr = rooms.get(pin);
-        return new GenericServerEvent(ANSWER_QUESTION);
+        Player p = players.get(pin).get(event.getPlayerId());
+        if(p == null){
+            return new GenericServerEvent(ERROR);
+        }
+        // Cant check validity of ints, since 0 per default
+        qr.answerQuestion(p, event.getQuestionId(), event.getAnswerId());
+        return new GenericServerEvent(SUCCESS);
     }
 
     public ServerEvent handleUseJoker(int pin, ClientEvent event){
         IPlayerAction qr = rooms.get(pin);
-        qr.useJoker(players.get(pin).get(event.getPlayerId()));
+        Player p = players.get(pin).get(event.getPlayerId());
+        if(p == null){
+            return new GenericServerEvent(ERROR);
+        }
+        qr.useJoker(p);
         return new GenericServerEvent(SUCCESS);
     }
 
     public ServerEvent handleLeaveRoom(int pin, ClientEvent event){
         IPlayerAction qr = rooms.get(pin);
-        qr.leaveRoom(players.get(pin).get(event.getPlayerId()));
+        Player p = players.get(pin).get(event.getPlayerId());
+        if(p == null){
+            return new GenericServerEvent(ERROR);
+        }
+        qr.leaveRoom(p);
         players.get(pin).remove(event.getPlayerId());
         return new GenericServerEvent(SUCCESS);
     }
 
     public ServerEvent handleCancelTimeout(int pin, ClientEvent event){
         IPlayerAction qr = rooms.get(pin);
-        qr.cancelTimeout(players.get(pin).get(event.getPlayerId()));
+        Player p = players.get(pin).get(event.getPlayerId());
+        if(p == null){
+            return new GenericServerEvent(ERROR);
+        }
+        qr.cancelTimeout(p);
         return new GenericServerEvent(SUCCESS);
     }
 
     public ServerEvent handleSendAlivePing(int pin, ClientEvent event){
         IPlayerAction qr = rooms.get(pin);
-        qr.sendAlivePing(players.get(pin).get(event.getPlayerId()));
+        Player p = players.get(pin).get(event.getPlayerId());
+        if(p == null){
+            return new GenericServerEvent(ERROR);
+        }
+        qr.sendAlivePing(p);
         return new GenericServerEvent(SUCCESS);
     }
-
 
     /**
      * Broadcast event to all {@link Player}s in a {@link QuizRoom}
@@ -282,6 +307,11 @@ public class QRWebSocketConnection implements IRoomAction {
 
         log.debug("Received event of type " + request.getEvent() + " from " + user.getName());
 
+        log.debug("EVENT: " + request.getEvent());
+        log.debug("Player: " + request.getPlayerId());
+        log.debug("Question: " + request.getQuestionId());
+        log.debug("Answer: " + request.getAnswerId());
+
         switch (request.getEvent()){
             case GAME_INFO:
                 return handleGetGameInfo(pin);
@@ -307,10 +337,9 @@ public class QRWebSocketConnection implements IRoomAction {
     // TODO test if works
     @SubscribeMapping("/events/{pin}")
     public ServerEvent connect(@DestinationVariable int pin){
+        log.debug("hello from subscribemapping");
         return handleGetGameInfo(pin);
     }
-
-
 
     /* // TODO where is the endpoint?
     @MessageMapping("/events/{pin}")
