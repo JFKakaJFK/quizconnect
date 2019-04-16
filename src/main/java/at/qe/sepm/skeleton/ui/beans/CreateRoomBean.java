@@ -65,7 +65,8 @@ public class CreateRoomBean implements Serializable {
         questionSets.add(selectedQuestionSet);
 
         if (validate() == true) {
-            quizRoomManager.createRoom(selectedPlayerLimit, selectedDifficulty, selectedGameMode, questionSets, roomAction);
+            int pin = quizRoomManager.createRoom(selectedPlayerLimit, selectedDifficulty, selectedGameMode, questionSets, roomAction);
+            redirectToGame(pin);
         } else {
             messageBean.showError("message", "Sorry, could not create room!");
         }
@@ -91,10 +92,10 @@ public class CreateRoomBean implements Serializable {
         }
         return valid;
     }
-    public void redirectToGame(String url) {
+    public void redirectToGame(int pin) {
         try {
             FacesContext.getCurrentInstance().
-                    getExternalContext().redirect("/login.xhtml?registration=success");
+                    getExternalContext().redirect("/quizroom/join.html?pin="+pin);
         } catch (IOException e) {
             e.printStackTrace();
         }
