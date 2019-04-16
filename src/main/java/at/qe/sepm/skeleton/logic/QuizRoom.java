@@ -66,6 +66,7 @@ public class QuizRoom implements IPlayerAction
 	private volatile int score; // current room score
 	private volatile int numReshuffleJokers; // number of jokers available
 	private volatile List<ActiveQuestion> activeQuestions; // list of currently active questions
+	private volatile HashMap<Integer, ActiveQuestion> activeByQuestionId; // map for finding active questions by the qid;
 	private volatile HashMap<Player, ActiveQuestion> playerQuestions; // map for storing assigned questions of players
 	private volatile HashMap<Player, List<ActiveQuestion>> playerAnswers; // map for storing assigned answers of players, both right and wrong
 	private volatile HashMap<Player, Long> playerActivityTimestamps; // map for storing activity time stamps of players
@@ -118,6 +119,7 @@ public class QuizRoom implements IPlayerAction
 		score = 0;
 		
 		activeQuestions = new LinkedList<>();
+		activeByQuestionId = new HashMap<>(maxPlayers);
 		playerQuestions = new HashMap<>(maxPlayers);
 		playerAnswers = new HashMap<>(maxPlayers);
 		playerActivityTimestamps = new HashMap<>(maxPlayers);
@@ -488,6 +490,7 @@ public class QuizRoom implements IPlayerAction
 		ActiveQuestion newActive = new ActiveQuestion(question, qPlayer, raPlayer, waPlayers, qTime);
 		
 		activeQuestions.add(newActive);
+		activeByQuestionId.put(question.getId(), newActive);
 		
 		playerQuestions.put(qPlayer, newActive);
 		
@@ -586,10 +589,15 @@ public class QuizRoom implements IPlayerAction
 	 */
 	private synchronized void removeQuestion(ActiveQuestion q)
 	{
+		// remove question
 		playerQuestions.put(q.playerQuestion, null);
+		
+		// remove right answer
 		List<ActiveQuestion> qs = playerAnswers.get(q.playerAnswer);
 		qs.remove(q);
 		playerAnswers.put(q.playerAnswer, qs);
+		
+		// remove wrong answers
 		for (Player player : q.playersWrongAnswers)
 		{
 			qs = playerAnswers.get(player);
@@ -598,6 +606,7 @@ public class QuizRoom implements IPlayerAction
 		}
 		
 		activeQuestions.remove(q);
+		activeByQuestionId.remove(q.question.getId());
 		
 		// event call
 		playerInterface.removeQuestion(pin, q);
@@ -658,6 +667,9 @@ public class QuizRoom implements IPlayerAction
 	@Override
 	public synchronized List<Player> getRoomReadyPlayers()
 	{
+		if (!wfpMode)
+			return null;
+		
 		List<Player> ps = new ArrayList<>(readyPlayers.size());
 		for (Player player : readyPlayers)
 		{
@@ -675,6 +687,9 @@ public class QuizRoom implements IPlayerAction
 	@Override
 	public synchronized void readyUp(Player p)
 	{
+		if (!wfpMode)
+			return;
+		
 		// player already ready?
 		if (readyPlayers.contains(p))
 			return;
@@ -695,25 +710,30 @@ public class QuizRoom implements IPlayerAction
 	}
 	
 	@Override
-	public void answerQuestion(Player p, ActiveQuestion q, int index)
+	public void answerQuestion(Player p, int questionId, int index)
 	{
-		if (!activeQuestions.contains(q))
+		if (!activeByQuestionId.containsKey(index))
 		{
 			LOGGER.debug(
-					"### WARNING ### Answer Question call from Player " + p.getId() + " on already removed ActiveQuestion (qid: " + q.question.getId() + ")");
+					"### WARNING ### Answer Question call from Player " + p.getId() + " on already removed ActiveQuestion (qid: " + questionId + ")");
 			return;
 		}
+		
+		ActiveQuestion q = activeByQuestionId.get(questionId);
 		if (!playerAnswers.get(p).contains(q))
 		{
 			LOGGER.debug(
-					"### WARNING ### Answer Question call from Player " + p.getId() + " Question not assigned to Player! (qid: " + q.question.getId() + ")");
+					"### WARNING ### Answer Question call from Player " + p.getId() + " Question not assigned to Player! (qid: " + questionId + ")");
 			return;
 		}
+		
+		// register player activity
+		playerActivityTimestamps.put(p, new Date().getTime());
 		
 		completedQuestions++;
 		
 		// check if right answer
-		if (q.playerAnswer == p)
+		if (index == 0 && q.playerAnswer == p)
 		{
 			score += 100;
 			correctlyAnsweredQuestions++;
@@ -735,6 +755,10 @@ public class QuizRoom implements IPlayerAction
 		{
 			return;
 		}
+		
+		// register player activity
+		playerActivityTimestamps.put(p, new Date().getTime());
+		
 		numReshuffleJokers--;
 		eventCall(x -> x.onJokerUse(pin, numReshuffleJokers));
 		
@@ -762,7 +786,7 @@ public class QuizRoom implements IPlayerAction
 	}
 	
 	@Override
-	public void leaveRoom(Player p)
+	public synchronized void leaveRoom(Player p)
 	{
 		removePlayer(p, "left");
 	}
