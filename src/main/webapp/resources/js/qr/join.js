@@ -7,9 +7,6 @@ const msg = document.getElementById('msg');
 localStorage.removeItem('pin');
 localStorage.removeItem('playerId');
 
-
-
-
 const validatePIN = () => {
     let input = pin.value.replace(/^0+/, '').substring(0, 6);
     let PIN = parseInt(input.replace(/[^\d]/gi, ''));
@@ -19,34 +16,37 @@ const validatePIN = () => {
 };
 
 const joinGame = (pin) => {
-    return fetch(`${URL}${pin}`, {
+    fetch(`${URL}${pin}`, {
         method: 'POST',
     })
     .then(response => response.json())
+    .then(data => {
+        console.log(data);
+        if(data.error){
+            msg.innerHTML = data.message;
+        }
+        if(data.playerId){
+            console.log(data.playerId);
+            localStorage.setItem('pin', pin);
+            localStorage.setItem('playerId', data.playerId);
+            window.location.href = '/quizroom/index.html'
+        }
+    })
+    .catch(error => msg.innerHTML = error.message);
 };
 
 const join = () => {
   const pin = validatePIN();
   if(isNaN(pin)) return;
-  joinGame(pin)
-      .then(data => {
-          console.log(data);
-          if(data.error){
-            msg.innerHTML = data.message;
-          }
-          if(data.playerId){
-            console.log(data.playerId);
-            localStorage.setItem('pin', pin);
-            localStorage.setItem('playerId', data.playerId);
-            window.location.href = '/quizroom/index.html'
-          }
-      })
-      .catch(error => msg.innerHTML = error.message);
+  joinGame(pin);
 };
 
+/**
+ * If hotlink directly try to join game
+ *
+ * @type {URLSearchParams}
+ */
 const params = new URLSearchParams(window.location.search);
-console.log(params.has('pin'));
-
 if(params.has('pin')){
     joinGame(parseInt(params.get('pin')));
     pin.value = params.get('pin');

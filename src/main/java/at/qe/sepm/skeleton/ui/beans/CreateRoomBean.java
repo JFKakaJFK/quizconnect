@@ -64,6 +64,8 @@ public class CreateRoomBean implements Serializable {
         List<QuestionSet> questionSets = new ArrayList<>();
         questionSets.add(selectedQuestionSet);
 
+        logger.debug("MAX: " + selectedPlayerLimit);
+
         if (validate() == true) {
             int pin = quizRoomManager.createRoom(selectedPlayerLimit, selectedDifficulty, selectedGameMode, questionSets, roomAction);
             redirectToGame(pin);

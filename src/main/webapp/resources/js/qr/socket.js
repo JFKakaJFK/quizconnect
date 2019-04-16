@@ -72,8 +72,8 @@ class STATE {
  * @type {{pin: number, id: number, state: number}}
  */
 const state = {
-    pin: 118222,
-    id: 201,
+    pin: parseInt(localStorage.getItem('pin')),
+    id: parseInt(localStorage.getItem('playerId')),
     state: LOBBY,
 };
 
@@ -85,6 +85,8 @@ stompClient.connect({}, (frame) => {
     console.log(frame);
     stompClient.subscribe(`${WS_SOURCE}/${state.pin}`, event => handleServerEvent(JSON.parse(event.body)));
     // TODO get game info, set alive ping & room players
+    getGameInfo();
+    getRoomPlayers();
 });
 
 /**
@@ -291,7 +293,7 @@ const sendAlivePing = () => {
 // 2. setAlivePings
 
 // TODO call methods in stomp connect callback
-//const ping = setInterval(sendAlivePing(), state.alvePingInterval);
+const ping = setInterval(sendAlivePing(), state.alivePingInterval);
 
 /* IF STATE IS LOBBY */
 
