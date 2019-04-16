@@ -72,8 +72,8 @@ class STATE {
  * @type {{pin: number, id: number, state: number}}
  */
 const state = {
-    pin: 10,
-    id: 123,
+    pin: 118222,
+    id: 201,
     state: LOBBY,
 };
 

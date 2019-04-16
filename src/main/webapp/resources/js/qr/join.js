@@ -8,6 +8,8 @@ localStorage.removeItem('pin');
 localStorage.removeItem('playerId');
 
 
+
+
 const validatePIN = () => {
     let input = pin.value.replace(/^0+/, '').substring(0, 6);
     let PIN = parseInt(input.replace(/[^\d]/gi, ''));
@@ -28,14 +30,15 @@ const join = () => {
   if(isNaN(pin)) return;
   joinGame(pin)
       .then(data => {
-          console.log(data)
+          console.log(data);
           if(data.error){
             msg.innerHTML = data.message;
-          } else {
+          }
+          if(data.playerId){
             console.log(data.playerId);
             localStorage.setItem('pin', pin);
             localStorage.setItem('playerId', data.playerId);
-            window.location.href = "/quizroom/index.html";
+            window.location.href = '/quizroom/index.html'
           }
       })
       .catch(error => msg.innerHTML = error.message);
