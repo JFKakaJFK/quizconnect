@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.annotation.RequestScope;
 
 import javax.servlet.http.HttpServletResponse;
@@ -41,19 +42,16 @@ public class JoinGameController {
 
 
     @RequestMapping(value = "/qr/join/{pin}", method = RequestMethod.POST)
-    public void joinRoom(HttpServletResponse response, @PathVariable String pin){
+    @ResponseBody
+    public String joinRoom(@PathVariable String pin){
         if(!sessionInfoBean.isLoggedIn() || !sessionInfoBean.hasRole("PLAYER")){
-            try {
-                response.sendError(401, "Mmmhmmhm Nonono");
-            } catch (IOException e){
-                logger.error("Failed to send Error");
-            }
+            return null;
         }
         int PIN = Integer.valueOf(pin);
         Player p  = sessionInfoBean.getCurrentUser().getPlayer();
         IPlayerAction qr = quizRoomManager.joinRoom(PIN, p);
         qrWebSocketConnection.addGame(PIN, qr, p);
-        response.setStatus(200);
         logger.info("Player " + p.getUser().getUsername() + " joined room " + pin);
+        return "{\"playerId\":" + p.getId() + "}";
     }
 }
