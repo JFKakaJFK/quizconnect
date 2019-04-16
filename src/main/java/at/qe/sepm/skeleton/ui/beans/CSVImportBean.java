@@ -6,6 +6,7 @@ import com.opencsv.CSVReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -18,6 +19,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.ManagedBean;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 @Controller
@@ -32,6 +37,8 @@ public class CSVImportBean implements Serializable {
     @Autowired
     private QuestionService questionService;
 
+    private Path temp;
+
     private QuestionSet questionSet;
     private Set<Question> questions;
     private Question question;
@@ -41,18 +48,21 @@ public class CSVImportBean implements Serializable {
     private ManagerService managerService;
 
     @Autowired
-    public CSVImportBean(StorageService storageService, PlayerService playerService, ManagerService managerService) {
+    public CSVImportBean(StorageService storageService,
+                         PlayerService playerService,
+                         ManagerService managerService,
+                         @Value("${storage.uploads.temporary}") String temp) {
         assert storageService != null;
         assert playerService != null;
         assert managerService != null;
         this.storageService = storageService;
         this.playerService = playerService;
         this.managerService = managerService;
+        this.temp = Paths.get(temp);
     }
 
-    private String filename = null;
+    private Path filename = null;
     private Manager manager;
-    private MultipartFile file;
 
 
     /**
@@ -63,20 +73,27 @@ public class CSVImportBean implements Serializable {
      */
     @RequestMapping(value = "/upload/csv", method = RequestMethod.POST)
     public ResponseEntity handleFileUpload(@RequestParam("file") MultipartFile file) {
-        logger.info("Process csv called!");
-        this.file = file; // i weis nit ob des reicht, oder ob die referenz nach methoedenaufruf inaktiv wird und du
-        // dir nit im /temp ordner (oder app.properites.storage.temp oder so) a temporäre
-        // kopie machen mussch wenns später konsumieren willsch
         if (file == null) {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
-
+        try(InputStream is = file.getInputStream()){
+            filename = Files.createTempFile(temp, "qs", ".csv");
+            Files.copy(is, filename, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e){
+            logger.error("Such sad");
+            filename = null;
+        }
         return new ResponseEntity(HttpStatus.OK);
     }
 
     public void abort() {
         if (filename != null) {
-            storageService.deleteAvatar(filename);
+            try{
+                Files.deleteIfExists(filename);
+            } catch (IOException e){
+                logger.error("Much error such sad");
+            }
+
             filename = null;
         }
     }
@@ -110,7 +127,7 @@ public class CSVImportBean implements Serializable {
     private List<List<String>> addQuestionsFromCSV() {
         logger.info("addQuestionsFromCSV called");
         List<List<String>> records = new ArrayList<List<String>>();
-        try (CSVReader csvReader = new CSVReader(new InputStreamReader(file.getInputStream()));) {
+        try (CSVReader csvReader = new CSVReader(new InputStreamReader(new FileInputStream(filename.toFile())))) {
             String[] values;
             while ((values = csvReader.readNext()) != null) {
                 records.add(Arrays.asList(values));
@@ -118,6 +135,12 @@ public class CSVImportBean implements Serializable {
             return records;
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                Files.deleteIfExists(filename);
+            } catch (IOException e){
+                logger.error("lol");
+            }
         }
         return records;
     }
