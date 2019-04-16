@@ -45,6 +45,7 @@ public class QuestionSetBean implements Serializable {
 
     private Set<Question> savedQuestionSets;
 
+    //TODO: JavaDoc for init
     @PostConstruct
     public void init() {
         questionSet = new QuestionSet();
@@ -53,18 +54,21 @@ public class QuestionSetBean implements Serializable {
         currentUser = sessionInfoBean.getCurrentUser();
     }
 
+    //TODO: JavaDoc for clearQuestion
     public void clearQuestion() {
         logger.info("clearQuestion invoked");
         question = new Question();
         question.setType(QuestionType.text);
     }
 
+    //TODO: JavaDoc for clearQuestionSet
     public void clearQuestionSet() {
         logger.info("clearQuestionSet invoked");
         questionSet = new QuestionSet();
         questionSet.setDifficulty(QuestionSetDifficulty.easy);
     }
 
+    //TODO: JavaDoc for saveNewQuestion
     public void saveNewQuestion() {
         logger.info("saveNewQuestion invoked");
         questions.add(question);
@@ -75,6 +79,7 @@ public class QuestionSetBean implements Serializable {
         clearQuestion();
     }
 
+    //TODO: JavaDoc for saveNewQuestionSet
     public void saveNewQuestionSet() {
         logger.info("saveNewQuestionSet invoked");
         if (currentUser.getRole() == UserRole.MANAGER) {
@@ -88,6 +93,7 @@ public class QuestionSetBean implements Serializable {
         }
     }
 
+    //TODO: JavaDoc for exitCreateQuestionSet
     public void exitCreateQuestionSet() {
         saveNewQuestion();
         logger.info("Added a total of " + questions.size() + " questions to QuestionSet with name: " + questionSet.getName());

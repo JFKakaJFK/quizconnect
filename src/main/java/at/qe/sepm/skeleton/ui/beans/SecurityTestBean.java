@@ -18,32 +18,38 @@ public class SecurityTestBean {
     private boolean showOkDialog = false;
     private String performedAction = "NONE";
 
+    //TODO: JavaDoc for isShowOKDialog
     public boolean isShowOkDialog() {
         return showOkDialog;
     }
 
+    //TODO: JavaDoc for getPerformedAction
     public String getPerformedAction() {
         return performedAction;
     }
 
+    //TODO: JavaDoc for doAdminAction
     @PreAuthorize("hasAuthority('ADMIN')")
     public void doAdminAction() {
         performedAction = "ADMIN";
         showOkDialog = true;
     }
 
+    //TODO: JavaDoc for doManagerAction
     @PreAuthorize("hasAuthority('MANAGER')")
     public void doManagerAction() {
         performedAction = "MANAGER";
         showOkDialog = true;
     }
 
+    //TODO: JavaDoc for doEmployeeAction
     @PreAuthorize("hasAuthority('EMPLOYEE')")
     public void doEmployeeAction() {
         performedAction = "EMPLOYEE";
         showOkDialog = true;
     }
 
+    //TODO: JavaDoc for doHideOKDialog
     public void doHideOkDialog() {
         showOkDialog = false;
     }
