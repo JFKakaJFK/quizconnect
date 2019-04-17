@@ -305,12 +305,9 @@ public class QRWebSocketConnection implements IRoomAction {
     // @SendToUser(destinations = "/server/events/{pin}", broadcast = false)
     private ServerEvent handleEvent(@Payload ClientEvent request, Principal user, @DestinationVariable int pin){
 
-        log.debug("Received event of type " + request.getEvent() + " from " + user.getName());
-
-        log.debug("EVENT: " + request.getEvent());
-        log.debug("Player: " + request.getPlayerId());
-        log.debug("Question: " + request.getQuestionId());
-        log.debug("Answer: " + request.getAnswerId());
+        if(!request.getEvent().equals(ALIVE_PING)){
+            log.debug("Received event of type " + request.getEvent() + " from " + user.getName());
+        }
 
         switch (request.getEvent()){
             case GAME_INFO:
