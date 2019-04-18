@@ -51,6 +51,7 @@ public class QSOverviewBean implements Serializable {
 
     private Part uploadedFile;
 
+    //TODO JavaDoc for init
     @PostConstruct
     public void init() {
         this.questionSets = new ArrayList<>(questionSetService.getAllQuestionSets());
@@ -62,6 +63,7 @@ public class QSOverviewBean implements Serializable {
         return questionSets;
     }
 
+    // TODO JavaDoc for deleteQuestionSet
     public void deleteQuestionSet(QuestionSet questionSet) {
         logger.info("deleting QuestionSet with name: " + questionSet.getName());
         questionSetService.deleteQuestionSet(questionSet);
@@ -74,14 +76,16 @@ public class QSOverviewBean implements Serializable {
     }
 
     public void saveChanges() {
-        //TODO: edit functionality
+        //TODO: edit functionality & JavaDoc
     }
 
+    //TODO: JavaDoc for getCurrentUser
     public User getCurrentUser() {
         logger.info("user with name: " + currentUser.getUsername());
         return currentUser;
     }
 
+    //TODO: JavaDoc for getCurrentManager
     public Manager getCurrentManager() {
         logger.info("manager with id: " + currentManager.getId());
         return currentManager;

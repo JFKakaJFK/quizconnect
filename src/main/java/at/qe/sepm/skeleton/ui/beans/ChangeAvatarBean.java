@@ -71,6 +71,7 @@ public class ChangeAvatarBean implements Serializable {
         return new ResponseEntity(HttpStatus.OK);
     }
 
+    //TODO: JavaDoc for saveAvatar
     public void saveAvatar(){
         if(filename == null){
             return;
@@ -87,6 +88,7 @@ public class ChangeAvatarBean implements Serializable {
         filename = null;
     }
 
+    //TODO: JavaDoc for abort
     public void abort(){
         if(filename != null){
             storageService.deleteAvatar(filename);
@@ -115,5 +117,7 @@ public class ChangeAvatarBean implements Serializable {
         return filename;
     }
 
-    public void setFilename(String filename) {}
+    //Method has nothing in body
+    public void setFilename(String filename) {
+    }
 }

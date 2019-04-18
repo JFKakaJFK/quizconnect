@@ -36,7 +36,7 @@ public class QuestionSet implements Persistable<Integer>
 	@Column(length = 300)
 	private String description;
 	
-	@ManyToOne(optional = false, fetch = FetchType.EAGER)
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	private Manager author;
 	
 	@Enumerated(EnumType.STRING)
