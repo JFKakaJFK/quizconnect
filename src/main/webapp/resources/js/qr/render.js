@@ -53,7 +53,7 @@ const renderGameInfo = ({ settings }) => {
   `;
 };
 
-const renderPlayer = (player) => {
+const renderPlayer = (player) => { // TODO ready stuff (only data-ready & class ready stays)
   return `
     <div class="playerbox py-3 px-3" data-id="${player.id}">
       <div class="playerbox-avatar mx-2 my-2">
@@ -62,7 +62,11 @@ const renderPlayer = (player) => {
 
       <div class="playerbox-info mx-2 my-2">
           <div class="playerbox-actions text-right">
-            <input type="checkbox" ${player.ready ? 'checked' : ''}>
+            ${player.id === state.id ?
+              `<input class="ready" data-ready="${player.ready}" type="checkbox" ${player.ready ? 'checked' : ''}>` 
+              : 
+              `<span class="ready" data-ready="${player.ready}">${player.ready ? 'ready' : 'not ready'}</span>`
+            }
           </div>
 
           <div class="playerbox-info-row">
@@ -77,15 +81,41 @@ const renderPlayer = (player) => {
   `;
 };
 
-const renderPlayers = ({ players }) => {
-  const playerNodes = ROOT.querySelectorAll('.playerbox');
+const renderPlayers = ( parent, { players }) => {
+  if(parent === null){
+    return;
+  }
+  const playerNodes = parent.querySelectorAll('.playerbox');
+  const copy = [ ...players ];
   console.log(playerNodes);
 
-  return `
-    <div class="players">
-      ${players.map(p => renderPlayer(p)).join('')}
-    </div>
-  `;
+  if(playerNodes.length > 0){
+    playerNodes.forEach(node => {
+
+      let id = parseInt(node.getAttribute('data-id'))
+      let player = copy.find(p => p.id === id);
+      console.log(player);
+
+      // check for all in playerNodes if they are in players (n^2)
+      if(player){
+        // if yes, check if anything to rerender
+        let readyNode = node.querySelector('.ready');
+        let ready = readyNode.getAttribute('data-ready') === 'true';
+        if(!ready && player.ready){
+          // rerender ready
+          readyNode.innerHTML = `<span class=".ready" data-ready="true">ready</span>`; // TODO
+        }
+      } else { // if not, delete
+        parent.removeChild(node);
+      }
+
+      // remove player from copy
+      copy.filter(p => p.id !== id);
+    });
+  }
+
+  // add new players
+  copy.forEach(p => parent.innerHTML += renderPlayer(p));
 };
 
 const renderLobby = ( {info} ) => {
@@ -101,7 +131,12 @@ const renderLobby = ( {info} ) => {
     ROOT.innerHTML = renderGameInfo(info); // TODO change
   }
 
-  ROOT.innerHTML += renderPlayers(info);
+  elem = ROOT.querySelector('.players');
+  if(elem === null){
+    ROOT.innerHTML += `<div class="players"></div>`; // TODO change
+  }
+
+  renderPlayers(elem, info);
 };
 
 const renderGame = ( {game} ) => {

@@ -1,0 +1,7 @@
+.ready[data-ready="true"] {
+    background: green;
+}
+
+.ready[data-ready="false"] {
+    background: red;
+}
