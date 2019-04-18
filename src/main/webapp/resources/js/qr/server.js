@@ -68,7 +68,7 @@ const handleServerEvent = (response) => {
       } else if(!infoHandled && response.event === GAME_INFO){
         infoHandled = true;
         return handleGameInfo(response)
-      } else {
+      } else { // TODO remove case after debugging
         console.error(`Invalid event: ${response.event}`);
       }
   }
