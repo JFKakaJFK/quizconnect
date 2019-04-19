@@ -40,9 +40,12 @@
                 </div>
 
                 <div class="actions">
-                    <h:commandButton styleClass="btn btn-primary btn-lg" action="#" value="Create Game"/>
+                    <h:commandLink styleClass="btn btn-primary btn-lg" action="/quizroom/createRoom?faces-redirect=true" value="Create Game">
+                        <f:ajax execute="@this" render="@none" />
+                    </h:commandLink>
 
-                    <h:commandButton styleClass="btn btn-primary btn-lg" action="#" value="Join Game"/>
+                    <!-- TODO convert join.html to .xhtml & use template?? -->
+                    <a class="btn btn-primary btn-lg" href="/quizroom/join.html">Join Game</a>
                 </div>
             </h:panelGroup>
 

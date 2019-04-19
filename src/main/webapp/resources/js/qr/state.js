@@ -13,11 +13,14 @@ let state = {
   id: parseInt(localStorage.getItem('playerId')),
   state: LOBBY,
   info: {
-    settings: {},
+    settings: {
+      questionSets: [],
+    },
     players: [],
   },
   game: {
     score: 0,
+    questions: [],
   },
 };
 

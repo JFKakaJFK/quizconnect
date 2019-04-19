@@ -46,7 +46,7 @@ const renderGameInfo = ({ settings }) => {
         <p>difficulty</p>
       </div>
       <div class="stat stat-lg pin">
-        <h3>${settings.pin}</h3>
+        <h3>${settings.pin}${false ? 'share pin here' : ''}</h3>
         <p>pin</p>
       </div>
     </div>
@@ -126,8 +126,8 @@ const renderLobby = ( {info} ) => {
   let elem = ROOT.querySelector('.info');
 
   console.log(elem);
-  // TODO optimize rendering
-  // info only is rendered once, but players(currently everytime)?
+
+  // info only is rendered once
   if(elem === null){
     ROOT.innerHTML = renderGameInfo(info); // TODO change
   }
@@ -137,6 +137,7 @@ const renderLobby = ( {info} ) => {
     ROOT.innerHTML += `<div class="players"></div>`; // TODO change
   }
 
+  // renders the players
   renderPlayers(elem, info);
 };
 
