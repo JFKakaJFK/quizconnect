@@ -45,7 +45,7 @@ const renderGameInfo = ({ settings }) => {
         <h3>${settings.difficulty}</h3>
         <p>difficulty</p>
       </div>
-      <div class="stat stat-lg">
+      <div class="stat stat-lg pin">
         <h3>${settings.pin}</h3>
         <p>pin</p>
       </div>
@@ -63,16 +63,16 @@ const renderPlayer = (player) => { // TODO ready stuff (only data-ready & class 
       <div class="playerbox-info mx-2 my-2">
           <div class="playerbox-actions text-right">
             ${player.id === state.id ?
-              `<input class="ready" data-ready="${player.ready}" type="checkbox" ${player.ready ? 'checked' : ''}>` 
+              `<div class="ready" data-ready="${player.ready}" ${player.ready ? '' : 'onclick="readyUp()"'}>${player.ready ? 'ready' : 'ready up'}</div>` 
               : 
-              `<span class="ready" data-ready="${player.ready}">${player.ready ? 'ready' : 'not ready'}</span>`
+              `<div class="ready" data-ready="${player.ready}">${player.ready ? 'ready' : 'not ready'}</div>`
             }
           </div>
 
           <div class="playerbox-info-row">
              <div class="playerbox-info-name stat stat-lg stat-left">
               <h3>${player.username}</h3>
-              <p>name</p>
+              <p>username</p>
             </div>
           </div>
 
@@ -82,40 +82,41 @@ const renderPlayer = (player) => { // TODO ready stuff (only data-ready & class 
 };
 
 const renderPlayers = ( parent, { players }) => {
-  if(parent === null){
+  if(parent === null || players.length === 0){
     return;
   }
   const playerNodes = parent.querySelectorAll('.playerbox');
-  const copy = [ ...players ];
-  console.log(playerNodes);
+  let copy = [ ...players ];
 
   if(playerNodes.length > 0){
     playerNodes.forEach(node => {
 
-      let id = parseInt(node.getAttribute('data-id'))
+      let id = parseInt(node.getAttribute('data-id'));
       let player = copy.find(p => p.id === id);
-      console.log(player);
 
-      // check for all in playerNodes if they are in players (n^2)
+      // check for all in playerNodes if they are in players
       if(player){
         // if yes, check if anything to rerender
         let readyNode = node.querySelector('.ready');
         let ready = readyNode.getAttribute('data-ready') === 'true';
+
         if(!ready && player.ready){
           // rerender ready
-          readyNode.innerHTML = `<span class=".ready" data-ready="true">ready</span>`; // TODO
+          readyNode.innerHTML = `<div class="ready" data-ready="true">ready rerendered</div>`; // TODO
         }
-      } else { // if not, delete
+      } else { // if not in players, delete // TODO test
         parent.removeChild(node);
       }
 
-      // remove player from copy
-      copy.filter(p => p.id !== id);
+      // remove player from copy (make search space smaller)
+      copy = copy.filter(p => p.id !== id);
     });
   }
 
   // add new players
-  copy.forEach(p => parent.innerHTML += renderPlayer(p));
+  if(copy.length > 0){
+    copy.forEach(p => parent.innerHTML += renderPlayer(p));
+  }
 };
 
 const renderLobby = ( {info} ) => {
