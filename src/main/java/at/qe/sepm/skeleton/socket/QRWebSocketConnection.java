@@ -164,6 +164,7 @@ public class QRWebSocketConnection implements IRoomAction {
 
     /* Client events */
 
+    private final String ROOM_INFO = "getRoomInfo";
     private final String GAME_INFO = "getGameInfo";
     private final String ROOM_PLAYERS = "getRoomPlayers";
     private final String READY = "readyUp";
@@ -176,6 +177,7 @@ public class QRWebSocketConnection implements IRoomAction {
     private final String SUCCESS = "success";
     private final String ERROR = "error";
 
+    @Deprecated
     public ServerEvent handleGetGameInfo(int pin){
         IPlayerAction qr = rooms.get(pin);
 
@@ -190,6 +192,33 @@ public class QRWebSocketConnection implements IRoomAction {
         return event;
     }
 
+    public ServerEvent handleGetRoomInfo(int pin){
+        IPlayerAction qr = rooms.get(pin);
+
+        List<Player> ready = qr.getRoomReadyPlayers();
+        List<Player> all = qr.getRoomPlayers();
+        List<PlayerJSON> players = new ArrayList<>();
+        for (Player p: all) {
+            PlayerJSON pj = new PlayerJSON(p, avatars);
+            if(ready.contains(p)){
+                pj.setReady(true);
+            }
+            players.add(pj);
+        }
+
+        ServerEvent event = new RoomInfoEvent(pin,
+                qr.getRoomDifficulty().name(),
+                qr.getRoomMode().name(),
+                qr.getRoomQuestionSets(),
+                qr.getRoomScore(),
+                qr.getAlivePingTimeStep(),
+                qr.getNumberOfJokers(),
+                players);
+        event.setEvent(ROOM_INFO);
+        return event;
+    }
+
+    @Deprecated
     public ServerEvent handleGetRoomPlayers(int pin){
         IPlayerAction qr = rooms.get(pin);
         List<Player> ready = qr.getRoomReadyPlayers();
@@ -310,12 +339,6 @@ public class QRWebSocketConnection implements IRoomAction {
         }
 
         switch (request.getEvent()){
-            case GAME_INFO:
-                return handleGetGameInfo(pin);
-            case ROOM_PLAYERS:
-                return handleGetRoomPlayers(pin);
-            case READY:
-                return handleReadyUp(pin, request);
             case ANSWER_QUESTION:
                 return handleAnswerQuestion(pin, request);
             case USE_JOKER:
@@ -326,6 +349,14 @@ public class QRWebSocketConnection implements IRoomAction {
                 return handleCancelTimeout(pin, request);
             case ALIVE_PING:
                 return handleSendAlivePing(pin, request);
+            case ROOM_INFO:
+                return handleGetRoomInfo(pin);
+            case GAME_INFO:
+                return handleGetGameInfo(pin);
+            case ROOM_PLAYERS:
+                return handleGetRoomPlayers(pin);
+            case READY:
+                return handleReadyUp(pin, request);
             default:
                 return new GenericServerEvent("error");
         }

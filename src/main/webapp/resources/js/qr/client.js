@@ -11,8 +11,13 @@ const USE_JOKER = "useJoker";
 const LEAVE_ROOM = "leaveRoom";
 const CANCEL_TIMEOUT = "cancelTimeout";
 const ALIVE_PING = "sendAlivePing";
+const ROOM_INFO = "getRoomInfo";
 
 /* Client Events */
+
+const getRoomInfo = () => {
+  sendEvent({ event: ROOM_INFO });
+};
 
 const getGameInfo = () => {
   sendEvent({event: GAME_INFO});

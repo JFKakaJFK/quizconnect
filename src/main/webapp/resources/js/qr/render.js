@@ -125,20 +125,18 @@ const renderLobby = ( {info} ) => {
 
   let elem = ROOT.querySelector('.info');
 
-  console.log(elem);
-
   // info only is rendered once
   if(elem === null){
     ROOT.innerHTML = renderGameInfo(info); // TODO change
   }
 
-  elem = ROOT.querySelector('.players');
-  if(elem === null){
+  if(ROOT.querySelector('.players') === null){
     ROOT.innerHTML += `<div class="players"></div>`; // TODO change
   }
+  let players = ROOT.querySelector('.players');
 
   // renders the players
-  renderPlayers(elem, info);
+  renderPlayers(players, info);
 };
 
 const renderGame = ( {game} ) => {

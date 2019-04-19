@@ -62,6 +62,7 @@ const handleServerEvent = (response) => {
     case PLAYER_LEAVE: // TODO only ingame?
       return handlePlayerLeave(response);
     default:
+      /*
       if(!playersHandled && response.event === ROOM_PLAYERS){
         playersHandled = true;
         return handleRoomPlayers(response)
@@ -70,6 +71,13 @@ const handleServerEvent = (response) => {
         return handleGameInfo(response)
       } else { // TODO remove case after debugging
         console.error(`Invalid event: ${response.event}`);
+      }
+      */
+      if(!infoHandled && response.event === ROOM_INFO){
+        infoHandled = true;
+        return handleRoomInfo(response);
+      } else {
+        console.log(`Received '${response.event}' event`)
       }
   }
 };
@@ -109,6 +117,29 @@ const handleRoomPlayers = ({ num, players }) => {
   console.info(`Players updated`);
 };
 
+const handleRoomInfo = ({ pin, difficulty, mode, questionSets, score, alivePingInterval, numJokers, num, players }) => {
+  setState({
+    alivePing: setInterval(sendAlivePing, alivePingInterval - 50), // account for latency
+    info: {
+      settings: {
+        pin,
+        difficulty,
+        mode,
+        questionSets,
+        score,
+        alivePingInterval,
+        numJokers,
+      },
+      num,
+      players,
+    },
+    game: {
+      jokersLeft: numJokers,
+    }
+  });
+  console.info(`room info updated`);
+};
+
 // set the player to ready
 const handleReadyUp = ({ playerId }) => {
   setState({
@@ -121,7 +152,7 @@ const handleReadyUp = ({ playerId }) => {
       }),
     },
   });
-  console.info(`Player ${event.playerId} is ready`);
+  console.info(`Player ${playerId} is ready`);
 };
 
 // on join add player to state.info.players
@@ -131,14 +162,14 @@ const handlePlayerJoin = ({ player }) => {
       players: state.info.players.concat([player])
     },
   });
-  console.info(`Player ${event.playerId} joined`);
+  console.info(`Player ${player.playerId} joined`);
 };
 
 // remove player from state.info.players
 const handlePlayerLeave = ({ playerId }) => {
   setState({
     info: {
-      players: state.players.filter(p => p.playerId !== playerId),
+      players: state.info.players.filter(p => p.playerId !== playerId),
     }
   });
   console.info(`Player ${playerId} left`)

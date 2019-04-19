@@ -9,14 +9,16 @@ const WS_TARGET = '/qc/events';
 const socket = new SockJS(WS_FALLBACK);
 const stompClient = Stomp.over(socket);
 
+stompClient.debug = () => {}; // Disables debug messages
+
 const connect = () => {
   stompClient.connect({}, (frame) => {
     // console.debug(frame);
     stompClient.subscribe(`${WS_SOURCE}/${state.pin}`, event => handleServerEvent(JSON.parse(event.body)));
     sendAlivePing();
-    getGameInfo();
-    getRoomPlayers();
-    stompClient.debug = () => {}; // Disables debug messages
+    // getGameInfo();
+    // getRoomPlayers();
+    getRoomInfo();
   });
 };
 
