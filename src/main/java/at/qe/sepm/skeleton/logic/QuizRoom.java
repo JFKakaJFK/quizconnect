@@ -31,10 +31,10 @@ public class QuizRoom implements IPlayerAction
 	// all times in ms
 	private final long frameTimeStep = 50; // time between FramUpdate calls
 	private final long activityTimeStep = 500; // time between player activity checks
-	private final long activityDuration = 30000; // time until an activity ping invalidates
+	private final long activityDuration = 60000; // time until an activity ping invalidates
 	private final long timeoutDuration = 10000; // time until player gets kicked after no activity
 	private final long aliveTimeStep = 500; // time between alive ping checks
-	private final long aliveDuration = 1000; // maximum time between alive pings
+	private final long aliveDuration = 5000; // maximum time between alive pings
 	private final long timerSyncTimeStep = 1000; // time between timer sync calls to players
 	private final long roomStartDelay = 5000; // time between all Players ready and game start
 	
@@ -246,8 +246,9 @@ public class QuizRoom implements IPlayerAction
 		long now = new Date().getTime() + 10; // offset by 10ms to make up for 'just missed' calls
 		while (delayQueue.size() > 0 && delayQueue.get(0).execTime <= now)
 		{
-			delayQueue.get(0).action.run();
+			DelayedAction a = delayQueue.get(0);
 			delayQueue.remove(0);
+			a.action.run();
 		}
 	}
 	
@@ -330,13 +331,13 @@ public class QuizRoom implements IPlayerAction
 	 * 
 	 * @param player
 	 *            Player to join the room.
-	 * @return True if join successful, false if room is full.
+	 * @return True if room is full, false if join successful.
 	 */
 	public synchronized boolean addPlayer(Player player)
 	{
-		if (players.size() == maxPlayers)
+		if (players.size() == maxPlayers || (players.contains(player)))
 		{
-			return false;
+			return true;
 		}
 		
 		players.add(player);
@@ -347,7 +348,7 @@ public class QuizRoom implements IPlayerAction
 			x.onPlayerJoin(pin, player);
 		});
 		
-		return true;
+		return false;
 	}
 	
 	/**
@@ -364,7 +365,12 @@ public class QuizRoom implements IPlayerAction
 			x.onPlayerLeave(pin, player, reason);
 		});
 		
-		removeQuestion(playerQuestions.get(player));
+		if (playerQuestions.containsKey(player))
+		{
+			removeQuestion(playerQuestions.get(player));
+		}
+		
+		// TODO redistribute questions with right answer at player
 		
 		players.remove(player);
 		playerQuestions.remove(player);
@@ -589,6 +595,9 @@ public class QuizRoom implements IPlayerAction
 	 */
 	private synchronized void removeQuestion(ActiveQuestion q)
 	{
+		if (q == null)
+			return;
+		
 		// remove question
 		playerQuestions.put(q.playerQuestion, null);
 		
@@ -712,6 +721,12 @@ public class QuizRoom implements IPlayerAction
 	@Override
 	public void answerQuestion(Player p, int questionId, int index)
 	{
+		if (!playerActivityTimestamps.containsKey(p))
+		{
+			LOGGER.error("Illegal call to answerQuestion! Player is not in QuizRoom! (id: " + p.getId() + ")");
+			return;
+		}
+		
 		if (!activeByQuestionId.containsKey(index))
 		{
 			LOGGER.debug(
@@ -756,6 +771,12 @@ public class QuizRoom implements IPlayerAction
 			return;
 		}
 		
+		if (!playerActivityTimestamps.containsKey(p))
+		{
+			LOGGER.error("Illegal call to useJoker! Player is not in QuizRoom! (id: " + p.getId() + ")");
+			return;
+		}
+		
 		// register player activity
 		playerActivityTimestamps.put(p, new Date().getTime());
 		
@@ -780,6 +801,12 @@ public class QuizRoom implements IPlayerAction
 	@Override
 	public synchronized void cancelTimeout(Player p)
 	{
+		if (!playerActivityTimestamps.containsKey(p))
+		{
+			LOGGER.error("Illegal call to cancelTimeout! Player is not in QuizRoom! (id: " + p.getId() + ")");
+			return;
+		}
+		
 		long tooLong = (new Date().getTime()) - activityDuration;
 		if (playerActivityTimestamps.get(p) < tooLong)
 			playerActivityTimestamps.put(p, new Date().getTime());
@@ -788,12 +815,24 @@ public class QuizRoom implements IPlayerAction
 	@Override
 	public synchronized void leaveRoom(Player p)
 	{
+		if (!players.contains(p))
+		{
+			LOGGER.error("Illegal call to leaveRoom! Player is not in QuizRoom! (id: " + p.getId() + ")");
+			return;
+		}
+		
 		removePlayer(p, "left");
 	}
 	
 	@Override
 	public synchronized void sendAlivePing(Player p)
 	{
+		if (!playerActivityTimestamps.containsKey(p))
+		{
+			LOGGER.error("Illegal call to sendAlivePing! Player is not in QuizRoom! (id: " + p.getId() + ")");
+			return;
+		}
+		
 		playerAlivePingTimestamps.put(p, new Date().getTime());
 	}
 	

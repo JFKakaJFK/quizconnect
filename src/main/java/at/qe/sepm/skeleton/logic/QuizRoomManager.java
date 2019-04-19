@@ -128,6 +128,18 @@ public class QuizRoomManager implements ApplicationListener<ContextRefreshedEven
 	}
 	
 	/**
+	 * Returns true if a {@link QuizRoom} with pin currently exists.
+	 * 
+	 * @param pin
+	 *            Pin of the QuizRoom.
+	 * @return
+	 */
+	public boolean doesRoomExist(int pin)
+	{
+		return rooms.containsKey(pin);
+	}
+	
+	/**
 	 * Returns a new unique pin for a QR.
 	 * 
 	 * @return
