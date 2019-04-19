@@ -52,6 +52,10 @@ const leaveRoom = () => {
 
 const cancelTimeout = () => {
   sendEvent({event: CANCEL_TIMEOUT, playerId: state.id})
+  if(state.timeoutTimer){ // TODO do w/ setState?!!
+    clearInterval(state.timeoutTimer);
+    state.timeoutTimer = null;
+  }
 };
 
 const sendAlivePing = () => {

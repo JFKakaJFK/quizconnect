@@ -4,6 +4,11 @@
 
 connect();
 
+// TODO only send if in timeout? or add client activity event?
+document.addEventListener('click', cancelTimeout);
+document.addEventListener('touchstart', cancelTimeout);
+document.addEventListener('mousemove', cancelTimeout);
+
 
 // 1. getGameInfo
 

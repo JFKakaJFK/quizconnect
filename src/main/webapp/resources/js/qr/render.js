@@ -18,6 +18,16 @@
  */
 
 const ROOT = document.getElementById('root');
+const TIMEOUT_MODAL = document.getElementById('timeout');
+const TIMEOUT_COUNTER = TIMEOUT_MODAL.querySelector('#timeoutRemainingTime');
+
+const renderTimeOutModal = (remaining) => {
+  TIMEOUT_MODAL.modal('show'); // show modal
+  TIMEOUT_COUNTER.innerHTML = `${remaining / 1000}`;
+  state.timeoutTimer = setInterval(() => {
+    TIMEOUT_COUNTER.innerHTML = `${parseInt(TIMEOUT_COUNTER.innerHTML) - 1}`;
+  }, 1000)
+};
 
 /**
  * Takes in a JS Object with following attributes

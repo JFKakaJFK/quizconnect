@@ -216,9 +216,15 @@ const handleTimerSync = (event) => {
   console.log("timer sync");
 };
 
-const handleTimeoutStart = (event) => {
-  // TODO: display modal & start countdown
-  console.log("timeout started")
+const handleTimeoutStart = ({ playerId, remaining }) => {
+  if(state.id !== playerId){
+    return;
+  }
+  setState({
+    timeoutIsActive: true,
+    timeoutRemainingTime: remaining,
+  });
+  console.log(`timeout started, ${remaining / 1000}s left`)
 };
 
 const handleKick = ({ playerId }) => {

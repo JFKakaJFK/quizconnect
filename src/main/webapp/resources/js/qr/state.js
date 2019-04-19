@@ -12,6 +12,9 @@ let state = {
   pin: parseInt(localStorage.getItem('pin')),
   id: parseInt(localStorage.getItem('playerId')),
   state: LOBBY,
+  timeoutIsActive: false,
+  timeoutRemainingTime: 0,
+  timeoutTimer: null,
   info: {
     settings: {
       questionSets: [],
@@ -29,8 +32,6 @@ if(!state.pin || !state.id){
   window.location.href = URL_JOIN;
 }
 
-
-
 /* TODO
  * state updates
  *   - never directly: wrap in class (no information hiding -> why?)
@@ -43,6 +44,8 @@ if(!state.pin || !state.id){
  *
  */
 
+
+// TODO deep merge? https://davidwalsh.name/javascript-deep-merge
 const setState = (newState) => {
   // TODO find differences & render only those
   // TODO timeouts
@@ -53,6 +56,10 @@ const setState = (newState) => {
   state = Object.assign(state, newState, { info: Object.assign(state.info, newState.info) }, { game: Object.assign(state.game, newState.game)});
   console.log("merged");
   console.log(state);
+  if(state.timeoutIsActive){
+    // TODO show modal
+    renderTimeOutModal(state.timeoutRemainingTime);
+  }
   if(state.state === INGAME){
     renderGame(state)
   } else if(state.state === LOBBY){
