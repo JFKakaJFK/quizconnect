@@ -162,14 +162,14 @@ const handlePlayerJoin = ({ player }) => {
       players: state.info.players.concat([player])
     },
   });
-  console.info(`Player ${player.playerId} joined`);
+  console.info(`Player ${player.id} joined`);
 };
 
 // remove player from state.info.players
 const handlePlayerLeave = ({ playerId }) => {
   setState({
     info: {
-      players: state.info.players.filter(p => p.playerId !== playerId),
+      players: state.info.players.filter(p => p.id !== playerId),
     }
   });
   console.info(`Player ${playerId} left`)

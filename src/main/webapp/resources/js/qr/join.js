@@ -23,7 +23,7 @@ const joinGame = (pin) => {
     .then(data => {
         console.log(data);
         if(data.error){
-            msg.innerHTML = data.message;
+            msg.innerHTML = data.message; // TODO ignore? | default: show invalid indicator (e.g. red border) until pin is valid?
         }
         if(data.playerId){
             console.log(data.playerId);

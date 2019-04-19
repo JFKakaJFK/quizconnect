@@ -49,9 +49,12 @@ public class JoinGameController {
         }
         int PIN = Integer.valueOf(pin);
         Player p  = sessionInfoBean.getCurrentUser().getPlayer();
-        IPlayerAction qr = quizRoomManager.joinRoom(PIN, p);
-        qrWebSocketConnection.addGame(PIN, qr, p);
-        logger.info("Player " + p.getUser().getUsername() + " joined room " + pin);
-        return "{\"playerId\":" + p.getId() + "}";
+        if(quizRoomManager.doesRoomExist(PIN)){
+            IPlayerAction qr = quizRoomManager.joinRoom(PIN, p);
+            qrWebSocketConnection.addGame(PIN, qr, p);
+            logger.info("Player " + p.getUser().getUsername() + " joined room " + pin);
+            return "{\"playerId\":" + p.getId() + "}";
+        }
+        return "{\"error\":\"Room [" + pin + "] doesn't exist\"}";
     }
 }
