@@ -1,0 +1,8 @@
+/* TODO use css vars */
+
+.box {
+    padding: 1rem;
+    border: 2px solid var(--col-1-m);
+    border-radius: 1rem;
+    box-sizing: border-box;
+}

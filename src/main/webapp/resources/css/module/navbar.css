@@ -11,3 +11,10 @@
 .navbar-logo {
     font-size: 1.5rem;
 }
+
+.navbar-logo svg {
+    transition: 0.3s;
+}
+.navbar-logo svg:hover {
+    transform: rotate(360deg) scale(1.3);
+}

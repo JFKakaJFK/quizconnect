@@ -55,7 +55,7 @@ public class UserBean implements Serializable {
     }
     */
 
-
+    //TODO: JavaDoc for redirectRegistration
     public void redirectRegistration() {
         try {
             FacesContext.getCurrentInstance().

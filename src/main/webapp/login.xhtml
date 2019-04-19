@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
-      xmlns:ui="http://java.sun.com/jsf/facelets">
+      xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core">
 
 <h:head>
     <title>Login</title>
@@ -25,6 +25,7 @@
 </h:head>
 
 <h:body>
+    <f:event listener="#{loginRedirectController.redirect}" type="preRenderView" />
 
     <script type="text/javascript">
         window.onload = function () {
