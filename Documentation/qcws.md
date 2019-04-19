@@ -119,7 +119,7 @@ On page load:
 4. The response gets mapped to eventHandler
 5. handler may cause DOM updates
 
-- `getGameInfo`
+- `getGameInfo``@DEPRECATED`
   - returns all game info needed for Lobby, called once when joined
   - Request
     
@@ -144,7 +144,7 @@ On page load:
       "alivePingInterval": "30000",
     }
     ```
-- `getRoomPlayers`
+- `getRoomPlayers` `@DEPRECATED`
   - returns players in the room, called once on lobby join
   - later updates just update `players` list (and ideally just do a partial rerender of lobby players)
     - on join, add to list
@@ -187,6 +187,8 @@ On page load:
       ]
     }
     ```
+- `getRoomInfo`
+    - combines `getGameInfo` and `getRoomPlayers`   
 
 Game Events
 
