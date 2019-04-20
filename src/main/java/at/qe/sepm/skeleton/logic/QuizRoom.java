@@ -426,7 +426,7 @@ public class QuizRoom implements IPlayerAction
 	{
 		readyPlayers = null;
 		
-		long now = new Date().getTime();
+		long now = new Date().getTime() + roomStartDelay;
 		for (Player player : players)
 		{
 			// initialize time stamps
