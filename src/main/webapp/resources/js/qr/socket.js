@@ -15,7 +15,7 @@ const connect = () => {
   stompClient.connect({}, (frame) => {
     // console.debug(frame);
     stompClient.subscribe(`${WS_SOURCE}/${state.pin}`, event => handleServerEvent(JSON.parse(event.body)));
-    sendAlivePing();
+    // sendAlivePing();
     // getGameInfo();
     // getRoomPlayers();
     getRoomInfo();
@@ -29,8 +29,9 @@ const disconnect = () => {
     if(stompClient){
         stompClient.disconnect();
     }
-    if(state.alivePing !== undefined){
+    if(state.alivePing !== null){
         clearInterval(state.alivePing);
+        state.alivePing = null;
     }
 };
 

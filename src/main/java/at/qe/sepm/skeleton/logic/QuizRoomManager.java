@@ -103,7 +103,7 @@ public class QuizRoomManager implements ApplicationListener<ContextRefreshedEven
 		
 		QuizRoom quizRoom = rooms.get(roomPin);
 		
-		boolean full = !quizRoom.addPlayer(player);
+		boolean full = quizRoom.addPlayer(player);
 		if (full)
 			throw new IllegalArgumentException("QuizRoom already full!");
 

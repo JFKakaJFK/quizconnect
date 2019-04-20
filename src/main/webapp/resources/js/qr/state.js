@@ -15,6 +15,7 @@ let state = {
   timeoutIsActive: false,
   timeoutRemainingTime: 0,
   timeoutTimer: null,
+  alivePing: null,
   info: {
     settings: {
       questionSets: [],

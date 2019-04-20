@@ -119,7 +119,6 @@ const handleRoomPlayers = ({ num, players }) => {
 
 const handleRoomInfo = ({ pin, difficulty, mode, questionSets, score, alivePingInterval, numJokers, num, players }) => {
   setState({
-    alivePing: setInterval(sendAlivePing, alivePingInterval - 50), // account for latency
     info: {
       settings: {
         pin,
@@ -177,9 +176,15 @@ const handlePlayerLeave = ({ playerId }) => {
 
 // set state.state = INGAME
 const handleGameStart = (event) => {
+  sendAlivePing();
   setState({
+    alivePing: setInterval(sendAlivePing, alivePingInterval - 50), // account for latency
     state: INGAME,
   });
+  // TODO only send if in timeout? or add client activity event?
+  document.addEventListener('click', cancelTimeout);
+  document.addEventListener('touchstart', cancelTimeout);
+  document.addEventListener('mousemove', cancelTimeout);
   console.info(`Game started`)
 };
 
