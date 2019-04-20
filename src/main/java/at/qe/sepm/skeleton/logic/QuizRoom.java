@@ -365,13 +365,52 @@ public class QuizRoom implements IPlayerAction
 			x.onPlayerLeave(pin, player, reason);
 		});
 		
+		// remove ActiveQuestion with question at player
 		if (playerQuestions.containsKey(player))
 		{
 			removeQuestion(playerQuestions.get(player));
 		}
 		
-		// TODO redistribute questions with right answer at player
+		// redistribute questions with right answer at player, modify activeQuestions with wrong answers at player
+		int redistCount = 0;
+		for (ActiveQuestion activeQuestion : playerAnswers.get(player))
+		{
+			if (activeQuestion.playerAnswer == player)
+			{
+				// return question to appropriate pool and remove from current play
+				if (activeQuestion.questionDifficulty == QuestionSetDifficulty.easy)
+				{
+					questionsPoolEasy.add(activeQuestion.question);
+				}
+				else
+				{
+					questionsPoolHard.add(activeQuestion.question);
+				}
+				removeQuestion(activeQuestion);
+				redistCount++;
+			}
+			else if (activeQuestion.playersWrongAnswers.contains(player))
+			{
+				// remove all instances of player (player may have multiple wrong answers of AQ)
+				while (activeQuestion.playersWrongAnswers.contains(player))
+					activeQuestion.playersWrongAnswers.remove(player);
+			}
+			else
+			{
+				LOGGER.error(
+						"Illegal state for ActiveQuestion detected - playerAnswers has AQ registered but AQ not player as playerAnswer or playersWrongAnswers!");
+			}
+		}
 		
+		// redistribute questions after 0.5sec delay
+		final int rC = redistCount;
+		addDelayedAction(new DelayedAction(500, () ->  {
+			for (int i = 0; i < rC; i++)
+			{
+				distributeQuestion();
+			}
+		} ));
+
 		players.remove(player);
 		playerQuestions.remove(player);
 		playerAnswers.remove(player);
@@ -493,7 +532,7 @@ public class QuizRoom implements IPlayerAction
 		
 		long qTime = computeQuestionTime(pair.getValue());
 		
-		ActiveQuestion newActive = new ActiveQuestion(question, qPlayer, raPlayer, waPlayers, qTime);
+		ActiveQuestion newActive = new ActiveQuestion(question, pair.getValue(), qPlayer, raPlayer, waPlayers, qTime);
 		
 		activeQuestions.add(newActive);
 		activeByQuestionId.put(question.getId(), newActive);

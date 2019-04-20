@@ -31,6 +31,7 @@ public class Timer
 	public Timer(ThreadPoolTaskScheduler scheduler, ITimedAction action, long timeStep)
 	{
 		startTime = new Date().getTime();
+		lastTime = startTime;
 		this.action = action;
 		this.timeStep = timeStep;
 		
