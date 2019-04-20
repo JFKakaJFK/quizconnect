@@ -436,6 +436,10 @@ public class QuizRoom implements IPlayerAction
 		
 		wfpMode = false;
 		
+		eventCall(x -> {
+			x.onGameStart(pin);
+		});
+		
 		// distribute questions to all players
 		for (int i = 0; i < players.size(); i++)
 		{
