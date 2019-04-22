@@ -279,7 +279,7 @@ public class QuizRoom implements IPlayerAction
 			if (playerActivityTimestamps.get(player) < tooLong)
 			{
 				playerInterface.onTimeoutStart(pin, player, timeoutDuration);
-				addDelayedAction(new DelayedAction(timeoutDuration, () -> {
+				addDelayedAction(new DelayedAction((new Date().getTime()) + timeoutDuration, () -> {
 					kickPlayerIfNoActivity(player);
 				}));
 			}
@@ -404,7 +404,7 @@ public class QuizRoom implements IPlayerAction
 		
 		// redistribute questions after 0.5sec delay
 		final int rC = redistCount;
-		addDelayedAction(new DelayedAction(500, () ->  {
+		addDelayedAction(new DelayedAction((new Date().getTime()) + 500, () -> {
 			for (int i = 0; i < rC; i++)
 			{
 				distributeQuestion();
@@ -751,7 +751,7 @@ public class QuizRoom implements IPlayerAction
 		// are all players ready?
 		if (readyPlayers.size() == players.size())
 		{
-			addDelayedAction(new DelayedAction(new Date().getTime() + roomStartDelay, () -> {
+			addDelayedAction(new DelayedAction((new Date().getTime()) + roomStartDelay, () -> {
 				onGameStart();
 			}));
 		}
@@ -833,7 +833,7 @@ public class QuizRoom implements IPlayerAction
 		}
 		
 		// wait 1 second, then assign new questions to all players
-		addDelayedAction(new DelayedAction(1000, () -> {
+		addDelayedAction(new DelayedAction((new Date().getTime()) + 1000, () -> {
 			for (int i = 0; i < players.size(); i++)
 			{
 				distributeQuestion();
