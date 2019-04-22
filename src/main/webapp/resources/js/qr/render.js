@@ -190,20 +190,82 @@ const renderLobby = ( {info} ) => {
   renderPlayers(players, info);
 };
 
-
-const renderQuestion = () => {
-
+// TODO other types for reverse mode
+// TODO progress bar? or SVG + anime.js??
+// TODO save initial question time? for progress %
+const renderQuestion = (parent, { questionId, type, question, remaining }) => {
+  parent.innerHTML = `
+    <h2 id="question">${question}</h2>
+    <div id="questionTime"><span></span></div>
+  `;
 };
 
-const renderAnswer = () => {
-
+const renderGenericAnswer = ({ classes, content, answerId, questionId} ) => { // TODO parseInt necessary?
+  return `
+    <div class="answer ${classes}" data-questionId="${questionId}" data-answerId="${answerId}" onclick="() => answerQuestion(parseInt(${questionId}), parseInt(${answerId}))">
+      ${content}
+    </div>
+  `;
 };
 
-const renderAnswers = () => {
-
+// TODO depending on text length, add different size style classes
+// using these classes + displey: grid + grid-auto-flow do different layouts
+const renderTextAnswer = (answer) => {
+  return {
+    content: `<p>${answer}</p>`,
+    classes: 'answer-text',
+  };
 };
 
+const renderPictureAnswer = (answer) => {
+  return {
+    content: `<img src="${answer}" alt="answer image" />`,
+    classes: 'answer-img',
+  };
+};
 
+const renderAnswer = ({ questionId, type, answerId, answer }) => {
+  switch (type){
+    case ANSWERTYPE_TEXT:
+      return renderGenericAnswer({ ...renderTextAnswer(answer), questionId, answerId });
+    case ANSWERTYPE_PICTURE:
+      return renderGenericAnswer({ ...renderPictureAnswer(answer), questionId, answerId });
+    default:
+      return renderGenericAnswer({ classes: 'answer-default', content: answer, questionId, answerId });
+  }
+};
+
+const renderAnswers = ( parent, { answers }) => {
+  // TODO render placeholders?
+  if(parent === null || answers.length === 0){
+    return;
+  }
+  const answerNodes = parent.querySelectorAll('.answer');
+  let copy = [ ...answers ];
+
+  if(answerNodes.length > 0){
+    // remove answer if not in state
+    answerNodes.forEach(node => {
+
+      let questionId = parseInt(node.getAttribute('data-questionId'));
+      let answerId = parseInt(node.getAttribute('data-answerId'));
+      let answer = copy.find(a => a.questionId === questionId && a.answerId === answerId);
+
+      // delete if not in answers
+      if(answer === undefined){
+        parent.removeChild(node);
+      }
+
+      // remove answer from copy (make search space smaller)
+      copy = copy.filter(a => a.questionId !== questionId || a.answerId !== answerId);
+    });
+  }
+
+  // add new answers
+  if(copy.length > 0){
+    copy.forEach(a => parent.innerHTML += renderAnswer(a));
+  }
+};
 
 /**
  * Renders the game state
@@ -211,6 +273,7 @@ const renderAnswers = () => {
  * @param game
  */
 const renderGame = ( {game} ) => {
+  // if LOBBY was rendered before, clear the ROOT node and add INGAME containers
   if(ROOT.querySelector('.info') !== null || ROOT.querySelector('.players') !== null){
     clearScreen();
     let question = document.createElement('div');
@@ -221,5 +284,7 @@ const renderGame = ( {game} ) => {
     ROOT.appendChild(answers);
   }
 
-  ROOT.innerHTML = JSON.stringify(game);
+  renderQuestion(ROOT.querySelector('.question'), game.question);
+
+  renderAnswers(ROOT.querySelector('.answers'), game.answers);
 };

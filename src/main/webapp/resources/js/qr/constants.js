@@ -11,3 +11,6 @@ const URL_FINISH = '/quizroom/final.xhtml';
 const URL_KICKED = '/player/home.xhtml?kicked=true';
 
 const MAX_ANSWERS = 6;
+
+const ANSWERTYPE_TEXT = 'text';
+const ANSWERTYPE_PICTURE = 'picture';
