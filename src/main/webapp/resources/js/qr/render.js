@@ -18,15 +18,39 @@
  */
 
 const ROOT = document.getElementById('root');
-const TIMEOUT_MODAL = document.getElementById('timeout');
-const TIMEOUT_COUNTER = TIMEOUT_MODAL.querySelector('#timeoutRemainingTime');
+const TIMEOUT_MODAL = $('#timeout'); // TODO bootstrap only works w/ jQuery Selector
+// document.getElementById('timeout');
+const TIMEOUT_COUNTER = document.getElementById('timeoutRemainingTime');
+//TIMEOUT_MODAL.querySelector('#timeoutRemainingTime');
 
+
+/**
+ * Clears all elements within the ROOT
+ *
+ */
+const clearScreen = () => {
+  let lc = ROOT.lastChild;
+  while(lc){
+    ROOT.removeChild(lc);
+    lc = ROOT.lastChild;
+  }
+};
+
+/**
+ * Activates timeout modal
+ * @param remaining
+ */
+// TODO fix
 const renderTimeOutModal = (remaining) => {
+  console.log(TIMEOUT_MODAL);
   TIMEOUT_MODAL.modal('show'); // show modal
-  TIMEOUT_COUNTER.innerHTML = `${remaining / 1000}`;
+  TIMEOUT_COUNTER.innerHTML = `${(remaining / 1000).toFixed(1)}`;
   state.timeoutTimer = setInterval(() => {
-    TIMEOUT_COUNTER.innerHTML = `${parseInt(TIMEOUT_COUNTER.innerHTML) - 1}`;
-  }, 1000)
+    if(parseFloat(TIMEOUT_COUNTER.innerHTML) > 0.0){
+      TIMEOUT_COUNTER.innerHTML = `${(parseFloat(TIMEOUT_COUNTER.innerHTML) - 0.1).toFixed(1)}`;
+    }
+  }, 100);
+  setTimeout(() => TIMEOUT_MODAL.modal('hide'), 10000); // TODO?
 };
 
 /**
@@ -63,6 +87,12 @@ const renderGameInfo = ({ settings }) => {
   `;
 };
 
+/**
+ * Renders a player
+ *
+ * @param player
+ * @returns {string}
+ */
 const renderPlayer = (player) => { // TODO ready stuff (only data-ready & class ready stays)
   return `
     <div class="playerbox py-3 px-3" data-id="${player.id}">
@@ -91,6 +121,12 @@ const renderPlayer = (player) => { // TODO ready stuff (only data-ready & class 
   `;
 };
 
+/**
+ * Renders all players in the lobby
+ *
+ * @param parent
+ * @param players
+ */
 const renderPlayers = ( parent, { players }) => {
   if(parent === null || players.length === 0){
     return;
@@ -129,6 +165,11 @@ const renderPlayers = ( parent, { players }) => {
   }
 };
 
+/**
+ * Renders the lobby state
+ *
+ * @param info
+ */
 const renderLobby = ( {info} ) => {
   console.info('render Lobby was called');
   console.info(info);
@@ -149,12 +190,36 @@ const renderLobby = ( {info} ) => {
   renderPlayers(players, info);
 };
 
+
+const renderQuestion = () => {
+
+};
+
+const renderAnswer = () => {
+
+};
+
+const renderAnswers = () => {
+
+};
+
+
+
+/**
+ * Renders the game state
+ *
+ * @param game
+ */
 const renderGame = ( {game} ) => {
-  const body = document.querySelector('body');
-  let div = document.createElement('div');
-  div.innerHTML = `
-    <h2>Ingame</h2>
-    <p>Score: ${game.score}</p>
-  `;
-  body.appendChild(div);
+  if(ROOT.querySelector('.info') !== null || ROOT.querySelector('.players') !== null){
+    clearScreen();
+    let question = document.createElement('div');
+    question.classList.add('question');
+    ROOT.appendChild(question);
+    let answers = document.createElement('div');
+    answers.classList.add('answers');
+    ROOT.appendChild(answers);
+  }
+
+  ROOT.innerHTML = JSON.stringify(game);
 };

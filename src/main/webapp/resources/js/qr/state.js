@@ -10,7 +10,7 @@
  */
 let state = {
   pin: parseInt(localStorage.getItem('pin')),
-  id: parseInt(localStorage.getItem('playerId')),
+  id: parseInt(localStorage.getItem('playerId')), // TODO: refactor as playerId | change docs
   state: LOBBY,
   timeoutIsActive: false,
   timeoutRemainingTime: 0,
@@ -24,7 +24,8 @@ let state = {
   },
   game: {
     score: 0,
-    questions: [],
+    question: null,
+    answers: [],
   },
 };
 
@@ -45,18 +46,14 @@ if(!state.pin || !state.id){
  *
  */
 
-
-// TODO deep merge? https://davidwalsh.name/javascript-deep-merge
 const setState = (newState) => {
-  // TODO find differences & render only those
   // TODO timeouts
-  console.log("old");
-  console.log(state);
-  console.log("new");
-  console.log(newState);
+  console.log("new", newState);
+
+  // TODO deep merge? https://davidwalsh.name/javascript-deep-merge
   state = Object.assign(state, newState, { info: Object.assign(state.info, newState.info) }, { game: Object.assign(state.game, newState.game)});
-  console.log("merged");
-  console.log(state);
+  console.log("merged", state);
+
   if(state.timeoutIsActive){
     // TODO show modal
     renderTimeOutModal(state.timeoutRemainingTime);
@@ -67,5 +64,8 @@ const setState = (newState) => {
     renderLobby(state)
   } else if(state.state === FINISHED){
     window.location.href = `${URL_FINISH}?score=${state.game.score}`
+  }
+  if(state.game.answers.length > MAX_ANSWERS){
+    console.error(`ERROR: only ${MAX_ANSWERS} answers allowed (currently: ${state.game.answers.length})`)
   }
 };

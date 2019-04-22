@@ -9,3 +9,5 @@ const FINISHED = 2;
 const URL_JOIN = '/quizroom/join.html';
 const URL_FINISH = '/quizroom/final.xhtml';
 const URL_KICKED = '/player/home.xhtml?kicked=true';
+
+const MAX_ANSWERS = 6;

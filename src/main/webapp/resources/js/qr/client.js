@@ -56,6 +56,10 @@ const cancelTimeout = () => {
     clearInterval(state.timeoutTimer);
     state.timeoutTimer = null;
   }
+  // remove event listeners
+  document.removeEventListener('click', cancelTimeout);
+  document.removeEventListener('touchstart', cancelTimeout);
+  document.removeEventListener('mousemove', cancelTimeout);
 };
 
 const sendAlivePing = () => {

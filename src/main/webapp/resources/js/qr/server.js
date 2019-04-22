@@ -178,20 +178,23 @@ const handlePlayerLeave = ({ playerId }) => {
 const handleGameStart = (event) => {
   sendAlivePing();
   setState({
-    alivePing: setInterval(sendAlivePing, alivePingInterval - 50), // account for latency
+    alivePing: setInterval(sendAlivePing, state.info.settings.alivePingInterval - 50), // account for latency
     state: INGAME,
   });
-  // TODO only send if in timeout? or add client activity event?
+  // TODO only send if in timeout? <- DO THIS (DONE)
+  // TODO or register every 1s & unregister on activity -> only 1 call of cancelTimeout/s -> less bandwidth <- DO THIS TOO
+  /*
   document.addEventListener('click', cancelTimeout);
   document.addEventListener('touchstart', cancelTimeout);
   document.addEventListener('mousemove', cancelTimeout);
+  */
   console.info(`Game started`)
 };
 
 // set state.state = URL_FINISH
 const handleGameEnd = (event) => {
   setState({
-    state: URL_FINISH,
+    state: FINISHED,
   });
   console.info(`Game ended`)
 };
@@ -216,15 +219,27 @@ const handleScoreChange = ({ newScore }) => {
   console.info(`Score changed to ${newScore}`)
 };
 
-const handleTimerSync = (event) => {
+const handleTimerSync = ({ questionId, remaining }) => {
   // TODO: update time left (gets changed & rendered @ fixed interval, so nothing to do else?)
-  console.log("timer sync");
+  // TODO change updated values if deepmerge in setState
+  if(questionId === state.game.question.questionId){
+    setState({
+      game: {
+        question: Object.assign(state.game.question, { remaining, })
+      }
+    })
+  }
+  console.log(`timer sync, question ${questionId} has ${remaining/1000}s left`);
 };
 
 const handleTimeoutStart = ({ playerId, remaining }) => {
   if(state.id !== playerId){
     return;
   }
+  // listen for any activity
+  document.addEventListener('click', cancelTimeout);
+  document.addEventListener('touchstart', cancelTimeout);
+  document.addEventListener('mousemove', cancelTimeout);
   setState({
     timeoutIsActive: true,
     timeoutRemainingTime: remaining,
@@ -240,12 +255,70 @@ const handleKick = ({ playerId }) => {
   console.info(`Player ${playerId} was kicked`)
 };
 
-const handleAssignQuestion = (event) => {
-  // TODO update questions in state & display if relevat to user
+/**
+ * Sets the game state according to the question assignment. If question & answer are assigned to the
+ * same user, the state is updated multiple times(Given the chances of that for sufficiently many players
+ * this should be more efficient).
+ *
+ * @param questionId
+ * @param type
+ * @param question
+ * @param playerId
+ * @param timeRemaining
+ * @param answers
+ */
+const handleAssignQuestion = ({ questionId, type, question, playerId, timeRemaining, answers }) => {
+  // check if player is current player
+  if(playerId === state.id){
+    if(state.game.question !== null){
+      console.error('Cannot display multiple questions');
+    }
+    setState({
+      game: {
+        question: {
+          questionId,
+          type,
+          question,
+          remaining: timeRemaining,
+        }
+      }
+    })
+  }
+  // if new answers for player, add answers
+  if(answers.find(a => a.playerId === state.id) !== undefined){
+    setState({
+      game: {
+        answers: state.game.answers.concat(
+          answers.filter(a => a.playerId === state.id)
+            .map(a => ({
+              questionId,
+              type,
+              answerId: a.answerId,
+              answer: a.answer,
+            }))
+        ),
+      }
+    });
+  }
   console.log("new question");
 };
 
-const handleRemoveQuestion = (event) => {
-  // TODO update questions in state & rerender(remove) if necessary
+const handleRemoveQuestion = ({ questionId }) => {
+  // has this player the question?
+  if(questionId === state.game.question.questionId){
+    setState({
+      game: {
+        question: null,
+      }
+    })
+  }
+  // does the player have an answer/answers to the question? if so remove them
+  if(state.game.answers.find(a => a.questionId === questionId) !== undefined){
+    setState({
+      game: {
+        answers: state.game.answers.filter(a => a.questionId !== questionId),
+      }
+    })
+  }
   console.log("remove question");
 };
