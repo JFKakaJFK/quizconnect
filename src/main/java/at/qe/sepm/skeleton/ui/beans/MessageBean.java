@@ -37,7 +37,14 @@ public class MessageBean implements Serializable {
         }
     }
 
-
+    public void showGlobalInformation(String text) {
+        logger.info("messageBean called with global and text: "+text);
+        if(FacesContext.getCurrentInstance() != null) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", text)
+            );
+        }
+    }
     /**
      * Show error message
      * @param id

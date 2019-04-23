@@ -40,10 +40,13 @@ public class CSVImportBean implements Serializable {
     private QuestionSetService questionSetService;
 
     @Autowired
+    private QuestionService questionService;
+
+    @Autowired
     private QSOverviewBean QSOverviewBean;
 
-    //@Autowired
-    //private MessageBean messageBean;
+    @Autowired
+    private MessageBean messageBean;
 
     private List<String> questionVariables = new ArrayList<>(Arrays.asList("getWrongAnswerString_1","getWrongAnswerString_2","getWrongAnswerString_3","getWrongAnswerString_4","getWrongAnswerString_5"));
 
@@ -154,6 +157,7 @@ public class CSVImportBean implements Serializable {
         logger.info("called A2DB");
         questionSet = new QuestionSet();
         initQuestionSet(); //new QuestionSet, set difficulty, author, name, description, and connect to HashSet of individual questions
+        questionSetService.saveQuestionSet(questionSet);
 
         Set<Question> questions = new HashSet<>();
 
@@ -178,18 +182,22 @@ public class CSVImportBean implements Serializable {
                     }
                 }
             }
+
             question.setQuestionSet(questionSet);
             questions.add(question);
-
+            questionService.saveQuestion(question);
         }
 
         questionSet.setQuestions(questions);
-        questionSetService.saveQuestionSet(questionSet);
-        QSOverviewBean.addQuestionSetForDisplay(questionSet);
 
-        //messageBean.showInformation("overview-QSets", "Success");
-        //messageBean.updateComponent("formOverview-QSets");
+        QSOverviewBean.addQuestionSetForDisplay(questionSet);
+        messageBean.updateComponent("formOverview-QSets:overview-QSets");
+
+        String message = String.format("Successfully imported CSV");
+        messageBean.showGlobalInformation(message);
+        messageBean.updateComponent("messages");
     }
+
 
     public void initQuestionSet() {
         questionSet.setDifficulty(QuestionSetDifficulty.easy);
@@ -199,10 +207,12 @@ public class CSVImportBean implements Serializable {
         questionSet.setQuestions(new HashSet<>());
     }
 
+
+    /* Obsolete?
     public void initQuestion() {
         question = new Question();
         question.setType(QuestionType.text);
-    }
+    }*/
 
     public Manager getManager() {
         return manager;

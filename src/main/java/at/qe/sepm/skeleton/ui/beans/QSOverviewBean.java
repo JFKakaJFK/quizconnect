@@ -37,11 +37,15 @@ public class QSOverviewBean implements Serializable {
     @Autowired
     private QuestionSetService questionSetService;
 
+    @Autowired
+    private MessageBean messageBean;
+
     private List<QuestionSet> questionSets;
 
 
     @PostConstruct
     public void init() {
+        logger.info("Init called");
         this.questionSets = new ArrayList<>(questionSetService.getAllQuestionSets());
     }
 
@@ -49,7 +53,6 @@ public class QSOverviewBean implements Serializable {
         //if (questionSets.size() != questionSetService.getAllQuestionSets().size()) {
         //    this.questionSets = questionSetService.getAllQuestionSets();
         //}
-        logger.info("getQuestionSet called");
         return questionSets;
     }
 
@@ -68,9 +71,9 @@ public class QSOverviewBean implements Serializable {
         logger.info("deleted from database");
         questionSets.remove(questionSet);
         logger.info("deleted from internal set");
-        FacesContext.getCurrentInstance().getPartialViewContext().getRenderIds().add("formOverview-QSets:overview-QSets");
+        messageBean.updateComponent("formOverview-QSets:overview-QSets");
         String message = String.format("Successfully deleted %s", questionSet.getName());
-        //messageBean.showInformation("overview-QSets", message);
+        messageBean.showGlobalInformation(message);
     }
 
     public void saveChanges() {
