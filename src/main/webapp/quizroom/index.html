@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="../resources/css/quizroom.css" />
+
+    <title>In Game | QuizConnect</title>
+
+</head>
+<body>
+
+    <div data-pushbar-id="bar" class="pushbar from_left">
+        <div class="pushbar-close">
+                    <span data-pushbar-close="" class="py-2 px-2 my-2 mx-3">
+                        <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M16.24 14.83a1 1 0 0 1-1.41 1.41L12 13.41l-2.83 2.83a1 1 0 0 1-1.41-1.41L10.59 12 7.76 9.17a1 1 0 0 1 1.41-1.41L12 10.59l2.83-2.83a1 1 0 0 1 1.41 1.41L13.41 12l2.83 2.83z"/></svg>
+                    </span>
+        </div>
+
+        <nav class="pushbar-nav pl-4 pr-3 py-4">
+            <ul class="list-unstyled">
+                <li class="my-3">
+                    <a href="#" data-toggle="modal" data-target="#leave" data-backdrop="static">Leave Game</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="pushbar_main_content">
+
+        <header class="navbar d-flex py-2">
+            <div class="navbar-burger py-2 px-2" data-pushbar-target="bar">
+                <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M4 5h16a1 1 0 0 1 0 2H4a1 1 0 1 1 0-2zm0 6h16a1 1 0 0 1 0 2H4a1 1 0 0 1 0-2zm0 6h16a1 1 0 0 1 0 2H4a1 1 0 0 1 0-2z"/></svg>
+            </div>
+            <div class="d-flex flex-grow-1 justify-content-sm-center justify-content-end px-2">
+                <a class="navbar-logo" href="#">
+                    <svg id="icon" viewBox="0 0 2000 2000" width="30" height="30"><defs><style>.cls-1,.cls-2{fill:none;stroke-miterlimit:10;stroke-width:200px;}.cls-1{stroke:#018786;stroke-dasharray:248.33 19.87;}.cls-2{stroke:#00c4b4;stroke-linecap:round;}.cls-3{fill:#3bc5b5;}</style></defs><circle class="cls-1" cx="1000" cy="1000" r="853.59"/><path class="cls-2" d="M1000,1853.59c-471.42,0-853.59-382.16-853.59-853.59S528.58,146.41,1000,146.41"/><path class="cls-3" d="M1042.58,866.18,1949,1953,898.42,1004.82A100.25,100.25,0,0,1,1032.76,856,109.71,109.71,0,0,1,1042.58,866.18Z"/></svg>
+                </a>
+            </div>
+        </header>
+
+        <div id="root">
+            <!-- game will be rendered here -->
+        </div>
+    </div>
+
+    <!-- TODO maybe look at https://getbootstrap.com/docs/4.3/components/modal/#varying-modal-content -->
+    <div class="modal fade" id="leave" tabindex="-1" role="dialog" aria-labelledby="leaveModal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="leaveModal">Leave Game</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h2>Are you sure? Things will happen</h2>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <!-- TODO test leave action -->
+                    <button type="button" class="btn btn-primary" onclick="leaveRoom()"><a href="/player/home.xhtml?left=true">Leave Game</a></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="timeout" tabindex="-1" role="dialog" aria-labelledby="timeoutModal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="timeoutModal">Timeout</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h2>Do something or be kicked in <span id="timeoutRemainingTime"></span>s.</h2>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel Timeout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <!-- TODO load js in head? time to first alive ping should be small, maybe load ws stuff before bootstrap stuff? -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    <!-- Websocket JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script src="../resources/js/qr/constants.js"></script>
+    <script src="../resources/js/qr/render.js"></script>
+    <script src="../resources/js/qr/state.js"></script>
+    <script src="../resources/js/qr/client.js"></script>
+    <script src="../resources/js/qr/server.js"></script>
+    <script src="../resources/js/qr/socket.js"></script>
+    <script src="../resources/js/qr/init.js"></script>
+
+    <!-- Pushbar JS -->
+    <script type="text/javascript" src="../resources/js/pushbar.js"></script>
+    <script type="text/javascript">
+      const pushbar = new Pushbar({
+        blur:true,
+        overlay:true,
+      });
+    </script>
+</body>
+</html>
