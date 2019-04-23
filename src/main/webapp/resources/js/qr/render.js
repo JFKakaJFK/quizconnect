@@ -41,6 +41,7 @@ const clearScreen = () => {
  * @param remaining
  */
 // TODO fix
+// TODO use this for modal https://stackoverflow.com/a/50523971/6244663
 const renderTimeOutModal = (remaining) => {
   console.log(TIMEOUT_MODAL);
   TIMEOUT_MODAL.modal('show'); // show modal
