@@ -17,7 +17,7 @@
     </ui:define>
 
     <ui:define name="content">
-        <div class="container pt-5 reduced-mobile-spacing">
+        <div class="container pt-5 pb-5 reduced-mobile-spacing">
             <div class="row py-3">
                 <div class="col-lg">
                     <h1 class="display-4 text-center">Overview Question-Sets</h1>
@@ -25,29 +25,27 @@
             </div>
         </div>
 
-        <form jsf:id="formId" >
-            <h:commandLink action="all?faces-redirect=true" styleClass="back-btn">
-                <svg viewBox="0 0 24 24" width="24" height="24">
-                    <path class="heroicon-ui"
-                          d="M5.41 11H21a1 1 0 0 1 0 2H5.41l5.3 5.3a1 1 0 0 1-1.42 1.4l-7-7a1 1 0 0 1 0-1.4l7-7a1 1 0 0 1 1.42 1.4L5.4 11z"/>
-                </svg>
-                All Players
-            </h:commandLink>
+        <h:form>
+            <div class="row justify-content-center">
+                <div class="col-3">
+                    <h:commandButton styleClass="btn btn-block btn-primary btn-lg"
+                                     action="/secured/questionSet.xhtml?faces-redirect=true" value="Create new"/>
+                </div>
+                <div class="col-3">
+                    <h:commandLink styleClass="btn btn-block btn-primary btn-lg"
+                                   p:data-toggle="modal" p:data-target="#uploadCSV"
+                                   p:data-backdrop="static" value="Upload CSV"
+                                   onclick="#{CSVImportBean.setManager(sessionInfoBean.currentUser.manager)}">
+                        <f:ajax execute="@form" render="@none"/><!-- TODO update modal here -->
+                    </h:commandLink>
+                </div>
+            </div>
+        </h:form>
 
+        <form jsf:id="formId">
             <h:panelGroup layout="block" styleClass="container" rendered="#{QSOverviewBean.questionSets == null}">
                 <h1 class="display-4">No QuestionSets found</h1>
                 <h:commandButton styleClass="btn btn-primary" action="all?faces-redirect=true" value="All Players"/>
-            </h:panelGroup>
-
-
-            <h:panelGroup layout="block" styleClass="container">
-                <h:commandButton styleClass="btn btn-block btn-primary btn-lg"
-                                 action="/secured/questionSet.xhtml?faces-redirect=true" value="Create new"/>
-                <h:commandButton styleClass="btn btn-block btn-primary btn-lg" actionListener="#{CSVImportBean.setManager(sessionInfoBean.currentUser.manager)}"
-                               p:class="ml-2" p:data-toggle="modal" p:data-target="#uploadCSV"
-                               p:data-backdrop="static" value="Upload CSV">
-                    <f:ajax execute="@form" render="@none"/><!-- TODO update modal here -->
-                </h:commandButton>
             </h:panelGroup>
 
             <qc:modal id="modal"
@@ -67,6 +65,25 @@
                            accept=".csv" update=":form:modal:body :form:modal:footer"
                            styleClass="jsf-hide"/>
                 <label for="file" class="btn btn-primary">Upload CSV</label>
+
+                <div jsf:id="preview" class="preview">
+                    <h:outputText p:id="preview"
+                                  value="TODO"
+                                  alt="File"/>
+                </div>
+
+                <div class="form-group">
+                    <label for="nameCSV">Name</label>
+                    <h:inputText styleClass="form-control" id="nameCSV" value="#{CSVImportBean.nameCSV}"
+                                 p:required="true"></h:inputText>
+                </div>
+
+                <div class="form-group">
+                    <label for="descriptionCSV">Description</label>
+                    <h:inputText styleClass="form-control" id="descriptionCSV" value="#{CSVImportBean.descriptionCSV}"
+                                 p:required="true"></h:inputText>
+                </div>
+
             </qc:modal>
         </form>
 
@@ -76,15 +93,16 @@
                           styleClass="boxes px-3">
 
 
-                <ui:repeat value="#{QSOverviewBean.questionSets}" var="i_questionSet">
+                <ui:repeat value="#{QSOverviewBean.questionSets}" var="set">
                     <qc:generic-box size="sm"
-                                    showDelete="#{sessionInfoBean.currentUser.manager == i_questionSet.author}"
-                                    deleteAction="#{QSOverviewBean.deleteQuestionSet(i_questionSet)}">
-                        <h3>#{i_questionSet.name}</h3>
-                        <h3>#{i_questionSet.description}</h3>
+                                    showDelete="#{sessionInfoBean.currentUser.manager == managerService.getManagerOfQuestionSet(set)}"
+                                    deleteIcon="fas fa-trash"
+                                    deleteAction="#{QSOverviewBean.deleteQuestionSet(set)}">
+                        <h3>#{set.name}</h3>
+                        <h3>#{set.description}</h3>
                         <div class="row">
-                            <h3 class="col-md-6">#{i_questionSet.difficulty}</h3>
-                            <h3 class="col-md-6">#{i_questionSet.questions.size()}</h3>
+                            <h3 class="col-md-6">#{set.difficulty}</h3>
+                            <h3 class="col-md-6">#{set.questions.size()}</h3>
                         </div>
                     </qc:generic-box>
                 </ui:repeat>
