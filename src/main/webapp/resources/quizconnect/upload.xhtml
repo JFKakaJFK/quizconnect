@@ -14,41 +14,40 @@
 
     !!!!!!!!!!!!       IMPORTANT         !!!!!!!!!!!!
 
-    1. h:form needs id
-    2. h:form needs enctype="multipart/form-data"
-    3. QCUpload.js needs to be imported
-    4. The backing bean must have a @RequestMapping
-       on the [endpoint] (e.g. '/avatars') and expect
-       a parameter with name [target]
-    5. formId & target should be unique
+    1. h:form needs enctype="multipart/form-data"
+    2. QCUpload.js needs to be imported
+    3. The backing bean must have a property of type
+       java.io.File w/ Getters & Setters
+    4. The backing bean must have a method which
+       handles upload events
+
+    !!! currently only 1 upload per page(reuse)
 
     ===============    ATTRIBUTES    ================
 
-    - formId ... id of the h:form
-    - target ... name of requested file (used for POST
-                 request parameter name & as id)
-    - endpoint ... POST request is sent to endpoint
     - accept ... HTML5 input[type="file"] accept attr
+    - target ... property of type java.io.File
     - styleClass ... HTML class
+    - listener ... bean method
+    - update ... components to update
 
     ==============================================-->
 
-    <cc:attribute name="formId" required="true" />
-    <cc:attribute name="target" required="true" />
-    <cc:attribute name="endpoint" required="true" />
+    <cc:attribute name="listener" required="true" method-signature="void listener()"/>
+    <cc:attribute name="target" required="true" type="java.io.File"/>
     <cc:attribute name="accept" required="false" default="*/*" />
     <cc:attribute name="styleClass" required="false" default=""/>
     <cc:attribute name="update" required="false" default="@none" />
-
 </cc:interface>
 
-<cc:implementation>
-    <input type="file" accept="#{cc.attrs.accept}" name="#{cc.attrs.target}" id="#{cc.attrs.target}" class="#{cc.attrs.styleClass}"/>
-    <h:commandButton styleClass="hidden#{cc.attrs.target} jsf-hide">
+<cc:implementation> <!-- TODO change name to attribute & generate unique ids + handle all @RequestParams in the backend => mulitple uploads -->
+    <input type="file" accept="#{cc.attrs.accept}" name="file" id="upload" class="#{cc.attrs.styleClass}"/>
+    <h:commandButton styleClass="upload jsf-hide" action="#{cc.attrs.listener}">
+        <f:setPropertyActionListener value="#{uploadService.getUpload(sessionInfoBean.currentUser)}" target="#{cc.attrs.target}"/>
         <f:ajax execute="@this" render="#{cc.attrs.update}" />
     </h:commandButton>
     <h:outputScript>
-        QCUpload.upload('##{cc.attrs.target}', '#{cc.attrs.endpoint}', '##{cc.attrs.formId}', '.hidden#{cc.attrs.target}');
+        QCUpload.upload('#{sessionInfoBean.currentUserName}');
     </h:outputScript>
 </cc:implementation>
 </html>

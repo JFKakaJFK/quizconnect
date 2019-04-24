@@ -1,38 +1,42 @@
 "use strict";
 
 class QCUpload {
-    constructor(){}
+  constructor(){}
 
-    static upload(target, endpoint, formId, click = null){
-        const elem = document.querySelector(target);
-        const form = document.querySelector(formId);
-
-        elem.addEventListener('change', () => {
-            const file = elem.files[0];
-            if(!file){
-                return;
-            }
-            let formData = new FormData(form);
-
-            for(let name in file){
-                formData.append(name, file[name]);
-            }
-
-            fetch(endpoint, {
-                method: 'POST',
-                body: formData,
-            }).then(response => {
-                if(click !== ''){
-                    document.querySelector(click).click();
-                }
-                return response;
-            }
-            ).catch(error => {
-                console.error(error);
-                if(click !== ''){
-                    document.querySelector(click).click();
-                }
-            })
-        });
+  static upload(username, elemId = 'upload'){
+    if(username == null || username == ''){
+      console.error('QCUpload.upload: username is invalid');
+      return;
     }
+    const elem = document.getElementById(`${elemId}`);
+    if(elem == null){
+      console.error('QCUpload.upload: input element not found');
+      return;
+    }
+    const form = elem.closest('form');
+
+    elem.addEventListener('change', () => {
+      const file = elem.files[0];
+      if(!file){
+        return;
+      }
+      let formData = new FormData(form);
+
+      for(let name in file){
+        formData.append(name, file[name]);
+      }
+
+      fetch(`/uploads/${username}`, {
+        method: 'POST',
+        body: formData,
+      }).then(response => {
+        document.querySelector('.upload').click();
+        return response;
+      }
+      ).catch(error => {
+        console.error(error);
+        document.querySelector('.upload').click();
+      })
+    });
+  }
 }

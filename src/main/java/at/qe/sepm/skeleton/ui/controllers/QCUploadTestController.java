@@ -5,16 +5,31 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+
 @Controller
 public class QCUploadTestController {
 
-    @RequestMapping(value = "/upload", method = RequestMethod.POST)
-    @ResponseStatus(value = HttpStatus.OK)
-    public void handleUpload(@RequestParam("parameterName")MultipartFile file){
-        System.out.println("UPLOAD - START");
-        System.out.println(file.getOriginalFilename());
-        System.out.println("END");
+   File file;
 
-        // TODO: IMPORTANT: do file validation here
+   public void handleFileUpload() throws IOException {
+       if(file != null){
+           System.out.println(file.getName());
+           // do something w/ file here
+           // at least save somewhere else (or call clear method later)
+           Files.deleteIfExists(file.toPath());
+       } else {
+           System.out.println("error at file upload");
+       }
+   }
+
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
     }
 }

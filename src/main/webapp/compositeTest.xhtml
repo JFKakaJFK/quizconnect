@@ -21,7 +21,7 @@
 <h:body>
     <qc:stat label="accuracy" value="#{1034}%" size="lg" align="left" />
 
-    <h:form p:id="formId" enctype="multipart/form-data">
+    <h:form enctype="multipart/form-data">
 
         <h:commandLink p:class="ml-2" p:data-toggle="modal" p:data-target="#myModal" p:data-backdrop="static">
             Open Modal
@@ -29,9 +29,9 @@
         </h:commandLink>
 
 
-        <script type="text/javascript" src="resources/quizconnect/js/QCUpload.js"></script>
-        <qc:upload id="parameterName" target="parameterName" endpoint="/upload" formId="formId" accept="text/csv,image/*" styleClass="invisible"/>
-        <label for="parameterName" class="btn btn-primary">Upload File</label>
+        <script type="text/javascript" src="/resources/quizconnect/js/QCUpload.js"></script>
+        <qc:upload listener="#{QCUploadTestController.handleFileUpload}" id="upload" target="#{QCUploadTestController.file}"  accept="text/csv,image/*" styleClass="invisible"/>
+        <label for="upload" class="btn btn-primary">Upload File</label>
 
     </h:form>
 
