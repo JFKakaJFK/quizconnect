@@ -71,6 +71,7 @@ public class QuizRoom implements IPlayerAction
 	private volatile HashMap<Player, List<ActiveQuestion>> playerAnswers; // map for storing assigned answers of players, both right and wrong
 	private volatile HashMap<Player, Long> playerActivityTimestamps; // map for storing activity time stamps of players
 	private volatile HashMap<Player, Long> playerAlivePingTimestamps; // map for storing alive ping time stamps of players
+	private volatile List<Player> inactivePlayers; // list of players marked as inactive and to be kicked soon
 	
 	private volatile List<Player> readyPlayers; // list of players who declared themselves ready
 	private volatile boolean wfpMode; // true if the room is in 'waiting for players' mode
@@ -124,6 +125,7 @@ public class QuizRoom implements IPlayerAction
 		playerAnswers = new HashMap<>(maxPlayers);
 		playerActivityTimestamps = new HashMap<>(maxPlayers);
 		playerAlivePingTimestamps = new HashMap<>(maxPlayers);
+		inactivePlayers = new LinkedList<>();
 		
 		readyPlayers = new LinkedList<>();
 		wfpMode = true;
@@ -276,8 +278,9 @@ public class QuizRoom implements IPlayerAction
 		long tooLong = (new Date().getTime()) - activityDuration;
 		for (Player player : players)
 		{
-			if (playerActivityTimestamps.get(player) < tooLong)
+			if (playerActivityTimestamps.get(player) < tooLong && !inactivePlayers.contains(player))
 			{
+				inactivePlayers.add(player);
 				playerInterface.onTimeoutStart(pin, player, timeoutDuration);
 				addDelayedAction(new DelayedAction((new Date().getTime()) + timeoutDuration, () -> {
 					kickPlayerIfNoActivity(player);
@@ -292,11 +295,13 @@ public class QuizRoom implements IPlayerAction
 	private synchronized void kickPlayerIfNoActivity(Player player)
 	{
 		long tooLong = (new Date().getTime()) - activityDuration;
-		if (playerActivityTimestamps.get(player) < tooLong)
+		if (playerActivityTimestamps.containsKey(player) && playerActivityTimestamps.get(player) < tooLong)
 		{
 			playerInterface.onKick(pin, player);
 			removePlayer(player, "kicked for AFK");
 		}
+		
+		inactivePlayers.remove(player);
 	}
 	
 	/**
@@ -486,14 +491,15 @@ public class QuizRoom implements IPlayerAction
 			}
 			if (playerAnswers.get(player).size() < playerAnswerSlots)
 			{
-				for (int i = 0; i < playerAnswers.get(player).size(); i++)
+				for (int i = 0; i < (playerAnswerSlots - playerAnswers.get(player).size()); i++)
 					answerFreePlayers.add(player);
 			}
 		}
 		
 		if (questionFreePlayers.size() == 0 || answerFreePlayers.size() == 0)
 		{
-			LOGGER.error("### ERROR ### no question / answer free players available in distributeQuestion!");
+			LOGGER.error("### ERROR ### no question / answer free players available in distributeQuestion! (" + questionFreePlayers.size() + "|"
+					+ answerFreePlayers.size() + ")");
 			return;
 		}
 		
