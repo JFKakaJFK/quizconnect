@@ -15,8 +15,9 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
         return container -> {
             ErrorPage error401Page = new ErrorPage(HttpStatus.UNAUTHORIZED, "/unauth.xhtml");
-            ErrorPage error404Page = new ErrorPage(HttpStatus.NOT_FOUND, "/notfound.xhtml");
-            container.addErrorPages(error401Page,error404Page);
+            ErrorPage error404Page = new ErrorPage(HttpStatus.NOT_FOUND, "/error/404.xhtml");
+            ErrorPage error418Page = new ErrorPage(HttpStatus.I_AM_A_TEAPOT, "/error/418.xhtml");
+            container.addErrorPages(error401Page,error404Page,error418Page);
         };
     }
 }
