@@ -285,7 +285,29 @@ const renderGame = ( {game} ) => {
     ROOT.appendChild(answers);
   }
 
-  renderQuestion(ROOT.querySelector('.question'), game.question);
+  if(game.question != null){
+    renderQuestion(ROOT.querySelector('.question'), game.question);
+  } else {
+    // TODO render Placeholder?
+  }
 
-  renderAnswers(ROOT.querySelector('.answers'), game.answers);
+  if(state.game.answers.length > MAX_ANSWERS){
+    console.error(`ERROR: only ${MAX_ANSWERS} answers allowed (currently: ${state.game.answers.length})`)
+  }
+  renderAnswers(ROOT.querySelector('.answers'), game);
+};
+
+const render = (state) => {
+  if(state.timeoutIsActive){
+    // TODO show modal
+    renderTimeOutModal(state.timeoutRemainingTime);
+  }
+  if(state.state === INGAME){
+    renderGame(state)
+  } else if(state.state === LOBBY){
+    renderLobby(state)
+  } else if(state.state === FINISHED){
+    // TODO maybe not per GET Param (or player can view ending screen for any score...)
+    window.location.href = `${URL_FINISH}?score=${state.game.score}`
+  }
 };

@@ -222,6 +222,9 @@ const handleScoreChange = ({ newScore }) => {
 const handleTimerSync = ({ questionId, remaining }) => {
   // TODO: update time left (gets changed & rendered @ fixed interval, so nothing to do else?)
   // TODO change updated values if deepmerge in setState
+  if(state.game.question == null){
+    return;
+  }
   if(questionId === state.game.question.questionId){
     setState({
       game: {
