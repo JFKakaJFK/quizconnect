@@ -49,6 +49,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .hasAnyAuthority("PLAYER", "MANAGER")
                 .antMatchers("/login/**")
                 .hasAnyAuthority("PLAYER", "MANAGER")
+                // TODO add preauthorize for qr websocket & qr path
+                /*
+                .antMatchers("/quizroom/**")
+                .hasAnyAuthority("PLAYER")
+                .antMatchers("/qr/**")
+                .hasAnyAuthority("PLAYER")
+                */
                 //If user doesn't have permission, forward him to login page
                 .and()
                 .formLogin()
