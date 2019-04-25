@@ -4,7 +4,7 @@ class QCUpload {
   constructor(){}
 
   static upload(username, elemId = 'upload'){
-    if(username == null || username == ''){
+    if(username == null || username === ''){
       console.error('QCUpload.upload: username is invalid');
       return;
     }
@@ -31,9 +31,13 @@ class QCUpload {
         body: formData,
       }).then(response => {
         document.querySelector('.upload').click();
+        // form.reset();
+        elem.value = '';
         return response;
       }
       ).catch(error => {
+        // form.reset();
+        elem.value = '';
         console.error(error);
         document.querySelector('.upload').click();
       })

@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.*;
+import java.util.List;
 
 @Controller
 public class UploadAPIController {
@@ -48,11 +49,20 @@ public class UploadAPIController {
     /**
      * Handles all uploads and saves them in a way such that {@link at.qe.sepm.skeleton.services.UploadService} can retrieve them.
      *
-     * @param file
+     * @param files
      * @return
      */
     @RequestMapping(value = "/uploads/{username}", method = RequestMethod.POST)
-    public ResponseEntity handleUpload(@RequestParam("file") MultipartFile file, @PathVariable String username){
+    public ResponseEntity handleUpload(@RequestParam("files[]") List<MultipartFile> files, @PathVariable String username){
+        MultipartFile file = null;
+        for(int i = 0; i < files.size(); i++){
+            MultipartFile f = files.get(i);
+            if(f != null && !f.getOriginalFilename().equals("")){
+                file = f;
+                break;
+            }
+        }
+
         if(file == null){
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }

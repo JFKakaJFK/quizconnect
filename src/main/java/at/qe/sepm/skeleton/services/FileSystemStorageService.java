@@ -117,6 +117,7 @@ public class FileSystemStorageService implements StorageService {
         try {
             tempFile = Files.createTempFile(temp, "answer", "." + extension);
             Files.copy(inputStream, tempFile, StandardCopyOption.REPLACE_EXISTING);
+            inputStream.close();
             Files.createDirectories(root.resolve(managerId));
 
             filePath = imageService.resizeImage(tempFile, root.resolve(managerId), size, size, type);
@@ -125,6 +126,7 @@ public class FileSystemStorageService implements StorageService {
             return null;
         } finally {
             try {
+                inputStream.close();
                 Files.deleteIfExists(tempFile);
             } catch (IOException e){
                 log.warn("Couldn't delete temporary file");
