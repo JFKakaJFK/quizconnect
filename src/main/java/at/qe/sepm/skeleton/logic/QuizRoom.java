@@ -259,6 +259,7 @@ public class QuizRoom implements IPlayerAction
 	 */
 	private synchronized void checkQuestionTimes(long deltaTime)
 	{
+		int missing = 0;
 		for (int i = activeQuestions.size() - 1; i >= 0; i--)
 		{
 			activeQuestions.get(i).timeRemaining -= deltaTime;
@@ -266,7 +267,13 @@ public class QuizRoom implements IPlayerAction
 			{ // question time elapsed, remove
 				completedQuestions++;
 				removeQuestion(activeQuestions.get(i));
+				missing++;
 			}
+		}
+		
+		for (int i = 0; i < missing; i++)
+		{
+			distributeQuestion();
 		}
 	}
 	
@@ -340,9 +347,14 @@ public class QuizRoom implements IPlayerAction
 	 */
 	public synchronized boolean addPlayer(Player player)
 	{
-		if (players.size() == maxPlayers || (players.contains(player)))
+		if (players.contains(player))
 		{
-			return true;
+			throw new IllegalArgumentException("Player already in QuizRoom");
+		}
+		if (players.size() == maxPlayers)
+		{
+			throw new IllegalArgumentException("QuizRoom already full! (" + players.size() + "/" + maxPlayers + ")");
+			// return true;
 		}
 		
 		players.add(player);
