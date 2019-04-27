@@ -13,7 +13,18 @@ class QCUpload {
       console.error('QCUpload.upload: input element not found');
       return;
     }
+    let render = elem.nextElementSibling;
+    while(render !== null){
+      if(render.classList.contains('upload-ajax-btn')){break;}
+      render = render.nextElementSibling;
+      if(render === null){
+        return;
+      }
+    }
     const form = elem.closest('form');
+    if(form === null){
+      return;
+    }
 
     elem.addEventListener('change', () => {
       const file = elem.files[0];
@@ -29,17 +40,12 @@ class QCUpload {
       fetch(`/uploads/${username}`, {
         method: 'POST',
         body: formData,
-      }).then(response => {
-        document.querySelector('.upload').click();
-        // form.reset();
-        elem.value = '';
-        return response;
-      }
-      ).catch(error => {
-        // form.reset();
-        elem.value = '';
+      }).catch(error => {
         console.error(error);
-        document.querySelector('.upload').click();
+      }).finally(() => {
+        // form.reset();
+        elem.value = '';
+        render.click()
       })
     });
   }

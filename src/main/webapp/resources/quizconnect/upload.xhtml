@@ -28,29 +28,30 @@
     - accept ... HTML5 input[type="file"] accept attr
     - target ... property of type java.io.File
     - styleClass ... HTML class
-    - listener ... bean method
+    - listener ... bean method (void, no args)
     - update ... components to update
+    - text ... label text
 
     ==============================================-->
 
     <cc:attribute name="listener" required="true" method-signature="void listener()"/>
     <cc:attribute name="target" required="true" type="java.io.File"/>
-    <cc:attribute name="id" required="false" default="upload"/>
+
     <cc:attribute name="text" required="false" default="Upload File" />
     <cc:attribute name="accept" required="false" default="*/*" />
     <cc:attribute name="styleClass" required="false" default=""/>
     <cc:attribute name="update" required="false" default="@none" />
 </cc:interface>
 
-<cc:implementation> <!-- TODO change name to attribute & generate unique ids + handle all @RequestParams in the backend => mulitple uploads -->
-    <input type="file" accept="#{cc.attrs.accept}" name="files[]" id="#{cc.clientId}:#{cc.attrs.id}" class="invisible"/>
-    <label for="#{cc.clientId}:#{cc.attrs.id}" class="btn btn-primary #{cc.attrs.styleClass}">Upload File</label>
-    <h:commandButton styleClass="upload jsf-hide" action="#{cc.attrs.listener}">
+<cc:implementation>
+    <input type="file" accept="#{cc.attrs.accept}" name="files[]" id="#{cc.clientId}" class="jsf-hide"/>
+    <label for="#{cc.clientId}" class="btn btn-primary #{cc.attrs.styleClass}">Upload File</label>
+    <h:commandButton styleClass="upload-ajax-btn jsf-hide" action="#{cc.attrs.listener}">
         <f:setPropertyActionListener value="#{uploadService.getUpload(sessionInfoBean.currentUser)}" target="#{cc.attrs.target}"/>
         <f:ajax execute="@this" render="#{cc.attrs.update}" />
     </h:commandButton>
     <h:outputScript>
-        QCUpload.upload('#{sessionInfoBean.currentUserName}', '#{cc.clientId}:#{cc.attrs.id}');
+        QCUpload.upload('#{sessionInfoBean.currentUserName}', '#{cc.clientId}');
     </h:outputScript>
 </cc:implementation>
 </html>
