@@ -1,0 +1,8 @@
+@import "main.css";
+
+@import "layout/qr/lobby.css";
+@import "layout/qr/ingame.css";
+@import "layout/qr/info.css";
+@import "layout/qr/players.css";
+@import "layout/qr/question.css";
+@import "layout/qr/answers.css";

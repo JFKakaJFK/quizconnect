@@ -48,7 +48,8 @@ public class Question implements Persistable<Integer>
 	private String wrongAnswerString_4;
 	@Column(nullable = true, length = 200)
 	private String wrongAnswerString_5;
-	
+
+	@Deprecated // TODO remove deprecated
 	public QuestionSet getQuestionSet()
 	{
 		return questionSet;

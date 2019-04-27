@@ -10,6 +10,10 @@ body {
     font-weight: 300;
 }
 
+.btn {
+    white-space: nowrap;
+}
+
 .btn-primary {
     background: var(--grad-m);
     border: none;
@@ -35,6 +39,7 @@ body {
     color: var(--gray-5);
     border:3px solid var(--gray-5);
     border-radius: 50px;
+    box-sizing: border-box;
 }
 
 a { color: var(--gray-5); }
@@ -47,6 +52,13 @@ a:hover {
 svg {
     width: 100%;
     max-width: 100%;
+    color: inherit;
+    fill: currentColor;
+    stroke: none;
+}
+
+::selection {
+    background: var(--col-4-l);
 }
 
 .form-control {
@@ -57,5 +69,9 @@ svg {
 }
 
 input.error {
+    border-color: var(--error);
+}
+
+input:invalid {
     border-color: var(--error);
 }

@@ -1,0 +1,6 @@
+#root {
+    padding: 1rem;
+    box-sizing: border-box;
+    margin: 0 auto;
+    max-width: var(--breakpoint-md);
+}
