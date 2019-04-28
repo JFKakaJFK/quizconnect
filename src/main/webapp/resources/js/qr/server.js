@@ -285,7 +285,8 @@ const handleAssignQuestion = ({ questionId, type, question, playerId, timeRemain
           remaining: timeRemaining,
         }
       }
-    })
+    });
+    console.log("new question for me");
   }
   // if new answers for player, add answers
   if(answers.find(a => a.playerId === state.id) !== undefined){
@@ -302,13 +303,14 @@ const handleAssignQuestion = ({ questionId, type, question, playerId, timeRemain
         ),
       }
     });
+    console.log("new answers for me");
   }
-  console.log("new question");
+  // console.log("new question");
 };
 
 const handleRemoveQuestion = ({ questionId }) => {
   // has this player the question?
-  if(questionId === state.game.question.questionId){
+  if(state.game.question !== null && questionId === state.game.question.questionId){
     setState({
       game: {
         question: null,

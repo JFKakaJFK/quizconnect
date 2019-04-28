@@ -195,15 +195,27 @@ const renderLobby = ( {info} ) => {
 // TODO progress bar? or SVG + anime.js??
 // TODO save initial question time? for progress %
 const renderQuestion = (parent, { questionId, type, question, remaining }) => {
+  if(ROOT.querySelector('#question') !== null){
+    ROOT.querySelector('#question').innerHTML = question;
+    return;
+  }
   parent.innerHTML = `
     <h2 id="question">${question}</h2>
     <div id="questionTime"><span></span></div>
   `;
 };
 
+const renderQuestionPlaceholder = (parent) => {
+  if(ROOT.querySelector('#question') !== null && ROOT.querySelector('#question').value === '') return;
+  parent.innerHTML = `
+    <h2 id="question"></h2>
+    <div id="questionTime"><span></span></div>
+  `;
+};
+
 const renderGenericAnswer = ({ classes, content, answerId, questionId} ) => { // TODO parseInt necessary?
   return `
-    <div class="answer ${classes}" data-questionId="${questionId}" data-answerId="${answerId}" onclick="() => answerQuestion(parseInt(${questionId}), parseInt(${answerId}))">
+    <div class="answer ${classes}" data-questionId="${questionId}" data-answerId="${answerId}" onclick="answerQuestion(${questionId}, ${answerId})">
       ${content}
     </div>
   `;
@@ -238,7 +250,7 @@ const renderAnswer = ({ questionId, type, answerId, answer }) => {
 
 const renderAnswers = ( parent, { answers }) => {
   // TODO render placeholders?
-  if(parent === null || answers.length === 0){
+  if(parent === null){
     return;
   }
   const answerNodes = parent.querySelectorAll('.answer');
@@ -288,7 +300,7 @@ const renderGame = ( {game} ) => {
   if(game.question != null){
     renderQuestion(ROOT.querySelector('.question'), game.question);
   } else {
-    // TODO render Placeholder?
+    renderQuestionPlaceholder(ROOT.querySelector('.question'));
   }
 
   if(state.game.answers.length > MAX_ANSWERS){
