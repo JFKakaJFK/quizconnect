@@ -31,6 +31,8 @@
     - listener ... bean method (void, no args)
     - update ... components to update
     - text ... label text
+    - ignoreValidation ... bool indicates wheter to
+      ignore the HTML5 form validation(default = false)
 
     ==============================================-->
 
@@ -41,6 +43,7 @@
     <cc:attribute name="accept" required="false" default="*/*" />
     <cc:attribute name="styleClass" required="false" default=""/>
     <cc:attribute name="update" required="false" default="@none" />
+    <cc:attribute name="ignoreValidation" required="false" default="false" type="boolean"/>
 </cc:interface>
 
 <cc:implementation>
@@ -51,7 +54,7 @@
         <f:ajax execute="@this" render="#{cc.attrs.update}" />
     </h:commandButton>
     <h:outputScript>
-        QCUpload.upload('#{sessionInfoBean.currentUserName}', '#{cc.clientId}');
+        QCUpload.upload('#{sessionInfoBean.currentUserName}', '#{cc.clientId}', #{cc.attrs.ignoreValidation});
     </h:outputScript>
 </cc:implementation>
 </html>
