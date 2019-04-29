@@ -788,7 +788,7 @@ public class QuizRoom implements IPlayerAction
 			return;
 		}
 		
-		if (!activeByQuestionId.containsKey(index))
+		if (!activeByQuestionId.containsKey(questionId))
 		{
 			LOGGER.debug(
 					"### WARNING ### Answer Question call from Player " + p.getId() + " on already removed ActiveQuestion (qid: " + questionId + ")");
