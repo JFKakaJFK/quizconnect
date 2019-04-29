@@ -43,6 +43,7 @@ public class QSOverviewBean implements Serializable {
     private List<QuestionSet> questionSets;
 
 
+    //TODO JavaDoc for init
     @PostConstruct
     public void init() {
         logger.info("Init called");
@@ -77,7 +78,7 @@ public class QSOverviewBean implements Serializable {
     }
 
     public void saveChanges() {
-        //TODO: edit functionality
+        //TODO: edit functionality & JavaDoc
     }
 }
 

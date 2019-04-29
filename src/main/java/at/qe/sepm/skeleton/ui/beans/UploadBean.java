@@ -14,6 +14,7 @@ public class UploadBean {
 
     private String type = "no file";
 
+    //TODO: JavaDoc for handleFileUpload
     // @PostMapping("/avatar")
     @RequestMapping(value = "/avatar", method = RequestMethod.POST)
     @ResponseBody

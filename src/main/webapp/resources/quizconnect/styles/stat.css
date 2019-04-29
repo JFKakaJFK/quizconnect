@@ -40,3 +40,7 @@
 .stat.stat-right {
     text-align: right;
 }
+
+.stat.stat-upper {
+    text-transform: uppercase;
+}

@@ -62,6 +62,7 @@ public class QuestionSetBean implements Serializable {
 
     }
 
+    //TODO: JavaDoc for clearQuestion
     public void clearQuestion() {
         question = new Question();
         question.setType(QuestionType.text);

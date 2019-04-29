@@ -11,6 +11,7 @@ public class AvatarBean {
     @Value("${storage.api.avatars}")
     private String avatars;
 
+    //TODO: JavaDoc for getAvatar
     public String getAvatar(String path) {
         if(path == null || !path.matches(".*/.*\\.(png|jpg)")){
             return "/" + avatars + "default/avatar.png";

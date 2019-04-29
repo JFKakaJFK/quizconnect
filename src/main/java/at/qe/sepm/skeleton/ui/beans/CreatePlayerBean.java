@@ -35,7 +35,7 @@ public class CreatePlayerBean {
         player.setCreator(sessionInfoBean.getCurrentUser().getManager());
     }
 
-    // TODO: error messages
+    // TODO: error messages & JavaDoc
     public void createNewPlayer(){
         if(player.getCreator() == null){
             return;

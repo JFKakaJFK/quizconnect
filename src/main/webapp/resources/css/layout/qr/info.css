@@ -1,0 +1,24 @@
+.info {
+    padding: 1rem;
+    display: grid;
+    box-sizing: border-box;
+}
+
+.info .stat {
+    padding: .25rem 0;
+}
+
+.info .stat.pin h3 {
+    letter-spacing: .5rem;
+}
+
+@media only screen and (min-width: 300px) {
+    .info {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .info .stat:nth-child(1),
+    .info .stat:nth-child(4){
+        grid-column: span 2;
+    }
+}
