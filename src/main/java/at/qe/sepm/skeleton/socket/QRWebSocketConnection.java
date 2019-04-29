@@ -27,8 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 
 @Controller
-// @ApplicationScope
-// @Scope("application")
 public class QRWebSocketConnection implements IRoomAction {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
@@ -92,9 +90,9 @@ public class QRWebSocketConnection implements IRoomAction {
 
     @Override // TODO: move all server logic out of here, call remove method of this controller on gameend
     public void onGameEnd(int pin) {
+        gameEnd(pin);
         ServerEvent event = new GenericServerEvent(GAME_END);
         broadcast(event, pin);
-        gameEnd(pin);
         log.debug("Game " + pin + ": game ended");
     }
 
@@ -309,20 +307,6 @@ public class QRWebSocketConnection implements IRoomAction {
     }
 
     /**
-     * Send to single {@link Player} in a {@link QuizRoom}
-     *
-     * @param p
-     * @param event
-     * @param pin
-     */
-    // TODO where is the endpoint?
-    private void sendToPlayer(Player p, ServerEvent event, int pin){
-        log.info("Sending '" + event.getEvent() + "' event"); // to " + p.getUser().getUsername());
-        //this.messagingTemplate.convertAndSendToUser(p.getUser().getUsername(), serverEndpoint + "/" + pin, event);
-        this.messagingTemplate.convertAndSendToUser("user3", serverEndpoint + "/" + pin, event);
-    }
-
-    /**
      * Responds to user request, only sends to specific user
      *
      * @param request
@@ -331,10 +315,14 @@ public class QRWebSocketConnection implements IRoomAction {
      */
     @MessageMapping("/events/{pin}")
     @SendTo("/server/events/{pin}") // works but broadcast
-    // @SendToUser(destinations = "/server/events/{pin}", broadcast = false)
     private ServerEvent handleEvent(@Payload ClientEvent request, Principal user, @DestinationVariable int pin){
 
-        if(!request.getEvent().equals(ALIVE_PING)){
+        if(!rooms.containsKey(pin)){
+            log.warn("QuizRoom " + pin + " does not exist");
+            return new GenericServerEvent(ERROR);
+        }
+
+        if(!request.getEvent().equals(ALIVE_PING)){ // TODO remove
             log.debug("Received event of type " + request.getEvent() + " from " + user.getName());
         }
 
@@ -344,46 +332,23 @@ public class QRWebSocketConnection implements IRoomAction {
             case USE_JOKER:
                 return handleUseJoker(pin, request);
             case LEAVE_ROOM:
-                return handleCancelTimeout(pin, request);
+                return handleLeaveRoom(pin, request);
             case CANCEL_TIMEOUT:
                 return handleCancelTimeout(pin, request);
             case ALIVE_PING:
                 return handleSendAlivePing(pin, request);
             case ROOM_INFO:
                 return handleGetRoomInfo(pin);
+            case READY:
+                return handleReadyUp(pin, request);
             case GAME_INFO:
                 return handleGetGameInfo(pin);
             case ROOM_PLAYERS:
                 return handleGetRoomPlayers(pin);
-            case READY:
-                return handleReadyUp(pin, request);
             default:
                 return new GenericServerEvent("error");
         }
     }
-
-    // TODO test if works
-    @SubscribeMapping("/events/{pin}")
-    public ServerEvent connect(@DestinationVariable int pin){
-        log.debug("hello from subscribemapping");
-        return handleGetGameInfo(pin);
-    }
-
-    /* // TODO where is the endpoint?
-    @MessageMapping("/events/{pin}")
-    //@SendTo("/server/events/{pin}")
-    //@SendToUser(destinations = "/server/events/{pin}", broadcast = false)
-    private void listen2(@Payload GClientEvent request, Principal user, @DestinationVariable int pin){
-        System.out.println("Listen2");
-        log.info("Received event of type " + request.getEvent() + " from " + user.getName());
-        // TODO: get request event type, get response
-        ServerEvent response =  new GenericServerEvent("Hello");
-        //return response;
-        //this.messagingTemplate.convertAndSendToUser(user.getName(), serverEndpoint + "/" + pin, response );
-        this.messagingTemplate.convertAndSendToUser(user.getName(), "events/" + pin, response );
-
-    }
-    */
 
     public void addGame(int pin, IPlayerAction qr, Player p){
         if(!rooms.containsKey(pin)){
@@ -396,7 +361,11 @@ public class QRWebSocketConnection implements IRoomAction {
         players.get(pin).put(p.getId(), p);
     }
 
-    public void gameEnd(int pin){
+    public boolean isPlayerInGame(int pin, Player p){
+        return players.get(pin) != null && players.get(pin).containsKey(p.getId());
+    }
+
+    private void gameEnd(int pin){
         if(rooms.containsKey(pin)){
             rooms.remove(pin);
         }

@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.faces.context.FacesContext;
 import java.io.*;
+import java.nio.file.Files;
 
 // TODO jdoc
 
@@ -41,34 +42,25 @@ public class ChangeAvatarBean implements Serializable {
     }
 
     private String filename = null;
+    private File file;
     private Player player;
 
+    // TODO jdoc
+    public void handleFileUpload(){
+        if(file != null){
+            if(filename != null){
+                storageService.deleteAvatar(filename);
+            }
 
-    /**
-     * Catches a fileupload and stores file
-     *
-     * @param file
-     * @return
-     */
-    @RequestMapping(value = "/upload/avatars", method = RequestMethod.POST)
-    public ResponseEntity handleFileUpload(@RequestParam("file") MultipartFile file) {
-        if(file == null){
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            try {
+                Manager manager = managerService.getManagerOfPlayer(player);
+                filename = storageService.storeAvatar(file, manager.getId().toString());
+                Files.deleteIfExists(file.toPath());
+            } catch (IOException e){
+                filename = null;
+                log.error("Exception while saving Avatar");
+            }
         }
-
-        if(filename != null){
-            storageService.deleteAvatar(filename);
-        }
-        try(InputStream is = file.getInputStream()) {
-            Manager manager = managerService.getManagerOfPlayer(player);
-            filename = storageService.storeAvatar(is, file.getOriginalFilename(), String.valueOf(manager.getId()));
-        } catch (IOException e){
-            filename = null;
-            log.error("Exception while saving Avatar");
-            return new ResponseEntity(HttpStatus.I_AM_A_TEAPOT);
-        }
-
-        return new ResponseEntity(HttpStatus.OK);
     }
 
     //TODO: JavaDoc for saveAvatar
@@ -117,7 +109,13 @@ public class ChangeAvatarBean implements Serializable {
         return filename;
     }
 
-    //Method has nothing in body
-    public void setFilename(String filename) {
+    public void setFilename(String filename) {}
+
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
     }
 }
