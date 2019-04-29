@@ -25,7 +25,7 @@ public class QCUploadTestController {
            System.out.println(file.getName());
            // do something w/ file here
            // at least save somewhere else (or call clear method later)
-           storageService.storeAvatar(new FileInputStream(file), file.getName(), "managerId");
+           storageService.storeAvatar(file, "managerId");
            Files.deleteIfExists(file.toPath()); // Should always be deleted after usage
        } else {
            System.out.println("error at file upload");

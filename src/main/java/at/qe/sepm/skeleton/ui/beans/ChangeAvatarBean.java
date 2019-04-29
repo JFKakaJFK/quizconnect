@@ -61,7 +61,7 @@ public class ChangeAvatarBean implements Serializable {
         }
         try(InputStream is = file.getInputStream()) {
             Manager manager = managerService.getManagerOfPlayer(player);
-            filename = storageService.storeAvatar(is, file.getOriginalFilename(), String.valueOf(manager.getId()));
+            //filename = storageService.storeAvatar(is, file.getOriginalFilename(), String.valueOf(manager.getId()));
         } catch (IOException e){
             filename = null;
             log.error("Exception while saving Avatar");

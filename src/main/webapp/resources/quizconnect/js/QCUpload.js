@@ -3,7 +3,7 @@
 class QCUpload {
   constructor(){}
 
-  static upload(username, elemId = 'upload', ignoreValidation = false){
+  static upload(username, elemId = 'upload'){
     if(username == null || username === ''){
       console.error('QCUpload.upload: username is invalid');
       return;
@@ -25,14 +25,6 @@ class QCUpload {
     if(form === null){
       return;
     }
-    /*
-    let readyListener = null;
-    if(!ignoreValidation){
-      readyListener = setInterval(() => {
-
-      }, 500);
-    }
-    */
 
     elem.addEventListener('change', () => {
       const file = elem.files[0];
@@ -53,8 +45,6 @@ class QCUpload {
       }).finally(() => {
         // form.reset();
         elem.value = '';
-
-        // TODO check if form valid
         render.click()
       })
     });

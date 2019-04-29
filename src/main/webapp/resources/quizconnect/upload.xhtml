@@ -21,8 +21,6 @@
     4. The backing bean must have a method which
        handles upload events
 
-    !!! currently only 1 upload per page(reuse)
-
     ===============    ATTRIBUTES    ================
 
     - accept ... HTML5 input[type="file"] accept attr
@@ -33,6 +31,7 @@
     - text ... label text
     - ignoreValidation ... bool indicates wheter to
       ignore the HTML5 form validation(default = false)
+      TODO ^
 
     ==============================================-->
 
@@ -43,7 +42,7 @@
     <cc:attribute name="accept" required="false" default="*/*" />
     <cc:attribute name="styleClass" required="false" default=""/>
     <cc:attribute name="update" required="false" default="@none" />
-    <cc:attribute name="ignoreValidation" required="false" default="false" type="boolean"/>
+
 </cc:interface>
 
 <cc:implementation>
@@ -54,7 +53,7 @@
         <f:ajax execute="@this" render="#{cc.attrs.update}" />
     </h:commandButton>
     <h:outputScript>
-        QCUpload.upload('#{sessionInfoBean.currentUserName}', '#{cc.clientId}', #{cc.attrs.ignoreValidation});
+        QCUpload.upload('#{sessionInfoBean.currentUserName}', '#{cc.clientId}');
     </h:outputScript>
 </cc:implementation>
 </html>
