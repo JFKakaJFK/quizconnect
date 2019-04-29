@@ -191,6 +191,11 @@ const renderLobby = ( {info} ) => {
   renderPlayers(players, info);
 };
 
+// TODO structure, rerender only on change
+const renderScore = (parent, score) => {
+  parent.innerHTML = score;
+};
+
 // TODO other types for reverse mode
 // TODO progress bar? or SVG + anime.js??
 // TODO save initial question time? for progress %
@@ -215,7 +220,7 @@ const renderQuestionPlaceholder = (parent) => {
 
 const renderGenericAnswer = ({ classes, content, answerId, questionId} ) => { // TODO parseInt necessary?
   return `
-    <div class="answer ${classes}" data-questionId="${questionId}" data-answerId="${answerId}" onclick="answerQuestion(${questionId}, ${answerId})">
+    <div class="answer box ${classes}" data-questionId="${questionId}" data-answerId="${answerId}" onclick="answerQuestion(${questionId}, ${answerId})">
       ${content}
     </div>
   `;
@@ -280,6 +285,17 @@ const renderAnswers = ( parent, { answers }) => {
   }
 };
 
+// TODO structure, rerender only on change
+const renderJoker = (parent, jokers) => {
+  if(jokers === 0){
+    parent.removeEventListener('click', useJoker);
+  }
+  parent.innerHTML = jokers;
+  if(jokers > 0){
+    parent.addEventListener('click', useJoker);
+  }
+};
+
 /**
  * Renders the game state
  *
@@ -289,13 +305,26 @@ const renderGame = ( {game} ) => {
   // if LOBBY was rendered before, clear the ROOT node and add INGAME containers
   if(ROOT.querySelector('.info') !== null || ROOT.querySelector('.players') !== null){
     clearScreen();
+    let score = document.createElement('div');
+    score.classList.add('score');
+    ROOT.appendChild(score);
+
     let question = document.createElement('div');
     question.classList.add('question');
+    question.classList.add('box');
     ROOT.appendChild(question);
+
     let answers = document.createElement('div');
     answers.classList.add('answers');
     ROOT.appendChild(answers);
+
+    let joker = document.createElement('div');
+    joker.classList.add('joker');
+    joker.classList.add('box');
+    ROOT.appendChild(joker);
   }
+
+  renderScore(ROOT.querySelector('.score'), game.score);
 
   if(game.question != null){
     renderQuestion(ROOT.querySelector('.question'), game.question);
@@ -307,6 +336,8 @@ const renderGame = ( {game} ) => {
     console.error(`ERROR: only ${MAX_ANSWERS} answers allowed (currently: ${state.game.answers.length})`)
   }
   renderAnswers(ROOT.querySelector('.answers'), game);
+
+  renderJoker(ROOT.querySelector('.joker'), game.jokersLeft);
 };
 
 const render = (state) => {
