@@ -195,15 +195,27 @@ const renderLobby = ( {info} ) => {
 // TODO progress bar? or SVG + anime.js??
 // TODO save initial question time? for progress %
 const renderQuestion = (parent, { questionId, type, question, remaining }) => {
+  if(ROOT.querySelector('#question') !== null){
+    ROOT.querySelector('#question').innerHTML = question;
+    return;
+  }
   parent.innerHTML = `
     <h2 id="question">${question}</h2>
     <div id="questionTime"><span></span></div>
   `;
 };
 
+const renderQuestionPlaceholder = (parent) => {
+  if(ROOT.querySelector('#question') !== null && ROOT.querySelector('#question').value === '') return;
+  parent.innerHTML = `
+    <h2 id="question"></h2>
+    <div id="questionTime"><span></span></div>
+  `;
+};
+
 const renderGenericAnswer = ({ classes, content, answerId, questionId} ) => { // TODO parseInt necessary?
   return `
-    <div class="answer ${classes}" data-questionId="${questionId}" data-answerId="${answerId}" onclick="() => answerQuestion(parseInt(${questionId}), parseInt(${answerId}))">
+    <div class="answer ${classes}" data-questionId="${questionId}" data-answerId="${answerId}" onclick="answerQuestion(${questionId}, ${answerId})">
       ${content}
     </div>
   `;
@@ -238,7 +250,7 @@ const renderAnswer = ({ questionId, type, answerId, answer }) => {
 
 const renderAnswers = ( parent, { answers }) => {
   // TODO render placeholders?
-  if(parent === null || answers.length === 0){
+  if(parent === null){
     return;
   }
   const answerNodes = parent.querySelectorAll('.answer');
@@ -285,7 +297,29 @@ const renderGame = ( {game} ) => {
     ROOT.appendChild(answers);
   }
 
-  renderQuestion(ROOT.querySelector('.question'), game.question);
+  if(game.question != null){
+    renderQuestion(ROOT.querySelector('.question'), game.question);
+  } else {
+    renderQuestionPlaceholder(ROOT.querySelector('.question'));
+  }
 
-  renderAnswers(ROOT.querySelector('.answers'), game.answers);
+  if(state.game.answers.length > MAX_ANSWERS){
+    console.error(`ERROR: only ${MAX_ANSWERS} answers allowed (currently: ${state.game.answers.length})`)
+  }
+  renderAnswers(ROOT.querySelector('.answers'), game);
+};
+
+const render = (state) => {
+  if(state.timeoutIsActive){
+    // TODO show modal
+    renderTimeOutModal(state.timeoutRemainingTime);
+  }
+  if(state.state === INGAME){
+    renderGame(state)
+  } else if(state.state === LOBBY){
+    renderLobby(state)
+  } else if(state.state === FINISHED){
+    // TODO maybe not per GET Param (or player can view ending screen for any score...)
+    window.location.href = `${URL_FINISH}?score=${state.game.score}`
+  }
 };
