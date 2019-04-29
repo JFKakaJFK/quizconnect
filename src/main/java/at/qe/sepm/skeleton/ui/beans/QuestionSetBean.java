@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 
 import javax.annotation.PostConstruct;
 import javax.faces.context.FacesContext;
@@ -21,8 +22,9 @@ import java.util.*;
  * @author Johannes Spies
  */
 
-@Component
+@Controller
 @Scope("session")
+
 public class QuestionSetBean implements Serializable {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -35,6 +37,9 @@ public class QuestionSetBean implements Serializable {
     @Autowired
     private SessionInfoBean sessionInfoBean;
 
+    @Autowired
+    private QSOverviewBean overviewBean;
+
     private List<String> types = Arrays.asList("text", "picture");
     private List<String> difficulty = Arrays.asList("easy", "hard");
 
@@ -43,43 +48,45 @@ public class QuestionSetBean implements Serializable {
     private Set<Question> questions;
     private Question question;
 
-    private Set<Question> savedQuestionSets;
-
-    //TODO: JavaDoc for init
     @PostConstruct
     public void init() {
-        questionSet = new QuestionSet();
-        questionSet.setDifficulty(QuestionSetDifficulty.easy);
+        // questions is the internal list of questions created
         questions = new HashSet<Question>();
+        // current user for setting the author of the QuestionSet
         currentUser = sessionInfoBean.getCurrentUser();
+        // because of the session-scope, this needs to be cleared just in case something remained in the inputs. Shouldn't be necessary!
+        clearQuestions();
+        clearQuestion();
+        clearQuestionSet();
+
+
     }
 
     //TODO: JavaDoc for clearQuestion
     public void clearQuestion() {
-        logger.info("clearQuestion invoked");
         question = new Question();
         question.setType(QuestionType.text);
     }
 
-    //TODO: JavaDoc for clearQuestionSet
+    public void clearQuestions() {
+        questions = new HashSet<Question>();
+    }
+
     public void clearQuestionSet() {
-        logger.info("clearQuestionSet invoked");
         questionSet = new QuestionSet();
         questionSet.setDifficulty(QuestionSetDifficulty.easy);
     }
 
-    //TODO: JavaDoc for saveNewQuestion
+    /* Called on modal button "add another question - YES" */
     public void saveNewQuestion() {
-        logger.info("saveNewQuestion invoked");
         questions.add(question);
         question.setQuestionSet(questionSet);
-        logger.info("questionSet=" + question.getQuestionSet() + "; type=" + question.getType() + ", questionString='" + question.getQuestionString() + ", rightAnswerString='" + question.getRightAnswerString());
         questionService.saveQuestion(question);
-        logger.info("Created a new question with ID: " + question.getId());
+        logger.info("Added question to Database - ID: " + question.getId());
         clearQuestion();
     }
 
-    //TODO: JavaDoc for saveNewQuestionSet
+    /* Called by exitCreateQuestionSet (which is triggered by modal button - NO) */
     public void saveNewQuestionSet() {
         logger.info("saveNewQuestionSet invoked");
         if (currentUser.getRole() == UserRole.MANAGER) {
@@ -87,26 +94,29 @@ public class QuestionSetBean implements Serializable {
             questionSet.setQuestions(questions);
             questionSetService.saveQuestionSet(questionSet);
             logger.info("Created a new QuestionSet with ID: " + questionSet.getId() + " by manager:" + questionSet.getAuthor());
-
-            // creates a new question initialized to type text
-            clearQuestion();
         }
     }
 
-    //TODO: JavaDoc for exitCreateQuestionSet
+    /* Called on modal button "add another question - NO" Saves the currently entered question and saves the whole QuestionSet */
     public void exitCreateQuestionSet() {
         saveNewQuestion();
-        logger.info("Added a total of " + questions.size() + " questions to QuestionSet with name: " + questionSet.getName());
+        saveNewQuestionSet();
 
+        // redirect to overview
         try {
             FacesContext.getCurrentInstance().
-                    getExternalContext().redirect("/secured/home.xhtml");
+                    getExternalContext().redirect("/secured/QSOverview.xhtml");
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        //as this is session scoped, reset the QuestionSet so another one can be created
+        /* add QuestionSet to QSOverviewBean internal list, which gets returned by getter (used in ui:repeat to show all questionSets) */
+        overviewBean.addQuestionSetForDisplay(questionSet);
+
+        /* clear all*/
+        clearQuestion();
         clearQuestionSet();
+        clearQuestions();
     }
 
     public Question getQuestion() {
@@ -123,10 +133,6 @@ public class QuestionSetBean implements Serializable {
 
     public void setQuestionSet(QuestionSet questionSet) {
         this.questionSet = questionSet;
-    }
-
-    public Set<Question> getSavedQuestionSets() {
-        return savedQuestionSets;
     }
 
     public List<String> getTypes() {
