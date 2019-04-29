@@ -132,7 +132,7 @@ public class CSVImportBean implements Serializable {
      */
 
     private List<List<String>> addQuestionsFromCSV() {
-        logger.info("add Questions from CSV");
+        logger.info("addQuestionsFromCSV invoked");
         List<List<String>> records = new ArrayList<List<String>>();
         try (CSVReader csvReader = new CSVReader(new InputStreamReader(new FileInputStream(filename.toFile())))) {
             String[] values;
@@ -154,18 +154,17 @@ public class CSVImportBean implements Serializable {
 
     //FIXME: This is so bad it actually hurts a bit
     private void arrayToDatabase(List<List<String>> data) {
-        logger.info("called A2DB");
+        logger.info("arrayToDatabase invoked");
+
         questionSet = new QuestionSet();
         initQuestionSet(); //new QuestionSet, set difficulty, author, name, description, and connect to HashSet of individual questions
         questionSetService.saveQuestionSet(questionSet);
 
-        Set<Question> questions = new HashSet<>();
+        Set<Question> questions = new HashSet<Question>();
 
         for (int wholeQuestion = 0; wholeQuestion < data.size(); wholeQuestion++) {
-            //initQuestion(); //new Question-Object set to text
-
             Question question = new Question();
-            question.setType(QuestionType.text);
+            question.setType(QuestionType.text); //csv import only allows questions of type text
 
             question.setQuestionString(data.get(wholeQuestion).get(0)); // First element of each Question is the question (required)
             question.setRightAnswerString(data.get(wholeQuestion).get(1)); // Second element of each Question is the correct answer (required)
@@ -182,16 +181,24 @@ public class CSVImportBean implements Serializable {
                     }
                 }
             }
-
+            // after each iteration (= one question/line in the csv-file) assign it to the QuestionSet, add to internal list (for displaying it later) and save to DB
             question.setQuestionSet(questionSet);
             questions.add(question);
             questionService.saveQuestion(question);
         }
 
+        // assign all questions (number of lines in the csv) to the QuestionSet
         questionSet.setQuestions(questions);
 
+        // add them to the internal list used in the ui:repeat to show it without time-consuming load from the DB
         QSOverviewBean.addQuestionSetForDisplay(questionSet);
-        messageBean.updateComponent("formOverview-QSets:overview-QSets");
+
+        // clear for new import
+        nameCSV = null;
+        descriptionCSV = null;
+
+        // update to show the new Set
+         messageBean.updateComponent("formOverview-QSets:overview-QSets");
 
         String message = String.format("Successfully imported CSV");
         messageBean.showGlobalInformation(message);
@@ -207,13 +214,6 @@ public class CSVImportBean implements Serializable {
         questionSet.setQuestions(new HashSet<>());
     }
 
-
-    /* Obsolete?
-    public void initQuestion() {
-        question = new Question();
-        question.setType(QuestionType.text);
-    }*/
-
     public Manager getManager() {
         return manager;
     }
@@ -221,14 +221,6 @@ public class CSVImportBean implements Serializable {
     public void setManager(Manager manager) {
         logger.info("Set manager with ID:" + manager.getId());
         this.manager = manager;
-    }
-
-    public Path getFilename() {
-        return filename;
-    }
-
-    public void setFilename(Path filename) {
-        this.filename = filename;
     }
 
     public String getNameCSV() {
