@@ -8,19 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Scope;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
-//import org.primefaces.event.FileUploadEvent;
-//import org.primefaces.model.UploadedFile;
 
-import javax.annotation.ManagedBean;
+import org.springframework.stereotype.Controller;
+
 import javax.annotation.PostConstruct;
 import java.io.*;
 import java.nio.file.Files;
@@ -77,6 +67,7 @@ public class CSVImportBean implements Serializable {
     }
 
     private Path filename = null;
+    private File file;
     private Manager manager;
 
 
@@ -86,26 +77,21 @@ public class CSVImportBean implements Serializable {
         //descriptionCSV = "";
         //questions = new HashSet<>();
     }
-    /**
-     * Catches a fileupload and stores file
-     *
-     * @param file
-     * @return
-     */
-    @RequestMapping(value = "/upload/csv", method = RequestMethod.POST)
-    public ResponseEntity handleFileUpload(@RequestParam("file") MultipartFile file) {
-        logger.info("filename: " + file.getOriginalFilename());
-        if (file == null) {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+
+    public void handleFileUpload(){
+        if(file != null){
+            try(InputStream is = new FileInputStream(file)){
+                // If there is no upload in the time between processing this upload & the next upload of the user,
+                // the file attribute could be used directly
+                filename = Files.createTempFile(temp, "qs", ".csv");
+                Files.copy(is, filename, StandardCopyOption.REPLACE_EXISTING);
+                is.close();
+                Files.deleteIfExists(file.toPath());
+            } catch (IOException e){
+                logger.error("Failed to store uploaded .csv file");
+                filename = null;
+            }
         }
-        try(InputStream is = file.getInputStream()){
-            filename = Files.createTempFile(temp, "qs", ".csv");
-            Files.copy(is, filename, StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e){
-            logger.error("Such sad");
-            filename = null;
-        }
-        return new ResponseEntity(HttpStatus.OK);
     }
 
     public void abort() {
@@ -237,5 +223,13 @@ public class CSVImportBean implements Serializable {
 
     public void setDescriptionCSV(String descriptionCSV) {
         this.descriptionCSV = descriptionCSV;
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
     }
 }

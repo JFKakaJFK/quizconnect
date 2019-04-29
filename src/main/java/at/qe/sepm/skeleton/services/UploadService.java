@@ -46,7 +46,7 @@ public class UploadService {
      */
     public File getUpload(User user){
         if(user == null){
-            return null;
+            throw new IllegalArgumentException("User cannot be null");
         }
         int managerId = user.getManager() == null ? managerService.getManagerOfPlayer(user.getPlayer()).getId() : user.getManager().getId();
 
@@ -67,7 +67,7 @@ public class UploadService {
      */
     public void clearUploads(User user){
         if(user == null){
-            return;
+            throw new IllegalArgumentException("User cannot be null");
         }
         int managerId = user.getManager() == null ? managerService.getManagerOfPlayer(user.getPlayer()).getId() : user.getManager().getId();
 
