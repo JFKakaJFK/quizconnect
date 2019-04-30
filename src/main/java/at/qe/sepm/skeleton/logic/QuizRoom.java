@@ -755,6 +755,12 @@ public class QuizRoom implements IPlayerAction
 	}
 	
 	@Override
+	public boolean isRoomInWaitingMode()
+	{
+		return wfpMode;
+	}
+	
+	@Override
 	public synchronized void readyUp(Player p)
 	{
 		if (!wfpMode)
