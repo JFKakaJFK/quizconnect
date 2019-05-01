@@ -5,7 +5,7 @@
                 xmlns:qc="http://java.sun.com/jsf/composite/quizconnect"
                 xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
                 template="/WEB-INF/templates/main.xhtml">
-    <ui:define name ="content">
+    <ui:define name="content">
         <h:form id="formQSEdit">
             <h:panelGroup id="questionsEdit" layout="block" rendered="#{QSOverviewBean.questionSets != null}"
                           styleClass="boxes px-3">
@@ -13,9 +13,11 @@
 
                 <ui:repeat value="#{editQuestionBean.questions}" var="question">
                     <qc:generic-box size="sm">
-                        <h:commandLink action="#{editQuestionBean.setSelectedQuestion(question)}" pt:class="ml-2" pt:data-toggle="modal" pt:data-target="#questionEditModal" pt:data-backdrop="static">
+                        <h:commandLink action="#{editQuestionBean.setSelectedQuestion(question)}" pt:class="ml-2"
+                                       pt:data-toggle="modal" pt:data-target="#questionEditModal"
+                                       pt:data-backdrop="static">
                             Open Modal
-                            <f:ajax execute="@this" render=":changesForQuestion:editModal:modal-body" />
+                            <f:ajax execute="@this" render=":changesForQuestion:editModal:modal-body"/>
                         </h:commandLink>
                         <p>#{question.questionString}</p>
                         <p>#{question.rightAnswerString}</p>
@@ -42,54 +44,60 @@
         </h:form>
 
 
+        <h:form id="changesForQuestion">
+            <qc:modal target="questionEditModal" id="editModal" closable="false" modaltype="edit" title="Edit Question"
+                      abort="Discard changes" confirm="Save" abortAction="#{editQuestionBean.discard}"
+                      executeOnAbort="@none" confirmAction="#{editQuestionBean.save}" update=":formQSEdit">
+                <div class="form-group">
+                    <label for="question">Question</label>
+                    <h:inputText type="text" styleClass="form-control"
+                                 value="#{editQuestionBean.selectedQuestion.questionString}"
+                                 name="question" id="question" pt:autocomplete="off" pt:required="true"/>
+                    <h:message for="question" styleClass="state-error"/>
+                </div>
 
-<h:form id="changesForQuestion">
-        <qc:modal target="questionEditModal" id="editModal" closable="false" modaltype="question" title="Edit Question" abort="Discard changes" confirm="Save" abortAction="#{editQuestionBean.abort}" confirmAction="#{editQuestionBean.save}" update=":formQSEdit">
-            <div class="form-group">
-                <label for="question">Question</label>
-                <h:inputText type="text" styleClass="form-control"
-                             value="#{editQuestionBean.selectedQuestion.questionString}"
-                             name="question" id="question" pt:autocomplete="off" pt:required="true"/>
-                <h:message for="question" styleClass="state-error"/>
-            </div>
+                <div class="form-group">
+                    <label for="corrAnswer">Correct answer</label>
+                    <h:inputText type="text" styleClass="form-control"
+                                 value="#{editQuestionBean.selectedQuestion.rightAnswerString}"
+                                 name="corrAnswer" id="corrAnswer" pt:autocomplete="off" pt:required="true"/>
+                </div>
 
-            <div class="form-group">
-                <label for="corrAnswer">Correct answer</label>
-                <h:inputText type="text" styleClass="form-control"
-                             value="#{editQuestionBean.selectedQuestion.rightAnswerString}"
-                             name="corrAnswer" id="corrAnswer" pt:autocomplete="off" pt:required="true"/>
-            </div>
+                <div class="form-group">
+                    <label for="wrongAnswer1">Wrong answer #1</label>
+                    <h:inputText type="text" styleClass="form-control"
+                                 value="#{editQuestionBean.selectedQuestion.wrongAnswerString_1}" name="wrongAnswer1"
+                                 pt:required="true" id="wrongAnswer1" pt:autocomplete="off"/>
+                </div>
 
-            <div class="form-group">
-                <label for="wrongAnswer1">Wrong answer #1</label>
-                <h:inputText type="text" styleClass="form-control"
-                             value="#{editQuestionBean.selectedQuestion.wrongAnswerString_1}" name="wrongAnswer1"
-                             pt:required="true" id="wrongAnswer1" pt:autocomplete="off"/>
-            </div>
+                <div class="form-group">
+                    <label for="wrongAnswer2">Wrong answer #2</label>
+                    <h:inputText type="text" styleClass="form-control"
+                                 value="#{editQuestionBean.selectedQuestion.wrongAnswerString_2}" name="wrongAnswer2"
+                                 id="wrongAnswer2" pt:autocomplete="off"/>
+                </div>
 
-            <div class="form-group">
-                <label for="wrongAnswer2">Wrong answer #2</label>
-                <h:inputText type="text" styleClass="form-control"
-                             value="#{editQuestionBean.selectedQuestion.wrongAnswerString_2}" name="wrongAnswer2"
-                             id="wrongAnswer2" pt:autocomplete="off"/>
-            </div>
+                <div class="form-group">
+                    <label for="wrongAnswer3">Wrong answer #3</label>
+                    <h:inputText type="text" styleClass="form-control"
+                                 value="#{editQuestionBean.selectedQuestion.wrongAnswerString_3}" name="wrongAnswer3"
+                                 id="wrongAnswer3" pt:autocomplete="off"/>
+                </div>
 
-            <div class="form-group">
-                <label for="wrongAnswer3">Wrong answer #3</label>
-                <h:inputText type="text" styleClass="form-control"
-                             value="#{editQuestionBean.selectedQuestion.wrongAnswerString_3}" name="wrongAnswer3"
-                             id="wrongAnswer3" pt:autocomplete="off"/>
-            </div>
-        </qc:modal>
-</h:form>
+                <ui:fragment rendered="#{not empty editQuestionBean.selectedQuestion.wrongAnswerString_4}">
+                    <label for="wrongAnswer4">Wrong answer #4</label>
+                    <h:inputText type="text" styleClass="form-control"
+                                 value="#{editQuestionBean.selectedQuestion.wrongAnswerString_4}" name="wrongAnswer4"
+                                 id="wrongAnswer4" pt:autocomplete="off"/>
+                </ui:fragment>
 
-    </ui:define>
-
-    <ui:define name="site-specific-javascript">
-        <script type="text/javascript">
-            $(document).on('hidden.bs.modal', function (e) {
-                $(e.target).removeData('bs.modal');
-            });
-        </script>
+                <ui:fragment rendered="#{not empty editQuestionBean.selectedQuestion.wrongAnswerString_4}">
+                    <label for="wrongAnswer5">Wrong answer #5</label>
+                    <h:inputText type="text" styleClass="form-control"
+                                 value="#{editQuestionBean.selectedQuestion.wrongAnswerString_5}" name="wrongAnswer5"
+                                 id="wrongAnswer5" pt:autocomplete="off"/>
+                </ui:fragment>
+            </qc:modal>
+        </h:form>
     </ui:define>
 </ui:composition>
