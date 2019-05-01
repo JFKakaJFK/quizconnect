@@ -4,6 +4,7 @@ import at.qe.sepm.skeleton.model.Player;
 import at.qe.sepm.skeleton.model.User;
 import at.qe.sepm.skeleton.services.ManagerService;
 import at.qe.sepm.skeleton.services.PlayerService;
+import at.qe.sepm.skeleton.utils.ScrollPaginator;
 import com.sun.xml.internal.bind.v2.TODO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -29,11 +30,13 @@ public class AllPlayersBean {
     private String searchPhrase = "";
     private User user;
     private boolean onlyByManager;
+    private ScrollPaginator<Player> paginator;
 
     @Autowired
     public AllPlayersBean(PlayerService playerService, SessionInfoBean sessionInfoBean){
         this.playerService = playerService;
         this.user = sessionInfoBean.getCurrentUser();
+        this.paginator = new ScrollPaginator<>(2);
     }
 
     /*
@@ -74,6 +77,7 @@ public class AllPlayersBean {
     public List<Player> getPlayers() {
         if(players == null){
             this.players = getAllPlayers();
+            paginator.updateList(players);
         }
         return players;
     }
@@ -112,5 +116,13 @@ public class AllPlayersBean {
         } else {
             allByManager.add(p);
         }
+    }
+
+    public ScrollPaginator<Player> getPaginator() {
+        return paginator;
+    }
+
+    public void setPaginator(ScrollPaginator<Player> paginator) {
+        this.paginator = paginator;
     }
 }

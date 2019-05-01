@@ -5,7 +5,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:qc="http://java.sun.com/jsf/composite/quizconnect"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:p="http://xmlns.jcp.org/jsf/passthrough" xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
       xml:lang="en"
       lang="en">
 <h:head>
@@ -34,6 +36,69 @@
 
 
         <qc:upload listener="#{QCUploadTestController.handleFileUpload}" target="#{QCUploadTestController.file}"  accept="text/csv"/>
+
+        <h:panelGroup layout="block" id="repeat">
+            <ui:repeat value="#{testBean.paginator.model}" var="listItem">
+                <div>
+                    <h:outputText value="#{listItem}"/>
+                </div>
+            </ui:repeat>
+
+
+            <h:commandButton value="&lt; prev" action="#{testBean.paginator.prev}">
+                <f:ajax execute="@this" render="repeat"/>
+            </h:commandButton>
+            <h:outputText value="#{testBean.paginator.pageIndex} / #{testBean.paginator.pages}"/>
+            <h:commandButton value="next &gt;" action="#{testBean.paginator.next}">
+                <f:ajax execute="@this" render="repeat"/>
+            </h:commandButton>
+            <h:inputHidden value="#{testBean.paginator.pageIndex}"/>
+        </h:panelGroup>
+
+
+        <h:panelGroup layout="block" id="scrollrepeat">
+
+            <div class="" style="display: grid;grid-template-columns: repeat(5, 1fr);">
+            <ui:repeat value="#{testBean.scrollPaginator.parts}" var="part">
+                <ui:repeat value="#{part.items}" var="item">
+                    <div>#{item}</div>
+                </ui:repeat>
+            </ui:repeat>
+            </div>
+
+            <div style="display: flex;justify-content: center">
+                <h:commandButton value="Show more" action="#{testBean.scrollPaginator.initNext}" rendered="#{!testBean.scrollPaginator.initialized}" styleClass="btn btn-primary">
+                    <f:ajax execute="@this" render="@this scrollrepeat"/>
+                </h:commandButton>
+                <h:commandButton value="Show less" action="#{testBean.scrollPaginator.initLess}" rendered="#{!testBean.scrollPaginator.initialized}" styleClass="btn btn-tertiary">
+                    <f:ajax execute="@this" render="@this scrollrepeat"/>
+                </h:commandButton>
+            </div>
+
+        </h:panelGroup>
+
+        <h:panelGroup layout="block" id="players">
+
+            <div class="players">
+                <ui:repeat value="#{allPlayersBean.paginator.parts}" var="part">
+                    <ui:repeat value="#{part.items}" var="player">
+                        <qc:playerbox player="#{player}" online="#{randomOnlineTestBean.online}" rank="Beginner">
+                            <h:link outcome="/players/profile" styleClass="ml-2">
+                                <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-9a1 1 0 0 1 1 1v4a1 1 0 0 1-2 0v-4a1 1 0 0 1 1-1zm0-4a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+                                <f:param name="id" value="#{player.id}"/>
+                            </h:link>
+                        </qc:playerbox>
+                    </ui:repeat>
+                </ui:repeat>
+            </div>
+
+            <div style="display: flex;justify-content: center">
+                <h:commandButton value="Show more" action="#{allPlayersBean.paginator.initNext}" rendered="#{!allPlayersBean.paginator.initialized}" styleClass="btn btn-primary">
+                    <f:ajax execute="@this" render="@this players"/>
+                </h:commandButton>
+            </div>
+
+        </h:panelGroup>
 
     </h:form>
 
