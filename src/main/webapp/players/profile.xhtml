@@ -5,8 +5,11 @@
                 xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
                 xmlns:qc="http://java.sun.com/jsf/composite/quizconnect"
                 template="/WEB-INF/templates/main.xhtml">
-    <ui:define name ="content">
+    <ui:define name="site-specific-css">
         <link rel="stylesheet" href="../resources/css/profile.css" />
+    </ui:define>
+
+    <ui:define name ="content">
 
         <f:metadata>
             <f:viewParam name="id" value="#{profileBean.id}"/>
@@ -43,11 +46,146 @@
                 </h:panelGroup>
 
                 <h:panelGroup layout="block" id="qs-chart" styleClass="qs-chart box">
+                    <div id="line">LOADING</div>
+                    <div id="pie">LOADING</div>
                     <p>Do some nice graphs w/ ApexCharts</p>
                 </h:panelGroup>
             </h:panelGroup>
 
         </h:form>
 
+    </ui:define>
+
+    <ui:define name="site-specific-javascript">
+        <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+        <script>
+            // TODO move to external script, fetch data from backend via requestmapping n'stuff
+            // TODO get a managers student average  display apex chart annotation? https://apexcharts.com/docs/annotations/
+            const line = document.querySelector("#line")
+            const pie = document.querySelector("#pie")
+          var options = {
+            theme: {
+              palette: 'palette1',
+              mode: 'dark',
+              /*
+              monochrome: {
+                enabled: true,
+                color: '#13CFB8',
+                // color: 'var(--col-4-m)',
+              }
+              */
+            },
+            /*
+            colors: [
+              'var(--col-2-m)',
+              'var(--col-3-m)',
+              'var(--col-4-m)',
+              'var(--col-5-m)',
+            ],
+            */
+            chart: {
+              width: '100%',
+              type: 'area'
+            },
+            series: [{
+                name: 'question set 1',
+                data: [30,40,35,50,49,60,70,91,125]
+              },
+              {
+                name: 'question set 2',
+                data: [60,50,22,18,23,45,56,77,69]
+              },
+              {
+                name: 'question set3',
+                data: [88, 120, 95, 80, 95, 76, 40, 50, 45]
+              },
+              {
+                name: 'average',
+                data: [60, 70, 60, 55, 45, 40, 35, 40, 50]
+              },
+            ],
+            dataLabels: {
+              enabled: false,
+            },
+            tooltip: {
+              enabled: false,
+            },
+            toolbar: {
+              show: false,
+              tools: {
+                download: false,
+              }
+            },
+            yaxis: {
+              show: true,
+              labels: {
+                show: true,
+                style: {
+                  color: 'var(--fg)',
+                },
+                formatter: (value) => value,
+              }
+            },
+            xaxis: {
+              categories: [1991,1992,1993,1994,1995,1996,1997, 1998,1999]
+            },
+            legend: {
+              show: true,
+              labels: {
+                colors: 'var(--fg)',
+              }
+            }
+          }
+
+          var chart = new ApexCharts(line, options);
+
+            line.innerHTML = '';
+          chart.render();
+
+            var options1 = {
+              theme: {
+                mode: 'dark',
+                palette: 'palette1',
+              },
+              chart: {
+                type: 'donut',
+              },
+              dataLabels: {
+                enabled: false,
+              },
+              tooltip: {
+                enabled: false,
+              },
+              stroke: {
+                show: false,
+                width: 0,
+              },
+              series: [44, 55, 41, 17, 15],
+              responsive: [{
+                breakpoint: 480,
+                options: {
+                  chart: {
+                    width: 200
+                  },
+                  legend: {
+                    position: 'bottom'
+                  }
+                }
+              }],
+              plotOptions: {
+                pie: {
+                  expandOnClick: false
+                }
+              }
+            }
+
+            var chart1 = new ApexCharts(
+              pie,
+              options1
+            );
+            pie.innerHTML = '';
+            chart1.render();
+
+        </script>
     </ui:define>
 </ui:composition>
