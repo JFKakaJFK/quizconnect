@@ -6,6 +6,15 @@
                 xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
                 template="/WEB-INF/templates/main.xhtml">
     <ui:define name="content">
+        <h:form id="addQuestionToSet">
+            <h:panelGroup id="addQ" layout="block" styleClass="boxes px-3">
+                <h:commandLink action="#{editQuestionBean.setNewQuestion}" pt:class="ml-2"
+                               pt:data-toggle="modal" pt:data-target="#questionEditModal"
+                               pt:data-backdrop="static"> Add new Question
+                <f:ajax execute="@this" render=":changesForQuestion:editModal:modal-body"/>
+                </h:commandLink>
+            </h:panelGroup>
+        </h:form>
         <h:form id="formQSEdit">
             <h:panelGroup id="questionsEdit" layout="block" rendered="#{QSOverviewBean.questionSets != null}"
                           styleClass="boxes px-3">
@@ -16,9 +25,16 @@
                         <h:commandLink action="#{editQuestionBean.setSelectedQuestion(question)}" pt:class="ml-2"
                                        pt:data-toggle="modal" pt:data-target="#questionEditModal"
                                        pt:data-backdrop="static">
-                            Open Modal
+                            Edit Question
                             <f:ajax execute="@this" render=":changesForQuestion:editModal:modal-body"/>
                         </h:commandLink>
+
+                        <h:commandLink action="#{editQuestionBean.deleteQuestion(question)}">
+                            Delete Question
+                            <f:ajax execute="@this" render=":formQSEdit"/>
+                        </h:commandLink>
+
+
                         <p>#{question.questionString}</p>
                         <p>#{question.rightAnswerString}</p>
                         <p>#{question.wrongAnswerString_1}</p>
