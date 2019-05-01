@@ -18,7 +18,7 @@ public class TestBean {
     @PostConstruct
     public void init() {
         this.list = new ArrayList<>();
-        for(int i = 0; i < 500; i++){
+        for(int i = 0; i < 3000; i++){
             this.list.add("Item " + i);
         }
 

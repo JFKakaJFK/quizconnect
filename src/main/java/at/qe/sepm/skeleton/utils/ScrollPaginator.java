@@ -5,7 +5,7 @@ import java.util.List;
 
 public class ScrollPaginator <T> {
 
-    private static final int DEFAULT_ITEMS = 18;
+    private static final int DEFAULT_SIZE = 18;
 
     private int total;
     private int partSize;
@@ -22,7 +22,7 @@ public class ScrollPaginator <T> {
     }
 
     public ScrollPaginator(List<T> list) {
-        this.partSize = DEFAULT_ITEMS;
+        this.partSize = DEFAULT_SIZE;
         if(list == null){
             list = new ArrayList<>(0);
         }
@@ -53,7 +53,7 @@ public class ScrollPaginator <T> {
         int toIndex;
         this.parts = new ArrayList<>(((int) (((float) total) / (float) partSize)) + 1);
         // TODO first part 2x normal part size?
-        int initial = 1;
+        int initial = 3;
         parts.add(new ScrollPart<>(all.subList(0, Math.min(total, initial * partSize))));
         fromIndex += initial * partSize;
         while(fromIndex < total){
