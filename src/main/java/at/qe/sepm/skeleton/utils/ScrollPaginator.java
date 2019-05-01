@@ -5,7 +5,7 @@ import java.util.List;
 
 public class ScrollPaginator <T> {
 
-    private static final int DEFAULT_ITEMS = 60;
+    private static final int DEFAULT_ITEMS = 18;
 
     private int total;
     private int partSize;
@@ -49,15 +49,17 @@ public class ScrollPaginator <T> {
     // TODO needs to trigger whole repeat reload
     private void update(){
         this.total = all.size();
-        int itemsLeft = total;
         int fromIndex = 0;
         int toIndex;
         this.parts = new ArrayList<>(((int) (((float) total) / (float) partSize)) + 1);
-        while(itemsLeft > 0){
-            toIndex = itemsLeft > partSize ? fromIndex + partSize : total;
+        // TODO first part 2x normal part size?
+        int initial = 1;
+        parts.add(new ScrollPart<>(all.subList(0, Math.min(total, initial * partSize))));
+        fromIndex += initial * partSize;
+        while(fromIndex < total){
+            toIndex = Math.min(fromIndex + partSize, total);
             parts.add(new ScrollPart<>(all.subList(fromIndex, toIndex)));
             fromIndex += partSize;
-            itemsLeft -= partSize;
         }
 
         initNext();
@@ -68,13 +70,6 @@ public class ScrollPaginator <T> {
             return;
         }
         parts.get(initialized++).setInitialized(true);
-    }
-
-    public void initLess(){
-        if(initialized == 1){ // at least one part is shown
-            return;
-        }
-        parts.get(--initialized).setInitialized(false);
     }
 
     public boolean isInitialized(){

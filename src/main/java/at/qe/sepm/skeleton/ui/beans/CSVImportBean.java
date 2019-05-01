@@ -176,7 +176,7 @@ public class CSVImportBean implements Serializable {
         // assign all questions (number of lines in the csv) to the QuestionSet
         questionSet.setQuestions(questions);
 
-        // add them to the internal list used in the ui:repeat to show it without time-consuming load from the DB
+        // add them to the internal list used in the ui:repeat to show it without time-consuming SELECTOR from the DB
         QSOverviewBean.addQuestionSetForDisplay(questionSet);
 
         // clear for new import
