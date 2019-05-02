@@ -81,9 +81,11 @@ const renderGameInfo = ({ settings }) => {
         <p>difficulty</p>
       </div>
       <div class="stat stat-lg pin">
-        <h3>${settings.pin}${false ? 'share pin here' : ''}</h3>
+        <h3>${settings.pin.toString().padStart(6, '0')}${false ? 'share pin here' : ''}</h3> 
         <p>pin</p>
       </div>
+      ${/* TODO: implement share functionality */}
+      <a href="https://wa.me/?text=${encodeURIComponent(SHARE_PIN_WHATSAPP(settings.pin.toString().padStart(6, '0')))}" target="_blank" rel="noopener noreferrer nofollow">Share via WhatsApp</a>
     </div>
   `;
 };
@@ -203,12 +205,10 @@ const renderQuestion = (parent, { questionId, type, question, remaining }) => {
   let q = parent.querySelector('#question');
   let qt = parent.querySelector('#questionTime span');
   if(q !== null){
-    console.log(q.value)
-    console.log(q.innerHTML)
     console.log(q.innerText)
-    if(q.value === question){
+    if(q.innerText === question){
       let total = parseInt(qt.getAttribute('data-total'));
-      qt.style.width = `${remaining / total}%`;
+      qt.style.width = `${(remaining / total) * 100}%`;
     } else {
       q.innerHTML = question;
       qt.setAttribute('data-total', remaining);
@@ -217,7 +217,7 @@ const renderQuestion = (parent, { questionId, type, question, remaining }) => {
     return;
   }
   parent.innerHTML = `
-    <h2 id="question box">${question}</h2>
+    <h2 id="question">${question}</h2>
     <div id="questionTime"><span data-total="${remaining}" style="width: 100%"></span></div>
   `;
 };
@@ -225,7 +225,7 @@ const renderQuestion = (parent, { questionId, type, question, remaining }) => {
 const renderQuestionPlaceholder = (parent) => {
   if(ROOT.querySelector('#question') !== null && ROOT.querySelector('#question').value === '') return;
   parent.innerHTML = `
-    <h2 id="question box"></h2>
+    <h2 id="question"></h2>
     <div id="questionTime"><span></span></div>
   `;
 };
@@ -304,7 +304,7 @@ const renderJoker = (parent, jokers) => {
   }
   parent.innerHTML = jokers;
   if(jokers > 0){
-    parent.addEventListener('click', useJoker);
+    parent.addEventListener('click', useJoker); // TODO use timeout after click to prevent joker spamming
   }
 };
 
@@ -319,6 +319,7 @@ const renderGame = ( {game} ) => {
     clearScreen();
     let score = document.createElement('div');
     score.classList.add('score');
+    score.classList.add('box');
     ROOT.appendChild(score);
 
     let question = document.createElement('div');
