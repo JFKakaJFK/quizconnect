@@ -77,7 +77,7 @@ public class QuizRoom implements IPlayerAction
 	
 	private volatile List<Player> readyPlayers; // list of players who declared themselves ready
 	private volatile boolean wfpMode; // true if the room is in 'waiting for players' mode
-	
+	private volatile boolean isJokerTimeout; // true while joker timeout is going on (= time between joker call and distribution of new questions)
 	
 	/**
 	 * Initializes a new QR.
@@ -132,6 +132,7 @@ public class QuizRoom implements IPlayerAction
 		
 		readyPlayers = new LinkedList<>();
 		wfpMode = true;
+		isJokerTimeout = false;
 		
 		loadQuestions();
 		
@@ -486,7 +487,9 @@ public class QuizRoom implements IPlayerAction
 		
 		// TODO update player stats
 		
+		delayQueue.clear();
 		timerFrameUpdate.stop();
+		wfpMode = true; // prevent processing of any frameUpdate calls on any runtime structures
 		manager.removeRoom(pin);
 
 		LOGGER.debug("QuizRoom [" + pin + "] closed after " + timerFrameUpdate.getElapsedTime() + " ms.");
@@ -497,12 +500,20 @@ public class QuizRoom implements IPlayerAction
 	 */
 	private synchronized void distributeQuestion()
 	{
+		if (isJokerTimeout)
+		{
+			LOGGER.debug("### INFO ### distributeQuestion call while in joker timeout, ignoring.");
+			return;
+		}
+		
 		_distributeQuestion();
 		while (missingQuestions > 0)
 		{
 			_distributeQuestion();
 			missingQuestions--;
 		}
+		
+		missingQuestions = 0; // fix any negative number
 	}
 	
 	/**
@@ -513,7 +524,7 @@ public class QuizRoom implements IPlayerAction
 		// check if too many questions in play
 		if (activeByQuestionId.keySet().size() >= players.size())
 		{
-			LOGGER.error("### ERROR ### distributing more questions than Players in game!");
+			LOGGER.error("### WARNING ### [QR " + pin + "] distributing more questions than Players in game, skipping call.");
 			return;
 		}
 		
@@ -542,8 +553,8 @@ public class QuizRoom implements IPlayerAction
 		
 		if (questionFreePlayers.size() == 0 || answerFreePlayers.size() == 0)
 		{
-			LOGGER.error("### ERROR ### no question / answer free players available in distributeQuestion! (" + questionFreePlayers.size() + "|"
-					+ answerFreePlayers.size() + ")");
+			LOGGER.error("### ERROR ### [QR " + pin + "] no question / answer free players available in distributeQuestion! (" + questionFreePlayers.size()
+					+ "|" + answerFreePlayers.size() + ")");
 			return;
 		}
 		
@@ -822,14 +833,15 @@ public class QuizRoom implements IPlayerAction
 	{
 		if (!playerActivityTimestamps.containsKey(p))
 		{
-			LOGGER.error("Illegal call to answerQuestion! Player is not in QuizRoom! (id: " + p.getId() + ")");
+			LOGGER.error("### ERROR ### [QR " + pin + "] Illegal call to answerQuestion! Player is not in QuizRoom! (id: " + p.getId() + ")");
 			return;
 		}
 		
 		if (!activeByQuestionId.containsKey(questionId))
 		{
 			LOGGER.debug(
-					"### WARNING ### Answer Question call from Player " + p.getId() + " on already removed ActiveQuestion (qid: " + questionId + ")");
+					"### WARNING ### [QR " + pin + "] Answer Question call from Player " + p.getId() + " on already removed ActiveQuestion (qid: " + questionId
+							+ ")");
 			return;
 		}
 		
@@ -837,7 +849,8 @@ public class QuizRoom implements IPlayerAction
 		if (!playerAnswers.get(p).contains(q))
 		{
 			LOGGER.debug(
-					"### WARNING ### Answer Question call from Player " + p.getId() + " Question not assigned to Player! (qid: " + questionId + ")");
+					"### WARNING ### [QR " + pin + "] Answer Question call from Player " + p.getId() + " Question not assigned to Player! (qid: " + questionId
+							+ ")");
 			return;
 		}
 		
@@ -888,12 +901,14 @@ public class QuizRoom implements IPlayerAction
 			removeQuestion(aq);
 		}
 		
+		// prevent delayed calls to distributing questions before joker timeout has finished
+		isJokerTimeout = true;
+		
 		// wait 1 second, then assign new questions to all players
 		addDelayedAction(new DelayedAction((new Date().getTime()) + 1000, () -> {
-			for (int i = 0; i < players.size(); i++)
-			{
-				distributeQuestion();
-			}
+			isJokerTimeout = false;
+			missingQuestions = players.size() - 1;
+			distributeQuestion();
 		}));
 	}
 	
@@ -902,7 +917,7 @@ public class QuizRoom implements IPlayerAction
 	{
 		if (!playerActivityTimestamps.containsKey(p))
 		{
-			LOGGER.error("Illegal call to cancelTimeout! Player is not in QuizRoom! (id: " + p.getId() + ")");
+			LOGGER.error("### ERROR ### [QR " + pin + "] Illegal call to cancelTimeout! Player is not in QuizRoom! (id: " + p.getId() + ")");
 			return;
 		}
 		
@@ -916,7 +931,7 @@ public class QuizRoom implements IPlayerAction
 	{
 		if (!players.contains(p))
 		{
-			LOGGER.error("Illegal call to leaveRoom! Player is not in QuizRoom! (id: " + p.getId() + ")");
+			LOGGER.error("### ERROR ### [QR " + pin + "] Illegal call to leaveRoom! Player is not in QuizRoom! (id: " + p.getId() + ")");
 			return;
 		}
 		
@@ -928,7 +943,7 @@ public class QuizRoom implements IPlayerAction
 	{
 		if (!playerActivityTimestamps.containsKey(p))
 		{
-			LOGGER.error("Illegal call to sendAlivePing! Player is not in QuizRoom! (id: " + p.getId() + ")");
+			LOGGER.error("### ERROR ### [QR " + pin + "] Illegal call to sendAlivePing! Player is not in QuizRoom! (id: " + p.getId() + ")");
 			return;
 		}
 		
