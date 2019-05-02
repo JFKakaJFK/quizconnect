@@ -43,19 +43,18 @@ Other
 
 Backend
 
-- [ ] Spielalgorithmus
-- [ ] Fragenverteilung
-- [ ] Verbindung v. QuizRoom und Frontend
+- [x] Spielalgorithmus
+- [x] Fragenverteilung
+- [x] Verbindung v. QuizRoom und Frontend
 - [ ] 3. Antwortart einbinden
 
 Frontend
 
-- [ ] CSS
-- [ ] CSS3
-- [ ] CSS Grid
-- [ ] Game Creation UI
-- [ ] Game Join UI
-- [ ] Game UI Boilerplate
+- [ ] QuestionSet & Question CRUD fixes
+- [x] Player Creation
+- [x] Game Creation UI
+- [x] Game Join UI
+- [x] Game UI Boilerplate
 - [ ] Game Sounds
 - [ ] Selenium Setup
 - [ ] Selenium Webdriver einbinden
