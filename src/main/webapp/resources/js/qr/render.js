@@ -84,7 +84,7 @@ const renderGameInfo = ({ settings }) => {
         <h3>${settings.pin.toString().padStart(6, '0')}${false ? 'share pin here' : ''}</h3> 
         <p>pin</p>
       </div>
-      ${/* TODO: implement share functionality */}
+      ${/* TODO: implement share functionality + copy to clipboard */false}
       <a href="https://wa.me/?text=${encodeURIComponent(SHARE_PIN_WHATSAPP(settings.pin.toString().padStart(6, '0')))}" target="_blank" rel="noopener noreferrer nofollow">Share via WhatsApp</a>
     </div>
   `;
