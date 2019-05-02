@@ -53,7 +53,7 @@ public class AllPlayersBean {
                 .collect(Collectors.toList());
     }
 
-    public List<Player> getAllPlayers() {
+    private List<Player> getAllPlayers() {
         if(onlyByManager && user.getManager() != null){
             if(allByManager == null){
                 allByManager = playerService.getPlayersOfManager(user.getManager());
