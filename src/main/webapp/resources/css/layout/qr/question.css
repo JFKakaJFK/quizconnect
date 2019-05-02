@@ -1,3 +1,10 @@
 .question {
     padding-bottom: 1rem;
 }
+
+#questionTime span {
+    transition: width .15ms ease-in-out, color .25ms ease-in-out;
+    background: red;
+    height: 3px;
+    display: inline-block;
+}

@@ -46,7 +46,19 @@ public class QuestionSetService {
 	{
 		return questionSetRepositoryRepository.findAll();
 	}
-	
+
+    /**
+     * Returns a {@link QuestionSet} by id
+     *
+     * @param id of QuestionSet
+     * @return
+     */
+    public QuestionSet getQuestionSetById(int id)
+    {
+        return questionSetRepositoryRepository.findQuestionSetById(id);
+    }
+
+
     /**
      * Returns the QuestionSet of a Question
      * @param question
