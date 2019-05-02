@@ -195,20 +195,32 @@ const renderLobby = ( {info} ) => {
 // TODO progress bar? or SVG + anime.js??
 // TODO save initial question time? for progress %
 const renderQuestion = (parent, { questionId, type, question, remaining }) => {
-  if(ROOT.querySelector('#question') !== null){
-    ROOT.querySelector('#question').innerHTML = question;
+  let q = parent.querySelector('#question');
+  let qt = parent.querySelector('#questionTime span');
+  if(q !== null){
+    console.log(q.value)
+    console.log(q.innerHTML)
+    console.log(q.innerText)
+    if(q.value === question){
+      let total = parseInt(qt.getAttribute('data-total'));
+      qt.style.width = `${remaining / total}%`;
+    } else {
+      q.innerHTML = question;
+      qt.setAttribute('data-total', remaining);
+      qt.style.width = '100%';
+    }
     return;
   }
   parent.innerHTML = `
-    <h2 id="question">${question}</h2>
-    <div id="questionTime"><span></span></div>
+    <h2 id="question box">${question}</h2>
+    <div id="questionTime"><span data-total="${remaining}" style="width: 100%"></span></div>
   `;
 };
 
 const renderQuestionPlaceholder = (parent) => {
   if(ROOT.querySelector('#question') !== null && ROOT.querySelector('#question').value === '') return;
   parent.innerHTML = `
-    <h2 id="question"></h2>
+    <h2 id="question box"></h2>
     <div id="questionTime"><span></span></div>
   `;
 };

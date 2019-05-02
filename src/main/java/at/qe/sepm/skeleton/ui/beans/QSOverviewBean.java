@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -24,98 +25,61 @@ import java.io.InputStream;
  *
  * @author Johannes Spies
  */
-@Component
-@Scope("session")
+
+@Controller
 
 public class QSOverviewBean implements Serializable {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired
-    private MessageBean messageBean;
+    //@Autowired
+    //private MessageBean messageBean;
 
     @Autowired
     private QuestionSetService questionSetService;
 
     @Autowired
-    private QuestionService questionService;
+    private MessageBean messageBean;
 
-    @Autowired
-    private CSVImportBean CSVImport;
-
-    @Autowired
-    private SessionInfoBean sessionInfoBean;
-
-    private User currentUser;
-    private Manager currentManager;
     private List<QuestionSet> questionSets;
 
-    private Part uploadedFile;
 
     //TODO JavaDoc for init
     @PostConstruct
     public void init() {
+        logger.info("Init called");
         this.questionSets = new ArrayList<>(questionSetService.getAllQuestionSets());
-        currentUser = sessionInfoBean.getCurrentUser();
-        currentManager = sessionInfoBean.getCurrentUser().getManager();
     }
 
     public List<QuestionSet> getQuestionSets(){
+        //if (questionSets.size() != questionSetService.getAllQuestionSets().size()) {
+        //    this.questionSets = questionSetService.getAllQuestionSets();
+        //}
         return questionSets;
     }
 
-    // TODO JavaDoc for deleteQuestionSet
+    public void addQuestionSetForDisplay(QuestionSet toAdd) {
+        questionSets.add(toAdd);
+        logger.info("Added QuestionSet to DisplayList");
+    }
+
+    public void setQuestionSets(List<QuestionSet> questionSets) {
+        this.questionSets = questionSets;
+    }
+
     public void deleteQuestionSet(QuestionSet questionSet) {
         logger.info("deleting QuestionSet with name: " + questionSet.getName());
         questionSetService.deleteQuestionSet(questionSet);
         logger.info("deleted from database");
         questionSets.remove(questionSet);
         logger.info("deleted from internal set");
-        FacesContext.getCurrentInstance().getPartialViewContext().getRenderIds().add("formOverview-QSets:overview-QSets");
+        messageBean.updateComponent("formOverview-QSets:overview-QSets");
         String message = String.format("Successfully deleted %s", questionSet.getName());
-        messageBean.showInformation("overview-QSets", message);
+        messageBean.showGlobalInformation(message);
     }
 
     public void saveChanges() {
         //TODO: edit functionality & JavaDoc
     }
-
-    //TODO: JavaDoc for getCurrentUser
-    public User getCurrentUser() {
-        logger.info("user with name: " + currentUser.getUsername());
-        return currentUser;
-    }
-
-    //TODO: JavaDoc for getCurrentManager
-    public Manager getCurrentManager() {
-        logger.info("manager with id: " + currentManager.getId());
-        return currentManager;
-    }
-
-    /*
-    public Part getUploadedFile() {
-        return uploadedFile;
-    }
-
-    public void setUploadedFile(Part uploadedFile) {
-        logger.info("WTF IS SET");
-        this.uploadedFile = uploadedFile;
-    }
-
-
-
-    public void processFile(){
-        logger.info("WTF IS SAVE");
-        logger.info(String.valueOf(uploadedFile));
-        try (InputStream input = uploadedFile.getInputStream()) {
-            List<List<String>> csvdata = CSVImport.addQuestionsFromCSV(input);
-            logger.info(String.valueOf(csvdata));
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-   */
-
 }
 
 

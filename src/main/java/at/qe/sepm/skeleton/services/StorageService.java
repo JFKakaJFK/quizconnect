@@ -1,9 +1,7 @@
 package at.qe.sepm.skeleton.services;
 
-//import org.primefaces.model.UploadedFile;
-
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Path;
 
 /**
@@ -21,22 +19,22 @@ public interface StorageService {
     void init() throws IOException;
 
     /**
-     * Stores a user avatar {@link UploadedFile} in the service
+     * Stores a user avatar {@link File} in the service
      *
-     * @param inputStream of file to store
+     * @param file to store
      * @return filename of the stored file, needed for retrieval of stored file
      * @throws IOException
      */
-    String storeAvatar(InputStream inputStream, String filename, String managerId) throws IOException;
+    String storeAvatar(File file, String managerId) throws IOException;
 
     /**
-     * Stores an answer file {@link UploadedFile} in the service
+     * Stores an answer {@link File} in the service
      *
-     * @param inputStream of file to store
+     * @param file to store
      * @return filename of the stored file, needed for retrieval of stored file
      * @throws IOException
      */
-    String storeAnswer(InputStream inputStream, String filename, String managerId) throws IOException;
+    String storeAnswer(File file, String managerId) throws IOException;
 
     /**
      * Returns a stored avatar
