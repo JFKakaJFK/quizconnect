@@ -20,6 +20,8 @@ public class AssignQuestionEvent extends ServerEvent {
     public AssignQuestionEvent(){}
 
     public AssignQuestionEvent(ActiveQuestion aq){
+        // Note: QuestionSet is not set since DB call would be needed & info not needed in frontend
+        // TODO: remove attribute QuestionSet
         Question q = aq.question;
         this.questionId = q.getId();
         this.type = q.getType();
@@ -30,15 +32,15 @@ public class AssignQuestionEvent extends ServerEvent {
 
         answers.add(new AnswerJSON(0, q.getRightAnswerString(), aq.playerAnswer.getId()));
         if(aq.playersWrongAnswers == null || aq.playersWrongAnswers.size() == 0) return;
-        answers.add(new AnswerJSON(1, q.getWrongAnswerString_1(), aq.playersWrongAnswers.get(1).getId()));
+        answers.add(new AnswerJSON(1, q.getWrongAnswerString_1(), aq.playersWrongAnswers.get(0).getId()));
         if(aq.playersWrongAnswers.size() == 1) return;
-        answers.add(new AnswerJSON(2, q.getWrongAnswerString_2(), aq.playersWrongAnswers.get(2).getId()));
+        answers.add(new AnswerJSON(2, q.getWrongAnswerString_2(), aq.playersWrongAnswers.get(1).getId()));
         if(aq.playersWrongAnswers.size() == 2) return;
-        answers.add(new AnswerJSON(3, q.getWrongAnswerString_3(), aq.playersWrongAnswers.get(3).getId()));
+        answers.add(new AnswerJSON(3, q.getWrongAnswerString_3(), aq.playersWrongAnswers.get(2).getId()));
         if(aq.playersWrongAnswers.size() == 3) return;
-        answers.add(new AnswerJSON(4, q.getWrongAnswerString_4(), aq.playersWrongAnswers.get(4).getId()));
+        answers.add(new AnswerJSON(4, q.getWrongAnswerString_4(), aq.playersWrongAnswers.get(3).getId()));
         if(aq.playersWrongAnswers.size() == 4) return;
-        answers.add(new AnswerJSON(5, q.getWrongAnswerString_5(), aq.playersWrongAnswers.get(5).getId()));
+        answers.add(new AnswerJSON(5, q.getWrongAnswerString_5(), aq.playersWrongAnswers.get(4).getId()));
 
     }
 

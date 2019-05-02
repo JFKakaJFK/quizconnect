@@ -54,18 +54,5 @@ const setState = (newState) => {
   state = Object.assign(state, newState, { info: Object.assign(state.info, newState.info) }, { game: Object.assign(state.game, newState.game)});
   console.log("merged", state);
 
-  if(state.timeoutIsActive){
-    // TODO show modal
-    renderTimeOutModal(state.timeoutRemainingTime);
-  }
-  if(state.state === INGAME){
-    renderGame(state)
-  } else if(state.state === LOBBY){
-    renderLobby(state)
-  } else if(state.state === FINISHED){
-    window.location.href = `${URL_FINISH}?score=${state.game.score}`
-  }
-  if(state.game.answers.length > MAX_ANSWERS){
-    console.error(`ERROR: only ${MAX_ANSWERS} answers allowed (currently: ${state.game.answers.length})`)
-  }
+  render(state);
 };

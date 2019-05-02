@@ -63,6 +63,11 @@ public interface IPlayerAction
 	 * Returns the number of Jokers remaining in the QR.
 	 */
 	public int getNumberOfJokers();
+	
+	/**
+	 * Returns true if the {@link QuizRoom} is in 'waiting for players' mode, false if game is currently ongoing.
+	 */
+	public boolean isRoomInWaitingMode();
 
 	/*
 	 * ### ALL FUNCTIONS BENEATH THIS POINT MUST PROVIDE A REFERENCE TO THE PLAYER WHO MAKES THE CALL! NECCESSARY TO DIFFERENTIATE PLAYERS IN THE QUIZROOM. ###

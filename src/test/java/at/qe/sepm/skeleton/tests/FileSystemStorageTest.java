@@ -87,9 +87,8 @@ public class FileSystemStorageTest {
     @Test
     public void testStoreAvatar() throws IOException {
         String rightPath = avatars.toString();
-        InputStream is = new FileInputStream(testFile);
 
-        String stored = fileSystemStorageService.storeAvatar(is, testFile.getName(), manager);
+        String stored = fileSystemStorageService.storeAvatar(testFile, manager);
 
         Assert.assertTrue("Stored file exists", Files.exists(avatars.resolve(stored)));
         Assert.assertTrue("Stored file has right path", avatars.resolve(stored).toString().contains(rightPath));
@@ -102,9 +101,8 @@ public class FileSystemStorageTest {
     @Test
     public void testStoreAnswer() throws IOException {
         String rightPath = answers.toString();
-        InputStream inputStream = new FileInputStream(testFile);
 
-        String stored = fileSystemStorageService.storeAnswer(inputStream, testFile.getName(), manager);
+        String stored = fileSystemStorageService.storeAnswer(testFile, manager);
 
         Assert.assertTrue("Stored answer exists", Files.exists(answers.resolve(stored)));
         Assert.assertTrue("Stored answer has right path", answers.resolve(stored).toString().contains(rightPath));
@@ -117,24 +115,21 @@ public class FileSystemStorageTest {
     @Test(expected = NullPointerException.class)
     public void testEmptyAvatar() throws IOException {
         File testFile = folder.newFile("testPic.jpg");
-        InputStream is = new FileInputStream(testFile);
 
-        fileSystemStorageService.storeAvatar(is, testFile.getName(), manager);
+        fileSystemStorageService.storeAvatar(testFile, manager);
     }
 
     @Test(expected = NullPointerException.class)
     public void testEmptyAnswer() throws IOException {
         File testFile = folder.newFile("testPic.jpg");
-        InputStream is = new FileInputStream(testFile);
 
-        fileSystemStorageService.storeAnswer(is, testFile.getName(), manager);
+        fileSystemStorageService.storeAnswer(testFile, manager);
     }
 
     @Test
     public void testLoadAvatar() throws IOException {
-        InputStream inputStream = new FileInputStream(testFile);
 
-        String stored = fileSystemStorageService.storeAvatar(inputStream,  testFile.getName(), manager);
+        String stored = fileSystemStorageService.storeAvatar(testFile, manager);
 
         Path loaded = fileSystemStorageService.loadAvatar(stored);
 
@@ -165,13 +160,11 @@ public class FileSystemStorageTest {
 
     @Test
     public void testLoadAnswer() throws IOException {
-        InputStream inputStream = new FileInputStream(testFile);
-
-        String stored = fileSystemStorageService.storeAnswer(inputStream,  testFile.getName(), manager);
+        String stored = fileSystemStorageService.storeAnswer(testFile, manager);
 
         Path loaded = fileSystemStorageService.loadAnswer(stored);
 
-        Assert.assertTrue("Retrieved aanswer exists", Files.exists(loaded));
+        Assert.assertTrue("Retrieved answer exists", Files.exists(loaded));
         Assert.assertTrue("Retrieved file is non empty", loaded.toFile().length() > 0);
         Assert.assertEquals("Retrieved file is of right type", answerType, FilenameUtils.getExtension(loaded.toString()));
 
@@ -179,10 +172,8 @@ public class FileSystemStorageTest {
     }
 
     @Test
-    public void testDeleteAvatar() throws IOException {
-        InputStream inputStream = new FileInputStream(testFile);
-
-        String stored = fileSystemStorageService.storeAvatar(inputStream,  testFile.getName(), manager);
+    public void testDeleteAvatar() {
+        String stored = fileSystemStorageService.storeAvatar(testFile, manager);
 
         fileSystemStorageService.deleteAvatar(stored);
 
@@ -190,10 +181,9 @@ public class FileSystemStorageTest {
     }
 
     @Test
-    public void testDeleteAnswer() throws IOException {
-        InputStream inputStream = new FileInputStream(testFile);
+    public void testDeleteAnswer() {
 
-        String stored = fileSystemStorageService.storeAnswer(inputStream,  testFile.getName(), manager);
+        String stored = fileSystemStorageService.storeAnswer(testFile, manager);
 
         fileSystemStorageService.deleteAnswer(stored);
 

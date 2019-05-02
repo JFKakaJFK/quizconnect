@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -14,8 +15,9 @@ import java.io.Serializable;
  *
  * @author Simon Jenewein
  */
-@Component
-@Scope("request")
+
+@Controller
+
 public class MessageBean implements Serializable {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -35,7 +37,14 @@ public class MessageBean implements Serializable {
         }
     }
 
-
+    public void showGlobalInformation(String text) {
+        logger.info("messageBean called with global and text: "+text);
+        if(FacesContext.getCurrentInstance() != null) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", text)
+            );
+        }
+    }
     /**
      * Show error message
      * @param id
@@ -47,5 +56,10 @@ public class MessageBean implements Serializable {
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Fehler", text)
             );
         }
+    }
+
+    public void updateComponent(String id) {
+        logger.info("updating component: " + id);
+        FacesContext.getCurrentInstance().getPartialViewContext().getRenderIds().add(id);
     }
 }
