@@ -521,6 +521,11 @@ public class QuizRoom implements IPlayerAction
 	 */
 	private synchronized void _distributeQuestion()
 	{
+		if (wfpMode)
+		{ // game has ended (or somehow in call in wfp mode), ignore call
+			return;
+		}
+		
 		// check if too many questions in play
 		if (activeByQuestionId.keySet().size() >= players.size())
 		{
