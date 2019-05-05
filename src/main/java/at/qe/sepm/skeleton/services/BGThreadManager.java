@@ -1,35 +1,23 @@
-package at.qe.sepm.skeleton.timed;
+package at.qe.sepm.skeleton.services;
 
 import java.util.Arrays;
 import java.util.List;
 
+import at.qe.sepm.skeleton.services.DataGeneratorServiceSEPM;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Component;
 
-import at.qe.sepm.skeleton.services.DataGeneratorService;
-
-/**
- * Manager class for starting / scheduling {@link BGThread}s on server startup.
- * 
- * @author Lorenz_Smidt
- *
- */
 @Component
 @Scope("application")
 public class BGThreadManager implements ApplicationListener<ContextRefreshedEvent>
 {
-	@Autowired
-	BGThread thread;
+
 	
 	@Autowired
-	ThreadPoolTaskScheduler taskScheduler;
-	
-	@Autowired
-	DataGeneratorService dataGenService;
+	DataGeneratorServiceSEPM dataGenService;
 	
 	private boolean threadStarted = false;
 	
@@ -42,13 +30,6 @@ public class BGThreadManager implements ApplicationListener<ContextRefreshedEven
 			if (!isJUnitTest())
 			{
 				dataGenService.generateData(); // call data gen
-				
-				// if data gen active, don't start BGThread
-				if (!DataGeneratorService.enabled)
-				{
-					taskScheduler.scheduleAtFixedRate(thread, 60000);
-					// taskScheduler.scheduleAtFixedRate(thread, 10000); // for debug purposes
-				}
 			}
 			
 			threadStarted = true;
