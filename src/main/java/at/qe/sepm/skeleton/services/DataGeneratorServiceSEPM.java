@@ -14,10 +14,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 
-import java.net.Authenticator;
+
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
+
+/**
+ * Service for generating test data
+ *
+ * @author Simon Triendl
+ */
 
 @Component
 @Scope("application")
@@ -47,6 +53,7 @@ public class DataGeneratorServiceSEPM {
     @Autowired
     QuestionSetPerformanceService questionSetPerformanceService;
 
+
     public void generateData(){
         if(!enabled){
             return;
@@ -56,32 +63,59 @@ public class DataGeneratorServiceSEPM {
 
         AuthenticationUtil.configureAuthentication("MANAGER");
 
-        generateUser(random.nextInt(20 * countMultiplier) + (30 * countMultiplier));
+        generatePlayer(random.nextInt(20 * countMultiplier) + (30 * countMultiplier));
+
+        generateManager(random.nextInt(5 * countMultiplier) + (10 * countMultiplier));
 
         AuthenticationUtil.clearAuthentication();
 
     }
 
-    private void generateUser(int count){
+    /**
+     * Method to generate a User
+     * Formally used  at generatePlayer and generateManager
+     * Not needed since saveNewPlayer and saveNewManager create a User
+     * @param numUser
+     * @return
+     */
+    private User generateUser(int numUser){
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(6);
-        Set<UserRole> roles = new HashSet<>();
-        roles.add(UserRole.PLAYER);
+
+        User user = new User();
+        user.setUsername("GeneratedUser" + numUser);
+        user.setPassword(passwordEncoder.encode("passwd" + numUser));
+        user.setEnabled(true);
+
+        userService.saveUser(user);
+
+        return user;
+    }
+
+
+    private void generatePlayer(int count){
         for (int i = 1; i <= count; i++){
 
-            Manager manager = managerService.getManagerById(101);
+            Manager creator = managerService.getManagerById(101);
 
-            User user = new User();
-            user.setUsername("GeneratedUser" + i);
-            user.setPassword(passwordEncoder.encode("passwd" + i));
-            user.setEnabled(true);
-            user.setManager(manager);
-            userService.saveUser(user);
+            Player player = new Player();
+            player.setCreator(creator);
 
-            //if (i == (int) (count * 0.1)) {
-             //   roles.add(UserRole.MANAGER);
-            //}
+            playerService.saveNewPlayer(player, "GeneratedName" + i, "passwd" + i);
         }
 
-        logger.info("> generated " + count + " users");
+        logger.info(count + " Player have been created");
+    }
+
+    private void generateManager(int count){
+        for (int i = 0; i <= count; i++){
+
+            Manager manager = new Manager();
+            manager.setEmail("generatedMail@test.com" + i);
+            manager.setInstitution("generatedInst" + i);
+
+            managerService.saveNewManager(manager, "passwd" + i);
+        }
+
+        logger.info(count + " Manager have been created");
     }
 }
