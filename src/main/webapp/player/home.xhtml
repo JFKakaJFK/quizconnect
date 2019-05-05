@@ -8,13 +8,14 @@
                 xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
                 xmlns:jsf="http://xmlns.jcp.org/jsf"
                 template="/WEB-INF/templates/main.xhtml">
-    <ui:define name ="content">
+    <ui:define name="site-specific-css">
         <link rel="stylesheet" href="../resources/css/phome.css" />
-        <!-- TODO: import in head -->
         <script type="text/javascript" src="../resources/quizconnect/js/QCUpload.js"></script>
+    </ui:define>
 
+    <ui:define name ="content">
 
-        <form jsf:id="formId" >
+        <form jsf:id="formId" action="">
 
             <h:panelGroup layout="block" styleClass="home-grid">
 
@@ -55,7 +56,6 @@
                       closeAction="#{changeAvatarBean.abort}"
                       abortAction="#{changeAvatarBean.abort}"
                       confirmAction="#{changeAvatarBean.saveAvatar}"
-                      closeOnConfirm="#{true}"
                       update="@form"
                       bodyId="body"
                       footerId="footer"
@@ -67,11 +67,10 @@
                     <h:graphicImage p:id="preview" value="#{avatarBean.getAvatar((changeAvatarBean.filename == null ? sessionInfoBean.currentUser.player.avatarPath : changeAvatarBean.filename))}" alt="avatar" />
                 </div>
 
-                <qc:upload id="file" target="file"
-                           endpoint="/upload/avatars" formId="formId"
+                <qc:upload target="#{changeAvatarBean.file}"
+                           listener="#{changeAvatarBean.handleFileUpload}"
                            accept="image/*" update=":formId:modal:body :formId:modal:footer"
-                           styleClass="jsf-hide" />
-                <label for="file" class="btn btn-primary">Upload Avatar</label>
+                           text="Upload Avatar" />
 
             </qc:modal>
 

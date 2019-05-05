@@ -101,6 +101,15 @@ public class QuestionSetServiceTest {
         Assert.assertTrue("Wrong number of Players loaded",questionSets.size() > 0);
     }
 
+    @Test
+    @WithMockUser(username = "user1", authorities = { "MANAGER" })
+    public void testGetQuestionById()
+    {
+        QuestionSet questionSet = questionSetService.getQuestionSetById(300);
+        Assert.assertNotNull("QuestionSets not loaded!", questionSet);
+        Assert.assertEquals("Wrong set loaded",300, (int) questionSet.getId());
+    }
+
     @Test(expected = IllegalArgumentException.class)
     @WithMockUser(username = "user1", authorities = { "MANAGER" })
     public void testSaveQuestionSetNullSet() {

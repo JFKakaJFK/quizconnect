@@ -39,9 +39,10 @@ public class QuizRoom implements IPlayerAction
 	private final long roomStartDelay = 5000; // time between all Players ready and game start
 	
 	private final int defaultNumberJokers = 1; // number of jokers to start with
-	private final int playerAnswerSlots = 6;
+	private final int playerAnswerSlots = 6; // number of answers a Player can have at most
 	private final int maxQuestions = 30; // maximum number of questions until game ends
 	
+	// constants while QR exists
 	private int pin;
 	private int maxPlayers;
 	private QuizRoomManager manager;
@@ -58,6 +59,7 @@ public class QuizRoom implements IPlayerAction
 	private volatile List<Question> questionsPoolHard; // list of all unused hard questions
 	private volatile int completedQuestions; // total number of answered questions
 	private volatile int correctlyAnsweredQuestions; // number of correctly answered questions
+	private volatile int missingQuestions; // number of players without questions (used for hot-joining the room)
 	
 	private volatile List<Player> players; // players in the room
 	private IRoomAction playerInterface; // interface for all players
@@ -117,6 +119,7 @@ public class QuizRoom implements IPlayerAction
 		numReshuffleJokers = defaultNumberJokers;
 		completedQuestions = 0;
 		correctlyAnsweredQuestions = 0;
+		missingQuestions = 0;
 		score = 0;
 		
 		activeQuestions = new LinkedList<>();
@@ -259,6 +262,7 @@ public class QuizRoom implements IPlayerAction
 	 */
 	private synchronized void checkQuestionTimes(long deltaTime)
 	{
+		int missing = 0;
 		for (int i = activeQuestions.size() - 1; i >= 0; i--)
 		{
 			activeQuestions.get(i).timeRemaining -= deltaTime;
@@ -266,7 +270,13 @@ public class QuizRoom implements IPlayerAction
 			{ // question time elapsed, remove
 				completedQuestions++;
 				removeQuestion(activeQuestions.get(i));
+				missing++;
 			}
+		}
+		
+		for (int i = 0; i < missing; i++)
+		{
+			distributeQuestion();
 		}
 	}
 	
@@ -340,9 +350,14 @@ public class QuizRoom implements IPlayerAction
 	 */
 	public synchronized boolean addPlayer(Player player)
 	{
-		if (players.size() == maxPlayers || (players.contains(player)))
+		if (players.contains(player))
 		{
-			return true;
+			throw new IllegalArgumentException("Player already in QuizRoom");
+		}
+		if (players.size() == maxPlayers)
+		{
+			throw new IllegalArgumentException("QuizRoom already full! (" + players.size() + "/" + maxPlayers + ")");
+			// return true;
 		}
 		
 		players.add(player);
@@ -352,6 +367,17 @@ public class QuizRoom implements IPlayerAction
 		eventCall(x -> {
 			x.onPlayerJoin(pin, player);
 		});
+		
+		// hot-join
+		if (!wfpMode)
+		{
+			long now = new Date().getTime();
+			playerActivityTimestamps.put(player, now);
+			playerAlivePingTimestamps.put(player, now);
+			
+			// add additional question to distribute on next call
+			missingQuestions++;
+		}
 		
 		return false;
 	}
@@ -445,11 +471,8 @@ public class QuizRoom implements IPlayerAction
 			x.onGameStart(pin);
 		});
 		
-		// distribute questions to all players
-		for (int i = 0; i < players.size(); i++)
-		{
-			distributeQuestion();
-		}
+		missingQuestions = players.size() - 1;
+		distributeQuestion();
 	}
 	
 	/**
@@ -457,6 +480,10 @@ public class QuizRoom implements IPlayerAction
 	 */
 	private void onRoomClose()
 	{
+		eventCall((x) -> {
+			x.onGameEnd(pin);
+		});
+		
 		// TODO update player stats
 		
 		timerFrameUpdate.stop();
@@ -466,16 +493,33 @@ public class QuizRoom implements IPlayerAction
 	}
 	
 	/**
-	 * Takes a random unused question and assigns it to players with open slots. Question selection is dependent on room difficulty and available questions.
+	 * Takes a random unused question and assigns it to players with open slots. Question selection is dependent on room difficulty and available questions. Processes missing Questions on call.
 	 */
 	private synchronized void distributeQuestion()
 	{
+		_distributeQuestion();
+		while (missingQuestions > 0)
+		{
+			_distributeQuestion();
+			missingQuestions--;
+		}
+	}
+	
+	/**
+	 * INTERNAL ONLY! Called by distributeQuestion to distribute an individual Question.
+	 */
+	private synchronized void _distributeQuestion()
+	{
+		// check if too many questions in play
+		if (activeByQuestionId.keySet().size() >= players.size())
+		{
+			LOGGER.error("### ERROR ### distributing more questions than Players in game!");
+			return;
+		}
+		
 		AbstractMap.SimpleEntry<Question, QuestionSetDifficulty> pair = selectQuestion();
 		if (pair == null)
-		{
-			eventCall(x -> {
-				x.onGameEnd(pin);
-			});
+		{ // close when no more Questions available or if maximum number of Questions answered.
 			onRoomClose();
 		}
 		
@@ -743,6 +787,12 @@ public class QuizRoom implements IPlayerAction
 	}
 	
 	@Override
+	public boolean isRoomInWaitingMode()
+	{
+		return wfpMode;
+	}
+	
+	@Override
 	public synchronized void readyUp(Player p)
 	{
 		if (!wfpMode)
@@ -776,7 +826,7 @@ public class QuizRoom implements IPlayerAction
 			return;
 		}
 		
-		if (!activeByQuestionId.containsKey(index))
+		if (!activeByQuestionId.containsKey(questionId))
 		{
 			LOGGER.debug(
 					"### WARNING ### Answer Question call from Player " + p.getId() + " on already removed ActiveQuestion (qid: " + questionId + ")");

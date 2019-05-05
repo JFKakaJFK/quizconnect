@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -84,8 +86,8 @@ public class FileSystemStorageService implements StorageService {
      * @throws IOException
      */
     @Override
-    public String storeAvatar(InputStream inputStream, String filename, String managerId) {
-        return store(inputStream, filename, managerId, avatars, avatarSize, avatarType);
+    public String storeAvatar(File file, String managerId) {
+        return store(file, managerId, avatars, avatarSize, avatarType);
     }
 
     /**
@@ -95,26 +97,25 @@ public class FileSystemStorageService implements StorageService {
      * @throws IOException
      */
     @Override
-    public String storeAnswer(InputStream inputStream, String filename, String managerId) {
-        return store(inputStream, filename, managerId, answers, answerSize, answerType);
+    public String storeAnswer(File file, String managerId) {
+        return store(file, managerId, answers, answerSize, answerType);
     }
 
     /**
      * First stores the stream contents in a temporary directory, resizes the image and
      * then saves it to {root}/{managerId}/{uniqueFilename.ext}
-     * @param inputStream
-     * @param filename
+     * @param file
      * @param managerId
      * @param root
      * @param size
      * @return
      */
-    private String store(InputStream inputStream, String filename, String managerId, Path root, int size, String type){
-        String extension = FilenameUtils.getExtension(filename);
+    private String store(File file, String managerId, Path root, int size, String type){
+        String extension = FilenameUtils.getExtension(file.getName());
 
         Path tempFile = null;
         Path filePath;
-        try {
+        try(InputStream inputStream = new FileInputStream(file)) {
             tempFile = Files.createTempFile(temp, "answer", "." + extension);
             Files.copy(inputStream, tempFile, StandardCopyOption.REPLACE_EXISTING);
             Files.createDirectories(root.resolve(managerId));

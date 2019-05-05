@@ -55,6 +55,9 @@ const cancelTimeout = () => {
   if(state.timeoutTimer){ // TODO do w/ setState?!!
     clearInterval(state.timeoutTimer);
     state.timeoutTimer = null;
+    setState({
+      timeoutIsActive: false,
+    })
   }
   // remove event listeners
   document.removeEventListener('click', cancelTimeout);
