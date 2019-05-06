@@ -2,17 +2,12 @@ package at.qe.sepm.skeleton.ui.beans;
 
 import at.qe.sepm.skeleton.model.Player;
 import at.qe.sepm.skeleton.model.User;
-import at.qe.sepm.skeleton.services.ManagerService;
 import at.qe.sepm.skeleton.services.PlayerService;
-import com.sun.xml.internal.bind.v2.TODO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
-import javax.annotation.ManagedBean;
-import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
-import javax.faces.event.ValueChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
