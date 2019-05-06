@@ -60,4 +60,5 @@ public class Main extends SpringBootServletInitializer {
             storageService.init();
         };
     }
+
 }

@@ -22,6 +22,8 @@ package at.qe.sepm.skeleton.tests;
 
 /**
  * Tests for the {@link QuestionSetService}
+ *
+ * @author Simon Triendl
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)
