@@ -1,0 +1,47 @@
+.modal {
+    --border-radius: 16px;
+}
+
+.modal-dialog {
+
+}
+
+.modal-content {
+    background: transparent;
+}
+
+.modal-header {
+    background: var(--col-1-m);
+    border-bottom: 0;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+}
+
+.modal-title {
+
+}
+
+.modal-body {
+    background: var(--col-1-d);
+}
+
+.modal-footer {
+    border-top: 0;
+    background: var(--col-1-m);
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+}
+
+.modal-warning .modal-header, .modal-warning .modal-body, .modal-warning .modal-footer {
+    background-color: var(--warning);
+}
+
+.modal-error .modal-header, .modal-error .modal-body, .modal-error .modal-footer {
+    background-color: var(--error);
+}
+
+.modal-success .modal-header, .modal-success .modal-body, .modal-success .modal-footer {
+    background-color: var(--success);
+}
+
+.modal-question .modal-header, .modal-question .modal-body, .modal-question .modal-footer {
+    background-color: var(--warning);
+}

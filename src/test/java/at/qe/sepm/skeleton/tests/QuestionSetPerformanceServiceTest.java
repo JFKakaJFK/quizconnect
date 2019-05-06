@@ -14,14 +14,19 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import java.util.List;
+
 /**
- * Tests for the {@link QuestionSetPerfService}
+ * Tests for the {@link QuestionSetPerformanceService}
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @WebAppConfiguration
 public class QuestionSetPerformanceServiceTest {
+    @Autowired
+    UserService userService;
+
     @Autowired
     QuestionSetPerformanceService questionSetPerformanceService;
     @Autowired
@@ -46,6 +51,17 @@ public class QuestionSetPerformanceServiceTest {
     private QuestionSet questionSet;
     private Player player;
     private QuestionSetPerformance questionSetPerformance;
+
+    @Test
+    @WithMockUser(username = "user1", authorities = { "MANAGER" })
+    public void testGetQuestionSetPerfsOfPlayer()
+    {
+        User p = userService.loadUser("user3");
+        // TODO add QSetPerf and test again
+        List<QuestionSetPerformance> perfs = questionSetPerformanceService.getQuestionSetPerformancesOfPlayer(p.getPlayer());
+        Assert.assertNotNull("QuestionSets not loaded!", perfs);
+        //Assert.assertEquals("Wrong number of Players loaded", 3, questionSets.size());
+    }
 
     @Before
     @WithMockUser(username = "user1", authorities = { "MANAGER" })

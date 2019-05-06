@@ -37,7 +37,7 @@ public class UserServiceTest {
     @Test
 	@WithMockUser(username = "user1", authorities = { "MANAGER" })
     public void testDatainitialization() {
-		Assert.assertEquals("Insufficient amount of users initialized for test data source", 7, userService.getAllUsers().size());
+		Assert.assertEquals("Insufficient amount of users initialized for test data source", 8, userService.getAllUsers().size());
         for (User user : userService.getAllUsers()) {
 			if ("user1".equals(user.getUsername()))
 			{
@@ -74,6 +74,11 @@ public class UserServiceTest {
 				Assert.assertTrue("User \"user7\" does not have role PLAYER", user.getRole().equals(UserRole.PLAYER));
 				Assert.assertNotNull("User \"user7\" does not have a createDate defined", user.getCreateDate());
 			}
+			else if ("veryLongUserName".equals(user.getUsername()))
+			{
+				Assert.assertTrue("User \"veryLongUserName\" does not have role PLAYER", user.getRole().equals(UserRole.PLAYER));
+				Assert.assertNotNull("User \"veryLongUserName7\" does not have a createDate defined", user.getCreateDate());
+			}
 			else
 			{
                 Assert.fail("Unknown user \"" + user.getUsername() + "\" loaded from test data source via UserService.getAllUsers");
@@ -92,7 +97,7 @@ public class UserServiceTest {
 
         userService.deleteUser(toBeDeletedUser);
 
-		Assert.assertEquals("No user has been deleted after calling UserService.deleteUser", 6, userService.getAllUsers().size());
+		Assert.assertEquals("No user has been deleted after calling UserService.deleteUser", 7, userService.getAllUsers().size());
 		User deletedUser = userService.loadUser("user2");
 		Assert.assertNull("Deleted User2 could still be loaded from test data source via UserService.loadUser", deletedUser);
 

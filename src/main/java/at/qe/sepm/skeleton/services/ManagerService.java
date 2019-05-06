@@ -2,12 +2,14 @@ package at.qe.sepm.skeleton.services;
 
 import java.util.Collection;
 
+import at.qe.sepm.skeleton.model.QuestionSet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
 import at.qe.sepm.skeleton.model.Manager;
+import at.qe.sepm.skeleton.model.Player;
 import at.qe.sepm.skeleton.model.User;
 import at.qe.sepm.skeleton.repositories.ManagerRepository;
 
@@ -50,6 +52,31 @@ public class ManagerService
 		return managerRepository.findOne(id);
 	}
 	
+	/**
+	 * Returns the creator {@link Manager} of a {@link Player}.
+	 * 
+	 * @param player
+	 * @return
+	 */
+	@PreAuthorize("hasAuthority('PLAYER') or hasAuthority('MANAGER')")
+	public Manager getManagerOfPlayer(Player player)
+	{
+		return managerRepository.findByCreatedPlayers(player);
+	}
+
+	/**
+	 * Returns the creator {@link Manager} of a {@link QuestionSet}.
+	 *
+	 * @param questionSet
+	 * @return
+	 */
+	@PreAuthorize("hasAuthority('PLAYER') or hasAuthority('MANAGER')")
+	public Manager getManagerOfQuestionSet(QuestionSet questionSet)
+	{
+		return managerRepository.findByCreatedQuestionSets(questionSet);
+	}
+
+
 	/**
 	 * Saves the {@link Manager} to the database. Throws an IllegalArgumentException if any consistency checks fail. Use 'saveNewManager' to create a new Manager.
 	 * 

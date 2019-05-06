@@ -1,0 +1,167 @@
+/* Grid around playerboxes*/
+
+.players {
+    display: grid;
+    grid-gap: 1rem;
+    padding: 1rem;
+}
+
+@media only screen and (min-width: 768px){
+    .players {
+        grid-template-columns: 1fr 1fr;
+        max-width: 1072px;
+        margin: 0 auto;
+    }
+}
+
+@media only screen and (min-width: 1200px){
+    .players {
+        grid-template-columns: 1fr 1fr 1fr;
+        max-width: 1440px;
+    }
+}
+
+/* Boxes */
+
+.playerbox {
+    --border: 2px;
+    --border-online: 3px;
+    background: var(--pb-bg);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    box-sizing: border-box;
+    border: var(--border) solid transparent;
+    background-clip: padding-box;
+    border-radius: 16px;
+    position: relative;
+}
+
+.playerbox:before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0; bottom: 0; left: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: var(--col-1-m);
+    margin: calc(0px - var(--border));
+}
+
+/* Avatar */
+
+.playerbox-avatar {
+    background: var(--pb-avatar);
+    box-sizing: content-box;
+    width: 5rem;
+    height: 5rem;
+    border-radius: 50%;
+    overflow: hidden;
+    transition: border .25s ease-in-out;
+}
+
+.playerbox[data-ingame="true"] .playerbox-avatar {
+    border: var(--border-online) solid var(--pb-ingame);
+}
+
+/* TODO: delete or set */
+.playerbox[data-ingame="false"] .playerbox-avatar {
+    border: var(--border-online) solid var(--pb-bg);
+}
+
+.playerbox-avatar img {
+    width: 100%;
+    height: 100%;
+}
+
+@media only screen and (max-width: 320px){
+    .playerbox-avatar {
+        display: none;
+    }
+}
+
+/* Info */
+
+.playerbox-info {
+    flex: 1;
+}
+
+.playerbox-info-name h3 {
+    display: inline-block;
+    max-width: 62.5vw;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@media only screen and (min-width: 320px){
+    .players .playerbox-info-name h3 {
+        max-width: 40vw;
+    }
+}
+
+@media only screen and (min-width: 768px){
+    .players .playerbox-info-name h3 {
+        max-width: 18.5vw;
+    }
+}
+
+@media only screen and (min-width: 1072px){
+    .players .playerbox-info-name h3 {
+        max-width: 125px;
+    }
+}
+
+@media only screen and (min-width: 1200px){
+    .players .playerbox-info-name h3 {
+        max-width: 12.5vw;
+    }
+}
+
+@media only screen and (min-width: 1440px){
+    .players .playerbox-info-name h3 {
+        max-width: 200px;
+    }
+}
+
+.playerbox-info-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+}
+
+@media only screen and (max-width: 450px) {
+    .playerbox-info-row {
+        flex-direction: column;
+        align-items: flex-start;
+
+    }
+    .playerbox-info-row .stat h3 {
+        text-align: left;
+    }
+    .playerbox-info .stat p {
+        display: none;
+    }
+}
+
+/* Actions */
+
+.playerbox-actions {
+    line-height: 1.25rem;
+    height: 1.25rem;
+}
+
+.playerbox-actions svg {
+    width: initial;
+}
+
+.playerbox-actions a,
+.playerbox-actions a:link,
+.playerbox-actions a:visited {
+    color: var(--pb-actions);
+    border-radius: 100%;
+}
+
+.playerbox-actions a:hover,
+.playerbox-actions a:active {
+    color: var(--pb-actions-active);
+}

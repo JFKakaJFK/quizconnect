@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://java.sun.com/jsf/composite"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xml:lang="en"
+      lang="en">
+<cc:interface>
+
+    <!--=============================================
+
+    !!!!!!!!!!!!       IMPORTANT         !!!!!!!!!!!!
+
+    1. h:form needs enctype="multipart/form-data"
+    2. QCUpload.js needs to be imported
+    3. The backing bean must have a property of type
+       java.io.File w/ Getters & Setters
+    4. The backing bean must have a method which
+       handles upload events
+
+    ===============    ATTRIBUTES    ================
+
+    - accept ... HTML5 input[type="file"] accept attr
+    - target ... property of type java.io.File
+    - styleClass ... HTML class
+    - listener ... bean method (void, no args)
+    - update ... components to update
+    - text ... label text
+    - ignoreValidation ... bool indicates wheter to
+      ignore the HTML5 form validation(default = false)
+      TODO ^
+
+    ==============================================-->
+
+    <cc:attribute name="listener" required="true" method-signature="void listener()"/>
+    <cc:attribute name="target" required="true" type="java.io.File"/>
+
+    <cc:attribute name="text" required="false" default="Upload File" />
+    <cc:attribute name="accept" required="false" default="*/*" />
+    <cc:attribute name="styleClass" required="false" default=""/>
+    <cc:attribute name="update" required="false" default="@none" />
+
+</cc:interface>
+
+<cc:implementation>
+    <input type="file" accept="#{cc.attrs.accept}" name="files[]" id="#{cc.clientId}" class="jsf-hide"/>
+    <label for="#{cc.clientId}" class="btn btn-primary #{cc.attrs.styleClass}">Upload File</label>
+    <h:commandButton styleClass="upload-ajax-btn jsf-hide" action="#{cc.attrs.listener}">
+        <f:setPropertyActionListener value="#{uploadService.getUpload(sessionInfoBean.currentUser)}" target="#{cc.attrs.target}"/>
+        <f:ajax execute="@this" render="#{cc.attrs.update}" />
+    </h:commandButton>
+    <h:outputScript>
+        QCUpload.upload('#{sessionInfoBean.currentUserName}', '#{cc.clientId}');
+    </h:outputScript>
+</cc:implementation>
+</html>

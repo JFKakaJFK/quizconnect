@@ -1,7 +1,10 @@
 package at.qe.sepm.skeleton.services;
 
 import java.util.Collection;
+import java.util.List;
 
+import at.qe.sepm.skeleton.model.Manager;
+import at.qe.sepm.skeleton.model.QuestionSetPerformance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,16 +29,27 @@ public class PlayerService
 	
 	@Autowired
 	UserService userService;
-	
+
 	/**
 	 * Returns a Collection of all {@link Player}s.
 	 * 
 	 * @return
 	 */
-	@PreAuthorize("hasAuthority('MANAGER')")
+	//@PreAuthorize("hasAuthority('MANAGER')")
 	public Collection<Player> getAllPlayers()
 	{
 		return playerRepository.findAll();
+	}
+
+	/**
+	 * Returns all {@link Player}s of the {@link Manager}
+	 *
+	 * @param manager
+	 * @return
+	 */
+	@PreAuthorize("hasAuthority('MANAGER')")
+	public List<Player> getPlayersOfManager(Manager manager){
+		return playerRepository.findByCreator(manager);
 	}
 	
 	/**
@@ -44,10 +58,22 @@ public class PlayerService
 	 * @param id
 	 * @return
 	 */
-	@PreAuthorize("hasAuthority('MANAGER')")
+	//@PreAuthorize("hasAuthority('MANAGER')")
 	public Player getPlayerById(int id)
 	{
 		return playerRepository.findOne(id);
+	}
+	
+	/**
+	 * Returns a {@link Player} by its username.
+	 * 
+	 * @param username
+	 * @return
+	 */
+	@PreAuthorize("hasAuthority('MANAGER') or hasAuthority('PLAYER')")
+	public Player getPlayerByUsername(String username)
+	{
+		return playerRepository.findByUserUsername(username);
 	}
 	
 	/**
@@ -71,7 +97,7 @@ public class PlayerService
 	
 	/**
 	 * Saves a new {@link Player} to the database. Automatically creates a new {@link User} for the player using username and password. Password is expected to be already encrypted. Performs consistency
-	 * checks which may throw IllegalArgumentExceptions. For re-saving / updating {@link Players} use the 'savePlayer' function.
+	 * checks which may throw IllegalArgumentExceptions. For re-saving / updating {@link Player}s use the 'savePlayer' function.
 	 * 
 	 * @param player
 	 * @param username

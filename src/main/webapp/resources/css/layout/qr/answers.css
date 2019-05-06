@@ -1,0 +1,9 @@
+.answers {
+    display: grid;
+    grid-gap: 1rem;
+}
+
+
+.answer:hover {
+    cursor: pointer;
+}
