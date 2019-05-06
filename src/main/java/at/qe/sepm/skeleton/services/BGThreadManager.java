@@ -3,7 +3,6 @@ package at.qe.sepm.skeleton.services;
 import java.util.Arrays;
 import java.util.List;
 
-import at.qe.sepm.skeleton.services.DataGeneratorServiceSEPM;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Scope;
@@ -17,7 +16,7 @@ public class BGThreadManager implements ApplicationListener<ContextRefreshedEven
 
 	
 	@Autowired
-	DataGeneratorServiceSEPM dataGenService;
+    DataGeneratorService dataGenService;
 	
 	private boolean threadStarted = false;
 	
