@@ -168,12 +168,19 @@ const renderPlayers = ( parent, { players }) => {
   }
 };
 
+// TODO render join? is it even needed?
+
 /**
  * Renders the lobby state
  *
  * @param info
  */
 const renderLobby = ( {info} ) => {
+
+  if(ROOT.getAttribute('data-state') == null || parseInt(ROOT.getAttribute('data-state')) !== LOBBY) {
+    ROOT.setAttribute('data-state', LOBBY.toString());
+    clearScreen();
+  }
   console.info('render Lobby was called');
   console.info(info);
 
@@ -315,8 +322,13 @@ const renderJoker = (parent, jokers) => {
  */
 const renderGame = ( {game} ) => {
   // if LOBBY was rendered before, clear the ROOT node and add INGAME containers
-  if(ROOT.querySelector('.info') !== null || ROOT.querySelector('.players') !== null){
+
+  // if(ROOT.querySelector('.info') !== null || ROOT.querySelector('.players') !== null){ // TODO use data-state of ROOT instead
+
+  if(ROOT.getAttribute('data-state') == null || parseInt(ROOT.getAttribute('data-state')) !== INGAME) {
+    ROOT.setAttribute('data-state', INGAME.toString());
     clearScreen();
+
     let score = document.createElement('div');
     score.classList.add('score');
     score.classList.add('box');

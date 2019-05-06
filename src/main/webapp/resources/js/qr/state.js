@@ -9,9 +9,9 @@
  * @type {{pin: number, id: number, state: number}}
  */
 let state = {
-  pin: parseInt(localStorage.getItem('pin')),
-  id: parseInt(localStorage.getItem('playerId')), // TODO: refactor as playerId | change docs
-  state: LOBBY,
+  pin: null,
+  id: null, // TODO: refactor as playerId | change docs
+  state: JOIN,
   timeoutIsActive: false,
   timeoutRemainingTime: 0,
   timeoutTimer: null,
@@ -30,10 +30,11 @@ let state = {
 };
 
 // if pin & playerId not set, redirect to join page
+/*
 if(!state.pin || !state.id){
   window.location.href = URL_JOIN;
 }
-
+*/
 /* TODO
  * state updates
  *   - never directly: wrap in class (no information hiding -> why?)

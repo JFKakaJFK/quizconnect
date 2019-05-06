@@ -97,7 +97,7 @@ public class CreateRoomBean implements Serializable {
     public void redirectToGame(int pin) {
         try {
             FacesContext.getCurrentInstance().
-                    getExternalContext().redirect("/quizroom/join.html?pin="+pin);
+                    getExternalContext().redirect("/quizroom/index.html?pin="+pin);
         } catch (IOException e) {
             e.printStackTrace();
         }
