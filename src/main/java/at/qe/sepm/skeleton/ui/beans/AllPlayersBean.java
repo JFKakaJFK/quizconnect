@@ -4,7 +4,7 @@ import at.qe.sepm.skeleton.model.Player;
 import at.qe.sepm.skeleton.model.User;
 import at.qe.sepm.skeleton.services.ManagerService;
 import at.qe.sepm.skeleton.services.PlayerService;
-import com.sun.xml.internal.bind.v2.TODO;
+//import com.sun.xml.internal.bind.v2.TODO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
