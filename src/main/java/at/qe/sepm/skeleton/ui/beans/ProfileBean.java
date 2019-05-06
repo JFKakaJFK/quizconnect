@@ -12,13 +12,15 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @Controller
-@Scope("session")
-public class ProfileBean {
+//@Scope("session")
+@Scope("view")
+public class ProfileBean implements Serializable {
 
     private ManagerService managerService;
     private PlayerService playerService;
@@ -44,8 +46,12 @@ public class ProfileBean {
         this.managerService = managerService;
     }
 
+    // TODO should not need player as input, since this.player should be same... Player player
     public void deletePlayer(){ // TODO fix, player always null
+        System.out.println("called delete");
         if(player == null || !isDeletable()){
+            System.out.println(player);
+            System.out.println(isDeletable());
             return;
         }
         User user;
@@ -90,7 +96,5 @@ public class ProfileBean {
         return player;
     }
 
-    public void setPlayer(Player player) {
-        this.player = player;
-    }
+    public void setPlayer(Player player) {}
 }
