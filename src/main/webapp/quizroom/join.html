@@ -7,7 +7,7 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
+    <link rel="stylesheet" href="/resources/css/main.css"/>
     <title>Join Game</title>
     <style>
         body {
@@ -19,20 +19,48 @@
         }
 
         input {
+            --space: 1rem;
+
             border: 0;
+            box-sizing: border-box;
             outline: none;
             font-size: 3rem;
-            letter-spacing: 1rem;
+            line-height: 1;
+            letter-spacing: var(--space);
+            /*
+            margin-right: calc(-1 * var(--space));
+            min-width: calc(166px + (6 * var(--space)));
+            */
+            padding: 0 0 0 var(--space);
+            width: calc(166px + (8 * var(--space))); /* TODO find a better solution */
+
             display: block;
             text-align: center;
+            background: transparent;
+            font-weight: inherit;
+            color: inherit;
         }
+
+        input::placeholder {
+            color: inherit;
+        }
+
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
     </style>
 </head>
 <body>
-    <div>
-        <input id="pin" type="text" placeholder="000000" />
+    <div class="stat stat-lg">
+        <input id="pin" type="number" placeholder="000000" max="999999" min="1" />
+        <p>enter pin</p>
+        <!--
         <div id="msg" class="alert alert-danger" role="alert">
         </div>
+        -->
     </div>
 
     <!-- Optional JavaScript -->

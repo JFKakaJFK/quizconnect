@@ -39,9 +39,10 @@ public class QuizRoom implements IPlayerAction
 	private final long roomStartDelay = 5000; // time between all Players ready and game start
 	
 	private final int defaultNumberJokers = 1; // number of jokers to start with
-	private final int playerAnswerSlots = 6;
+	private final int playerAnswerSlots = 6; // number of answers a Player can have at most
 	private final int maxQuestions = 30; // maximum number of questions until game ends
 	
+	// constants while QR exists
 	private int pin;
 	private int maxPlayers;
 	private QuizRoomManager manager;
@@ -58,6 +59,7 @@ public class QuizRoom implements IPlayerAction
 	private volatile List<Question> questionsPoolHard; // list of all unused hard questions
 	private volatile int completedQuestions; // total number of answered questions
 	private volatile int correctlyAnsweredQuestions; // number of correctly answered questions
+	private volatile int missingQuestions; // number of players without questions (used for hot-joining the room)
 	
 	private volatile List<Player> players; // players in the room
 	private IRoomAction playerInterface; // interface for all players
@@ -75,7 +77,7 @@ public class QuizRoom implements IPlayerAction
 	
 	private volatile List<Player> readyPlayers; // list of players who declared themselves ready
 	private volatile boolean wfpMode; // true if the room is in 'waiting for players' mode
-	
+	private volatile boolean isJokerTimeout; // true while joker timeout is going on (= time between joker call and distribution of new questions)
 	
 	/**
 	 * Initializes a new QR.
@@ -117,6 +119,7 @@ public class QuizRoom implements IPlayerAction
 		numReshuffleJokers = defaultNumberJokers;
 		completedQuestions = 0;
 		correctlyAnsweredQuestions = 0;
+		missingQuestions = 0;
 		score = 0;
 		
 		activeQuestions = new LinkedList<>();
@@ -129,6 +132,7 @@ public class QuizRoom implements IPlayerAction
 		
 		readyPlayers = new LinkedList<>();
 		wfpMode = true;
+		isJokerTimeout = false;
 		
 		loadQuestions();
 		
@@ -196,7 +200,7 @@ public class QuizRoom implements IPlayerAction
 			timerSyncTime += deltaTime;
 			if (timerSyncTime >= timerSyncTimeStep)
 			{
-				synchonizeTimers();
+				synchronizeTimers();
 				timerSyncTime = 0;
 			}
 			
@@ -265,14 +269,16 @@ public class QuizRoom implements IPlayerAction
 			activeQuestions.get(i).timeRemaining -= deltaTime;
 			if (activeQuestions.get(i).timeRemaining <= 0)
 			{ // question time elapsed, remove
-				completedQuestions++;
+				changeScore(activeQuestions.get(i).questionDifficulty == QuestionSetDifficulty.easy ? 4 : 5, 0);
+				
 				removeQuestion(activeQuestions.get(i));
 				missing++;
 			}
 		}
 		
-		for (int i = 0; i < missing; i++)
+		if (missing > 0)
 		{
+			missingQuestions += missing - 1;
 			distributeQuestion();
 		}
 	}
@@ -330,7 +336,7 @@ public class QuizRoom implements IPlayerAction
 	/**
 	 * Called every timerSyncTimeStep, calls the onTimerSync event on all Players, sending the current remaining time on the Question timer.
 	 */
-	private synchronized void synchonizeTimers()
+	private synchronized void synchronizeTimers()
 	{
 		for (ActiveQuestion activeQuestion : activeQuestions)
 		{
@@ -364,6 +370,17 @@ public class QuizRoom implements IPlayerAction
 		eventCall(x -> {
 			x.onPlayerJoin(pin, player);
 		});
+		
+		// hot-join
+		if (!wfpMode)
+		{
+			long now = new Date().getTime();
+			playerActivityTimestamps.put(player, now);
+			playerAlivePingTimestamps.put(player, now);
+			
+			// add additional question to distribute on next call
+			missingQuestions++;
+		}
 		
 		return false;
 	}
@@ -457,11 +474,8 @@ public class QuizRoom implements IPlayerAction
 			x.onGameStart(pin);
 		});
 		
-		// distribute questions to all players
-		for (int i = 0; i < players.size(); i++)
-		{
-			distributeQuestion();
-		}
+		missingQuestions = players.size() - 1;
+		distributeQuestion();
 	}
 	
 	/**
@@ -469,25 +483,61 @@ public class QuizRoom implements IPlayerAction
 	 */
 	private void onRoomClose()
 	{
+		eventCall((x) -> {
+			x.onGameEnd(pin);
+		});
+		
 		// TODO update player stats
 		
+		delayQueue.clear();
 		timerFrameUpdate.stop();
+		wfpMode = true; // prevent processing of any frameUpdate calls on any runtime structures
 		manager.removeRoom(pin);
 
 		LOGGER.debug("QuizRoom [" + pin + "] closed after " + timerFrameUpdate.getElapsedTime() + " ms.");
 	}
 	
 	/**
-	 * Takes a random unused question and assigns it to players with open slots. Question selection is dependent on room difficulty and available questions.
+	 * Takes a random unused question and assigns it to players with open slots. Question selection is dependent on room difficulty and available questions. Processes missing Questions on call.
 	 */
 	private synchronized void distributeQuestion()
 	{
+		if (isJokerTimeout)
+		{
+			LOGGER.debug("### INFO ### distributeQuestion call while in joker timeout, ignoring.");
+			return;
+		}
+		
+		_distributeQuestion();
+		while (missingQuestions > 0)
+		{
+			_distributeQuestion();
+			missingQuestions--;
+		}
+		
+		missingQuestions = 0; // fix any negative number
+	}
+	
+	/**
+	 * INTERNAL ONLY! Called by distributeQuestion to distribute an individual Question.
+	 */
+	private synchronized void _distributeQuestion()
+	{
+		if (wfpMode)
+		{ // game has ended (or somehow in call in wfp mode), ignore call
+			return;
+		}
+		
+		// check if too many questions in play
+		if (activeByQuestionId.keySet().size() >= players.size())
+		{
+			LOGGER.error("### WARNING ### [QR " + pin + "] distributing more questions than Players in game, skipping call.");
+			return;
+		}
+		
 		AbstractMap.SimpleEntry<Question, QuestionSetDifficulty> pair = selectQuestion();
 		if (pair == null)
-		{
-			eventCall(x -> {
-				x.onGameEnd(pin);
-			});
+		{ // close when no more Questions available or if maximum number of Questions answered.
 			onRoomClose();
 		}
 		
@@ -510,8 +560,8 @@ public class QuizRoom implements IPlayerAction
 		
 		if (questionFreePlayers.size() == 0 || answerFreePlayers.size() == 0)
 		{
-			LOGGER.error("### ERROR ### no question / answer free players available in distributeQuestion! (" + questionFreePlayers.size() + "|"
-					+ answerFreePlayers.size() + ")");
+			LOGGER.error("### ERROR ### [QR " + pin + "] no question / answer free players available in distributeQuestion! (" + questionFreePlayers.size()
+					+ "|" + answerFreePlayers.size() + ")");
 			return;
 		}
 		
@@ -755,6 +805,12 @@ public class QuizRoom implements IPlayerAction
 	}
 	
 	@Override
+	public boolean isRoomInWaitingMode()
+	{
+		return wfpMode;
+	}
+	
+	@Override
 	public synchronized void readyUp(Player p)
 	{
 		if (!wfpMode)
@@ -784,14 +840,15 @@ public class QuizRoom implements IPlayerAction
 	{
 		if (!playerActivityTimestamps.containsKey(p))
 		{
-			LOGGER.error("Illegal call to answerQuestion! Player is not in QuizRoom! (id: " + p.getId() + ")");
+			LOGGER.error("### ERROR ### [QR " + pin + "] Illegal call to answerQuestion! Player is not in QuizRoom! (id: " + p.getId() + ")");
 			return;
 		}
 		
 		if (!activeByQuestionId.containsKey(questionId))
 		{
 			LOGGER.debug(
-					"### WARNING ### Answer Question call from Player " + p.getId() + " on already removed ActiveQuestion (qid: " + questionId + ")");
+					"### WARNING ### [QR " + pin + "] Answer Question call from Player " + p.getId() + " on already removed ActiveQuestion (qid: " + questionId
+							+ ")");
 			return;
 		}
 		
@@ -799,29 +856,64 @@ public class QuizRoom implements IPlayerAction
 		if (!playerAnswers.get(p).contains(q))
 		{
 			LOGGER.debug(
-					"### WARNING ### Answer Question call from Player " + p.getId() + " Question not assigned to Player! (qid: " + questionId + ")");
+					"### WARNING ### [QR " + pin + "] Answer Question call from Player " + p.getId() + " Question not assigned to Player! (qid: " + questionId
+							+ ")");
 			return;
 		}
 		
 		// register player activity
 		playerActivityTimestamps.put(p, new Date().getTime());
 		
-		completedQuestions++;
-		
 		// check if right answer
 		if (index == 0 && q.playerAnswer == p)
 		{
-			score += 100;
-			correctlyAnsweredQuestions++;
+			changeScore(q.questionDifficulty == QuestionSetDifficulty.easy ? 2 : 3, q.timeRemaining);
 		}
 		else
 		{
-			score -= 50;
+			changeScore(q.questionDifficulty == QuestionSetDifficulty.easy ? 0 : 1, q.timeRemaining);
 		}
 		removeQuestion(q);
-		eventCall(x -> x.onScoreChange(pin, score));
 		
 		distributeQuestion();
+	}
+	
+	/**
+	 * Changes the score of the room according to the change code.
+	 * 
+	 * @param code
+	 *            ChangeCode; Codes: 0 = wrong answer easy, 1 = wrong answer hard, 2 = right answer easy, 3 = right answer hard, 4 = timeout easy, 5 = timeout hard.
+	 * @param timeRemaining
+	 *            Time remaining on the Question
+	 */
+	private synchronized void changeScore(int code, long timeRemaining)
+	{
+		completedQuestions++;
+		switch (code)
+		{
+		case 0:
+			score -= (difficulty == RoomDifficulty.easy ? 50 : 75);
+			break;
+		case 1:
+			score -= (difficulty == RoomDifficulty.easy ? 75 : 100);
+			break;
+		case 2:
+			score += (difficulty == RoomDifficulty.easy ? 100 : 125) + (int) (timeRemaining / 1000);
+			correctlyAnsweredQuestions++;
+			break;
+		case 3:
+			score += (difficulty == RoomDifficulty.easy ? 125 : 150) + (int) (timeRemaining / 1000);
+			correctlyAnsweredQuestions++;
+			break;
+		case 4:
+			score -= (difficulty == RoomDifficulty.easy ? 50 : 75);
+			break;
+		case 5:
+			score -= (difficulty == RoomDifficulty.easy ? 75 : 100);
+			break;
+		}
+		
+		eventCall(x -> x.onScoreChange(pin, score));
 	}
 	
 	@Override
@@ -850,12 +942,14 @@ public class QuizRoom implements IPlayerAction
 			removeQuestion(aq);
 		}
 		
+		// prevent delayed calls to distributing questions before joker timeout has finished
+		isJokerTimeout = true;
+		
 		// wait 1 second, then assign new questions to all players
 		addDelayedAction(new DelayedAction((new Date().getTime()) + 1000, () -> {
-			for (int i = 0; i < players.size(); i++)
-			{
-				distributeQuestion();
-			}
+			isJokerTimeout = false;
+			missingQuestions = players.size() - 1;
+			distributeQuestion();
 		}));
 	}
 	
@@ -864,7 +958,7 @@ public class QuizRoom implements IPlayerAction
 	{
 		if (!playerActivityTimestamps.containsKey(p))
 		{
-			LOGGER.error("Illegal call to cancelTimeout! Player is not in QuizRoom! (id: " + p.getId() + ")");
+			LOGGER.error("### ERROR ### [QR " + pin + "] Illegal call to cancelTimeout! Player is not in QuizRoom! (id: " + p.getId() + ")");
 			return;
 		}
 		
@@ -878,7 +972,7 @@ public class QuizRoom implements IPlayerAction
 	{
 		if (!players.contains(p))
 		{
-			LOGGER.error("Illegal call to leaveRoom! Player is not in QuizRoom! (id: " + p.getId() + ")");
+			LOGGER.error("### ERROR ### [QR " + pin + "] Illegal call to leaveRoom! Player is not in QuizRoom! (id: " + p.getId() + ")");
 			return;
 		}
 		
@@ -890,7 +984,7 @@ public class QuizRoom implements IPlayerAction
 	{
 		if (!playerActivityTimestamps.containsKey(p))
 		{
-			LOGGER.error("Illegal call to sendAlivePing! Player is not in QuizRoom! (id: " + p.getId() + ")");
+			LOGGER.error("### ERROR ### [QR " + pin + "] Illegal call to sendAlivePing! Player is not in QuizRoom! (id: " + p.getId() + ")");
 			return;
 		}
 		
