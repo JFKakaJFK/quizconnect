@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-//@Scope("session")
-@Scope("view")
+@Scope("session")
+//@Scope("view")
 public class ProfileBean implements Serializable {
 
     private ManagerService managerService;
@@ -46,37 +46,6 @@ public class ProfileBean implements Serializable {
         this.managerService = managerService;
     }
 
-    // TODO should not need player as input, since this.player should be same... Player player
-    public void deletePlayer(){ // TODO fix, player always null
-        System.out.println("called delete");
-        if(player == null || !isDeletable()){
-            System.out.println(player);
-            System.out.println(isDeletable());
-            return;
-        }
-        User user;
-        if(player != null){
-            user = player.getUser();
-            /* TODO test if cascade on entity is enough
-            for(QuestionSetPerformance qsp: performanceService.getQuestionSetPerformancesOfPlayer(player)){
-                performanceService.deleteQuestionSetPerfomance(qsp);
-            }
-            */
-            if(player.getAvatarPath() != null){
-                storageService.deleteAvatar(player.getAvatarPath());
-            }
-            // TODO remove player from managers players?
-            playerService.deletePlayer(player);
-            userService.deleteUser(user);
-            this.player = null;
-        }
-        try {
-            FacesContext.getCurrentInstance().getExternalContext().redirect("/players/all.xhtml?faces-redirect=true");
-        } catch (IOException e){
-            // TODO
-        }
-    }
-
     // Deletion option is only on profile since deletion should be thought through, and therefore maybe not too easy to find & more performance (lots of db calls)
     public boolean isDeletable(){
         return sessionInfoBean.getCurrentUser().equals(managerService.getManagerOfPlayer(player).getUser());
@@ -96,5 +65,14 @@ public class ProfileBean implements Serializable {
         return player;
     }
 
-    public void setPlayer(Player player) {}
+    public void setPlayer(Player player) {
+        if(playerService.getPlayerById(player.getId()) == null){
+            try {
+                FacesContext.getCurrentInstance().getExternalContext().redirect("/players/all.xhtml?faces-redirect=true");
+            } catch (IOException e){
+                // TODO
+            }
+        }
+        this.player = player;
+    }
 }

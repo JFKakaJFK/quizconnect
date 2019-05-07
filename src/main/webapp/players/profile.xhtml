@@ -10,9 +10,11 @@
     </ui:define>
 
     <ui:define name ="content">
+        <!--
         <f:metadata>
-            <f:viewParam name="id" value="#{profileBean.id}"/>
+            <f:viewParam name="id" value="# {profileBean.id}"/>
         </f:metadata>
+        -->
 
         <h:form>
             <h:commandLink action="all?faces-redirect=true" styleClass="back-btn">
@@ -54,30 +56,30 @@
                     <p>Do some nice graphs w/ ApexCharts</p>
                 </h:panelGroup>
 
-                <!--
-                <qc:modal id="deletePlayer"
-                          target="deletePlayer"
-                          title="Delete Player"
-                          confirm="Delete Player"
-                          abort="Cancel"
-                          confirmAction="# {profileBean.deletePlayer}"
-                          update="player">
-                    Are you sure? This cannot be undone.
-                </qc:modal>
-                -->
-            </h:panelGroup>
+            <!--
+                            <qc:modal id="deletePlayer"
+                                      target="deletePlayer"
+                                      title="Delete Player"
+                                      confirm="Delete Player"
+                                      abort="Cancel"
+                                      confirmAction="# {deletePlayerBean.deletePlayer(profileBean.player)}"
+                                      update="player">
+                                Are you sure? This cannot be undone.
+                            </qc:modal>
+            -->
+                        </h:panelGroup>
 
-            <qc:modal id="deletePlayer"
-                      target="deletePlayer"
-                      title="Delete Player"
-                      confirm="Delete Player"
-                      abort="Cancel"
-                      confirmAction="#{profileBean.deletePlayer}"
-                      update="player">
-                Are you sure? This cannot be undone.
-            </qc:modal>
+                                    <qc:modal id="deletePlayer"
+                                              target="deletePlayer"
+                                              title="Delete Player"
+                                              confirm="Delete Player"
+                                              abort="Cancel"
+                                              confirmAction="#{deletePlayerBean.deletePlayer(profileBean.player)}"
+                                              update="player">
+                                        Are you sure? This cannot be undone.
+                                    </qc:modal>
 
-        </h:form>
+                    </h:form>
 
-    </ui:define>
-</ui:composition>
+                </ui:define>
+            </ui:composition>

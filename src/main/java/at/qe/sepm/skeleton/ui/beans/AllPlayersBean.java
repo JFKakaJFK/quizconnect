@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
-@Scope("session")
+@Scope("view") // @Scope("session")
 public class AllPlayersBean {
 
     private PlayerService playerService;
@@ -111,6 +111,19 @@ public class AllPlayersBean {
             this.allByManager = playerService.getPlayersOfManager(user.getManager());
         } else {
             allByManager.add(p);
+        }
+    }
+
+    public void removePlayer(Player p){
+        if(allPlayers == null){
+            this.allPlayers = new ArrayList<>(playerService.getAllPlayers());
+        } else {
+            allPlayers.remove(p);
+        }
+        if(allByManager == null){
+            this.allByManager = playerService.getPlayersOfManager(user.getManager());
+        } else {
+            allByManager.remove(p);
         }
     }
 }
