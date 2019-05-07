@@ -200,7 +200,7 @@ public class QuizRoom implements IPlayerAction
 			timerSyncTime += deltaTime;
 			if (timerSyncTime >= timerSyncTimeStep)
 			{
-				synchonizeTimers();
+				synchronizeTimers();
 				timerSyncTime = 0;
 			}
 			
@@ -269,14 +269,16 @@ public class QuizRoom implements IPlayerAction
 			activeQuestions.get(i).timeRemaining -= deltaTime;
 			if (activeQuestions.get(i).timeRemaining <= 0)
 			{ // question time elapsed, remove
-				completedQuestions++;
+				changeScore(activeQuestions.get(i).questionDifficulty == QuestionSetDifficulty.easy ? 4 : 5, 0);
+				
 				removeQuestion(activeQuestions.get(i));
 				missing++;
 			}
 		}
 		
-		for (int i = 0; i < missing; i++)
+		if (missing > 0)
 		{
+			missingQuestions += missing - 1;
 			distributeQuestion();
 		}
 	}
@@ -334,7 +336,7 @@ public class QuizRoom implements IPlayerAction
 	/**
 	 * Called every timerSyncTimeStep, calls the onTimerSync event on all Players, sending the current remaining time on the Question timer.
 	 */
-	private synchronized void synchonizeTimers()
+	private synchronized void synchronizeTimers()
 	{
 		for (ActiveQuestion activeQuestion : activeQuestions)
 		{
@@ -862,22 +864,56 @@ public class QuizRoom implements IPlayerAction
 		// register player activity
 		playerActivityTimestamps.put(p, new Date().getTime());
 		
-		completedQuestions++;
-		
 		// check if right answer
 		if (index == 0 && q.playerAnswer == p)
 		{
-			score += 100;
-			correctlyAnsweredQuestions++;
+			changeScore(q.questionDifficulty == QuestionSetDifficulty.easy ? 2 : 3, q.timeRemaining);
 		}
 		else
 		{
-			score -= 50;
+			changeScore(q.questionDifficulty == QuestionSetDifficulty.easy ? 0 : 1, q.timeRemaining);
 		}
 		removeQuestion(q);
-		eventCall(x -> x.onScoreChange(pin, score));
 		
 		distributeQuestion();
+	}
+	
+	/**
+	 * Changes the score of the room according to the change code.
+	 * 
+	 * @param code
+	 *            ChangeCode; Codes: 0 = wrong answer easy, 1 = wrong answer hard, 2 = right answer easy, 3 = right answer hard, 4 = timeout easy, 5 = timeout hard.
+	 * @param timeRemaining
+	 *            Time remaining on the Question
+	 */
+	private synchronized void changeScore(int code, long timeRemaining)
+	{
+		completedQuestions++;
+		switch (code)
+		{
+		case 0:
+			score -= (difficulty == RoomDifficulty.easy ? 50 : 75);
+			break;
+		case 1:
+			score -= (difficulty == RoomDifficulty.easy ? 75 : 100);
+			break;
+		case 2:
+			score += (difficulty == RoomDifficulty.easy ? 100 : 125) + (int) (timeRemaining / 1000);
+			correctlyAnsweredQuestions++;
+			break;
+		case 3:
+			score += (difficulty == RoomDifficulty.easy ? 125 : 150) + (int) (timeRemaining / 1000);
+			correctlyAnsweredQuestions++;
+			break;
+		case 4:
+			score -= (difficulty == RoomDifficulty.easy ? 50 : 75);
+			break;
+		case 5:
+			score -= (difficulty == RoomDifficulty.easy ? 75 : 100);
+			break;
+		}
+		
+		eventCall(x -> x.onScoreChange(pin, score));
 	}
 	
 	@Override
