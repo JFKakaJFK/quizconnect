@@ -9,10 +9,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-
-import java.util.concurrent.TimeUnit;
 
 public class managerTests {
 
@@ -22,6 +18,7 @@ public class managerTests {
     private String managerUsername = "user1";
     private String managerPassword = "pw1";
     private String questionSetOverview ="localhost:8080/secured/QSOverview.xhtml";
+    private String playerOverview = "http://localhost:8080/players/all.xhtml";
 
     @Before
     public void setUp() {
@@ -71,6 +68,17 @@ public class managerTests {
 
     }
 
+    @Test
+    public void createNewPlayer() throws InterruptedException {
+        driver.get(playerOverview);
+        driver.findElement(By.id("form:j_idt33")).click();
+        Thread.sleep(1000);
+        driver.findElement(By.id("form:modal:j_idt51")).sendKeys("testUser");
+        driver.findElement(By.id("form:modal:j_idt52")).sendKeys("testPassword");
+        Thread.sleep(1000);
+        driver.findElement(By.id("form:modal:j_idt60")).click();
+        //TODO: match username to created user
+    }
 
 
     @After
