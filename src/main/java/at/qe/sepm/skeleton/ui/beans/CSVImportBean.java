@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.PostConstruct;
@@ -20,7 +21,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 @Controller
-
+@Scope("view")
 public class CSVImportBean implements Serializable {
 
 

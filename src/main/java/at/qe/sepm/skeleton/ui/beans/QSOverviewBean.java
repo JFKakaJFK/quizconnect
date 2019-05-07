@@ -27,6 +27,7 @@ import java.io.InputStream;
  */
 
 @Controller
+@Scope("view")
 public class QSOverviewBean implements Serializable {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
