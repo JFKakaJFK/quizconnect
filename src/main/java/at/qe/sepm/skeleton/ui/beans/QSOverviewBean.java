@@ -27,7 +27,6 @@ import java.io.InputStream;
  */
 
 @Controller
-
 public class QSOverviewBean implements Serializable {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -42,8 +41,6 @@ public class QSOverviewBean implements Serializable {
 
     private List<QuestionSet> questionSets;
 
-
-    //TODO JavaDoc for init
     @PostConstruct
     public void init() {
         logger.info("Init called");
@@ -51,9 +48,6 @@ public class QSOverviewBean implements Serializable {
     }
 
     public List<QuestionSet> getQuestionSets(){
-        //if (questionSets.size() != questionSetService.getAllQuestionSets().size()) {
-        //    this.questionSets = questionSetService.getAllQuestionSets();
-        //}
         return questionSets;
     }
 
@@ -68,7 +62,7 @@ public class QSOverviewBean implements Serializable {
 
     public void deleteQuestionSet(QuestionSet questionSet) {
         logger.info("deleting QuestionSet with name: " + questionSet.getName());
-        questionSetService.deleteQuestionSet(questionSet);
+        questionSetService.deleteQuestionSet(questionSetService.getQuestionSetById(questionSet.getId()));
         logger.info("deleted from database");
         questionSets.remove(questionSet);
         logger.info("deleted from internal set");
