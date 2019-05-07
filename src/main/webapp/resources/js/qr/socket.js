@@ -6,23 +6,25 @@ const WS_FALLBACK = '/ws';
 const WS_SOURCE = '/server/events';
 const WS_TARGET = '/qc/events';
 
-const socket = new SockJS(WS_FALLBACK);
-const stompClient = Stomp.over(socket);
+let socket = null;
+let stompClient = null;
 
-// stompClient.debug = () => {}; // Disables debug messages
+stompClient.debug = () => {}; // Disables debug messages
 
 const connect = () => {
-  console.log('Trying to connect to socket, {pin:', state.pin, '}');
+  if(socket !== null){
+    return;
+  }
+  socket = new SockJS(WS_FALLBACK);
+  stompClient = Stomp.over(socket);
   stompClient.connect({}, (frame) => {
-    console.debug("connected: ", frame);
+    console.debug(frame);
     stompClient.subscribe(`${WS_SOURCE}/${state.pin}`, event => handleServerEvent(JSON.parse(event.body)));
     // sendAlivePing();
     // getGameInfo();
     // getRoomPlayers();
     getRoomInfo();
-    console.log('e')
   });
-  console.log('done')
 };
 
 /**

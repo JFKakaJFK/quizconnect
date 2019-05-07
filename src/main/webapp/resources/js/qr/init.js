@@ -2,6 +2,6 @@
 
 /* ======================== INIT ========================= */
 
-// 1. State is JOIN
+// Check if pin & playerid already in LocalStorage
 
 

@@ -62,3 +62,10 @@ if(params.has('pin')){
 
 PIN.addEventListener('change', join);
 PIN.addEventListener('input', join);
+
+const checkLocalStorage = () => {
+  let pin = parseInt(localStorage.getItem('pin'));
+  let id = parseInt(localStorage.getItem('playerId'));
+  let timeStamp = new Date(parseInt(localStorage.getItem('timeStamp')));
+
+};
