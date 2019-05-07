@@ -1,0 +1,46 @@
+/*
+    Layout:
+
+    [] ... optional
+
+    <div class="stat [.stat-left|.stat-right|.stst-lg|.stat-sm]">
+        <h3>23425</h3>
+        <p>highscore</p>
+    </div>
+*/
+
+
+.stat-lg h3 {
+    font-size: 2rem;
+}
+
+.stat-sm h3 {
+    font-size: 1.15rem;
+}
+
+.stat h3 {
+    margin: 0;
+}
+
+.stat p {
+    margin: 0;
+    text-transform: uppercase;
+    font-size: .75rem;
+    white-space: nowrap;
+}
+
+.stat {
+    text-align: center;
+}
+
+.stat.stat-left {
+    text-align: left;
+}
+
+.stat.stat-right {
+    text-align: right;
+}
+
+.stat.stat-upper {
+    text-transform: uppercase;
+}

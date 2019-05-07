@@ -27,17 +27,16 @@
 </h:head>
 
 <h:body>
-    <div class="container pt-5">
+    <div class="container pt-5 reduced-mobile-spacing">
         <div class="row py-3">
             <div class="col-lg">
-                <h1 class="display-3 text-center">QuizConnect</h1>
-                <h3 class="text-center">Fail together!</h3>
+                <h1 class="display-4 text-center">QuizConnect</h1>
             </div>
         </div>
     </div>
 
     <h:form id="signupform" action="#{userBean.redirectRegistration}" method="post">
-        <div class="container-fluid mt-5">
+        <div class="container-fluid mt-5 reduced-mobile-margin" id="responsive-formgroup">
             <div class="form-group">
                 <label for="institution">Institution</label>
                 <h:inputText type="text" styleClass="form-control" value="#{userBean.manager.institution}" name="institution" id="institution" pt:id="institution" pt:placeholder="Universtität Innsbruck" pt:autocomplete="off"/>

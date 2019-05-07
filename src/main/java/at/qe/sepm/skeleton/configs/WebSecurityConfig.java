@@ -28,8 +28,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
+        // TODO check why these 2 are set, if only for H2, remove
         http.csrf().disable();
-
         http.headers().frameOptions().disable(); // needed for H2 console
 
         http.logout()
@@ -40,22 +40,33 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/error/**")
                 .permitAll()
-				// Only access with manager role
-				.antMatchers("/manager/**").hasAnyAuthority("MANAGER")
                 //Permit access only for some roles
                 .antMatchers("/secured/**")
-				.hasAnyAuthority("PLAYER", "MANAGER")
+				.hasAnyAuthority("MANAGER")
+                .antMatchers("/player/**")
+                .hasAnyAuthority("PLAYER")
+                .antMatchers("/players/**")
+                .hasAnyAuthority("PLAYER", "MANAGER")
+                .antMatchers("/login/**")
+                .hasAnyAuthority("PLAYER", "MANAGER")
+                // TODO add preauthorize for qr websocket & qr path
+                /*
+                .antMatchers("/quizroom/**")
+                .hasAnyAuthority("PLAYER")
+                .antMatchers("/qr/**")
+                .hasAnyAuthority("PLAYER")
+                */
                 //If user doesn't have permission, forward him to login page
                 .and()
                 .formLogin()
                 .loginPage("/login.xhtml")
                 .loginProcessingUrl("/login")
-                .defaultSuccessUrl("/secured/welcome.xhtml");
+                .defaultSuccessUrl("/login/redirect.xhtml");
         // :TODO: user failureUrl(/login.xhtml?error) and make sure that a corresponding message is displayed
 
-        http.exceptionHandling().accessDeniedPage("/error/denied.xhtml");
+        http.exceptionHandling().accessDeniedPage("/error/402.xhtml");
 
-        http.sessionManagement().invalidSessionUrl("/error/invalid_session.xhtml");
+        http.sessionManagement().invalidSessionUrl("/");
 
     }
 
