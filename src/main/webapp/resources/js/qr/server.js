@@ -118,8 +118,13 @@ const handleRoomPlayers = ({ num, players }) => {
 };
 
 // TODO add state to event & update localStorage periodically
-const handleRoomInfo = ({ pin, difficulty, mode, questionSets, score, alivePingInterval, numJokers, num, players }) => {
+const handleRoomInfo = ({ pin, difficulty, mode, questionSets, score, alivePingInterval, numJokers, num, players, state }) => {
+  if(state === INGAME){
+    sendAlivePing();
+  }
   setState({
+    state,
+    alivePing: state === INGAME ? setInterval(sendAlivePing, alivePingInterval - 50) : null,
     gameSessionTimer: setInterval(updateLocalStorage(), 45000),
     info: {
       settings: {
@@ -135,6 +140,7 @@ const handleRoomInfo = ({ pin, difficulty, mode, questionSets, score, alivePingI
       players,
     },
     game: {
+      score: score,
       jokersLeft: numJokers,
     }
   });

@@ -192,16 +192,21 @@ public class QRWebSocketConnection implements IRoomAction {
 
     public ServerEvent handleGetRoomInfo(int pin){
         IPlayerAction qr = rooms.get(pin);
-
-        List<Player> ready = qr.getRoomReadyPlayers();
-        List<Player> all = qr.getRoomPlayers();
+        if(qr == null){
+            return new GenericServerEvent(ERROR);
+        }
+        boolean inLobby = qr.isRoomInWaitingMode();
         List<PlayerJSON> players = new ArrayList<>();
-        for (Player p: all) {
-            PlayerJSON pj = new PlayerJSON(p, avatars);
-            if(ready.contains(p)){
-                pj.setReady(true);
+        if(inLobby){
+            List<Player> ready = qr.getRoomReadyPlayers();
+            List<Player> all = qr.getRoomPlayers();
+            for (Player p: all) {
+                PlayerJSON pj = new PlayerJSON(p, avatars);
+                if(ready.contains(p)){
+                    pj.setReady(true);
+                }
+                players.add(pj);
             }
-            players.add(pj);
         }
 
         ServerEvent event = new RoomInfoEvent(pin,
@@ -211,6 +216,7 @@ public class QRWebSocketConnection implements IRoomAction {
                 qr.getRoomScore(),
                 qr.getAlivePingTimeStep(),
                 qr.getNumberOfJokers(),
+                inLobby,
                 players);
         event.setEvent(ROOM_INFO);
         return event;
