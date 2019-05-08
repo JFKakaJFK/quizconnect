@@ -128,7 +128,7 @@ public class QRWebSocketConnection implements IRoomAction {
         log.debug("Game " + pin + ": time remaining until player " + player.getId() + " is kicked: " + timeoutTime + "ms");
     }
 
-    @Override // TODO maybe not BROADCAST
+    @Override
     public void onTimerSync(int pin, Player p, ActiveQuestion q, long remaining) {
         ServerEvent event = new TimerSyncEvent(q, remaining);
         event.setEvent(TIMER_SYNC);
@@ -136,7 +136,7 @@ public class QRWebSocketConnection implements IRoomAction {
         log.debug("Game " + pin + ": time remaining of question " + q.question.getId() + " is " + remaining + "ms");
     }
 
-    @Override // TODO maybe not BROADCAST
+    @Override
     public void onKick(int pin, Player p) {
         ServerEvent event = new PlayerKickEvent(p);
         event.setEvent(KICK);
@@ -332,27 +332,32 @@ public class QRWebSocketConnection implements IRoomAction {
             log.debug("Received event of type " + request.getEvent() + " from " + user.getName());
         }
 
-        switch (request.getEvent()){
-            case ANSWER_QUESTION:
-                return handleAnswerQuestion(pin, request);
-            case USE_JOKER:
-                return handleUseJoker(pin, request);
-            case LEAVE_ROOM:
-                return handleLeaveRoom(pin, request);
-            case CANCEL_TIMEOUT:
-                return handleCancelTimeout(pin, request);
-            case ALIVE_PING:
-                return handleSendAlivePing(pin, request);
-            case ROOM_INFO:
-                return handleGetRoomInfo(pin);
-            case READY:
-                return handleReadyUp(pin, request);
-            case GAME_INFO:
-                return handleGetGameInfo(pin);
-            case ROOM_PLAYERS:
-                return handleGetRoomPlayers(pin);
-            default:
-                return new GenericServerEvent("error");
+        try {
+            switch (request.getEvent()){
+                case ANSWER_QUESTION:
+                    return handleAnswerQuestion(pin, request);
+                case USE_JOKER:
+                    return handleUseJoker(pin, request);
+                case LEAVE_ROOM:
+                    return handleLeaveRoom(pin, request);
+                case CANCEL_TIMEOUT:
+                    return handleCancelTimeout(pin, request);
+                case ALIVE_PING:
+                    return handleSendAlivePing(pin, request);
+                case ROOM_INFO:
+                    return handleGetRoomInfo(pin);
+                case READY:
+                    return handleReadyUp(pin, request);
+                case GAME_INFO:
+                    return handleGetGameInfo(pin);
+                case ROOM_PLAYERS:
+                    return handleGetRoomPlayers(pin);
+                default:
+                    return new GenericServerEvent("error");
+            }
+        } catch (NullPointerException e){
+            log.warn("Game " + pin + " failed to close correctly");
+            return new GenericServerEvent(ERROR);
         }
     }
 
