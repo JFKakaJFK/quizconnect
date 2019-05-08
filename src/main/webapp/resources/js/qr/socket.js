@@ -6,12 +6,17 @@ const WS_FALLBACK = '/ws';
 const WS_SOURCE = '/server/events';
 const WS_TARGET = '/qc/events';
 
-const socket = new SockJS(WS_FALLBACK);
-const stompClient = Stomp.over(socket);
-
-stompClient.debug = () => {}; // Disables debug messages
+let socket = null;
+let stompClient = null;
 
 const connect = () => {
+  if(socket !== null){
+    return;
+  }
+  socket = new SockJS(WS_FALLBACK);
+  stompClient = Stomp.over(socket);
+  stompClient.debug = () => {}; // Disables debug messages
+
   stompClient.connect({}, (frame) => {
     // console.debug(frame);
     stompClient.subscribe(`${WS_SOURCE}/${state.pin}`, event => handleServerEvent(JSON.parse(event.body)));
@@ -28,6 +33,8 @@ const connect = () => {
 const disconnect = () => {
     if(stompClient){
         stompClient.disconnect();
+        stompClient = null;
+        socket = null;
     }
     if(state.alivePing !== null){
         clearInterval(state.alivePing);

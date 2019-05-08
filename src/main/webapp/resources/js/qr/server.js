@@ -117,8 +117,10 @@ const handleRoomPlayers = ({ num, players }) => {
   console.info(`Players updated`);
 };
 
+// TODO add state to event & update localStorage periodically
 const handleRoomInfo = ({ pin, difficulty, mode, questionSets, score, alivePingInterval, numJokers, num, players }) => {
   setState({
+    gameSessionTimer: setInterval(updateLocalStorage(), 45000),
     info: {
       settings: {
         pin,
@@ -191,8 +193,17 @@ const handleGameStart = (event) => {
   console.info(`Game started`)
 };
 
-// set state.state = URL_FINISH
+// set state.state = FINISH
 const handleGameEnd = (event) => {
+  if(state.alivePing !== null){
+    clearInterval(state.alivePing);
+    state.alivePing = null;
+  }
+  if(state.gameSessionTimer !== null){
+    clearInterval(state.gameSessionTimer);
+    state.gameSessionTimer = null;
+  }
+  clearLocalStorage();
   setState({
     state: FINISHED,
   });
@@ -253,6 +264,7 @@ const handleTimeoutStart = ({ playerId, remaining }) => {
 const handleKick = ({ playerId }) => {
   if(playerId === state.id){
     disconnect();
+    clearLocalStorage();
     window.location.href = URL_KICKED;
   }
   console.info(`Player ${playerId} was kicked`)
