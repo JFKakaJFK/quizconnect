@@ -45,3 +45,8 @@
 .modal-question .modal-header, .modal-question .modal-body, .modal-question .modal-footer {
     background-color: var(--warning);
 }
+
+/*TODO: Select color for edit-modal*/
+.modal-edit .modal-header, .modal-edit .modal-body, .modal-edit .modal-footer {
+    background-color: var(--warning);
+}

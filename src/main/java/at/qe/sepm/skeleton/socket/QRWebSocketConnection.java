@@ -322,8 +322,6 @@ public class QRWebSocketConnection implements IRoomAction {
             return new GenericServerEvent(ERROR);
         }
 
-        log.debug(" --- QuizRoom " + pin + " should not be null --- ");
-
         if(!request.getEvent().equals(ALIVE_PING)){ // TODO remove
             log.debug("Received event of type " + request.getEvent() + " from " + user.getName());
         }

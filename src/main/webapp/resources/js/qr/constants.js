@@ -8,6 +8,7 @@ const DOMAIN = 'localhost:8080'; // TODO
 const LOBBY = 0;
 const INGAME = 1;
 const FINISHED = 2;
+const JOIN = 3;
 
 const URL_JOIN = '/quizroom/join.html';
 const URL_FINISH = '/quizroom/final.html';

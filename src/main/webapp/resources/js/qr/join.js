@@ -2,7 +2,7 @@
 
 const URL = '/qr/join/';
 const pin = document.getElementById('pin');
-const msg = document.getElementById('msg');
+// const msg = document.getElementById('msg');
 
 localStorage.removeItem('pin');
 localStorage.removeItem('playerId');
@@ -21,18 +21,20 @@ const joinGame = (pin) => {
     })
     .then(response => response.json())
     .then(data => {
-        console.log(data);
+        // console.log(data);
         if(data.error){
-            msg.innerHTML = data.message; // TODO ignore? | default: show invalid indicator (e.g. red border) until pin is valid?
+            // msg.innerHTML = data.message; // TODO ignore? | default: show invalid indicator (e.g. red border) until pin is valid?
+          console.log('TODO: error animation / progress')
         }
         if(data.playerId){
             console.log(data.playerId);
             localStorage.setItem('pin', pin);
             localStorage.setItem('playerId', data.playerId);
+            console.log('TODO: fancy animation')
             window.location.href = '/quizroom/index.html'
         }
     })
-    .catch(error => msg.innerHTML = error.message);
+    // .catch(error => msg.innerHTML = error.message);
 };
 
 const join = () => {

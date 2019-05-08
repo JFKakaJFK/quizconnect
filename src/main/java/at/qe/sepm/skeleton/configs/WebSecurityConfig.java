@@ -64,7 +64,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .defaultSuccessUrl("/login/redirect.xhtml");
         // :TODO: user failureUrl(/login.xhtml?error) and make sure that a corresponding message is displayed
 
-        http.exceptionHandling().accessDeniedPage("/error/denied.xhtml");
+        http.exceptionHandling().accessDeniedPage("/error/402.xhtml");
 
         http.sessionManagement().invalidSessionUrl("/");
 

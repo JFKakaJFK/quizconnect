@@ -29,6 +29,9 @@ public class QuestionSetBean implements Serializable {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
+    private MessageBean messageBean;
+
+    @Autowired
     private QuestionSetService questionSetService;
 
     @Autowired
@@ -62,7 +65,6 @@ public class QuestionSetBean implements Serializable {
 
     }
 
-    //TODO: JavaDoc for clearQuestion
     public void clearQuestion() {
         question = new Question();
         question.setType(QuestionType.text);
@@ -79,11 +81,12 @@ public class QuestionSetBean implements Serializable {
 
     /* Called on modal button "add another question - YES" */
     public void saveNewQuestion() {
-        questions.add(question);
-        question.setQuestionSet(questionSet);
-        questionService.saveQuestion(question);
-        logger.info("Added question to Database - ID: " + question.getId());
-        clearQuestion();
+            removeSpaces(question);
+            questions.add(question);
+            question.setQuestionSet(questionSet);
+            questionService.saveQuestion(question);
+            logger.info("Added question to Database - ID: " + question.getId());
+            clearQuestion();
     }
 
     /* Called by exitCreateQuestionSet (which is triggered by modal button - NO) */
@@ -118,6 +121,35 @@ public class QuestionSetBean implements Serializable {
         clearQuestionSet();
         clearQuestions();
     }
+
+    /**
+     * Removes trailing and leading spaces.
+     *
+     * @param question
+     * @return
+     */
+    private void removeSpaces (Question question) {
+        question.setQuestionString(question.getQuestionString().trim());
+        question.setRightAnswerString(question.getRightAnswerString().trim());
+        question.setWrongAnswerString_1(question.getWrongAnswerString_1().trim());
+
+        if (question.getWrongAnswerString_2()!=null) {
+            question.setWrongAnswerString_2(question.getWrongAnswerString_2().trim());
+        }
+
+        if (question.getWrongAnswerString_3()!=null) {
+            question.setWrongAnswerString_3(question.getWrongAnswerString_3().trim());
+        }
+
+        if (question.getWrongAnswerString_4()!=null) {
+            question.setWrongAnswerString_4(question.getWrongAnswerString_4().trim());
+        }
+
+        if (question.getWrongAnswerString_5()!=null) {
+            question.setWrongAnswerString_5(question.getWrongAnswerString_5().trim());
+        }
+    }
+
 
     public Question getQuestion() {
         return question;
