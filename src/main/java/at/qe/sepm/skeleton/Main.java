@@ -45,7 +45,7 @@ public class Main extends SpringBootServletInitializer {
     }
 
     @Bean
-    public CustomScopeConfigurer customScopeConfigurer() {
+    public static CustomScopeConfigurer customScopeConfigurer() {
         CustomScopeConfigurer customScopeConfigurer = new CustomScopeConfigurer();
         HashMap<String, Object> customScopes = new HashMap<>();
         customScopes.put("view", new ViewScope());
@@ -56,8 +56,8 @@ public class Main extends SpringBootServletInitializer {
     @Bean
     CommandLineRunner init(StorageService storageService) {
         return (args) -> {
-            // storageService.deleteAll(); // if enabled deletes all files
             storageService.init();
         };
     }
+
 }

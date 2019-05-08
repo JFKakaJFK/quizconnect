@@ -2,23 +2,18 @@ package at.qe.sepm.skeleton.ui.beans;
 
 import at.qe.sepm.skeleton.model.Player;
 import at.qe.sepm.skeleton.model.User;
-import at.qe.sepm.skeleton.services.ManagerService;
 import at.qe.sepm.skeleton.services.PlayerService;
-import com.sun.xml.internal.bind.v2.TODO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
-import javax.annotation.ManagedBean;
-import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
-import javax.faces.event.ValueChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
-@Scope("session")
+@Scope("view") // @Scope("session")
 public class AllPlayersBean {
 
     private PlayerService playerService;
@@ -53,7 +48,7 @@ public class AllPlayersBean {
                 .collect(Collectors.toList());
     }
 
-    public List<Player> getAllPlayers() {
+    private List<Player> getAllPlayers() {
         if(onlyByManager && user.getManager() != null){
             if(allByManager == null){
                 allByManager = playerService.getPlayersOfManager(user.getManager());
@@ -111,6 +106,19 @@ public class AllPlayersBean {
             this.allByManager = playerService.getPlayersOfManager(user.getManager());
         } else {
             allByManager.add(p);
+        }
+    }
+
+    public void removePlayer(Player p){
+        if(allPlayers == null){
+            this.allPlayers = new ArrayList<>(playerService.getAllPlayers());
+        } else {
+            allPlayers.remove(p);
+        }
+        if(allByManager == null){
+            this.allByManager = playerService.getPlayersOfManager(user.getManager());
+        } else {
+            allByManager.remove(p);
         }
     }
 }

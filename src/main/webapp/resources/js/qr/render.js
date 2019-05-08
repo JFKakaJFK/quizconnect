@@ -81,9 +81,11 @@ const renderGameInfo = ({ settings }) => {
         <p>difficulty</p>
       </div>
       <div class="stat stat-lg pin">
-        <h3>${settings.pin}${false ? 'share pin here' : ''}</h3>
+        <h3>${settings.pin.toString().padStart(6, '0')}${false ? 'share pin here' : ''}</h3> 
         <p>pin</p>
       </div>
+      ${/* TODO: implement share functionality + copy to clipboard */false}
+      <a href="https://wa.me/?text=${encodeURIComponent(SHARE_PIN_WHATSAPP(settings.pin.toString().padStart(6, '0')))}" target="_blank" rel="noopener noreferrer nofollow">Share via WhatsApp</a>
     </div>
   `;
 };
@@ -191,6 +193,11 @@ const renderLobby = ( {info} ) => {
   renderPlayers(players, info);
 };
 
+// TODO structure, rerender only on change
+const renderScore = (parent, score) => {
+  parent.innerHTML = score;
+};
+
 // TODO other types for reverse mode
 // TODO progress bar? or SVG + anime.js??
 // TODO save initial question time? for progress %
@@ -198,12 +205,10 @@ const renderQuestion = (parent, { questionId, type, question, remaining }) => {
   let q = parent.querySelector('#question');
   let qt = parent.querySelector('#questionTime span');
   if(q !== null){
-    console.log(q.value)
-    console.log(q.innerHTML)
     console.log(q.innerText)
-    if(q.value === question){
+    if(q.innerText === question){
       let total = parseInt(qt.getAttribute('data-total'));
-      qt.style.width = `${remaining / total}%`;
+      qt.style.width = `${(remaining / total) * 100}%`;
     } else {
       q.innerHTML = question;
       qt.setAttribute('data-total', remaining);
@@ -212,7 +217,7 @@ const renderQuestion = (parent, { questionId, type, question, remaining }) => {
     return;
   }
   parent.innerHTML = `
-    <h2 id="question box">${question}</h2>
+    <h2 id="question">${question}</h2>
     <div id="questionTime"><span data-total="${remaining}" style="width: 100%"></span></div>
   `;
 };
@@ -220,14 +225,14 @@ const renderQuestion = (parent, { questionId, type, question, remaining }) => {
 const renderQuestionPlaceholder = (parent) => {
   if(ROOT.querySelector('#question') !== null && ROOT.querySelector('#question').value === '') return;
   parent.innerHTML = `
-    <h2 id="question box"></h2>
+    <h2 id="question"></h2>
     <div id="questionTime"><span></span></div>
   `;
 };
 
 const renderGenericAnswer = ({ classes, content, answerId, questionId} ) => { // TODO parseInt necessary?
   return `
-    <div class="answer ${classes}" data-questionId="${questionId}" data-answerId="${answerId}" onclick="answerQuestion(${questionId}, ${answerId})">
+    <div class="answer box ${classes}" data-questionId="${questionId}" data-answerId="${answerId}" onclick="answerQuestion(${questionId}, ${answerId})">
       ${content}
     </div>
   `;
@@ -292,6 +297,17 @@ const renderAnswers = ( parent, { answers }) => {
   }
 };
 
+// TODO structure, rerender only on change
+const renderJoker = (parent, jokers) => {
+  if(jokers === 0){
+    parent.removeEventListener('click', useJoker);
+  }
+  parent.innerHTML = jokers;
+  if(jokers > 0){
+    parent.addEventListener('click', useJoker); // TODO use timeout after click to prevent joker spamming
+  }
+};
+
 /**
  * Renders the game state
  *
@@ -301,13 +317,27 @@ const renderGame = ( {game} ) => {
   // if LOBBY was rendered before, clear the ROOT node and add INGAME containers
   if(ROOT.querySelector('.info') !== null || ROOT.querySelector('.players') !== null){
     clearScreen();
+    let score = document.createElement('div');
+    score.classList.add('score');
+    score.classList.add('box');
+    ROOT.appendChild(score);
+
     let question = document.createElement('div');
     question.classList.add('question');
+    question.classList.add('box');
     ROOT.appendChild(question);
+
     let answers = document.createElement('div');
     answers.classList.add('answers');
     ROOT.appendChild(answers);
+
+    let joker = document.createElement('div');
+    joker.classList.add('joker');
+    joker.classList.add('box');
+    ROOT.appendChild(joker);
   }
+
+  renderScore(ROOT.querySelector('.score'), game.score);
 
   if(game.question != null){
     renderQuestion(ROOT.querySelector('.question'), game.question);
@@ -319,6 +349,8 @@ const renderGame = ( {game} ) => {
     console.error(`ERROR: only ${MAX_ANSWERS} answers allowed (currently: ${state.game.answers.length})`)
   }
   renderAnswers(ROOT.querySelector('.answers'), game);
+
+  renderJoker(ROOT.querySelector('.joker'), game.jokersLeft);
 };
 
 const render = (state) => {

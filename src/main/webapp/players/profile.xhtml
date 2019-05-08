@@ -10,10 +10,11 @@
     </ui:define>
 
     <ui:define name ="content">
-
+        <!--
         <f:metadata>
-            <f:viewParam name="id" value="#{profileBean.id}"/>
+            <f:viewParam name="id" value="# {profileBean.id}"/>
         </f:metadata>
+        -->
 
         <h:form>
             <h:commandLink action="all?faces-redirect=true" styleClass="back-btn">
@@ -25,10 +26,16 @@
                 <h:commandButton styleClass="btn btn-primary" action="all?faces-redirect=true" value="All Players"/>
             </h:panelGroup>
 
-            <h:panelGroup layout="block" rendered="#{profileBean.player != null}" styleClass="profile-grid">
+            <h:panelGroup id="player" layout="block" rendered="#{profileBean.player != null}" styleClass="profile-grid">
 
                 <h:panelGroup layout="block" id="avatar" styleClass="avatar">
-                    <qc:playerbox player="#{profileBean.player}" online="#{randomOnlineTestBean.online}" rank="Beginner" />
+                    <qc:playerbox player="#{profileBean.player}" online="#{randomOnlineTestBean.online}" rank="Beginner">
+                        <h:commandLink p:class="ml-2" p:data-toggle="modal" p:data-target="#deletePlayer"
+                                       rendered="#{profileBean.deletable}">
+                            <svg role="img" width="24" height="24" viewBox="0 0 24 24" aria-labelledby="binIconTitle binIconDesc"><title id="binIconTitle">Bin</title><desc id="binIconDesc">Icon of a bin (trash)</desc><path  d="M19 6L5 6M14 5L10 5M6 10L6 20C6 20.6666667 6.33333333 21 7 21 7.66666667 21 11 21 17 21 17.6666667 21 18 20.6666667 18 20 18 19.3333333 18 16 18 10"/></svg>
+                            <f:ajax execute="@form" render="@none" />
+                        </h:commandLink>
+                    </qc:playerbox>
                 </h:panelGroup>
 
                 <div class="stats box">
@@ -50,6 +57,40 @@
                     <div id="pie">LOADING</div>
                     <p>Do some nice graphs w/ ApexCharts</p>
                 </h:panelGroup>
+
+            <!--
+                            <qc:modal id="deletePlayer"
+                                      target="deletePlayer"
+                                      title="Delete Player"
+                                      confirm="Delete Player"
+                                      abort="Cancel"
+                                      confirmAction="# {deletePlayerBean.deletePlayer(profileBean.player)}"
+                                      update="player">
+                                Are you sure? This cannot be undone.
+                            </qc:modal>
+            -->
+                        </h:panelGroup>
+
+            <qc:modal id="deletePlayer"
+                      target="deletePlayer"
+                      title="Delete Player"
+                      confirm="Delete Player"
+                      abort="Cancel"
+                      confirmAction="#{deletePlayerBean.deletePlayer(profileBean.player)}"
+                      update="player">
+                Are you sure? This cannot be undone.
+            </qc:modal>
+            
+            <h:panelGroup layout="block" styleClass="players px-3">
+                <ui:repeat value="#{profileBean.recentlyPlayedWith}" var="player">
+                    <qc:playerbox player="#{player}" online="#{randomOnlineTestBean.online}" rank="Beginner">
+                        <h:commandLink action="profile?faces-redirect=true" styleClass="ml-2">
+                            <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-9a1 1 0 0 1 1 1v4a1 1 0 0 1-2 0v-4a1 1 0 0 1 1-1zm0-4a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+                            <f:ajax execute="@this" render="@none"/>
+                            <f:setPropertyActionListener value="#{player}" target="#{profileBean.player}"/>
+                        </h:commandLink>
+                    </qc:playerbox>
+                </ui:repeat>
             </h:panelGroup>
 
         </h:form>

@@ -317,7 +317,7 @@ public class QRWebSocketConnection implements IRoomAction {
     @SendTo("/server/events/{pin}") // works but broadcast
     private ServerEvent handleEvent(@Payload ClientEvent request, Principal user, @DestinationVariable int pin){
 
-        if(!rooms.containsKey(pin)){
+        if(!rooms.containsKey(pin) || rooms.get(pin) == null){
             log.warn("QuizRoom " + pin + " does not exist");
             return new GenericServerEvent(ERROR);
         }
