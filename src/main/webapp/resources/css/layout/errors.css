@@ -32,5 +32,5 @@
     vertical-align: bottom;
     width: 3.25rem;
     height: 3.25rem;
-    margin: -.2rem;
+    /* margin: -.2rem; */ /* TODO seems to break the layout */
 }
