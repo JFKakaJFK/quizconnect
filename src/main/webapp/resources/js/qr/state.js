@@ -9,6 +9,7 @@
  * @type {{pin: number, id: number, state: number}}
  */
 let state = {
+  gameSessionTimer: null,
   pin: null,
   id: null, // TODO: refactor as playerId | change docs
   state: JOIN,

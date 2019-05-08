@@ -23,7 +23,7 @@
 
         <nav class="pushbar-nav pl-4 pr-3 py-4">
             <ul class="list-unstyled">
-                <li class="my-3">
+                <li class="my-3"> <!-- TODO show normal menu in JOIN & FINISHED states? -->
                     <a href="#" data-toggle="modal" data-target="#leave" data-backdrop="static" onclick="if(state.state === JOIN || state.state === FINISHED){ window.location.href = URL_LEAVE }">Leave Game</a>
                 </li>
             </ul>
@@ -93,6 +93,26 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel Timeout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="confirmReady" tabindex="-1" role="dialog" aria-labelledby="confirmReadyModal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmReadyModal">Ready Up</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h2>The game will start when you are ready.</h2>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-tertiary" data-dismiss="modal">Abort</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="readyUp()">Start Game</button>
                 </div>
             </div>
         </div>

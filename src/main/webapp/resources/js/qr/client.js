@@ -46,12 +46,13 @@ const useJoker = () => {
 };
 
 const leaveRoom = () => {
-  sendEvent({event: LEAVE_ROOM, playerId: state.id})
-  disconnect()
+  sendEvent({event: LEAVE_ROOM, playerId: state.id});
+  disconnect();
+  clearLocalStorage();
 };
 
 const cancelTimeout = () => {
-  sendEvent({event: CANCEL_TIMEOUT, playerId: state.id})
+  sendEvent({event: CANCEL_TIMEOUT, playerId: state.id});
   if(state.timeoutTimer){ // TODO do w/ setState?!!
     clearInterval(state.timeoutTimer);
     state.timeoutTimer = null;

@@ -9,16 +9,16 @@ const WS_TARGET = '/qc/events';
 let socket = null;
 let stompClient = null;
 
-stompClient.debug = () => {}; // Disables debug messages
-
 const connect = () => {
   if(socket !== null){
     return;
   }
   socket = new SockJS(WS_FALLBACK);
   stompClient = Stomp.over(socket);
+  stompClient.debug = () => {}; // Disables debug messages
+
   stompClient.connect({}, (frame) => {
-    console.debug(frame);
+    // console.debug(frame);
     stompClient.subscribe(`${WS_SOURCE}/${state.pin}`, event => handleServerEvent(JSON.parse(event.body)));
     // sendAlivePing();
     // getGameInfo();
@@ -33,6 +33,8 @@ const connect = () => {
 const disconnect = () => {
     if(stompClient){
         stompClient.disconnect();
+        stompClient = null;
+        socket = null;
     }
     if(state.alivePing !== null){
         clearInterval(state.alivePing);

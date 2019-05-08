@@ -35,6 +35,7 @@ const joinGame = (pin) => {
       state.state = LOBBY;
       state.pin = pin;
       state.id = data.playerId;
+      updateLocalStorage();
       console.log(state.pin, state.id, stompClient);
       connect();
       console.log('should have connected')
@@ -64,8 +65,31 @@ PIN.addEventListener('change', join);
 PIN.addEventListener('input', join);
 
 const checkLocalStorage = () => {
+  if(state.state !== JOIN){
+    return;
+  }
   let pin = parseInt(localStorage.getItem('pin'));
-  let id = parseInt(localStorage.getItem('playerId'));
   let timeStamp = new Date(parseInt(localStorage.getItem('timeStamp')));
+  if(timeStamp >= new Date()){ // game data should still be valid
+    if(!isNaN(pin)){
+      joinGame(pin);
+    }
+  }
+};
 
+checkLocalStorage();
+
+const clearLocalStorage = () => {
+  localStorage.removeItem('pin');
+  localStorage.removeItem('timeStamp');
+};
+
+const updateLocalStorage = () => {
+  console.log('updating localStorage')
+  if(state.state === JOIN || state.state === FINISHED){
+    clearLocalStorage();
+  } else {
+    localStorage.setItem('pin', state.pin.toString());
+    localStorage.setItem('timeStamp', (new Date().valueOf() + 60 * 1000).toString()); // 1 min from now
+  }
 };
