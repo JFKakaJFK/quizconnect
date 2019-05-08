@@ -10,6 +10,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
+
 /**
  * Session information bean to retrieve session-specific parameters.
  *
@@ -19,7 +21,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Scope("session")
-public class SessionInfoBean {
+public class SessionInfoBean implements Serializable {
 
     @Autowired
     private UserService userService;
