@@ -154,14 +154,16 @@ const renderPlayers = ( parent, { players }) => {
 
         if(!ready && player.ready){
           // rerender ready
-          readyNode.innerHTML = `<div class="ready" data-ready="true">ready rerendered</div>`; // TODO
+          readyNode.setAttribute('data-ready', true);
+          readyNode.innerHTML = 'ready rerendered';
+          // readyNode.innerHTML = `<div class="ready" data-ready="true">ready rerendered</div>`; // TODO
+        } else if(!player.ready && lastReadyUp && player.id === state.id){ // TODO react to joins of unready players & render for first player... test if makes sense
+          readyNode.setAttribute('data-toggle', 'modal');
+          readyNode.setAttribute('data-target', '#confirmReady');
+          readyNode.setAttribute('onclick', '{}');
+          readyNode.innerHTML = 'last unready';
+          // readyNode.innerHTML = `<div class="ready" data-ready="false" data-toggle="modal" data-target="#confirmReady" onclick="(() => {})()">last unready</div>`;
         }
-        /*
-        else if(!player.ready && lastReadyUp && player.id === state.id){
-          readyNode.removeEventListener('click', readyUp);
-          readyNode.innerHTML = `<div class="ready" data-ready="false" data-toggle="modal" data-target="#confirmReady">last unready</div>`;
-        }
-        */
       } else { // if not in players, delete // TODO test
         parent.removeChild(node);
       }
