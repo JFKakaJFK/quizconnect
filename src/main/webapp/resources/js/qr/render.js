@@ -137,6 +137,9 @@ const renderPlayers = ( parent, { players }) => {
   const playerNodes = parent.querySelectorAll('.playerbox');
   let copy = [ ...players ];
 
+  let lastReadyUp = copy.filter(p => !p.ready).length === 1;
+  console.log(lastReadyUp)
+
   if(playerNodes.length > 0){
     playerNodes.forEach(node => {
 
@@ -153,6 +156,12 @@ const renderPlayers = ( parent, { players }) => {
           // rerender ready
           readyNode.innerHTML = `<div class="ready" data-ready="true">ready rerendered</div>`; // TODO
         }
+        /*
+        else if(!player.ready && lastReadyUp && player.id === state.id){
+          readyNode.removeEventListener('click', readyUp);
+          readyNode.innerHTML = `<div class="ready" data-ready="false" data-toggle="modal" data-target="#confirmReady">last unready</div>`;
+        }
+        */
       } else { // if not in players, delete // TODO test
         parent.removeChild(node);
       }
@@ -168,12 +177,19 @@ const renderPlayers = ( parent, { players }) => {
   }
 };
 
+// TODO render join? is it even needed?
+
 /**
  * Renders the lobby state
  *
  * @param info
  */
 const renderLobby = ( {info} ) => {
+
+  if(ROOT.getAttribute('data-state') == null || parseInt(ROOT.getAttribute('data-state')) !== LOBBY) {
+    ROOT.setAttribute('data-state', LOBBY.toString());
+    clearScreen();
+  }
   console.info('render Lobby was called');
   console.info(info);
 
@@ -315,8 +331,13 @@ const renderJoker = (parent, jokers) => {
  */
 const renderGame = ( {game} ) => {
   // if LOBBY was rendered before, clear the ROOT node and add INGAME containers
-  if(ROOT.querySelector('.info') !== null || ROOT.querySelector('.players') !== null){
+
+  // if(ROOT.querySelector('.info') !== null || ROOT.querySelector('.players') !== null){ // TODO use data-state of ROOT instead
+
+  if(ROOT.getAttribute('data-state') == null || parseInt(ROOT.getAttribute('data-state')) !== INGAME) {
+    ROOT.setAttribute('data-state', INGAME.toString());
     clearScreen();
+
     let score = document.createElement('div');
     score.classList.add('score');
     score.classList.add('box');
@@ -353,6 +374,24 @@ const renderGame = ( {game} ) => {
   renderJoker(ROOT.querySelector('.joker'), game.jokersLeft);
 };
 
+const renderGameEnd = ({game}) => {
+  if(ROOT.getAttribute('data-state') == null || parseInt(ROOT.getAttribute('data-state')) !== FINISHED) {
+    ROOT.setAttribute('data-state', FINISHED.toString());
+    clearScreen();
+
+    let score = document.createElement('div');
+    score.classList.add('score-container');
+    ROOT.appendChild(score);
+    score.innerHTML = `
+    <div class="stat stat-lg">
+        <h3>${game.score}</h3>
+        <p>Score</p>
+    </div>
+    <a href="/player/home.xhtml" class="btn btn-primary">Home</a>
+    `;
+  }
+};
+
 const render = (state) => {
   if(state.timeoutIsActive){
     // TODO show modal
@@ -364,6 +403,7 @@ const render = (state) => {
     renderLobby(state)
   } else if(state.state === FINISHED){
     // TODO maybe not per GET Param (or player can view ending screen for any score...)
-    window.location.href = `${URL_FINISH}?score=${state.game.score}`
+    //window.location.href = `${URL_FINISH}?score=${state.game.score}`
+    renderGameEnd(state)
   }
 };
