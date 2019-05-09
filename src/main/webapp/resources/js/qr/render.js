@@ -26,7 +26,7 @@ const clearScreen = () => {
  */
 // TODO use this for modal https://stackoverflow.com/a/50523971/6244663
 const renderTimeOutModal = (remaining) => {
-  console.log(TIMEOUT_MODAL);
+  // console.log(TIMEOUT_MODAL);
   TIMEOUT_MODAL.modal('show'); // show modal
   TIMEOUT_COUNTER.innerHTML = `${(remaining / 1000).toFixed(1)}`;
   state.timeoutTimer = setInterval(() => {
@@ -121,7 +121,7 @@ const renderPlayers = ( parent, { players }) => {
   let copy = [ ...players ];
 
   let lastReadyUp = copy.filter(p => !p.ready).length === 1;
-  console.log(lastReadyUp)
+  // console.log(lastReadyUp)
 
   if(playerNodes.length > 0){
     playerNodes.forEach(node => {
@@ -173,8 +173,7 @@ const renderLobby = ( {info} ) => {
     ROOT.setAttribute('data-state', LOBBY.toString());
     clearScreen();
   }
-  console.info('render Lobby was called');
-  console.info(info);
+  console.debug('RENDER: rendering lobby')
 
   let elem = ROOT.querySelector('.info');
 
@@ -204,7 +203,7 @@ const renderQuestion = (parent, { questionId, type, question, remaining }) => {
   let q = parent.querySelector('#question');
   let qt = parent.querySelector('#questionTime span');
   if(q !== null){
-    console.log(q.innerText)
+    // console.log(q.innerText)
     if(q.innerText === question){
       let total = parseInt(qt.getAttribute('data-total'));
       qt.style.width = `${(remaining / total) * 100}%`;
@@ -319,6 +318,7 @@ const renderJoker = (parent, jokers) => {
  * @param game
  */
 const renderGame = ( {game} ) => {
+  console.debug('RENDER: rendering game');
   // if LOBBY was rendered before, clear the ROOT node and add INGAME containers
   if(ROOT.getAttribute('data-state') == null || parseInt(ROOT.getAttribute('data-state')) !== INGAME) {
     ROOT.setAttribute('data-state', INGAME.toString());
