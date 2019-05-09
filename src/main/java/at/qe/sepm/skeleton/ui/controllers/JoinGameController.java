@@ -56,7 +56,12 @@ public class JoinGameController {
             if(qrWebSocketConnection.isPlayerInGame(PIN, p)){
                 return ResponseEntity.ok("{\"playerId\":" + p.getId() + "}");
             }
-            IPlayerAction qr = quizRoomManager.joinRoom(PIN, p);
+            IPlayerAction qr = null;
+            try{
+                qr = quizRoomManager.joinRoom(PIN, p);
+            } catch (IllegalArgumentException e){
+                return ResponseEntity.ok("{\"error\":\"room is full\"}");
+            }
             qrWebSocketConnection.addGame(PIN, qr, p);
             logger.debug("Player " + p.getUser().getUsername() + " joined room " + pin);
             return ResponseEntity.ok("{\"playerId\":" + p.getId() + "}");

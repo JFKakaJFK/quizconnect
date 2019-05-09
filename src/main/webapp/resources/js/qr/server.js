@@ -79,7 +79,7 @@ const handleRoomInfo = ({ pin, difficulty, mode, questionSets, score, alivePingI
   }
   setState({
     state,
-    alivePing: state === INGAME ? setInterval(sendAlivePing, alivePingInterval - 50) : null,
+    alivePing: state === INGAME ? setInterval(sendAlivePing, alivePingInterval - 50) : null, // TODO always set aliveping once backend supports it
     gameSessionTimer: setInterval(updateLocalStorage(), 45000),
     info: {
       settings: {

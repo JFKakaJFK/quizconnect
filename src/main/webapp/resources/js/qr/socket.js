@@ -21,9 +21,9 @@ const connect = () => {
     // console.debug(frame);
     stompClient.subscribe(`${WS_SOURCE}/${state.pin}`, event => handleServerEvent(JSON.parse(event.body)));
     // sendAlivePing();
-    // getGameInfo();
-    // getRoomPlayers();
     console.debug(`SOCKET: connected`)
+
+    sendAlivePing();// TODO
     getRoomInfo();
   });
 };

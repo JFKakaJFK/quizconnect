@@ -25,8 +25,8 @@ const joinGame = (pin) => {
   })
   .then(response => response.json())
   .then(data => {
-    // console.log(data);
     if(data.error){
+      console.error(data.error);
       console.log('TODO: error animation / progress') // TODO
     }
     if(data.playerId){
@@ -41,7 +41,6 @@ const joinGame = (pin) => {
   })
   .catch(error => {
     console.error(error);
-    // console.log('TODO: error animation / progress') // TODO
   });
 };
 
