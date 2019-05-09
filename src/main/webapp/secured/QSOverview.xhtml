@@ -96,6 +96,9 @@
 
                 <ui:repeat value="#{QSOverviewBean.questionSets}" var="set">
                     <qc:generic-box size="sm"
+                                    showEdit="#{sessionInfoBean.currentUser.manager == managerService.getManagerOfQuestionSet(set)}"
+                                    editIcon="fas fa-edit"
+                                    editAction="#{editQuestionBean.setAndRedirect(set)}"
                                     showDelete="#{sessionInfoBean.currentUser.manager == managerService.getManagerOfQuestionSet(set)}"
                                     deleteIcon="fas fa-trash"
                                     deleteAction="#{QSOverviewBean.deleteQuestionSet(set)}">

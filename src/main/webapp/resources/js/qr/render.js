@@ -2,27 +2,11 @@
 
 /* ======================== RENDER FUNCTIONS ========================= */
 
-/* TODO
- *
- *  - render Lobby
- *    - render game info
- *    - render players
- *      - render player
- *      - remove player
- *  - render game
- *    - render question
- *    - render timer
- *    - render answers
- *      - render answer
- *      - remove answer
- */
-
 const ROOT = document.getElementById('root');
 const TIMEOUT_MODAL = $('#timeout'); // TODO bootstrap only works w/ jQuery Selector
 // document.getElementById('timeout');
 const TIMEOUT_COUNTER = document.getElementById('timeoutRemainingTime');
 //TIMEOUT_MODAL.querySelector('#timeoutRemainingTime');
-
 
 /**
  * Clears all elements within the ROOT
@@ -40,7 +24,6 @@ const clearScreen = () => {
  * Activates timeout modal
  * @param remaining
  */
-// TODO fix
 // TODO use this for modal https://stackoverflow.com/a/50523971/6244663
 const renderTimeOutModal = (remaining) => {
   console.log(TIMEOUT_MODAL);
@@ -84,7 +67,7 @@ const renderGameInfo = ({ settings }) => {
         <h3>${settings.pin.toString().padStart(6, '0')}${false ? 'share pin here' : ''}</h3> 
         <p>pin</p>
       </div>
-      ${/* TODO: implement share functionality + copy to clipboard */false}
+      ${/* TODO: implement share functionality + copy to clipboard */""}
       <a href="https://wa.me/?text=${encodeURIComponent(SHARE_PIN_WHATSAPP(settings.pin.toString().padStart(6, '0')))}" target="_blank" rel="noopener noreferrer nofollow">Share via WhatsApp</a>
     </div>
   `;
@@ -179,8 +162,6 @@ const renderPlayers = ( parent, { players }) => {
   }
 };
 
-// TODO render join? is it even needed?
-
 /**
  * Renders the lobby state
  *
@@ -199,11 +180,11 @@ const renderLobby = ( {info} ) => {
 
   // info only is rendered once
   if(elem === null){
-    ROOT.innerHTML = renderGameInfo(info); // TODO change
+    ROOT.innerHTML = renderGameInfo(info);
   }
 
   if(ROOT.querySelector('.players') === null){
-    ROOT.innerHTML += `<div class="players"></div>`; // TODO change
+    ROOT.innerHTML += `<div class="players"></div>`;
   }
   let players = ROOT.querySelector('.players');
 
@@ -248,7 +229,7 @@ const renderQuestionPlaceholder = (parent) => {
   `;
 };
 
-const renderGenericAnswer = ({ classes, content, answerId, questionId} ) => { // TODO parseInt necessary?
+const renderGenericAnswer = ({ classes, content, answerId, questionId} ) => {
   return `
     <div class="answer box ${classes}" data-questionId="${questionId}" data-answerId="${answerId}" onclick="answerQuestion(${questionId}, ${answerId})">
       ${content}
@@ -333,9 +314,6 @@ const renderJoker = (parent, jokers) => {
  */
 const renderGame = ( {game} ) => {
   // if LOBBY was rendered before, clear the ROOT node and add INGAME containers
-
-  // if(ROOT.querySelector('.info') !== null || ROOT.querySelector('.players') !== null){ // TODO use data-state of ROOT instead
-
   if(ROOT.getAttribute('data-state') == null || parseInt(ROOT.getAttribute('data-state')) !== INGAME) {
     ROOT.setAttribute('data-state', INGAME.toString());
     clearScreen();
@@ -396,7 +374,6 @@ const renderGameEnd = ({game}) => {
 
 const render = (state) => {
   if(state.timeoutIsActive){
-    // TODO show modal
     renderTimeOutModal(state.timeoutRemainingTime);
   }
   if(state.state === INGAME){
@@ -404,8 +381,6 @@ const render = (state) => {
   } else if(state.state === LOBBY){
     renderLobby(state)
   } else if(state.state === FINISHED){
-    // TODO maybe not per GET Param (or player can view ending screen for any score...)
-    //window.location.href = `${URL_FINISH}?score=${state.game.score}`
     renderGameEnd(state)
   }
 };

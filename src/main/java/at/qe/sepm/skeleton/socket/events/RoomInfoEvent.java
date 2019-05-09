@@ -12,6 +12,7 @@ public class RoomInfoEvent extends ServerEvent {
     private long alivePingInterval;
     private int numJokers;
     private int num;
+    private int state;
     private List<PlayerJSON> players;
 
     public RoomInfoEvent(){}
@@ -23,6 +24,7 @@ public class RoomInfoEvent extends ServerEvent {
                          int score,
                          long alivePingInterval,
                          int numJokers,
+                         boolean inLobby,
                          List<PlayerJSON> players){
         this.pin = pin;
         this.difficulty = difficulty;
@@ -33,6 +35,8 @@ public class RoomInfoEvent extends ServerEvent {
         this.numJokers = numJokers;
         this.num = players.size();
         this.players = players;
+        // matches client side state constants: 0 = LOBBY & 1 = INGAME
+        this.state = inLobby ? 0 : 1;
     }
 
     public int getPin() {
@@ -97,6 +101,14 @@ public class RoomInfoEvent extends ServerEvent {
 
     public void setNum(int num) {
         this.num = num;
+    }
+
+    public int getState() {
+        return state;
+    }
+
+    public void setState(int state) {
+        this.state = state;
     }
 
     public List<PlayerJSON> getPlayers() {

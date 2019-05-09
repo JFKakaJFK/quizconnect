@@ -21,7 +21,6 @@ const REMOVE_QUESTION = "removeQuestion";
  *
  * @param response
  */
-let playersHandled = false;
 let infoHandled = false;
 const handleServerEvent = (response) => {
   // do nothing if event is no action
@@ -62,17 +61,6 @@ const handleServerEvent = (response) => {
     case PLAYER_LEAVE: // TODO only ingame?
       return handlePlayerLeave(response);
     default:
-      /*
-      if(!playersHandled && response.event === ROOM_PLAYERS){
-        playersHandled = true;
-        return handleRoomPlayers(response)
-      } else if(!infoHandled && response.event === GAME_INFO){
-        infoHandled = true;
-        return handleGameInfo(response)
-      } else { // TODO remove case after debugging
-        console.error(`Invalid event: ${response.event}`);
-      }
-      */
       if(!infoHandled && response.event === ROOM_INFO){
         infoHandled = true;
         return handleRoomInfo(response);
@@ -84,42 +72,13 @@ const handleServerEvent = (response) => {
 
 /* Event Handlers */
 
-// update game info
-const handleGameInfo = ({ pin, difficulty, mode, questionSets, score, alivePingInterval, numJokers }) => {
+const handleRoomInfo = ({ pin, difficulty, mode, questionSets, score, alivePingInterval, numJokers, num, players, state }) => {
+  if(state === INGAME){
+    sendAlivePing();
+  }
   setState({
-    alivePing: setInterval(sendAlivePing, alivePingInterval - 50), // account for latency
-    info: {
-      settings: {
-        pin,
-        difficulty,
-        mode,
-        questionSets,
-        score,
-        alivePingInterval,
-        numJokers,
-      }
-    },
-    game: {
-      jokersLeft: numJokers,
-    }
-  });
-  console.info(`Info updated`);
-};
-
-// update room players
-const handleRoomPlayers = ({ num, players }) => {
-  setState({
-    info: {
-      num,
-      players,
-    }
-  });
-  console.info(`Players updated`);
-};
-
-// TODO add state to event & update localStorage periodically
-const handleRoomInfo = ({ pin, difficulty, mode, questionSets, score, alivePingInterval, numJokers, num, players }) => {
-  setState({
+    state,
+    alivePing: state === INGAME ? setInterval(sendAlivePing, alivePingInterval - 50) : null,
     gameSessionTimer: setInterval(updateLocalStorage(), 45000),
     info: {
       settings: {
@@ -135,6 +94,7 @@ const handleRoomInfo = ({ pin, difficulty, mode, questionSets, score, alivePingI
       players,
     },
     game: {
+      score: score,
       jokersLeft: numJokers,
     }
   });
@@ -183,8 +143,7 @@ const handleGameStart = (event) => {
     alivePing: setInterval(sendAlivePing, state.info.settings.alivePingInterval - 50), // account for latency
     state: INGAME,
   });
-  // TODO only send if in timeout? <- DO THIS (DONE)
-  // TODO or register every 1s & unregister on activity -> only 1 call of cancelTimeout/s -> less bandwidth <- DO THIS TOO
+  // TODO or register every 1s & unregister on activity -> only 1 call of cancelTimeout/s
   /*
   document.addEventListener('click', cancelTimeout);
   document.addEventListener('touchstart', cancelTimeout);
@@ -231,8 +190,6 @@ const handleScoreChange = ({ newScore }) => {
 };
 
 const handleTimerSync = ({ questionId, remaining }) => {
-  // TODO: update time left (gets changed & rendered @ fixed interval, so nothing to do else?)
-  // TODO change updated values if deepmerge in setState
   if(state.game.question == null){
     return;
   }

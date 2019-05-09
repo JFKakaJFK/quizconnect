@@ -5,12 +5,16 @@
                 xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
                 xmlns:qc="http://java.sun.com/jsf/composite/quizconnect"
                 template="/WEB-INF/templates/main.xhtml">
-    <ui:define name ="content">
+    <ui:define name="site-specific-css">
         <link rel="stylesheet" href="../resources/css/profile.css" />
+    </ui:define>
 
+    <ui:define name ="content">
+        <!--
         <f:metadata>
-            <f:viewParam name="id" value="#{profileBean.id}"/>
+            <f:viewParam name="id" value="# {profileBean.id}"/>
         </f:metadata>
+        -->
 
         <h:form>
             <h:commandLink action="all?faces-redirect=true" styleClass="back-btn">
@@ -22,10 +26,16 @@
                 <h:commandButton styleClass="btn btn-primary" action="all?faces-redirect=true" value="All Players"/>
             </h:panelGroup>
 
-            <h:panelGroup layout="block" rendered="#{profileBean.player != null}" styleClass="profile-grid">
+            <h:panelGroup id="player" layout="block" rendered="#{profileBean.player != null}" styleClass="profile-grid">
 
                 <h:panelGroup layout="block" id="avatar" styleClass="avatar">
-                    <qc:playerbox player="#{profileBean.player}" online="#{randomOnlineTestBean.online}" rank="Beginner" />
+                    <qc:playerbox player="#{profileBean.player}" online="#{randomOnlineTestBean.online}" rank="Beginner">
+                        <h:commandLink p:class="ml-2" p:data-toggle="modal" p:data-target="#deletePlayer"
+                                       rendered="#{profileBean.deletable}">
+                            <svg role="img" width="24" height="24" viewBox="0 0 24 24" aria-labelledby="binIconTitle binIconDesc"><title id="binIconTitle">Bin</title><desc id="binIconDesc">Icon of a bin (trash)</desc><path  d="M19 6L5 6M14 5L10 5M6 10L6 20C6 20.6666667 6.33333333 21 7 21 7.66666667 21 11 21 17 21 17.6666667 21 18 20.6666667 18 20 18 19.3333333 18 16 18 10"/></svg>
+                            <f:ajax execute="@form" render="@none" />
+                        </h:commandLink>
+                    </qc:playerbox>
                 </h:panelGroup>
 
                 <div class="stats box">
@@ -45,9 +55,31 @@
                 <h:panelGroup layout="block" id="qs-chart" styleClass="qs-chart box">
                     <p>Do some nice graphs w/ ApexCharts</p>
                 </h:panelGroup>
-            </h:panelGroup>
 
-        </h:form>
+            <!--
+                            <qc:modal id="deletePlayer"
+                                      target="deletePlayer"
+                                      title="Delete Player"
+                                      confirm="Delete Player"
+                                      abort="Cancel"
+                                      confirmAction="# {deletePlayerBean.deletePlayer(profileBean.player)}"
+                                      update="player">
+                                Are you sure? This cannot be undone.
+                            </qc:modal>
+            -->
+                        </h:panelGroup>
 
-    </ui:define>
-</ui:composition>
+                                    <qc:modal id="deletePlayer"
+                                              target="deletePlayer"
+                                              title="Delete Player"
+                                              confirm="Delete Player"
+                                              abort="Cancel"
+                                              confirmAction="#{deletePlayerBean.deletePlayer(profileBean.player)}"
+                                              update="player">
+                                        Are you sure? This cannot be undone.
+                                    </qc:modal>
+
+                    </h:form>
+
+                </ui:define>
+            </ui:composition>

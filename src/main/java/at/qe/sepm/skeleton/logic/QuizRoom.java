@@ -19,7 +19,7 @@ import at.qe.sepm.skeleton.model.QuestionSet;
 import at.qe.sepm.skeleton.model.QuestionSetDifficulty;
 
 /**
- * Class representing a QuizRoom containing all major logic required.
+ * Class representing a QuizRoom containing all major logic required. For illustrations on how this class works please see the 'Documentation' folder.
  * 
  * @author Lorenz_Smidt
  *
@@ -100,7 +100,7 @@ public class QuizRoom implements IPlayerAction
 	public QuizRoom(ThreadPoolTaskScheduler scheduler, QuizRoomManager manager, int pin, int maxPlayers, RoomDifficulty difficulty, GameMode gameMode,
 			List<QuestionSet> qSets, IRoomAction roomAction)
 	{
-		LOGGER.debug("QuizRoom [" + pin + "] started.");
+		LOGGER.debug("### INFO ### QuizRoom [" + pin + "] started. (room difficulty " + difficulty + "; maxPlayers: " + maxPlayers + ")");
 		this.pin = pin;
 		this.manager = manager;
 		this.maxPlayers = maxPlayers;
@@ -165,6 +165,8 @@ public class QuizRoom implements IPlayerAction
 					questionsPoolHard.add(q);
 			}
 		}
+		LOGGER.debug("### INFO ### QuizRoom [" + pin + "] loaded " + questionsPoolEasy.size() + " easy Questions and " + questionsPoolHard.size()
+				+ " hard Questions.");
 	}
 	
 	/**
@@ -349,7 +351,7 @@ public class QuizRoom implements IPlayerAction
 	 * 
 	 * @param player
 	 *            Player to join the room.
-	 * @return True if room is full, false if join successful.
+	 * @return (True if room is full) IllegalArgumentException if join failure, false if join successful.
 	 */
 	public synchronized boolean addPlayer(Player player)
 	{
@@ -487,13 +489,14 @@ public class QuizRoom implements IPlayerAction
 			x.onGameEnd(pin);
 		});
 		
+		wfpMode = true; // prevent processing of any frameUpdate calls on any runtime structures
+		
 		// TODO update player stats
 		
 		delayQueue.clear();
 		timerFrameUpdate.stop();
-		wfpMode = true; // prevent processing of any frameUpdate calls on any runtime structures
 		manager.removeRoom(pin);
-
+		
 		LOGGER.debug("QuizRoom [" + pin + "] closed after " + timerFrameUpdate.getElapsedTime() + " ms.");
 	}
 	
@@ -539,6 +542,7 @@ public class QuizRoom implements IPlayerAction
 		if (pair == null)
 		{ // close when no more Questions available or if maximum number of Questions answered.
 			onRoomClose();
+			return;
 		}
 		
 		Question question = pair.getKey();
@@ -677,7 +681,7 @@ public class QuizRoom implements IPlayerAction
 	 */
 	private long computeQuestionTime(QuestionSetDifficulty questionDifficulty)
 	{
-		long playerBonus = 2000; // ms added for each player in the room
+		long playerBonus = 5000; // ms added for each player in the room
 		double scaleFactor = 0.3; // factor affecting time reduction towards end of game
 		
 		long base = 0;
@@ -838,6 +842,11 @@ public class QuizRoom implements IPlayerAction
 	@Override
 	public void answerQuestion(Player p, int questionId, int index)
 	{
+		if (wfpMode)
+		{
+			return;
+		}
+		
 		if (!playerActivityTimestamps.containsKey(p))
 		{
 			LOGGER.error("### ERROR ### [QR " + pin + "] Illegal call to answerQuestion! Player is not in QuizRoom! (id: " + p.getId() + ")");
@@ -942,7 +951,7 @@ public class QuizRoom implements IPlayerAction
 			removeQuestion(aq);
 		}
 		
-		// prevent delayed calls to distributing questions before joker timeout has finished
+		// prevent delayed calls to distribute questions before joker timeout has finished
 		isJokerTimeout = true;
 		
 		// wait 1 second, then assign new questions to all players

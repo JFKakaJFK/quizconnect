@@ -1,7 +1,6 @@
 "use strict";
 
 const PIN = document.getElementById('pin');
-// const msg = document.getElementById('msg');
 
 const validatePIN = () => {
   let input = PIN.value.replace(/^0+/, '').substring(0, 6);
@@ -13,25 +12,17 @@ const validatePIN = () => {
 
 const joinGame = (pin) => {
   fetch(`${JOIN_ENDPOINT}${pin}`, {
-      method: 'POST',
+    method: 'POST',
   })
   .then(response => response.json())
   .then(data => {
     // console.log(data);
     if(data.error){
-        // msg.innerHTML = data.message; // TODO ignore? | default: show invalid indicator (e.g. red border) until pin is valid?
-      console.log('TODO: error animation / progress')
+      console.log('TODO: error animation / progress') // TODO
     }
     if(data.playerId){
       console.log('PLAYER:', data.playerId);
-      console.log('TODO: fancy animation')
-      /*
-      setState({
-        state: LOBBY,
-        pin,
-        id: data.playerId,
-      });
-      */
+      console.log('TODO: fancy animation') // TODO
       state.state = LOBBY;
       state.pin = pin;
       state.id = data.playerId;

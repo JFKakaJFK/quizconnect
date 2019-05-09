@@ -12,7 +12,7 @@
 
     <error-page>
         <exception-type>org.springframework.security.access.AccessDeniedException</exception-type>
-        <location>/error/access_denied.xhtml</location>
+        <location>/error/402.xhtml</location>
     </error-page>
 
 

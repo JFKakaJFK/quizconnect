@@ -49,22 +49,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .hasAnyAuthority("PLAYER", "MANAGER")
                 .antMatchers("/login/**")
                 .hasAnyAuthority("PLAYER", "MANAGER")
-                // TODO add preauthorize for qr websocket & qr path
-                /*
                 .antMatchers("/quizroom/**")
                 .hasAnyAuthority("PLAYER")
                 .antMatchers("/qr/**")
                 .hasAnyAuthority("PLAYER")
-                */
-                //If user doesn't have permission, forward him to login page
                 .and()
                 .formLogin()
                 .loginPage("/login.xhtml")
                 .loginProcessingUrl("/login")
-                .defaultSuccessUrl("/login/redirect.xhtml");
-        // :TODO: user failureUrl(/login.xhtml?error) and make sure that a corresponding message is displayed
+                .defaultSuccessUrl("/login/redirect.xhtml")
+                .failureUrl("/login.xhtml?error"); // TODO show error message
 
-        http.exceptionHandling().accessDeniedPage("/error/denied.xhtml");
+        http.exceptionHandling().accessDeniedPage("/error/402.xhtml");
 
         http.sessionManagement().invalidSessionUrl("/");
 
