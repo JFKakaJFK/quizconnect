@@ -280,37 +280,55 @@ const renderAnswers = ( parent, { answers }) => {
   if(answerNodes.length > 0){
     // remove answer if not in state
     answerNodes.forEach(node => {
-      /*
       if(!node.classList.contains('answer-placeholder')){
-        // all of the below
+
+        let questionId = parseInt(node.getAttribute('data-questionId'));
+        let answerId = parseInt(node.getAttribute('data-answerId'));
+        let answer = copy.find(a => a.questionId === questionId && a.answerId === answerId);
+
+        // delete if not in answers
+        if(answer === undefined){
+          // change to default // TODO
+          console.log(node);
+          node.classList.add('answer-placeholder');
+          node.removeAttribute('data-questionId');
+          node.removeAttribute('data-answerId');
+          node.removeAllListeners('click');
+          let lc = node.lastChild;
+          while(lc){
+            node.removeChild(lc);
+            lc = node.lastChild;
+          }
+          // parent.removeChild(node);
+        }
+
+        // remove answer from copy (make search space smaller)
+        copy = copy.filter(a => a.questionId !== questionId || a.answerId !== answerId);
       }
-      */
-
-      let questionId = parseInt(node.getAttribute('data-questionId'));
-      let answerId = parseInt(node.getAttribute('data-answerId'));
-      let answer = copy.find(a => a.questionId === questionId && a.answerId === answerId);
-
-      // delete if not in answers
-      if(answer === undefined){
-        // change to default // TODO
-        //console.log(node);
-        parent.removeChild(node);
-      }
-
-      // remove answer from copy (make search space smaller)
-      copy = copy.filter(a => a.questionId !== questionId || a.answerId !== answerId);
     });
   }
 
   const emptyNodes = parent.querySelectorAll('.answer-placeholder');
   // add new answers
   if(copy.length > 0){
-    // first populate placeholders // TODO
-    /*
+    // first populate placeholders
     for (let node of emptyNodes) {
       if(copy.length > 0){
         let answer = copy.pop();
 
+        let pseudo = document.createElement('div');
+        pseudo.innerHTML = renderAnswer(answer);
+
+        node.parentNode.insertBefore(pseudo.firstChild, node.nextSibling);
+
+        parent.removeChild(node);
+        /*
+        node.classList.remove('answer-placeholder');
+        node.removeAttribute('data-questionId');
+        node.removeAttribute('data-answerId');
+        node.removeAllListeners('click');
+        */
+        // tODO
       } else {
         break;
       }
@@ -319,19 +337,16 @@ const renderAnswers = ( parent, { answers }) => {
     if(copy.length > 0){
       copy.forEach(a => parent.innerHTML += renderAnswer(a));
     }
-    */
 
-    copy.forEach(a => parent.innerHTML += renderAnswer(a));
+    // copy.forEach(a => parent.innerHTML += renderAnswer(a));
   }
 
   // delete all empty nodes at end of parent (only placeholders in between) // TODO
-  /*
   let lastNode = parent.lastChild;
-  while(lastNode.classList.contains('answer-placeholder')){
+  while(lastNode !== null && lastNode !== undefined && lastNode.classList.contains('answer-placeholder')){
     parent.removeChild(lastNode);
     lastNode = parent.lastChild;
   }
-  */
 };
 
 // TODO structure, rerender only on change
