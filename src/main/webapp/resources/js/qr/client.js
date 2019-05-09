@@ -15,10 +15,12 @@ const ROOM_INFO = "getRoomInfo";
 
 const getRoomInfo = () => {
   sendEvent({ event: ROOM_INFO });
+  console.debug(`CLIENT: getting room info`)
 };
 
 const readyUp = () => {
   sendEvent({event: READY, playerId: state.id});
+  console.debug(`CLIENT: this player is ready`)
 };
 
 const answerQuestion = (questionId, answerId) => {
@@ -28,17 +30,20 @@ const answerQuestion = (questionId, answerId) => {
     answerId,
     questionId,
   })
+  console.debug(`CLIENT: answered question ${questionId}`)
 };
 
 // TODO disable joker for x seconds after click & no multiple joker waste (easy sync w/ server)
 const useJoker = () => {
   sendEvent({event: USE_JOKER, playerId: state.id})
+  console.debug(`CLIENT: using joker`)
 };
 
 const leaveRoom = () => {
   sendEvent({event: LEAVE_ROOM, playerId: state.id});
   disconnect();
   clearLocalStorage();
+  console.debug(`CLIENT: leaving room`)
 };
 
 const cancelTimeout = () => {
@@ -54,6 +59,7 @@ const cancelTimeout = () => {
   document.removeEventListener('click', cancelTimeout);
   document.removeEventListener('touchstart', cancelTimeout);
   document.removeEventListener('mousemove', cancelTimeout);
+  console.debug(`CLIENT: timeout cancelled`)
 };
 
 const sendAlivePing = () => {

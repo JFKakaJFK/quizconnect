@@ -23,6 +23,7 @@ const connect = () => {
     // sendAlivePing();
     // getGameInfo();
     // getRoomPlayers();
+    console.debug(`SOCKET: connected`)
     getRoomInfo();
   });
 };
@@ -40,6 +41,7 @@ const disconnect = () => {
         clearInterval(state.alivePing);
         state.alivePing = null;
     }
+  console.debug(`SOCKET: disconnected`)
 };
 
 /**

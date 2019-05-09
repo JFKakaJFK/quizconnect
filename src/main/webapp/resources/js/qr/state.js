@@ -42,7 +42,7 @@ const setState = (newState) => {
 
   // TODO deep merge? https://davidwalsh.name/javascript-deep-merge
   state = Object.assign(state, newState, { info: Object.assign(state.info, newState.info) }, { game: Object.assign(state.game, newState.game)});
-  console.log("new State", state);
+  console.debug(`STATE: merged states, new State is ${state.state === INGAME ? 'INGAME' : state.state === LOBBY ? 'LOBBY' : state.state === JOIN ? 'JOIN' : 'FINISHED'}:`, JSON.stringify(state)); // should keep state changes affecting the debug log
 
   render(state);
 };

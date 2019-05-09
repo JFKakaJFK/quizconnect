@@ -11,6 +11,9 @@ const validatePIN = () => {
 };
 
 const joinGame = (pin) => {
+  if(state.state === INGAME && state.pin !== null && state.id !== null){
+    return;
+  }
   fetch(`${JOIN_ENDPOINT}${pin}`, {
     method: 'POST',
   })
@@ -21,15 +24,13 @@ const joinGame = (pin) => {
       console.log('TODO: error animation / progress') // TODO
     }
     if(data.playerId){
-      console.log('PLAYER:', data.playerId);
+      console.debug('JOIN: connected as player', data.playerId);
       console.log('TODO: fancy animation') // TODO
       state.state = LOBBY;
       state.pin = pin;
       state.id = data.playerId;
       updateLocalStorage();
-      console.log(state.pin, state.id, stompClient);
       connect();
-      console.log('should have connected')
     }
   })
   .catch(error => console.error(error));
@@ -68,6 +69,8 @@ const checkLocalStorage = () => {
   }
 };
 
+
+// TODO move functions to state
 checkLocalStorage();
 
 const clearLocalStorage = () => {
@@ -76,7 +79,7 @@ const clearLocalStorage = () => {
 };
 
 const updateLocalStorage = () => {
-  console.log('updating localStorage')
+  console.debug('STATE: updating localStorage');
   if(state.state === JOIN || state.state === FINISHED){
     clearLocalStorage();
   } else {
