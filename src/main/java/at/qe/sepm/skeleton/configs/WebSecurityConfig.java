@@ -53,6 +53,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .hasAnyAuthority("PLAYER")
                 .antMatchers("/qr/**")
                 .hasAnyAuthority("PLAYER")
+                .antMatchers("/uploads")
+                .hasAnyAuthority("PLAYER", "MANAGER")
                 .and()
                 .formLogin()
                 .loginPage("/login.xhtml")

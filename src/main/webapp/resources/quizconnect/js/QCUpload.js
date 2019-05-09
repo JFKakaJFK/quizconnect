@@ -3,11 +3,7 @@
 class QCUpload {
   constructor(){}
 
-  static upload(username, elemId = 'upload'){
-    if(username == null || username === ''){
-      console.error('QCUpload.upload: username is invalid');
-      return;
-    }
+  static upload(elemId = 'upload'){
     const elem = document.getElementById(`${elemId}`);
     if(elem == null){
       console.error('QCUpload.upload: input element not found');
@@ -37,7 +33,7 @@ class QCUpload {
         formData.append(name, file[name]);
       }
 
-      fetch(`/uploads/${username}`, {
+      fetch(`/uploads`, {
         method: 'POST',
         body: formData,
       }).catch(error => {
