@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 import javax.faces.event.AjaxBehaviorEvent;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
  */
 @Controller
 @Scope("view")
-public class AllPlayersBean {
+public class AllPlayersBean implements Serializable {
 
     private PlayerService playerService;
 

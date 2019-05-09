@@ -280,6 +280,11 @@ const renderAnswers = ( parent, { answers }) => {
   if(answerNodes.length > 0){
     // remove answer if not in state
     answerNodes.forEach(node => {
+      /*
+      if(!node.classList.contains('answer-placeholder')){
+        // all of the below
+      }
+      */
 
       let questionId = parseInt(node.getAttribute('data-questionId'));
       let answerId = parseInt(node.getAttribute('data-answerId'));
@@ -287,6 +292,8 @@ const renderAnswers = ( parent, { answers }) => {
 
       // delete if not in answers
       if(answer === undefined){
+        // change to default // TODO
+        //console.log(node);
         parent.removeChild(node);
       }
 
@@ -295,10 +302,36 @@ const renderAnswers = ( parent, { answers }) => {
     });
   }
 
+  const emptyNodes = parent.querySelectorAll('.answer-placeholder');
   // add new answers
   if(copy.length > 0){
+    // first populate placeholders // TODO
+    /*
+    for (let node of emptyNodes) {
+      if(copy.length > 0){
+        let answer = copy.pop();
+
+      } else {
+        break;
+      }
+    }
+    // then create new answers
+    if(copy.length > 0){
+      copy.forEach(a => parent.innerHTML += renderAnswer(a));
+    }
+    */
+
     copy.forEach(a => parent.innerHTML += renderAnswer(a));
   }
+
+  // delete all empty nodes at end of parent (only placeholders in between) // TODO
+  /*
+  let lastNode = parent.lastChild;
+  while(lastNode.classList.contains('answer-placeholder')){
+    parent.removeChild(lastNode);
+    lastNode = parent.lastChild;
+  }
+  */
 };
 
 // TODO structure, rerender only on change
