@@ -12,7 +12,7 @@ const validatePIN = () => {
 
 const joinGame = (pin) => {
   fetch(`${JOIN_ENDPOINT}${pin}`, {
-      method: 'POST',
+    method: 'POST',
   })
   .then(response => response.json())
   .then(data => {
