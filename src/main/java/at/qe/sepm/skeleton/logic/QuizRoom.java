@@ -100,7 +100,7 @@ public class QuizRoom implements IPlayerAction
 	public QuizRoom(ThreadPoolTaskScheduler scheduler, QuizRoomManager manager, int pin, int maxPlayers, RoomDifficulty difficulty, GameMode gameMode,
 			List<QuestionSet> qSets, IRoomAction roomAction)
 	{
-		LOGGER.debug("QuizRoom [" + pin + "] started.");
+		LOGGER.debug("### INFO ### QuizRoom [" + pin + "] started. (room difficulty " + difficulty + "; maxPlayers: " + maxPlayers + ")");
 		this.pin = pin;
 		this.manager = manager;
 		this.maxPlayers = maxPlayers;
@@ -165,6 +165,8 @@ public class QuizRoom implements IPlayerAction
 					questionsPoolHard.add(q);
 			}
 		}
+		LOGGER.debug("### INFO ### QuizRoom [" + pin + "] loaded " + questionsPoolEasy.size() + " easy Questions and " + questionsPoolHard.size()
+				+ " hard Questions.");
 	}
 	
 	/**
@@ -349,7 +351,7 @@ public class QuizRoom implements IPlayerAction
 	 * 
 	 * @param player
 	 *            Player to join the room.
-	 * @return True if room is full, false if join successful.
+	 * @return (True if room is full) IllegalArgumentException if join failure, false if join successful.
 	 */
 	public synchronized boolean addPlayer(Player player)
 	{
@@ -949,7 +951,7 @@ public class QuizRoom implements IPlayerAction
 			removeQuestion(aq);
 		}
 		
-		// prevent delayed calls to distributing questions before joker timeout has finished
+		// prevent delayed calls to distribute questions before joker timeout has finished
 		isJokerTimeout = true;
 		
 		// wait 1 second, then assign new questions to all players
