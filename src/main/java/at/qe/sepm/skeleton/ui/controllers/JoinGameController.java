@@ -61,7 +61,6 @@ public class JoinGameController {
             logger.debug("Player " + p.getUser().getUsername() + " joined room " + pin);
             return ResponseEntity.ok("{\"playerId\":" + p.getId() + "}");
         }
-        // return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // TODO return 404 & throw console error at client or hide from client?
         return ResponseEntity.ok("{\"error\":\"room does not exist\"}");
     }
 }
