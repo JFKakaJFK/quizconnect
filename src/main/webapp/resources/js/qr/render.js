@@ -229,6 +229,12 @@ const renderQuestionPlaceholder = (parent) => {
   `;
 };
 
+const renderAnswerPlaceholder = () => {
+  return `
+    <div class="answer box answer-placeholder"></div>
+  `;
+}
+
 const renderGenericAnswer = ({ classes, content, answerId, questionId} ) => {
   return `
     <div class="answer box ${classes}" data-questionId="${questionId}" data-answerId="${answerId}" onclick="answerQuestion(${questionId}, ${answerId})">
