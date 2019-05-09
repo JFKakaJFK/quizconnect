@@ -23,8 +23,8 @@
 
         <nav class="pushbar-nav pl-4 pr-3 py-4">
             <ul class="list-unstyled">
-                <li class="my-3">
-                    <a href="#" data-toggle="modal" data-target="#leave" data-backdrop="static">Leave Game</a>
+                <li class="my-3"> <!-- TODO show normal menu in JOIN & FINISHED states? -->
+                    <a href="#" data-toggle="modal" data-target="#leave" data-backdrop="static" onclick="if(state.state === JOIN || state.state === FINISHED){ window.location.href = URL_LEAVE }">Leave Game</a>
                 </li>
             </ul>
         </nav>
@@ -43,12 +43,20 @@
             </div>
         </header>
 
-        <div id="root">
+        <div id="root" data-state="3">
             <!-- game will be rendered here -->
+
+            <!-- JOIN VIEW (Why use JS if it can be done w/ HTML? -->
+            <div class="join">
+                <div class="stat stat-lg">
+                    <input id="pin" type="number" placeholder="000000" max="999999" min="1" />
+                    <p>enter pin</p>
+                </div>
+            </div>
+
         </div>
     </div>
 
-    <!-- TODO maybe look at https://getbootstrap.com/docs/4.3/components/modal/#varying-modal-content -->
     <div class="modal fade" id="leave" tabindex="-1" role="dialog" aria-labelledby="leaveModal" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
             <div class="modal-content">
@@ -64,7 +72,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                     <!-- TODO test leave action -->
-                    <button type="button" class="btn btn-primary" onclick="leaveRoom()"><a href="/player/home.xhtml?left=true">Leave Game</a></button>
+                    <button type="button" class="btn btn-primary" onclick="leaveRoom()"><a href="/player/home.xhtml?leave=true">Leave Game</a></button>
                 </div>
             </div>
         </div>
@@ -89,14 +97,33 @@
         </div>
     </div>
 
+    <div class="modal fade" id="confirmReady" tabindex="-1" role="dialog" aria-labelledby="confirmReadyModal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmReadyModal">Ready Up</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h2>The game will start when you are ready.</h2>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-tertiary" data-dismiss="modal">Abort</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="readyUp()">Start Game</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <!-- TODO load js in head? time to first alive ping should be small, maybe load ws stuff before bootstrap stuff? -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
-    <!-- Websocket JS -->
+    <!-- Websocket & QuizRoom JS -->
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
     <script src="../resources/js/qr/constants.js"></script>
@@ -105,6 +132,7 @@
     <script src="../resources/js/qr/client.js"></script>
     <script src="../resources/js/qr/server.js"></script>
     <script src="../resources/js/qr/socket.js"></script>
+    <script src="../resources/js/qr/join.js"></script>
     <script src="../resources/js/qr/init.js"></script>
 
     <!-- Pushbar JS -->
