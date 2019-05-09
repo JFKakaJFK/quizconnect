@@ -12,8 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Bean that shows all players for the {@link Player} overview
+ */
 @Controller
-@Scope("view") // @Scope("session")
+@Scope("view")
 public class AllPlayersBean {
 
     private PlayerService playerService;
@@ -31,23 +34,22 @@ public class AllPlayersBean {
         this.user = sessionInfoBean.getCurrentUser();
     }
 
-    /*
-    public void handleSearch(ValueChangeEvent event){
-        players = allPlayers.stream()
-                .filter(player -> player.getUser().getUsername().toLowerCase().contains(event.getNewValue().toString()))
-                .collect(Collectors.toList());
-
-        // TODO use messageBean
-        FacesContext.getCurrentInstance().getPartialViewContext().getRenderIds().add("form:players");
-    }
-    */
-
+    /**
+     * Updates the currently shown players by filtering accoriding to user input
+     *
+     * @param event
+     */
     public void handleSearch(AjaxBehaviorEvent event){
         players = allPlayers.stream()
                 .filter(player -> player.getUser().getUsername().toLowerCase().contains(searchPhrase.toLowerCase())) // || player.getId().toString().toLowerCase().contains(searchPhrase.toLowerCase()))
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Returns all {@link Player}s or all {@link Player}s by the {@link at.qe.sepm.skeleton.model.Manager}, depending on the current selection
+     *
+     * @return
+     */
     private List<Player> getAllPlayers() {
         if(onlyByManager && user.getManager() != null){
             if(allByManager == null){
@@ -65,14 +67,13 @@ public class AllPlayersBean {
         this.allPlayers = allPlayers;
     }
 
-    //TODO: JavaDoc for getPlayers
     public List<Player> getPlayers() {
         if(players == null){
             this.players = getAllPlayers();
         }
         return players;
     }
-    //TODO: JavaDoc for SetPlayers
+
     public void setPlayers(List<Player> players) {
         this.players = players;
     }
@@ -92,10 +93,13 @@ public class AllPlayersBean {
     public void setOnlyByManager(boolean onlyByManager) {
         this.onlyByManager = onlyByManager;
         this.players = null;
-        // this.allPlayers = null;
-        // this.allByManager = null;
     }
 
+    /**
+     * Adds a {@link Player} to the list of {@link Player}s
+     *
+     * @param p {@link Player} to add
+     */
     public void addPlayer(Player p){
         if(allPlayers == null){
             this.allPlayers = new ArrayList<>(playerService.getAllPlayers());

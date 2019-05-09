@@ -20,8 +20,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.*;
+import java.security.Principal;
 import java.util.List;
 
+/**
+ * This {@link Controller} handles all file uploads
+ */
 @Controller
 public class UploadAPIController {
 
@@ -53,7 +57,8 @@ public class UploadAPIController {
      * @return
      */
     @RequestMapping(value = "/uploads/{username}", method = RequestMethod.POST)
-    public ResponseEntity handleUpload(@RequestParam("files[]") List<MultipartFile> files, @PathVariable String username){
+    public ResponseEntity handleUpload(@RequestParam("files[]") List<MultipartFile> files, @PathVariable String username, Principal principal){
+        // username = principal.getName() // TODO
         MultipartFile file = null;
         for(int i = 0; i < files.size(); i++){
             MultipartFile f = files.get(i);
@@ -68,7 +73,7 @@ public class UploadAPIController {
         }
 
         User user = userService.loadUser(username);
-        if(user == null){ // TODO could be generalized to allow uploads by non logged in actors, but meh (set manager id to default & done [also in uploadservice])
+        if(user == null){
             return new ResponseEntity(HttpStatus.UNAUTHORIZED);
         }
         int managerId = user.getManager() == null ? managerService.getManagerOfPlayer(user.getPlayer()).getId() : user.getManager().getId();

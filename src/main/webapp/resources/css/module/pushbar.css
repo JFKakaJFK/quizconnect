@@ -103,7 +103,7 @@ html.pushbar_locked .pushbar_overlay{
 
 .pushbar-logout {
 	position: absolute;
-	bottom: 5rem; /* TODO maybe find a better hack */
+	bottom: 5rem;
 	left: 50%;
 	transform: translate(-50%, 0);
 }

@@ -60,7 +60,6 @@
                       footerId="footer"
                       disableConfirm="#{changeAvatarBean.disabled}"
                        >
-                <!-- TODO: disableConfirm="#{changeAvatarBean.disabled}" -->
 
                 <div jsf:id="preview" class="preview">
                     <h:graphicImage p:id="preview" value="#{avatarBean.getAvatar((changeAvatarBean.filename == null ? sessionInfoBean.currentUser.player.avatarPath : changeAvatarBean.filename))}" alt="avatar" />

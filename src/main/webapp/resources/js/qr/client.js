@@ -3,8 +3,6 @@
 /* ======================== CLIENT EVENTS ========================= */
 
 /* CLIENT EVENTS */
-const GAME_INFO = "getGameInfo";
-const ROOM_PLAYERS = "getRoomPlayers";
 const READY = "readyUp";
 const ANSWER_QUESTION = "answerQuestion";
 const USE_JOKER = "useJoker";
@@ -17,14 +15,6 @@ const ROOM_INFO = "getRoomInfo";
 
 const getRoomInfo = () => {
   sendEvent({ event: ROOM_INFO });
-};
-
-const getGameInfo = () => {
-  sendEvent({event: GAME_INFO});
-};
-
-const getRoomPlayers = () => {
-  sendEvent({event: ROOM_PLAYERS});
 };
 
 const readyUp = () => {
@@ -53,7 +43,7 @@ const leaveRoom = () => {
 
 const cancelTimeout = () => {
   sendEvent({event: CANCEL_TIMEOUT, playerId: state.id});
-  if(state.timeoutTimer){ // TODO do w/ setState?!!
+  if(state.timeoutTimer){
     clearInterval(state.timeoutTimer);
     state.timeoutTimer = null;
     setState({
