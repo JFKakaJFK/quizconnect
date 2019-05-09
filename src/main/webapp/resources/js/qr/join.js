@@ -17,6 +17,12 @@ const joinGame = (pin) => {
   fetch(`${JOIN_ENDPOINT}${pin}`, {
     method: 'POST',
   })
+  .then(response => {
+    if(!response.ok){
+      throw Error(response.statusText || response.status.toString());
+    }
+    return response;
+  })
   .then(response => response.json())
   .then(data => {
     // console.log(data);
@@ -25,7 +31,7 @@ const joinGame = (pin) => {
     }
     if(data.playerId){
       console.debug('JOIN: connected as player', data.playerId);
-      console.log('TODO: fancy animation') // TODO
+      console.log('TODO: fancy animation'); // TODO
       state.state = LOBBY;
       state.pin = pin;
       state.id = data.playerId;
@@ -33,7 +39,10 @@ const joinGame = (pin) => {
       connect();
     }
   })
-  .catch(error => console.error(error));
+  .catch(error => {
+    console.error(error);
+    // console.log('TODO: error animation / progress') // TODO
+  });
 };
 
 const join = () => {
