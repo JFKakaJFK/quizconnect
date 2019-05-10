@@ -1,24 +1,16 @@
 package at.qe.sepm.skeleton.ui.beans;
 
 import at.qe.sepm.skeleton.model.*;
-import at.qe.sepm.skeleton.services.QuestionService;
 import at.qe.sepm.skeleton.services.QuestionSetService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.PostConstruct;
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
-import javax.servlet.http.Part;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
-
-import java.io.InputStream;
 
 /**
  * Bean to manage QuestionSets
@@ -35,30 +27,36 @@ public class QSOverviewBean implements Serializable {
     //private MessageBean messageBean;
 
     @Autowired
+    private SessionInfoBean sessionInfoBean;
+
+    @Autowired
     private QuestionSetService questionSetService;
 
     @Autowired
     private MessageBean messageBean;
 
     private List<QuestionSet> questionSets;
+    private List<QuestionSet> questionSetsByManager;
+    private Manager manager;
+
+
+    /**
+     * Init is invoked once after the bean is initialized
+     * Loads all {@link QuestionSet} into an internal list to reduce calls to the database
+     * Also loads all sets created by this user to an internal list to check if a set was made by this manager (ui:repeat) without accessing the DB each time
+     */
 
     @PostConstruct
     public void init() {
-        logger.info("Init called");
+        this.manager = sessionInfoBean.getCurrentUser().getManager();
         this.questionSets = new ArrayList<>(questionSetService.getAllQuestionSets());
-    }
-
-    public List<QuestionSet> getQuestionSets(){
-        return questionSets;
+        this.questionSetsByManager = questionSetService.getQuestionSetsOfManager(manager);
     }
 
     public void addQuestionSetForDisplay(QuestionSet toAdd) {
         questionSets.add(toAdd);
+        questionSetsByManager.add(toAdd); //add to questionSetsByManager to correctly show edit/delete button right after the import (without having to reload the page)
         logger.info("Added QuestionSet to DisplayList");
-    }
-
-    public void setQuestionSets(List<QuestionSet> questionSets) {
-        this.questionSets = questionSets;
     }
 
     public void deleteQuestionSet(QuestionSet questionSet) {
@@ -67,13 +65,25 @@ public class QSOverviewBean implements Serializable {
         logger.info("deleted from database");
         questionSets.remove(questionSet);
         logger.info("deleted from internal set");
+
+        // removes the set from the list of sets by manager too, so isByManager doesn't need to check against already deleted sets (contains = O(n))
+        questionSetsByManager.remove(questionSet);
+
         messageBean.updateComponent("formOverview-QSets:overview-QSets");
         String message = String.format("Successfully deleted %s", questionSet.getName());
         messageBean.showGlobalInformation(message);
     }
 
-    public void saveChanges() {
-        //TODO: edit functionality & JavaDoc
+    public void setQuestionSets(List<QuestionSet> questionSets) {
+        this.questionSets = questionSets;
+    }
+
+    public List<QuestionSet> getQuestionSets(){
+        return questionSets;
+    }
+
+    public boolean isByManager(QuestionSet questionSet) {
+        return questionSetsByManager.contains(questionSet);
     }
 }
 
