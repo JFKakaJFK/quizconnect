@@ -1,4 +1,5 @@
 package at.qe.sepm.skeleton.ui.beans;
+
 import at.qe.sepm.skeleton.model.Manager;
 import at.qe.sepm.skeleton.services.MailSenderService;
 import at.qe.sepm.skeleton.services.ManagerService;
@@ -12,22 +13,20 @@ import javax.annotation.PostConstruct;
 import javax.faces.context.FacesContext;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.*;
 
 /**
- * Bean to help to create a new user object
+ * Bean for creating a new manager
  *
  * @author Johannes Spies
  */
 @Component
 @Scope("request")
-public class UserBean implements Serializable {
+public class CreateManagerBean implements Serializable {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private MailSenderService mailSenderService;
-
 
     @Autowired
     private ManagerService managerService;
@@ -38,21 +37,44 @@ public class UserBean implements Serializable {
     private String password;
     private Manager manager;
 
+
     @PostConstruct
     public void init() {
         manager = new Manager();
     }
 
     /**
-     * Creates a new {@link Manager} (and sends an email to the given address)
+     * Creates a new {@link Manager} (and sends an email to the entered address)
      */
     public void createNewManager() {
-        managerService.saveNewManager(manager, passwordBean.encodePassword(password));
-        logger.info("Created and saved a new manager: " + manager.toString());
+        if (password != null && manager.getEmail() != null) {
+            managerService.saveNewManager(manager, passwordBean.encodePassword(password));
+            logger.info("Created and saved a new manager: " + manager.toString());
+            //sendRegistrationEmail();
+            redirectRegistration();
 
-        /* Email sender - disabled until release */
+        }
 
-        /*mailSenderService.sendUserMail(manager.getEmail(),
+
+    }
+
+    /**
+     * Redirects the user to the login-page after creating the account (parameter registration=success is used for displaying an animation on the login-page)
+     */
+    public void redirectRegistration() {
+        try {
+            FacesContext.getCurrentInstance().
+                    getExternalContext().redirect("/login.xhtml?registration=success");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Sends a registration-mail (placeholder text) to the email provided by the user during the registration
+     */
+    public void sendRegistrationEmail() {
+        mailSenderService.sendUserMail(manager.getEmail(),
                 "Quizconnect: Account",
                 "Hey hey heeeeeeeeeey… Hey hey heeeeeeeeeey… Hey hey heeeeeeeeeey.\n\n" +
                         "What's-a what's-a what's-a what's-a what's-a what's-a what's-a what's-a what's UP, QUIZCONNEEEEEEEEEEEECT!\n\n" +
@@ -67,18 +89,7 @@ public class UserBean implements Serializable {
                         "AHAHAHAHAHAh!\n\n\n" +
                         "So GUYS, let me tell you: I LOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOVE QUIZ CON EEEEEEECT\n\n\n" +
                         "http://www.quizconnect.rocks");
-        */
-        redirectRegistration();
-    }
 
-    //TODO: JavaDoc for redirectRegistration
-    public void redirectRegistration() {
-        try {
-            FacesContext.getCurrentInstance().
-                    getExternalContext().redirect("/login.xhtml?registration=success");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public String getPassword() {

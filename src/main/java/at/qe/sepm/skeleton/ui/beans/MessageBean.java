@@ -12,8 +12,6 @@ import java.io.Serializable;
 
 /**
  * Bean to show a message for a given id with text.
- *
- * @author Simon Jenewein
  */
 
 @Controller
@@ -51,6 +49,7 @@ public class MessageBean implements Serializable {
      * @param text
      */
     public void showError(String id, String text) {
+        logger.info("showError called with global and text: "+text);
         if(FacesContext.getCurrentInstance() != null) {
             FacesContext.getCurrentInstance().addMessage(id,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Fehler", text)
