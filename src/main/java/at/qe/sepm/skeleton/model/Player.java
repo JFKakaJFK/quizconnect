@@ -26,11 +26,6 @@ public class Player implements Persistable<Integer>
 {
 	private static final long serialVersionUID = 1L;
 	
-	/**
-	 * Number of Players to be saved in the "played with last" list.
-	 */
-	private static final int maxPlayedWithLast = 10;
-	
 	@Id
 	@GeneratedValue
 	private Integer id;
@@ -62,13 +57,13 @@ public class Player implements Persistable<Integer>
 	private Map<Integer, Integer> qSetPlayCounts;
 	
 	/**
-	 * List of Players that were in the same game that this Player last played. Size is limited to maxPlayedWithLast but may be less. May be null.
+	 * List of Players that were in the same game that this Player last played. May be null or empty.
 	 */
 	@ElementCollection(fetch = FetchType.EAGER)
 	private List<String> playedWithLast;
 	
 	/**
-	 * Returns an iterator over the list of players the player recently played with. Iterator to prevent manipulation of reference.
+	 * Returns the List of usernames of the Players in the last game this Player played.
 	 * 
 	 * @return
 	 */
@@ -78,14 +73,16 @@ public class Player implements Persistable<Integer>
 	}
 	
 	/**
-	 * Stores the Players as last played with. Limits the number of stored players to maxPlayedWithLast.
+	 * Stores the Players as last played with. Don't forget to save the Player after updating any stats!
 	 * 
 	 * @param players
 	 */
 	public void setPlayedWithLast(List<Player> players)
 	{
 		playedWithLast = new ArrayList<String>();
-		for (int i = 0; i < (players.size() > maxPlayedWithLast ? maxPlayedWithLast : players.size()); i++)
+		if (players == null)
+			return;
+		for (int i = 0; i < players.size(); i++)
 		{
 			Player player = players.get(i);
 			if (player.getId() == this.id)
@@ -95,63 +92,144 @@ public class Player implements Persistable<Integer>
 		}
 	}
 	
+	/**
+	 * Returns the rank of the Player. Rank is calculated from total score and accuracy.
+	 */
+	public String getPlayerRank()
+	{
+		long actualScore = (long) (stat_totalScore * getPlayerAccuracy());
+		if (actualScore < 5000)
+			return "Noob";
+		else if (actualScore < 10000)
+			return "Beginner";
+		else if (actualScore < 20000)
+			return "Learner";
+		else if (actualScore < 40000)
+			return "Getting There";
+		else if (actualScore < 60000)
+			return "Almost Good";
+		else if (actualScore < 80000)
+			return "Well Established";
+		else if (actualScore < 100000)
+			return "Proficient";
+		else if (actualScore < 150000)
+			return "Master";
+		else if (actualScore < 250000)
+			return "Grand Master";
+		else if (actualScore < 500000)
+			return "Demi-God";
+		else
+			return "200 IQ";
+	}
+	
+	/**
+	 * Returns the accuracy of the Player (= correct / total answers).
+	 */
+	public float getPlayerAccuracy()
+	{
+		return (float) stat_correctAnswers / (float) stat_totalAnswers;
+	}
+	
+	/**
+	 * Returns the total score of the Player.
+	 */
 	public long getTotalScore()
 	{
 		return stat_totalScore;
 	}
 	
+	/**
+	 * Adds the additionalScore to the total score of the Player. Don't forget to save the Player after updating any stats!
+	 * 
+	 * @param additionalScore
+	 */
 	public void addToTotalScore(long additionalScore)
 	{
 		this.stat_totalScore += additionalScore;
 	}
 	
+	/**
+	 * Returns the highscore of the Player.
+	 */
 	public int getHighScore()
 	{
 		return stat_highScore;
 	}
 	
+	/**
+	 * Sets the new highscore of the Player. Don't forget to save the Player after updating any stats!
+	 * 
+	 * @param stat_highScore
+	 */
 	public void setHighScore(int stat_highScore)
 	{
 		this.stat_highScore = stat_highScore;
 	}
 	
+	/**
+	 * Returns the number of correct answers of the Player.
+	 */
 	public int getCorrectAnswersCount()
 	{
 		return stat_correctAnswers;
 	}
 	
+	/**
+	 * Adds additionalRightAnswers to the number of correct answers of the Player. Don't forget to save the Player after updating any stats!
+	 * 
+	 * @param additionalRightAnswers
+	 */
 	public void AddCorrectAnswers(int additionalRightAnswers)
 	{
 		this.stat_correctAnswers += additionalRightAnswers;
 	}
 	
+	/**
+	 * Returns the total number of answers of the Player, right or wrong.
+	 */
 	public int getTotalAnswers()
 	{
 		return stat_totalAnswers;
 	}
 	
+	/**
+	 * Adds additionalTotalAnswers to the total number of answers of the Player. Don't forget to save the Player after updating any stats!
+	 * 
+	 * @param additionalTotalAnswers
+	 */
 	public void addTotalAnswers(int additionalTotalAnswers)
 	{
 		this.stat_totalAnswers += additionalTotalAnswers;
 	}
 	
+	/**
+	 * Returns the total play time of the Player in ms.
+	 */
 	public long getPlayTime()
 	{
 		return stat_playTime;
 	}
 	
+	/**
+	 * Adds additionalPlayTime ms to the total play time of the Player. Don't forget to save the Player after updating any stats!
+	 * 
+	 * @param additionalPlayTime
+	 */
 	public void addPlayTime(long additionalPlayTime)
 	{
 		this.stat_playTime += additionalPlayTime;
 	}
 	
+	/**
+	 * Returns a Map from QuestionSetIds to number of times played of all QuestionSets the Player has played. If no entry for a QS exists the Player hasn't played it yet.
+	 */
 	public Map<Integer, Integer> getqSetPlayCounts()
 	{
 		return qSetPlayCounts;
 	}
 	
 	/**
-	 * Adds one play count to each QuestionSet in the list.
+	 * Adds one play count to each QuestionSet in the list. Don't forget to save the Player after updating any stats!
 	 * 
 	 * @param qSets
 	 */
@@ -171,7 +249,7 @@ public class Player implements Persistable<Integer>
 	}
 	
 	/**
-	 * Removes a QuestionSet id from the map of played ones. To be used if a QuestionSet no longer exists.
+	 * Removes a QuestionSet id from the map of played ones. To be used if a QuestionSet no longer exists. Don't forget to save the Player after updating any stats!
 	 * 
 	 * @param qSetId
 	 */

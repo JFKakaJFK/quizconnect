@@ -3,8 +3,8 @@ package at.qe.sepm.skeleton.tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -46,7 +46,7 @@ public class PlayerServiceTest
 	public void testLoadAllPlayers()
 	{
 		Collection<Player> players = playerService.getAllPlayers();
-		assertEquals("Wrong number of players loaded!", 6, players.size());
+		assertEquals("Wrong number of players loaded!", 19, players.size());
 		
 		for (Player player : players)
 		{
@@ -81,7 +81,7 @@ public class PlayerServiceTest
 
 		List<Player> players = playerService.getPlayersOfManager(m.getManager());
 		assertNotNull("Players not loaded!", players);
-		assertEquals("Wrong number of Players loaded", 3, players.size());
+		assertEquals("Wrong number of Players loaded", 9, players.size());
 	}
 	
 	@Test
@@ -126,7 +126,9 @@ public class PlayerServiceTest
 	{
 		Player player = playerService.getPlayerById(205);
 		Player player2 = playerService.getPlayerById(201);
-		player.addToPlayedWithLast(player2);
+		List<Player> ps = new ArrayList<>();
+		ps.add(player2);
+		player.setPlayedWithLast(ps);
 		
 		playerService.savePlayer(player);
 		
@@ -273,6 +275,6 @@ public class PlayerServiceTest
 		assertNull("Player not deleted!", player2);
 		
 		Collection<Player> players = playerService.getAllPlayers();
-		assertEquals("Wrong number of players in DB!", 5, players.size());
+		assertEquals("Wrong number of players in DB!", 18, players.size());
 	}
 }

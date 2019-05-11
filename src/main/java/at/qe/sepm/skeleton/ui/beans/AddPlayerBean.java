@@ -1,14 +1,13 @@
 package at.qe.sepm.skeleton.ui.beans;
 
-import at.qe.sepm.skeleton.model.Manager;
-import at.qe.sepm.skeleton.model.Player;
-import at.qe.sepm.skeleton.services.PlayerService;
-import at.qe.sepm.skeleton.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
-import java.util.ArrayList;
+import at.qe.sepm.skeleton.model.Manager;
+import at.qe.sepm.skeleton.model.Player;
+import at.qe.sepm.skeleton.services.PlayerService;
+import at.qe.sepm.skeleton.services.UserService;
 
 @Controller
 @Scope("session")
@@ -47,8 +46,7 @@ public class AddPlayerBean {
         Player p = new Player();
         p.setAvatarPath("default/avatar.png");
         p.setCreator(manager);
-        p.setqSetPerformances(new ArrayList<>());
-        playerService.saveNewPlayer(p, username, passwordBean.encodePassword(password));
+		playerService.saveNewPlayer(p, username, passwordBean.encodePassword(password));
         clear();
         allPlayersBean.addPlayer(p);
     }
