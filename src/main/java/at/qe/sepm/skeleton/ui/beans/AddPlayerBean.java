@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 @Controller
 @Scope("session")
@@ -22,6 +23,11 @@ public class AddPlayerBean {
 
     private String username = "";
     private String password = "";
+
+    private int getRandom(){
+        Random random = new Random();
+        return random.nextInt(10);
+    }
 
     @Autowired
     public AddPlayerBean(PlayerService playerService,
@@ -45,7 +51,7 @@ public class AddPlayerBean {
             return;
         }
         Player p = new Player();
-        p.setAvatarPath("default/avatar.png"); // TODO more default avatars @Simon
+        p.setAvatarPath("uploads/avatars/default" + getRandom() + ".png"); // TODO more default avatars @Simon
         p.setCreator(manager);
         p.setqSetPerformances(new ArrayList<>());
         playerService.saveNewPlayer(p, username, passwordBean.encodePassword(password));
