@@ -37,7 +37,7 @@
                                    p:data-toggle="modal" p:data-target="#uploadCSV"
                                    p:data-backdrop="static" value="Upload CSV"
                                    onclick="#{CSVImportBean.setManager(sessionInfoBean.currentUser.manager)}">
-                        <f:ajax execute="@form" render="@none"/><!-- TODO update modal here -->
+                        <f:ajax execute="@form" render="@none"/>
                     </h:commandLink>
                 </div>
             </div>
@@ -57,9 +57,7 @@
                       confirmAction="#{CSVImportBean.processCSV}"
                       update="@form"
                       bodyId="body"
-                      footerId="footer"
-            >
-                <!-- TODO: disableConfirm="#{changeAvatarBean.disabled}" -->
+                      footerId="footer">
 
                 <qc:upload target="#{CSVImportBean.file}"
                            listener="#{CSVImportBean.handleFileUpload}"
@@ -77,13 +75,13 @@
                 <div class="form-group">
                     <label for="nameCSV">Name</label>
                     <h:inputText styleClass="form-control" id="nameCSV" value="#{CSVImportBean.nameCSV}"
-                                 p:required="true"></h:inputText>
+                                 p:required="true" p:pattern="[\s\S]*\S[\s\S]*"></h:inputText>
                 </div>
 
                 <div class="form-group">
                     <label for="descriptionCSV">Description</label>
                     <h:inputText styleClass="form-control" id="descriptionCSV" value="#{CSVImportBean.descriptionCSV}"
-                                 p:required="true"></h:inputText>
+                                 p:required="true" p:pattern="[\s\S]*\S[\s\S]*"></h:inputText>
                 </div>
             </qc:modal>
         </form>
@@ -96,7 +94,10 @@
 
                 <ui:repeat value="#{QSOverviewBean.questionSets}" var="set">
                     <qc:generic-box size="sm"
-                                    showDelete="#{sessionInfoBean.currentUser.manager == managerService.getManagerOfQuestionSet(set)}"
+                                    showEdit="#{QSOverviewBean.isByManager(set)}"
+                                    editIcon="fas fa-edit"
+                                    editAction="#{editQuestionBean.setAndRedirect(set.id)}"
+                                    showDelete="#{QSOverviewBean.isByManager(set)}"
                                     deleteIcon="fas fa-trash"
                                     deleteAction="#{QSOverviewBean.deleteQuestionSet(set)}">
                         <h3>#{set.name}</h3>

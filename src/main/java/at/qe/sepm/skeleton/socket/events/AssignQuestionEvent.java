@@ -10,7 +10,6 @@ import java.util.List;
 public class AssignQuestionEvent extends ServerEvent {
 
     private int questionId;
-    private String questionSet;
     private QuestionType type;
     private String question;
     private int playerId;
@@ -20,8 +19,6 @@ public class AssignQuestionEvent extends ServerEvent {
     public AssignQuestionEvent(){}
 
     public AssignQuestionEvent(ActiveQuestion aq){
-        // Note: QuestionSet is not set since DB call would be needed & info not needed in frontend
-        // TODO: remove attribute QuestionSet
         Question q = aq.question;
         this.questionId = q.getId();
         this.type = q.getType();
@@ -50,14 +47,6 @@ public class AssignQuestionEvent extends ServerEvent {
 
     public void setQuestionId(int questionId) {
         this.questionId = questionId;
-    }
-
-    public String getQuestionSet() {
-        return questionSet;
-    }
-
-    public void setQuestionSet(String questionSet) {
-        this.questionSet = questionSet;
     }
 
     public QuestionType getType() {

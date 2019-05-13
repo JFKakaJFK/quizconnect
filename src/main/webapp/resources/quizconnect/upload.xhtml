@@ -29,9 +29,8 @@
     - listener ... bean method (void, no args)
     - update ... components to update
     - text ... label text
-    - ignoreValidation ... bool indicates wheter to
-      ignore the HTML5 form validation(default = false)
-      TODO ^
+    - ajax ... [ true(default) | false ] wheter to upload
+      the file asynchronously or with form submit // TODO + add passthrough for HTML5 required + validation
 
     ==============================================-->
 
@@ -49,11 +48,11 @@
     <input type="file" accept="#{cc.attrs.accept}" name="files[]" id="#{cc.clientId}" class="jsf-hide"/>
     <label for="#{cc.clientId}" class="btn btn-primary #{cc.attrs.styleClass}">Upload File</label>
     <h:commandButton styleClass="upload-ajax-btn jsf-hide" action="#{cc.attrs.listener}">
-        <f:setPropertyActionListener value="#{uploadService.getUpload(sessionInfoBean.currentUser)}" target="#{cc.attrs.target}"/>
+        <f:setPropertyActionListener value="#{uploadService.getUpload()}" target="#{cc.attrs.target}"/>
         <f:ajax execute="@this" render="#{cc.attrs.update}" />
     </h:commandButton>
     <h:outputScript>
-        QCUpload.upload('#{sessionInfoBean.currentUserName}', '#{cc.clientId}');
+        QCUpload.upload('#{cc.clientId}');
     </h:outputScript>
 </cc:implementation>
 </html>

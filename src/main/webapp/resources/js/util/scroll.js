@@ -4,17 +4,17 @@ const LOAD_OFFSET = window.innerHeight * .75; // how much distance to bottom of 
 const SELECTOR = '.load';
 
 const loadMore = () => {
-  console.log('loading more in ', document.body.scrollHeight - document.documentElement.scrollTop - window.innerHeight - LOAD_OFFSET, 'px');
+  console.debug('loading more in ', document.body.scrollHeight - document.documentElement.scrollTop - window.innerHeight - LOAD_OFFSET, 'px');
   if(window.innerHeight + LOAD_OFFSET >= document.body.scrollHeight - document.documentElement.scrollTop ) {
 
     document.body.scrollTo(0, -window.innerHeight);
 
     let loader = document.querySelector(SELECTOR);
     if (loader !== null) {
-      console.log('loading more');
+      console.debug('loading more');
       loader.click();
     } else {
-      console.log('loaded all elements');
+      console.debug('loaded all elements');
       document.removeEventListener('scroll', loadMore)
     }
   }

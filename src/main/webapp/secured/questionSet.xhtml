@@ -75,7 +75,7 @@
                     <label for="question">Question</label>
                     <h:inputText type="text" styleClass="form-control"
                                  value="#{questionSetBean.question.questionString}"
-                                 name="question" id="question" pt:autocomplete="off" pt:required="true"/>
+                                 name="question" id="question" pt:autocomplete="off" pt:required="true" pt:pattern="[\s\S]*\S[\s\S]*"/>
                     <h:message for="question" styleClass="state-error"/>
                 </div>
 
@@ -83,28 +83,42 @@
                     <label for="corrAnswer">Correct answer</label>
                     <h:inputText type="text" styleClass="form-control"
                                  value="#{questionSetBean.question.rightAnswerString}"
-                                 name="corrAnswer" id="corrAnswer" pt:autocomplete="off" pt:required="true"/>
+                                 name="corrAnswer" id="corrAnswer" pt:autocomplete="off" pt:required="true" pt:pattern="[\s\S]*\S[\s\S]*"/>
                 </div>
 
                 <div class="form-group">
                     <label for="wrongAnswer1">Wrong answer #1</label>
                     <h:inputText type="text" styleClass="form-control"
                                  value="#{questionSetBean.question.wrongAnswerString_1}" name="wrongAnswer1"
-                                 pt:required="true" id="wrongAnswer1" pt:autocomplete="off"/>
+                                 pt:required="true" id="wrongAnswer1" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*"/>
                 </div>
 
                 <div class="form-group">
                     <label for="wrongAnswer2">Wrong answer #2</label>
                     <h:inputText type="text" styleClass="form-control"
                                  value="#{questionSetBean.question.wrongAnswerString_2}" name="wrongAnswer2"
-                                 id="wrongAnswer2" pt:autocomplete="off"/>
+                                 id="wrongAnswer2" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*"/>
                 </div>
 
                 <div class="form-group">
                     <label for="wrongAnswer3">Wrong answer #3</label>
                     <h:inputText type="text" styleClass="form-control"
                                  value="#{questionSetBean.question.wrongAnswerString_3}" name="wrongAnswer3"
-                                 id="wrongAnswer3" pt:autocomplete="off"/>
+                                 id="wrongAnswer3" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*"/>
+                </div>
+
+                <div class="form-group">
+                    <label for="wrongAnswer4">Wrong answer #4</label>
+                    <h:inputText type="text" styleClass="form-control"
+                                 value="#{questionSetBean.question.wrongAnswerString_4}" name="wrongAnswer4"
+                                 id="wrongAnswer4" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*"/>
+                </div>
+
+                <div class="form-group">
+                    <label for="wrongAnswer5">Wrong answer #5</label>
+                    <h:inputText type="text" styleClass="form-control"
+                                 value="#{questionSetBean.question.wrongAnswerString_5}" name="wrongAnswer3"
+                                 id="wrongAnswer5" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*"/>
                 </div>
 
 

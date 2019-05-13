@@ -10,16 +10,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Scope;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.messaging.simp.annotation.SendToUser;
-import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.context.annotation.ApplicationScope;
 
 import java.security.Principal;
 import java.util.ArrayList;
@@ -47,7 +43,7 @@ public class QRWebSocketConnection implements IRoomAction {
         this.messagingTemplate = messagingTemplate;
         this.rooms = new HashMap<>();
         this.players = new HashMap<>();
-        log.debug("WQController started");
+        log.debug("QRWSController started");
     }
 
     /* Server events */
@@ -128,7 +124,7 @@ public class QRWebSocketConnection implements IRoomAction {
         log.debug("Game " + pin + ": time remaining until player " + player.getId() + " is kicked: " + timeoutTime + "ms");
     }
 
-    @Override // TODO maybe not BROADCAST
+    @Override
     public void onTimerSync(int pin, Player p, ActiveQuestion q, long remaining) {
         ServerEvent event = new TimerSyncEvent(q, remaining);
         event.setEvent(TIMER_SYNC);
@@ -136,7 +132,7 @@ public class QRWebSocketConnection implements IRoomAction {
         log.debug("Game " + pin + ": time remaining of question " + q.question.getId() + " is " + remaining + "ms");
     }
 
-    @Override // TODO maybe not BROADCAST
+    @Override
     public void onKick(int pin, Player p) {
         ServerEvent event = new PlayerKickEvent(p);
         event.setEvent(KICK);
@@ -163,8 +159,6 @@ public class QRWebSocketConnection implements IRoomAction {
     /* Client events */
 
     private final String ROOM_INFO = "getRoomInfo";
-    private final String GAME_INFO = "getGameInfo";
-    private final String ROOM_PLAYERS = "getRoomPlayers";
     private final String READY = "readyUp";
     private final String ANSWER_QUESTION = "answerQuestion";
     private final String USE_JOKER = "useJoker";
@@ -175,33 +169,23 @@ public class QRWebSocketConnection implements IRoomAction {
     private final String SUCCESS = "success";
     private final String ERROR = "error";
 
-    @Deprecated
-    public ServerEvent handleGetGameInfo(int pin){
+    private ServerEvent handleGetRoomInfo(int pin){
         IPlayerAction qr = rooms.get(pin);
-
-        ServerEvent event = new GameInfoEvent(pin,
-                qr.getRoomDifficulty().name(),
-                qr.getRoomMode().name(),
-                qr.getRoomQuestionSets(),
-                qr.getRoomScore(),
-                qr.getAlivePingTimeStep(),
-                qr.getNumberOfJokers());
-        event.setEvent(GAME_INFO);
-        return event;
-    }
-
-    public ServerEvent handleGetRoomInfo(int pin){
-        IPlayerAction qr = rooms.get(pin);
-
-        List<Player> ready = qr.getRoomReadyPlayers();
-        List<Player> all = qr.getRoomPlayers();
+        if(qr == null){
+            return new GenericServerEvent(ERROR);
+        }
+        boolean inLobby = qr.isRoomInWaitingMode();
         List<PlayerJSON> players = new ArrayList<>();
-        for (Player p: all) {
-            PlayerJSON pj = new PlayerJSON(p, avatars);
-            if(ready.contains(p)){
-                pj.setReady(true);
+        if(inLobby){
+            List<Player> ready = qr.getRoomReadyPlayers();
+            List<Player> all = qr.getRoomPlayers();
+            for (Player p: all) {
+                PlayerJSON pj = new PlayerJSON(p, avatars);
+                if(ready.contains(p)){
+                    pj.setReady(true);
+                }
+                players.add(pj);
             }
-            players.add(pj);
         }
 
         ServerEvent event = new RoomInfoEvent(pin,
@@ -211,30 +195,13 @@ public class QRWebSocketConnection implements IRoomAction {
                 qr.getRoomScore(),
                 qr.getAlivePingTimeStep(),
                 qr.getNumberOfJokers(),
+                inLobby,
                 players);
         event.setEvent(ROOM_INFO);
         return event;
     }
 
-    @Deprecated
-    public ServerEvent handleGetRoomPlayers(int pin){
-        IPlayerAction qr = rooms.get(pin);
-        List<Player> ready = qr.getRoomReadyPlayers();
-        List<Player> all = qr.getRoomPlayers();
-        List<PlayerJSON> players = new ArrayList<>();
-        for (Player p: all) {
-            PlayerJSON pj = new PlayerJSON(p, avatars);
-            if(ready.contains(p)){
-                pj.setReady(true);
-            }
-            players.add(pj);
-        }
-        ServerEvent event = new RoomPlayersEvent(players);
-        event.setEvent(ROOM_PLAYERS);
-        return event;
-    }
-
-    public ServerEvent handleReadyUp(int pin, ClientEvent event){
+    private ServerEvent handleReadyUp(int pin, ClientEvent event){
         IPlayerAction qr = rooms.get(pin);
         Player p = players.get(pin).get(event.getPlayerId());
         if(p == null){
@@ -244,7 +211,7 @@ public class QRWebSocketConnection implements IRoomAction {
         return new GenericServerEvent(SUCCESS);
     }
 
-    public ServerEvent handleAnswerQuestion(int pin, ClientEvent event){
+    private ServerEvent handleAnswerQuestion(int pin, ClientEvent event){
         IPlayerAction qr = rooms.get(pin);
         Player p = players.get(pin).get(event.getPlayerId());
         if(p == null){
@@ -255,7 +222,7 @@ public class QRWebSocketConnection implements IRoomAction {
         return new GenericServerEvent(SUCCESS);
     }
 
-    public ServerEvent handleUseJoker(int pin, ClientEvent event){
+    private ServerEvent handleUseJoker(int pin, ClientEvent event){
         IPlayerAction qr = rooms.get(pin);
         Player p = players.get(pin).get(event.getPlayerId());
         if(p == null){
@@ -265,7 +232,7 @@ public class QRWebSocketConnection implements IRoomAction {
         return new GenericServerEvent(SUCCESS);
     }
 
-    public ServerEvent handleLeaveRoom(int pin, ClientEvent event){
+    private ServerEvent handleLeaveRoom(int pin, ClientEvent event){
         IPlayerAction qr = rooms.get(pin);
         Player p = players.get(pin).get(event.getPlayerId());
         if(p == null){
@@ -276,7 +243,7 @@ public class QRWebSocketConnection implements IRoomAction {
         return new GenericServerEvent(SUCCESS);
     }
 
-    public ServerEvent handleCancelTimeout(int pin, ClientEvent event){
+    private ServerEvent handleCancelTimeout(int pin, ClientEvent event){
         IPlayerAction qr = rooms.get(pin);
         Player p = players.get(pin).get(event.getPlayerId());
         if(p == null){
@@ -286,7 +253,7 @@ public class QRWebSocketConnection implements IRoomAction {
         return new GenericServerEvent(SUCCESS);
     }
 
-    public ServerEvent handleSendAlivePing(int pin, ClientEvent event){
+    private ServerEvent handleSendAlivePing(int pin, ClientEvent event){
         IPlayerAction qr = rooms.get(pin);
         Player p = players.get(pin).get(event.getPlayerId());
         if(p == null){
@@ -317,36 +284,37 @@ public class QRWebSocketConnection implements IRoomAction {
     @SendTo("/server/events/{pin}") // works but broadcast
     private ServerEvent handleEvent(@Payload ClientEvent request, Principal user, @DestinationVariable int pin){
 
-        if(!rooms.containsKey(pin)){
-            log.warn("QuizRoom " + pin + " does not exist");
+        if(!rooms.containsKey(pin) || rooms.get(pin) == null){
+            log.warn("Game " + pin + ": QuizRoom " + pin + " does not exist");
             return new GenericServerEvent(ERROR);
         }
 
         if(!request.getEvent().equals(ALIVE_PING)){ // TODO remove
-            log.debug("Received event of type " + request.getEvent() + " from " + user.getName());
+            log.debug("Game " + pin + ": received event of type " + request.getEvent() + " from " + user.getName());
         }
 
-        switch (request.getEvent()){
-            case ANSWER_QUESTION:
-                return handleAnswerQuestion(pin, request);
-            case USE_JOKER:
-                return handleUseJoker(pin, request);
-            case LEAVE_ROOM:
-                return handleLeaveRoom(pin, request);
-            case CANCEL_TIMEOUT:
-                return handleCancelTimeout(pin, request);
-            case ALIVE_PING:
-                return handleSendAlivePing(pin, request);
-            case ROOM_INFO:
-                return handleGetRoomInfo(pin);
-            case READY:
-                return handleReadyUp(pin, request);
-            case GAME_INFO:
-                return handleGetGameInfo(pin);
-            case ROOM_PLAYERS:
-                return handleGetRoomPlayers(pin);
-            default:
-                return new GenericServerEvent("error");
+        try {
+            switch (request.getEvent()){
+                case ANSWER_QUESTION:
+                    return handleAnswerQuestion(pin, request);
+                case USE_JOKER:
+                    return handleUseJoker(pin, request);
+                case LEAVE_ROOM:
+                    return handleLeaveRoom(pin, request);
+                case CANCEL_TIMEOUT:
+                    return handleCancelTimeout(pin, request);
+                case ALIVE_PING:
+                    return handleSendAlivePing(pin, request);
+                case ROOM_INFO:
+                    return handleGetRoomInfo(pin);
+                case READY:
+                    return handleReadyUp(pin, request);
+                default:
+                    return new GenericServerEvent("error");
+            }
+        } catch (NullPointerException e){
+            log.warn("Game " + pin + " failed to close correctly");
+            return new GenericServerEvent(ERROR);
         }
     }
 

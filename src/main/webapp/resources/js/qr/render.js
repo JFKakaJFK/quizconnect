@@ -2,27 +2,11 @@
 
 /* ======================== RENDER FUNCTIONS ========================= */
 
-/* TODO
- *
- *  - render Lobby
- *    - render game info
- *    - render players
- *      - render player
- *      - remove player
- *  - render game
- *    - render question
- *    - render timer
- *    - render answers
- *      - render answer
- *      - remove answer
- */
-
 const ROOT = document.getElementById('root');
 const TIMEOUT_MODAL = $('#timeout'); // TODO bootstrap only works w/ jQuery Selector
 // document.getElementById('timeout');
 const TIMEOUT_COUNTER = document.getElementById('timeoutRemainingTime');
 //TIMEOUT_MODAL.querySelector('#timeoutRemainingTime');
-
 
 /**
  * Clears all elements within the ROOT
@@ -40,10 +24,9 @@ const clearScreen = () => {
  * Activates timeout modal
  * @param remaining
  */
-// TODO fix
 // TODO use this for modal https://stackoverflow.com/a/50523971/6244663
 const renderTimeOutModal = (remaining) => {
-  console.log(TIMEOUT_MODAL);
+  // console.log(TIMEOUT_MODAL);
   TIMEOUT_MODAL.modal('show'); // show modal
   TIMEOUT_COUNTER.innerHTML = `${(remaining / 1000).toFixed(1)}`;
   state.timeoutTimer = setInterval(() => {
@@ -81,9 +64,11 @@ const renderGameInfo = ({ settings }) => {
         <p>difficulty</p>
       </div>
       <div class="stat stat-lg pin">
-        <h3>${settings.pin}${false ? 'share pin here' : ''}</h3>
+        <h3>${settings.pin.toString().padStart(6, '0')}${false ? 'share pin here' : ''}</h3> 
         <p>pin</p>
       </div>
+      ${/* TODO: implement share functionality + copy to clipboard */""}
+      <a href="https://wa.me/?text=${encodeURIComponent(SHARE_PIN_WHATSAPP(settings.pin.toString().padStart(6, '0')))}" target="_blank" rel="noopener noreferrer nofollow">Share via WhatsApp</a>
     </div>
   `;
 };
@@ -135,6 +120,9 @@ const renderPlayers = ( parent, { players }) => {
   const playerNodes = parent.querySelectorAll('.playerbox');
   let copy = [ ...players ];
 
+  let lastReadyUp = copy.filter(p => !p.ready).length === 1;
+  // console.log(lastReadyUp)
+
   if(playerNodes.length > 0){
     playerNodes.forEach(node => {
 
@@ -149,7 +137,15 @@ const renderPlayers = ( parent, { players }) => {
 
         if(!ready && player.ready){
           // rerender ready
-          readyNode.innerHTML = `<div class="ready" data-ready="true">ready rerendered</div>`; // TODO
+          readyNode.setAttribute('data-ready', true);
+          readyNode.innerHTML = 'ready rerendered';
+          // readyNode.innerHTML = `<div class="ready" data-ready="true">ready rerendered</div>`; // TODO
+        } else if(!player.ready && lastReadyUp && player.id === state.id){ // TODO react to joins of unready players & render for first player... test if makes sense
+          readyNode.setAttribute('data-toggle', 'modal');
+          readyNode.setAttribute('data-target', '#confirmReady');
+          readyNode.setAttribute('onclick', '{}');
+          readyNode.innerHTML = 'last unready';
+          // readyNode.innerHTML = `<div class="ready" data-ready="false" data-toggle="modal" data-target="#confirmReady" onclick="(() => {})()">last unready</div>`;
         }
       } else { // if not in players, delete // TODO test
         parent.removeChild(node);
@@ -172,23 +168,32 @@ const renderPlayers = ( parent, { players }) => {
  * @param info
  */
 const renderLobby = ( {info} ) => {
-  console.info('render Lobby was called');
-  console.info(info);
+
+  if(ROOT.getAttribute('data-state') == null || parseInt(ROOT.getAttribute('data-state')) !== LOBBY) {
+    ROOT.setAttribute('data-state', LOBBY.toString());
+    clearScreen();
+  }
+  console.debug('RENDER: rendering lobby')
 
   let elem = ROOT.querySelector('.info');
 
   // info only is rendered once
   if(elem === null){
-    ROOT.innerHTML = renderGameInfo(info); // TODO change
+    ROOT.innerHTML = renderGameInfo(info);
   }
 
   if(ROOT.querySelector('.players') === null){
-    ROOT.innerHTML += `<div class="players"></div>`; // TODO change
+    ROOT.innerHTML += `<div class="players"></div>`;
   }
   let players = ROOT.querySelector('.players');
 
   // renders the players
   renderPlayers(players, info);
+};
+
+// TODO structure, rerender only on change
+const renderScore = (parent, score) => {
+  parent.innerHTML = score;
 };
 
 // TODO other types for reverse mode
@@ -198,12 +203,10 @@ const renderQuestion = (parent, { questionId, type, question, remaining }) => {
   let q = parent.querySelector('#question');
   let qt = parent.querySelector('#questionTime span');
   if(q !== null){
-    console.log(q.value)
-    console.log(q.innerHTML)
-    console.log(q.innerText)
-    if(q.value === question){
+    // console.log(q.innerText)
+    if(q.innerText === question){
       let total = parseInt(qt.getAttribute('data-total'));
-      qt.style.width = `${remaining / total}%`;
+      qt.style.width = `${(remaining / total) * 100}%`;
     } else {
       q.innerHTML = question;
       qt.setAttribute('data-total', remaining);
@@ -212,7 +215,7 @@ const renderQuestion = (parent, { questionId, type, question, remaining }) => {
     return;
   }
   parent.innerHTML = `
-    <h2 id="question box">${question}</h2>
+    <h2 id="question">${question}</h2>
     <div id="questionTime"><span data-total="${remaining}" style="width: 100%"></span></div>
   `;
 };
@@ -220,14 +223,20 @@ const renderQuestion = (parent, { questionId, type, question, remaining }) => {
 const renderQuestionPlaceholder = (parent) => {
   if(ROOT.querySelector('#question') !== null && ROOT.querySelector('#question').value === '') return;
   parent.innerHTML = `
-    <h2 id="question box"></h2>
+    <h2 id="question"></h2>
     <div id="questionTime"><span></span></div>
   `;
 };
 
-const renderGenericAnswer = ({ classes, content, answerId, questionId} ) => { // TODO parseInt necessary?
+const renderAnswerPlaceholder = () => {
   return `
-    <div class="answer ${classes}" data-questionId="${questionId}" data-answerId="${answerId}" onclick="answerQuestion(${questionId}, ${answerId})">
+    <div class="answer box answer-placeholder"></div>
+  `;
+}
+
+const renderGenericAnswer = ({ classes, content, answerId, questionId} ) => {
+  return `
+    <div class="answer box ${classes}" data-questionId="${questionId}" data-answerId="${answerId}" onclick="answerQuestion(${questionId}, ${answerId})">
       ${content}
     </div>
   `;
@@ -271,6 +280,11 @@ const renderAnswers = ( parent, { answers }) => {
   if(answerNodes.length > 0){
     // remove answer if not in state
     answerNodes.forEach(node => {
+      /*
+      if(!node.classList.contains('answer-placeholder')){
+        // all of the below
+      }
+      */
 
       let questionId = parseInt(node.getAttribute('data-questionId'));
       let answerId = parseInt(node.getAttribute('data-answerId'));
@@ -278,6 +292,8 @@ const renderAnswers = ( parent, { answers }) => {
 
       // delete if not in answers
       if(answer === undefined){
+        // change to default // TODO
+        //console.log(node);
         parent.removeChild(node);
       }
 
@@ -286,9 +302,46 @@ const renderAnswers = ( parent, { answers }) => {
     });
   }
 
+  const emptyNodes = parent.querySelectorAll('.answer-placeholder');
   // add new answers
   if(copy.length > 0){
+    // first populate placeholders // TODO
+    /*
+    for (let node of emptyNodes) {
+      if(copy.length > 0){
+        let answer = copy.pop();
+
+      } else {
+        break;
+      }
+    }
+    // then create new answers
+    if(copy.length > 0){
+      copy.forEach(a => parent.innerHTML += renderAnswer(a));
+    }
+    */
+
     copy.forEach(a => parent.innerHTML += renderAnswer(a));
+  }
+
+  // delete all empty nodes at end of parent (only placeholders in between) // TODO
+  /*
+  let lastNode = parent.lastChild;
+  while(lastNode.classList.contains('answer-placeholder')){
+    parent.removeChild(lastNode);
+    lastNode = parent.lastChild;
+  }
+  */
+};
+
+// TODO structure, rerender only on change
+const renderJoker = (parent, jokers) => {
+  if(jokers === 0){
+    parent.removeEventListener('click', useJoker);
+  }
+  parent.innerHTML = jokers;
+  if(jokers > 0){
+    parent.addEventListener('click', useJoker); // TODO use timeout after click to prevent joker spamming
   }
 };
 
@@ -298,16 +351,33 @@ const renderAnswers = ( parent, { answers }) => {
  * @param game
  */
 const renderGame = ( {game} ) => {
+  console.debug('RENDER: rendering game');
   // if LOBBY was rendered before, clear the ROOT node and add INGAME containers
-  if(ROOT.querySelector('.info') !== null || ROOT.querySelector('.players') !== null){
+  if(ROOT.getAttribute('data-state') == null || parseInt(ROOT.getAttribute('data-state')) !== INGAME) {
+    ROOT.setAttribute('data-state', INGAME.toString());
     clearScreen();
+
+    let score = document.createElement('div');
+    score.classList.add('score');
+    score.classList.add('box');
+    ROOT.appendChild(score);
+
     let question = document.createElement('div');
     question.classList.add('question');
+    question.classList.add('box');
     ROOT.appendChild(question);
+
     let answers = document.createElement('div');
     answers.classList.add('answers');
     ROOT.appendChild(answers);
+
+    let joker = document.createElement('div');
+    joker.classList.add('joker');
+    joker.classList.add('box');
+    ROOT.appendChild(joker);
   }
+
+  renderScore(ROOT.querySelector('.score'), game.score);
 
   if(game.question != null){
     renderQuestion(ROOT.querySelector('.question'), game.question);
@@ -319,11 +389,30 @@ const renderGame = ( {game} ) => {
     console.error(`ERROR: only ${MAX_ANSWERS} answers allowed (currently: ${state.game.answers.length})`)
   }
   renderAnswers(ROOT.querySelector('.answers'), game);
+
+  renderJoker(ROOT.querySelector('.joker'), game.jokersLeft);
+};
+
+const renderGameEnd = ({game}) => {
+  if(ROOT.getAttribute('data-state') == null || parseInt(ROOT.getAttribute('data-state')) !== FINISHED) {
+    ROOT.setAttribute('data-state', FINISHED.toString());
+    clearScreen();
+
+    let score = document.createElement('div');
+    score.classList.add('score-container');
+    ROOT.appendChild(score);
+    score.innerHTML = `
+    <div class="stat stat-lg">
+        <h3>${game.score}</h3>
+        <p>Score</p>
+    </div>
+    <a href="/player/home.xhtml" class="btn btn-primary">Home</a>
+    `;
+  }
 };
 
 const render = (state) => {
   if(state.timeoutIsActive){
-    // TODO show modal
     renderTimeOutModal(state.timeoutRemainingTime);
   }
   if(state.state === INGAME){
@@ -331,7 +420,6 @@ const render = (state) => {
   } else if(state.state === LOBBY){
     renderLobby(state)
   } else if(state.state === FINISHED){
-    // TODO maybe not per GET Param (or player can view ending screen for any score...)
-    window.location.href = `${URL_FINISH}?score=${state.game.score}`
+    renderGameEnd(state)
   }
 };

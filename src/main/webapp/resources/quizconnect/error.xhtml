@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://java.sun.com/jsf/composite"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:qc="http://java.sun.com/jsf/composite/quizconnect"
+      xml:lang="en"
+      lang="en">
+<cc:interface>
+
+    <!--=============================================
+
+    The error component displays an error.
+
+    Params:
+
+    - code ... error code
+    - message ... error message
+
+    ==============================================-->
+    <cc:attribute name="code" required="true" />
+    <cc:attribute name="message" required="true" />
+
+</cc:interface>
+
+<cc:implementation>
+    <h:panelGroup layout="block" styleClass="qc-error-container">
+        <div class="qc-error-content box">
+            <h2><svg id="icon" viewBox="0 0 2000 2000" width="30" height="30"><defs><style>.cls-1,.cls-2{fill:none;stroke-miterlimit:10;stroke-width:200px;}.cls-1{stroke:#018786;stroke-dasharray:248.33 19.87;}.cls-2{stroke:#00c4b4;stroke-linecap:round;}.cls-3{fill:#3bc5b5;}</style></defs><circle class="cls-1" cx="1000" cy="1000" r="853.59"/><path class="cls-2" d="M1000,1853.59c-471.42,0-853.59-382.16-853.59-853.59S528.58,146.41,1000,146.41"/><path class="cls-3" d="M1042.58,866.18,1949,1953,898.42,1004.82A100.25,100.25,0,0,1,1032.76,856,109.71,109.71,0,0,1,1042.58,866.18Z"/></svg>
+            uizConnect</h2>
+
+            <qc:stat value="#{cc.attrs.code}" label="#{cc.attrs.message}" size="lg"/>
+
+            <a href="/login.xhtml" class="btn btn-primary btn-lg">Home</a>
+        </div>
+    </h:panelGroup>
+</cc:implementation>
+</html>
