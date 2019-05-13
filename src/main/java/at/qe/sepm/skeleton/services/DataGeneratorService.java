@@ -26,7 +26,7 @@ import java.util.Set;
 @Scope("application")
 public class DataGeneratorService {
 
-    public static final boolean enabled = true;
+    public static final boolean enabled = false;
 
     private final int countMultiplier = 1;
 

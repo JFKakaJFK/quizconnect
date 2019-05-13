@@ -50,7 +50,7 @@
 /* Avatar */
 
 .playerbox-avatar {
-    background: var(--pb-avatar);
+    /* background: var(--pb-avatar); */
     box-sizing: content-box;
     width: 5rem;
     height: 5rem;
@@ -60,12 +60,31 @@
 }
 
 .playerbox[data-ingame="true"] .playerbox-avatar {
-    border: var(--border-online) solid var(--pb-ingame);
+    /* border: var(--border-online) solid var(--pb-ingame); */
 }
 
 /* TODO: delete or set */
 .playerbox[data-ingame="false"] .playerbox-avatar {
-    border: var(--border-online) solid var(--pb-bg);
+    /* border: var(--border-online) solid var(--pb-bg); */
+}
+
+/* TODO
+.playerbox[data-ingame="true"] .playerbox-info-name h3 {
+    position: relative;
+}
+
+ */
+.playerbox-info-name.stat-lg h3 {
+    font-size: 1.5rem;
+    font-weight: 300;
+}
+
+.playerbox[data-ingame="true"] .playerbox-info-name h3:after {
+    content: '●';
+    padding-left: .4rem;
+    color: var(--pb-ingame);
+    /* position: absolute;
+    right: -1rem; */
 }
 
 .playerbox-avatar img {

@@ -62,7 +62,7 @@
                        >
 
                 <div jsf:id="preview" class="preview">
-                    <h:graphicImage p:id="preview" value="#{avatarBean.getAvatar((changeAvatarBean.filename == null ? sessionInfoBean.currentUser.player.avatarPath : changeAvatarBean.filename))}" alt="avatar" />
+                    <h:graphicImage p:id="preview" value="#{avatarBean.getAvatar((changeAvatarBean.filename == null ? sessionInfoBean.currentUser.player.avatarPath : changeAvatarBean.filename), sessionInfoBean.currentUser.player.user.username)}" alt="avatar" />
                 </div>
 
                 <qc:upload target="#{changeAvatarBean.file}"
