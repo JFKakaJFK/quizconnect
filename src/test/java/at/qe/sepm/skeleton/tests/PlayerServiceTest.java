@@ -277,4 +277,99 @@ public class PlayerServiceTest
 		Collection<Player> players = playerService.getAllPlayers();
 		assertEquals("Wrong number of players in DB!", 18, players.size());
 	}
+	
+	@Test
+	@WithMockUser(username = "user1", authorities = { "MANAGER" })
+	public void testAddTotalScore()
+	{
+		Player player = playerService.getPlayerById(201);
+		assertNotNull("Player not loaded!", player);
+		
+		long score1 = player.getTotalScore();
+		assertEquals("Loaded score is wrong!", 9096, score1);
+		
+		player.addToTotalScore(1274);
+		long score2 = player.getTotalScore();
+		assertEquals("Updated score is wrong!", 10370, score2);
+		
+		Player updatedPlayer = playerService.savePlayer(player);
+		assertNotNull("Updated Player not loaded!", updatedPlayer);
+		assertEquals("Saved Score is wrong!", 10370, updatedPlayer.getTotalScore());
+	}
+	
+	@Test
+	@WithMockUser(username = "user1", authorities = { "MANAGER" })
+	public void testSetHighScore()
+	{
+		Player player = playerService.getPlayerById(201);
+		assertNotNull("Player not loaded!", player);
+		
+		int hs1 = player.getHighScore();
+		assertEquals("Loaded highscore is wrong!", 720, hs1);
+		
+		player.setHighScore(832);
+		int hs2 = player.getHighScore();
+		assertEquals("Updated highscore is wrong!", 832, hs2);
+		
+		Player updatedPlayer = playerService.savePlayer(player);
+		assertNotNull("Updated Player not loaded!", updatedPlayer);
+		assertEquals("Saved highscore is wrong!", 832, updatedPlayer.getHighScore());
+	}
+	
+	@Test
+	@WithMockUser(username = "user1", authorities = { "MANAGER" })
+	public void testAddCorrectAnswers()
+	{
+		Player player = playerService.getPlayerById(201);
+		assertNotNull("Player not loaded!", player);
+		
+		int ca1 = player.getCorrectAnswersCount();
+		assertEquals("Loaded correct answers is wrong!", 18, ca1);
+		
+		player.AddCorrectAnswers(11);
+		int ca2 = player.getCorrectAnswersCount();
+		assertEquals("Updated correct answers is wrong!", 29, ca2);
+		
+		Player updatedPlayer = playerService.savePlayer(player);
+		assertNotNull("Updated Player not loaded!", updatedPlayer);
+		assertEquals("Saved correct answers is wrong!", 29, updatedPlayer.getCorrectAnswersCount());
+	}
+	
+	@Test
+	@WithMockUser(username = "user1", authorities = { "MANAGER" })
+	public void testAddTotalAnswers()
+	{
+		Player player = playerService.getPlayerById(201);
+		assertNotNull("Player not loaded!", player);
+		
+		int ta1 = player.getTotalAnswers();
+		assertEquals("Loaded total answers is wrong!", 24, ta1);
+		
+		player.addTotalAnswers(23);
+		int ta2 = player.getTotalAnswers();
+		assertEquals("Updated total answers is wrong!", 47, ta2);
+		
+		Player updatedPlayer = playerService.savePlayer(player);
+		assertNotNull("Updated Player not loaded!", updatedPlayer);
+		assertEquals("Saved total answers is wrong!", 47, updatedPlayer.getTotalAnswers());
+	}
+	
+	@Test
+	@WithMockUser(username = "user1", authorities = { "MANAGER" })
+	public void testAddPlayTime()
+	{
+		Player player = playerService.getPlayerById(201);
+		assertNotNull("Player not loaded!", player);
+		
+		long pt1 = player.getPlayTime();
+		assertEquals("Loaded playtime is wrong!", 743563, pt1);
+		
+		player.addPlayTime(23698);
+		long pt2 = player.getPlayTime();
+		assertEquals("Updated playtime is wrong!", 767261, pt2);
+		
+		Player updatedPlayer = playerService.savePlayer(player);
+		assertNotNull("Updated Player not loaded!", updatedPlayer);
+		assertEquals("Saved playtime is wrong!", 767261, updatedPlayer.getPlayTime());
+	}
 }
