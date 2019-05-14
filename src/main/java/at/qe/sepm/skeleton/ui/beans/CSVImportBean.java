@@ -2,7 +2,6 @@ package at.qe.sepm.skeleton.ui.beans;
 
 import at.qe.sepm.skeleton.model.*;
 import at.qe.sepm.skeleton.services.*;
-import at.qe.sepm.skeleton.ui.controllers.QCModalController;
 import com.opencsv.CSVReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +21,14 @@ import java.util.*;
 
 @Controller
 @Scope("view")
+
+
+
+/**
+ * FIXME: This version currently works with valid datasets (the ones created by the PS groups) but will be replaced by a more sophisticated version (CSV column mapping) in the future
+ * TLDR: It works for valid data, but can't say what happens with invalid data. Will be replaced.
+ */
+
 public class CSVImportBean implements Serializable {
 
 
@@ -74,9 +81,8 @@ public class CSVImportBean implements Serializable {
 
     @PostConstruct
     public void init() {
-        //nameCSV = "";
-        //descriptionCSV = "";
-        //questions = new HashSet<>();
+        nameCSV = null;
+        descriptionCSV = null;
     }
 
     public void handleFileUpload(){
@@ -100,7 +106,7 @@ public class CSVImportBean implements Serializable {
             try{
                 Files.deleteIfExists(filename);
             } catch (IOException e){
-                logger.error("Much error such sad");
+                logger.error("deleteIfExists - error");
             }
 
             filename = null;
@@ -133,13 +139,12 @@ public class CSVImportBean implements Serializable {
             try {
                 Files.deleteIfExists(filename);
             } catch (IOException e){
-                logger.error("lol");
+                logger.error("could not delete");
             }
         }
         return records;
     }
 
-    //FIXME: This is so bad it actually hurts a bit
     private void arrayToDatabase(List<List<String>> data) {
         logger.info("arrayToDatabase invoked");
 

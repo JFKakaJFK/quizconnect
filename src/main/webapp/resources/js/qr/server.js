@@ -163,6 +163,7 @@ const handleGameEnd = (event) => {
     clearInterval(state.gameSessionTimer);
     state.gameSessionTimer = null;
   }
+  disconnect();
   clearLocalStorage();
   setState({
     state: FINISHED,

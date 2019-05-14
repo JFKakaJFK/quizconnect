@@ -137,14 +137,16 @@ const renderPlayers = ( parent, { players }) => {
 
         if(!ready && player.ready){
           // rerender ready
-          readyNode.innerHTML = `<div class="ready" data-ready="true">ready rerendered</div>`; // TODO
+          readyNode.setAttribute('data-ready', true);
+          readyNode.innerHTML = 'ready rerendered';
+          // readyNode.innerHTML = `<div class="ready" data-ready="true">ready rerendered</div>`; // TODO
+        } else if(!player.ready && lastReadyUp && player.id === state.id){ // TODO react to joins of unready players & render for first player... test if makes sense
+          readyNode.setAttribute('data-toggle', 'modal');
+          readyNode.setAttribute('data-target', '#confirmReady');
+          readyNode.setAttribute('onclick', '{}');
+          readyNode.innerHTML = 'last unready';
+          // readyNode.innerHTML = `<div class="ready" data-ready="false" data-toggle="modal" data-target="#confirmReady" onclick="(() => {})()">last unready</div>`;
         }
-        /*
-        else if(!player.ready && lastReadyUp && player.id === state.id){
-          readyNode.removeEventListener('click', readyUp);
-          readyNode.innerHTML = `<div class="ready" data-ready="false" data-toggle="modal" data-target="#confirmReady">last unready</div>`;
-        }
-        */
       } else { // if not in players, delete // TODO test
         parent.removeChild(node);
       }
@@ -226,6 +228,12 @@ const renderQuestionPlaceholder = (parent) => {
   `;
 };
 
+const renderAnswerPlaceholder = () => {
+  return `
+    <div class="answer box answer-placeholder"></div>
+  `;
+}
+
 const renderGenericAnswer = ({ classes, content, answerId, questionId} ) => {
   return `
     <div class="answer box ${classes}" data-questionId="${questionId}" data-answerId="${answerId}" onclick="answerQuestion(${questionId}, ${answerId})">
@@ -272,6 +280,11 @@ const renderAnswers = ( parent, { answers }) => {
   if(answerNodes.length > 0){
     // remove answer if not in state
     answerNodes.forEach(node => {
+      /*
+      if(!node.classList.contains('answer-placeholder')){
+        // all of the below
+      }
+      */
 
       let questionId = parseInt(node.getAttribute('data-questionId'));
       let answerId = parseInt(node.getAttribute('data-answerId'));
@@ -279,6 +292,8 @@ const renderAnswers = ( parent, { answers }) => {
 
       // delete if not in answers
       if(answer === undefined){
+        // change to default // TODO
+        //console.log(node);
         parent.removeChild(node);
       }
 
@@ -287,10 +302,36 @@ const renderAnswers = ( parent, { answers }) => {
     });
   }
 
+  const emptyNodes = parent.querySelectorAll('.answer-placeholder');
   // add new answers
   if(copy.length > 0){
+    // first populate placeholders // TODO
+    /*
+    for (let node of emptyNodes) {
+      if(copy.length > 0){
+        let answer = copy.pop();
+
+      } else {
+        break;
+      }
+    }
+    // then create new answers
+    if(copy.length > 0){
+      copy.forEach(a => parent.innerHTML += renderAnswer(a));
+    }
+    */
+
     copy.forEach(a => parent.innerHTML += renderAnswer(a));
   }
+
+  // delete all empty nodes at end of parent (only placeholders in between) // TODO
+  /*
+  let lastNode = parent.lastChild;
+  while(lastNode.classList.contains('answer-placeholder')){
+    parent.removeChild(lastNode);
+    lastNode = parent.lastChild;
+  }
+  */
 };
 
 // TODO structure, rerender only on change
