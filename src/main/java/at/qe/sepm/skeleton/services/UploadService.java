@@ -49,7 +49,8 @@ public class UploadService {
     public File getUpload(){
         User user = sessionInfoBean.getCurrentUser();
         if(user == null){
-            throw new IllegalArgumentException("User cannot be null");
+            log.warn("unauthenticated upload");
+            return null;
         }
         log.debug("user is " + user.getUsername());
         int managerId = user.getManager() == null ? managerService.getManagerOfPlayer(user.getPlayer()).getId() : user.getManager().getId();
@@ -58,7 +59,7 @@ public class UploadService {
         if(parentDir.exists()){
             File[] files = parentDir.listFiles(new UserFilter(user));
             if(files != null && files.length > 0){
-                log.debug("file " + files[0].getName() + "found for user" + user.getUsername());
+                log.debug("file " + files[0].getName() + " found for user" + user.getUsername());
                 return files[0];
             }
         }
