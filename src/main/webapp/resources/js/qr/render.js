@@ -168,6 +168,16 @@ const renderPlayers = ( parent, { players }) => {
   }
 };
 
+const countdown = (remaining, nodeId) => {
+  const node = document.getElementById(nodeId);
+  if(remaining > 0){
+    node.innerHTML = remaining.toString();
+    setTimeout(() => countdown(remaining - 1, nodeId), 1000)
+  } else {
+    node.innerHTML = '0';
+  }
+};
+
 /**
  * Renders the lobby state
  *
@@ -180,6 +190,19 @@ const renderLobby = ( {info} ) => {
     clearScreen();
   }
   console.debug('RENDER: rendering lobby')
+
+  let allReady = info.players.filter(p => !p.ready).length === 0;
+  if(allReady && document.getElementById('countdown') === null){
+    console.log("TODO; do 5s timer") // TODO
+    clearScreen();
+    ROOT.innerHTML = `
+      <div>
+        <h1>Game will start in <span id="countdown">5</span>s</h1>
+      </div>
+    `;
+    countdown(5, 'countdown');
+    console.log("started timer")
+  }
 
   let elem = ROOT.querySelector('.info');
 
@@ -196,10 +219,7 @@ const renderLobby = ( {info} ) => {
   // renders the players
   renderPlayers(players, info);
 
-  let allReady = info.players.filter(p => !p.ready).length === 0;
-  if(allReady){
-    console.log("TODO; do 5s timer") // TODO
-  }
+
 };
 
 // TODO structure, rerender only on change
@@ -441,5 +461,5 @@ const render = (state) => {
   }
 
   const time = performance.now() - start;
-  console.debug(`RENDER: rendering took ${time.toFixed(4)}ms`)
+  console.debug(`RENDER: rendering took ${time.toFixed(3)}ms`)
 };
