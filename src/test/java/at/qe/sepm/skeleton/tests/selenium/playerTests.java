@@ -2,6 +2,7 @@ package at.qe.sepm.skeleton.tests.selenium;
 
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -29,12 +30,16 @@ public class playerTests {
 
     @Test
     public void createGameTest(){
-        //TODO
+        driver.findElement(By.id("formId:j_idt58")).click(); //not working button for selenium
+        String currentURL = driver.getCurrentUrl();
+        Assert.assertEquals(currentURL, "http://localhost:8080/quizroom/createRoom.xhtml" );
     }
 
     @Test
     public void joinGameTest(){
-        //TODO
+        driver.findElement(By.xpath("//a[@class='btn btn-primary btn-lg']"));
+        String currentURL = driver.getCurrentUrl();
+        Assert.assertEquals(currentURL, "http://localhost:8080/quizroom/join.html" );
     }
 
     @Test
