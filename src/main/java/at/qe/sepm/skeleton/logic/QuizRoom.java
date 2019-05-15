@@ -401,6 +401,14 @@ public class QuizRoom implements IPlayerAction
 			x.onPlayerLeave(pin, player, reason);
 		});
 		
+		// remove QuizRoom if no more players in room
+		if (players.size() == 1)
+		{
+			players.remove(player);
+			onRoomClose();
+			return;
+		}
+		
 		// remove ActiveQuestion with question at player
 		if (playerQuestions.containsKey(player))
 		{
