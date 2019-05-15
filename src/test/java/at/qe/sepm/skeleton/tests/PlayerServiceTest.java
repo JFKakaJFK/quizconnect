@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,9 +20,11 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import at.qe.sepm.skeleton.model.Manager;
 import at.qe.sepm.skeleton.model.Player;
+import at.qe.sepm.skeleton.model.QuestionSet;
 import at.qe.sepm.skeleton.model.User;
 import at.qe.sepm.skeleton.model.UserRole;
 import at.qe.sepm.skeleton.services.PlayerService;
+import at.qe.sepm.skeleton.services.QuestionSetService;
 import at.qe.sepm.skeleton.services.UserService;
 
 /**
@@ -40,6 +43,9 @@ public class PlayerServiceTest
 	
 	@Autowired
 	UserService userService;
+	
+	@Autowired
+	QuestionSetService questionSetService;
 	
 	@Test
 	@WithMockUser(username = "user1", authorities = { "MANAGER" })
@@ -371,5 +377,31 @@ public class PlayerServiceTest
 		Player updatedPlayer = playerService.savePlayer(player);
 		assertNotNull("Updated Player not loaded!", updatedPlayer);
 		assertEquals("Saved playtime is wrong!", 767261, updatedPlayer.getPlayTime());
+	}
+	
+	@Test
+	@WithMockUser(username = "user1", authorities = { "MANAGER" })
+	public void testAddQSetPlays()
+	{
+		Player player = playerService.getPlayerById(201);
+		assertNotNull("Player not loaded!", player);
+		assertEquals("Map already contains entries!", 0, player.getqSetPlayCounts().size());
+		
+		List<QuestionSet> qsets = new ArrayList<>();
+		qsets.add(questionSetService.getQuestionSetById(300));
+		qsets.add(questionSetService.getQuestionSetById(301));
+		
+		player.addPlayToQSets(qsets);
+		assertEquals("Map doesn't contain entries for newly added QuestionSets!", 2, player.getqSetPlayCounts().size());
+		
+		Player savedPlayer = playerService.savePlayer(player);
+		assertEquals("Map doesn't contain entries for newly added QuestionSets on savedPlayer!", 2, savedPlayer.getqSetPlayCounts().size());
+		
+		Map<Integer, Integer> map = savedPlayer.getqSetPlayCounts();
+		assertEquals("Map missing entry for QSet 300", true, map.containsKey(300));
+		assertEquals("Map missing entry for QSet 301", true, map.containsKey(301));
+		
+		assertEquals("Map has wrong number for QSet 300", new Integer(1), map.get(300));
+		assertEquals("Map has wrong number for QSet 301", new Integer(1), map.get(301));
 	}
 }

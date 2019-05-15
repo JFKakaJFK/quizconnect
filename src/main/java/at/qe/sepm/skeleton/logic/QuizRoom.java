@@ -62,6 +62,7 @@ public class QuizRoom implements IPlayerAction
 	private volatile HashMap<Player, Integer> correctlyAnsweredQuestions; // map for storing number of correctly answered Questions per player
 	private volatile HashMap<Player, Integer> totalAnsweredQuestions; // map for storing total number of Questions answered per player
 	private volatile int missingQuestions; // number of players without questions (used for hot-joining the room)
+	private volatile long gameStartTime; // time stamp of game start, used for play time calculation
 	
 	private volatile List<Player> players; // players in the room
 	private IRoomAction playerInterface; // interface for all players
@@ -479,6 +480,7 @@ public class QuizRoom implements IPlayerAction
 		}
 		
 		wfpMode = false;
+		gameStartTime = new Date().getTime();
 		
 		eventCall(x -> {
 			x.onGameStart(pin);
@@ -515,7 +517,7 @@ public class QuizRoom implements IPlayerAction
 	private void updatePlayerStats()
 	{
 		PlayerService playerService = manager.getPlayerService();
-		long gameTime = timerFrameUpdate.getElapsedTime();
+		long gameTime = (new Date().getTime()) - gameStartTime;
 		for (Player player : players)
 		{
 			player.addToTotalScore(score);
