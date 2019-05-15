@@ -8,20 +8,15 @@ import at.qe.sepm.skeleton.services.StorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.faces.context.FacesContext;
 import java.io.*;
+import java.nio.file.Files;
 
 // TODO jdoc
 
 @Controller
+@Scope("view")
 public class ChangeAvatarBean implements Serializable {
 
     private static final Logger log = LoggerFactory.getLogger(ChangeAvatarBean.class);
@@ -41,34 +36,26 @@ public class ChangeAvatarBean implements Serializable {
     }
 
     private String filename = null;
+    private File file;
     private Player player;
 
+    // TODO jdoc
+    public void handleFileUpload(){
+        if(file != null){
+            log.debug("file for " + player.getUser().getUsername() + "is " + file.getName());
+            if(filename != null){
+                storageService.deleteAvatar(filename);
+            }
 
-    /**
-     * Catches a fileupload and stores file
-     *
-     * @param file
-     * @return
-     */
-    @RequestMapping(value = "/upload/avatars", method = RequestMethod.POST)
-    public ResponseEntity handleFileUpload(@RequestParam("file") MultipartFile file) {
-        if(file == null){
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            try {
+                Manager manager = managerService.getManagerOfPlayer(player);
+                filename = storageService.storeAvatar(file, manager.getId().toString());
+                Files.deleteIfExists(file.toPath());
+            } catch (IOException e){
+                filename = null;
+                log.error("Exception while saving Avatar");
+            }
         }
-
-        if(filename != null){
-            storageService.deleteAvatar(filename);
-        }
-        try(InputStream is = file.getInputStream()) {
-            Manager manager = managerService.getManagerOfPlayer(player);
-            filename = storageService.storeAvatar(is, file.getOriginalFilename(), String.valueOf(manager.getId()));
-        } catch (IOException e){
-            filename = null;
-            log.error("Exception while saving Avatar");
-            return new ResponseEntity(HttpStatus.I_AM_A_TEAPOT);
-        }
-
-        return new ResponseEntity(HttpStatus.OK);
     }
 
     //TODO: JavaDoc for saveAvatar
@@ -117,7 +104,13 @@ public class ChangeAvatarBean implements Serializable {
         return filename;
     }
 
-    //Method has nothing in body
-    public void setFilename(String filename) {
+    public void setFilename(String filename) {}
+
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
     }
 }

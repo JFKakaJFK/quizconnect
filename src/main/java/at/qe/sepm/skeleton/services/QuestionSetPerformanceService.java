@@ -61,7 +61,6 @@ public class QuestionSetPerformanceService {
      * @param right
      * @return
      */
-    // TODO: preauthorize
     public QuestionSetPerformance updatePlayerStats(QuestionSet questionSet, Player player, int total, int right){
         QuestionSetPerformance questionSetPerformance = questionSetPerformanceRepository.findByPlayerAndQuestionSet(player, questionSet);
 

@@ -1,0 +1,11 @@
+.players {
+    padding: 1rem 0;
+}
+
+.ready[data-ready="true"] {
+    background: green;
+}
+
+.ready[data-ready="false"] {
+    background: red;
+}

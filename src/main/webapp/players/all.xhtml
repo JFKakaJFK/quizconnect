@@ -3,21 +3,40 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
-                xmlns:pf="http://primefaces.org/ui"
                 xmlns:qc="http://java.sun.com/jsf/composite/quizconnect"
                 template="/WEB-INF/templates/main.xhtml">
     <ui:define name ="content">
         <link rel="stylesheet" href="../resources/css/allplayers.css" />
-        <h1>All Players</h1>
-        <p>Order by rank, search, show indicator who is online? or ingame</p>
-        <p>For manager: toggle only his players</p>
-        <!-- TODO: remove avatar changing, move it to player home screen, only search & filter here -->
 
-        <h:form enctype="multipart/form-data">
+        <h:form id="form" enctype="multipart/form-data">
 
-            <h:panelGroup layout="block" rendered="#{sessionInfoBean.hasRole('MANAGER')}">
-                <h:commandButton  p:class="btn btn-tertiary" value="Only show my players">
-                    <!-- TODO -->
+            <h:panelGroup layout="block" styleClass="actions">
+                <!--
+                <h:commandButton styleClass="updatePlayers jsf-hide">
+                    <f:ajax execute="@this" render="players"/>
+                </h:commandButton>
+                -->
+
+                <h:inputText p:placeholder="Search"
+                             value="#{allPlayersBean.searchPhrase}">
+                    <!-- p:onChange="() => document.querySelector('.updatePlayers').click()"
+                    valueChangeListener="# {allPlayersBean.handleSearch}">
+             <f:ajax event="change"/> -->
+                    <f:ajax listener="#{allPlayersBean.handleSearch}" event="keyup" execute="@this" render="players"/>
+                </h:inputText>
+
+                <h:panelGroup id="showByManager" rendered="#{sessionInfoBean.hasRole('MANAGER')}">
+                    <h:selectBooleanCheckbox p:id="showByManager" value="#{allPlayersBean.onlyByManager}" styleClass="jsf-hide">
+                        <f:ajax listener="#{allPlayersBean.setOnlyByManager(!allPlayersBean.onlyByManager)}" render="showByManager players"/>
+                    </h:selectBooleanCheckbox>
+
+                    <label for="showByManager" class="btn btn-tertiary">
+                        #{allPlayersBean.onlyByManager ? 'Show all players' : 'Show only your Players'}
+                    </label>
+                </h:panelGroup>
+
+                <h:commandButton styleClass="btn btn-tertiary" p:data-toggle="modal" p:data-target="#addPlayer" value="Add Player" rendered="#{sessionInfoBean.hasRole('MANAGER')}">
+                    <f:ajax execute="@this" render=":form:modal:footer :form:modal:body"/>
                 </h:commandButton>
             </h:panelGroup>
 
@@ -25,14 +44,44 @@
                 <ui:repeat value="#{allPlayersBean.players}" var="player">
 
                     <qc:playerbox player="#{player}" online="#{randomOnlineTestBean.online}" rank="Beginner">
+                        <!--
                         <h:link outcome="profile" styleClass="ml-2">
                             <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-9a1 1 0 0 1 1 1v4a1 1 0 0 1-2 0v-4a1 1 0 0 1 1-1zm0-4a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
-                            <f:param name="id" value="#{player.id}"/>
+                            <f:param name="id" value="# {player.id}"/>
                         </h:link>
+                        -->
+                        <h:commandLink action="profile?faces-redirect=true" styleClass="ml-2">
+                            <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-9a1 1 0 0 1 1 1v4a1 1 0 0 1-2 0v-4a1 1 0 0 1 1-1zm0-4a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+                            <f:ajax execute="@this" render="@none"/>
+                            <f:setPropertyActionListener value="#{player}" target="#{profileBean.player}"/>
+                        </h:commandLink>
                     </qc:playerbox>
 
                 </ui:repeat>
             </h:panelGroup>
+
+            <qc:modal id="modal"
+                      target="addPlayer"
+                      title="Add Player"
+                      update=":form:players :form:modal:body :form:modal:footer"
+                      bodyId="body" footerId="footer"
+                      disableConfirm="#{!addPlayerBean.validateInput()}"
+                      abortAction="#{addPlayerBean.clear}"
+                      closeAction="#{addPlayerBean.clear}"
+                      confirmAction="#{addPlayerBean.addUser}"
+                      confirm="Save Player" abort="Cancel"
+                      rendered="#{sessionInfoBean.hasRole('MANAGER')}">
+                <h:inputText p:placeholder="Username"
+                             value="#{addPlayerBean.username}">
+                    <f:ajax event="keyup" execute="@this" render=":form:modal:footer"/>
+                </h:inputText>
+
+                <!-- TODO password field + pw repeat + pw strength indicator (like manager signup) -->
+                <h:inputText p:placeholder="Password"
+                             value="#{addPlayerBean.password}">
+                    <f:ajax event="keyup" execute="@this" render=":form:modal:footer"/>
+                </h:inputText>
+            </qc:modal>
 
         </h:form>
 

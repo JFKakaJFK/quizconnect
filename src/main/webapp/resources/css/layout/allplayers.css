@@ -1,3 +1,69 @@
-.modal-content {
+.actions {
+    display: flex;
+    flex-flow: column wrap;
+    align-items: center;
+    justify-content:center;
+    padding: 1rem 1rem 0;
+    max-width: var(--breakpoint-xl);
+    margin: 0 auto;
+}
+
+.actions > * {
+    margin: 0.5rem 0;
+    width: 100%;
+}
+
+.actions > *:first-child {
+    margin-top: 0;
+}
+
+.actions > *:last-child {
+    margin-bottom: 0;
+}
+
+@media only screen and (min-width: 560px) {
+    .actions {
+        flex-flow: row nowrap;
+    }
+
+    .actions > * {
+        margin: 0 .5rem;
+        width: initial;
+    }
+
+    .actions > *:first-child {
+        margin-left: 0;
+    }
+
+    .actions > *:last-child {
+        margin-right: 0;
+    }
+}
+
+label.btn {
+    margin: 0;
+    width: 100%;
+    min-width: 200px;
+}
+
+input[type=text] {
+    outline: 0;
+    box-sizing: border-box;
+    height: 42px;
+    border-radius: 50px;
+    border: 3px solid var(--col-1-m);
     background: var(--bg);
+    color: var(--gray-5);
+    display: inline-block;
+    vertical-align: middle;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    font-weight: 300;
+    line-height: 1.5;
+    flex: 1;
+}
+
+input[type=text]::placeholder {
+    color: var(--gray-4);
+    font-weight: 300;
 }

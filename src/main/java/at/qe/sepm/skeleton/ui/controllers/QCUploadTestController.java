@@ -1,20 +1,40 @@
 package at.qe.sepm.skeleton.ui.controllers;
 
+import at.qe.sepm.skeleton.services.StorageService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+
 @Controller
 public class QCUploadTestController {
 
-    @RequestMapping(value = "/upload", method = RequestMethod.POST)
-    @ResponseStatus(value = HttpStatus.OK)
-    public void handleUpload(@RequestParam("parameterName")MultipartFile file){
-        System.out.println("UPLOAD - START");
-        System.out.println(file.getOriginalFilename());
-        System.out.println("END");
+   @Autowired
+   private StorageService storageService;
 
-        // TODO: IMPORTANT: do file validation here
+   File file;
+
+   public void handleFileUpload() throws IOException {
+       if(file != null){
+           System.out.println(file.getName());
+           // do something w/ file here
+           // at least save somewhere else (or call clear method later)
+       } else {
+           System.out.println("error at file upload");
+       }
+   }
+
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
     }
 }
