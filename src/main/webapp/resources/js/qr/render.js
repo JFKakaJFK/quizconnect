@@ -139,13 +139,18 @@ const renderPlayers = ( parent, { players }) => {
           // rerender ready
           readyNode.setAttribute('data-ready', true);
           readyNode.innerHTML = 'ready rerendered';
-          // readyNode.innerHTML = `<div class="ready" data-ready="true">ready rerendered</div>`; // TODO
-        } else if(!player.ready && lastReadyUp && player.id === state.id){ // TODO react to joins of unready players & render for first player... test if makes sense
-          readyNode.setAttribute('data-toggle', 'modal');
-          readyNode.setAttribute('data-target', '#confirmReady');
-          readyNode.setAttribute('onclick', '{}');
-          readyNode.innerHTML = 'last unready';
-          // readyNode.innerHTML = `<div class="ready" data-ready="false" data-toggle="modal" data-target="#confirmReady" onclick="(() => {})()">last unready</div>`;
+        } else if(!player.ready && player.id === state.id){
+          if(lastReadyUp){
+            readyNode.setAttribute('data-toggle', 'modal');
+            readyNode.setAttribute('data-target', '#confirmReady');
+            readyNode.setAttribute('onclick', '{}');
+            readyNode.innerHTML = 'last unready';
+          } else if(!lastReadyUp && readyNode.hasAttribute('data-toggle')){
+            readyNode.removeAttribute('data-toggle');
+            readyNode.removeAttribute('data-target');
+            readyNode.setAttribute('onclick', 'readyUp()');
+            readyNode.innerHTML = 'ready up';
+          }
         }
       } else { // if not in players, delete // TODO test
         parent.removeChild(node);
@@ -159,6 +164,7 @@ const renderPlayers = ( parent, { players }) => {
   // add new players
   if(copy.length > 0){
     copy.forEach(p => parent.innerHTML += renderPlayer(p));
+    // TODO handle ready up if only one player in lobby (show lastready | no ready up at all )??
   }
 };
 
@@ -299,6 +305,7 @@ const renderAnswers = ( parent, { answers }) => {
           placeholder.classList.add('answer-placeholder');
           placeholder.classList.add('answer');
           placeholder.classList.add('box');
+          placeholder.innerHTML = `<p></p>`
           // parent.removeChild(node);
         }
 
@@ -313,7 +320,6 @@ const renderAnswers = ( parent, { answers }) => {
   // add new answers
   if(copy.length > 0){
     // first populate placeholders
-    /*
     for (let node of emptyNodes) {
       if(copy.length > 0){
         let answer = copy.pop();
@@ -321,12 +327,12 @@ const renderAnswers = ( parent, { answers }) => {
         let pseudo = document.createElement('div');
         pseudo.innerHTML = renderAnswer(answer);
 
-        node.parentNode.replaceChild(pseudo.firstChild, node);
+        node.parentNode.replaceChild(pseudo.firstElementChild, node);
       } else {
         break;
       }
     }
-  */
+
     // then create new answers
     if(copy.length > 0){
       copy.forEach(a => parent.innerHTML += renderAnswer(a));
@@ -338,8 +344,8 @@ const renderAnswers = ( parent, { answers }) => {
   // delete all empty nodes at end of parent (only placeholders in between) // TODO
   let lastNode = parent.lastElementChild;
   while(lastNode !== null && lastNode !== undefined && lastNode.classList.contains('answer-placeholder')){
-    //parent.removeChild(lastNode);
-    //lastNode = parent.lastElementChild;
+    parent.removeChild(lastNode);
+    lastNode = parent.lastElementChild;
   }
 };
 
@@ -435,5 +441,5 @@ const render = (state) => {
   }
 
   const time = performance.now() - start;
-  console.debug(`RENDER: rendering took ${time}ms`)
+  console.debug(`RENDER: rendering took ${time.toFixed(4)}ms`)
 };
