@@ -30,12 +30,14 @@
             <f:ajax execute="@form" render="myModal" />
         </h:commandLink>
 
-
         <script type="text/javascript" src="/resources/quizconnect/js/QCUpload.js"></script>
-        <qc:upload id="upload1" listener="#{QCUploadTestController.handleFileUpload}" target="#{QCUploadTestController.file}"  accept="image/*"/>
+        <qc:upload id="upload1" listener="#{QCUploadTestController.handleFileUpload}" target="#{QCUploadTestController.file}"  accept="image/*" required="true"/>
 
+        <qc:upload listener="#{QCUploadTestController.handleFileUpload}" target="#{QCUploadTestController.file}"  accept="text/csv" ajax="false" required="true"/>
 
-        <qc:upload listener="#{QCUploadTestController.handleFileUpload}" target="#{QCUploadTestController.file}"  accept="text/csv"/>
+        <h:commandButton value="Submit">
+
+        </h:commandButton>
 
         <h:panelGroup layout="block" id="repeat">
             <ui:repeat value="#{testBean.paginator.model}" var="listItem">

@@ -58,9 +58,11 @@ public class UploadServiceTest {
         testFile = new File("src/test/resources/testImage1.jpg");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testGetUploadNullUser(){
-        uploadService.getUpload();
+        File f = uploadService.getUpload();
+
+        Assert.assertNull("The file is not null if no user is logged in", f);
     }
 
     @Test(expected = IllegalArgumentException.class)
