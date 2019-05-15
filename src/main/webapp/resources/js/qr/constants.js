@@ -8,10 +8,13 @@ const DOMAIN = 'localhost:8080'; // TODO
 const LOBBY = 0;
 const INGAME = 1;
 const FINISHED = 2;
+const JOIN = 3;
 
+const JOIN_ENDPOINT = '/qr/join/';
 const URL_JOIN = '/quizroom/join.html';
 const URL_FINISH = '/quizroom/final.html';
 const URL_KICKED = '/player/home.xhtml?kicked=true';
+const URL_LEAVE = '/player/home.xhtml?leave=true';
 
 const MAX_ANSWERS = 6;
 

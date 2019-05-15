@@ -3,7 +3,17 @@
     grid-gap: 1rem;
 }
 
-
 .answer:hover {
     cursor: pointer;
 }
+
+.answer-placeholder {
+    opacity: .5;
+    filter: blur(15px);
+    background: var(--gray-3);
+}
+
+.answer.answer-placeholder:hover {
+    cursor: initial;
+}
+

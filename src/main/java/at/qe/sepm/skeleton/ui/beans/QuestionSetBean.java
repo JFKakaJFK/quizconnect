@@ -23,10 +23,13 @@ import java.util.*;
  */
 
 @Controller
-@Scope("session")
+@Scope("view")
 
 public class QuestionSetBean implements Serializable {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    @Autowired
+    private MessageBean messageBean;
 
     @Autowired
     private QuestionSetService questionSetService;
@@ -36,9 +39,6 @@ public class QuestionSetBean implements Serializable {
 
     @Autowired
     private SessionInfoBean sessionInfoBean;
-
-    @Autowired
-    private QSOverviewBean overviewBean;
 
     private List<String> types = Arrays.asList("text", "picture");
     private List<String> difficulty = Arrays.asList("easy", "hard");
@@ -50,43 +50,46 @@ public class QuestionSetBean implements Serializable {
 
     @PostConstruct
     public void init() {
-        // questions is the internal list of questions created
-        questions = new HashSet<Question>();
-        // current user for setting the author of the QuestionSet
         currentUser = sessionInfoBean.getCurrentUser();
-        // because of the session-scope, this needs to be cleared just in case something remained in the inputs. Shouldn't be necessary!
-        clearQuestions();
-        clearQuestion();
-        clearQuestionSet();
+
+        // creates internal set ("questions") of questions created in this process which is later assigned to the questionSet
+        initQuestions();
+        // create an empty question on startup
+        initQuestion();
+        // create a new QuestionSet
+        initQuestionSet();
 
 
     }
 
-    //TODO: JavaDoc for clearQuestion
-    public void clearQuestion() {
+    private void initQuestion() {
         question = new Question();
         question.setType(QuestionType.text);
     }
 
-    public void clearQuestions() {
+    private void initQuestions() {
         questions = new HashSet<Question>();
     }
 
-    public void clearQuestionSet() {
+    private void initQuestionSet() {
         questionSet = new QuestionSet();
         questionSet.setDifficulty(QuestionSetDifficulty.easy);
     }
 
     /* Called on modal button "add another question - YES" */
     public void saveNewQuestion() {
-        questions.add(question);
-        question.setQuestionSet(questionSet);
-        questionService.saveQuestion(question);
-        logger.info("Added question to Database - ID: " + question.getId());
-        clearQuestion();
+            removeSpaces(question);
+            questions.add(question);
+            question.setQuestionSet(questionSet);
+            questionService.saveQuestion(question);
+            logger.info("Added question to Database - ID: " + question.getId());
+            initQuestion();
     }
 
-    /* Called by exitCreateQuestionSet (which is triggered by modal button - NO) */
+    /* Called on button "Step 2: Add new questions"
+    * Currently a questionSet is saved even if the manager decides to navigate to another page before adding a question (-> Empty questionSet is allowed)
+    * */
+
     public void saveNewQuestionSet() {
         logger.info("saveNewQuestionSet invoked");
         if (currentUser.getRole() == UserRole.MANAGER) {
@@ -100,7 +103,6 @@ public class QuestionSetBean implements Serializable {
     /* Called on modal button "add another question - NO" Saves the currently entered question and saves the whole QuestionSet */
     public void exitCreateQuestionSet() {
         saveNewQuestion();
-        saveNewQuestionSet();
 
         // redirect to overview
         try {
@@ -109,15 +111,36 @@ public class QuestionSetBean implements Serializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        /* add QuestionSet to QSOverviewBean internal list, which gets returned by getter (used in ui:repeat to show all questionSets) */
-        overviewBean.addQuestionSetForDisplay(questionSet);
-
-        /* clear all*/
-        clearQuestion();
-        clearQuestionSet();
-        clearQuestions();
     }
+
+    /**
+     * Removes trailing and leading spaces.
+     *
+     * @param question
+     * @return
+     */
+    private void removeSpaces (Question question) {
+        question.setQuestionString(question.getQuestionString().trim());
+        question.setRightAnswerString(question.getRightAnswerString().trim());
+        question.setWrongAnswerString_1(question.getWrongAnswerString_1().trim());
+
+        if (question.getWrongAnswerString_2()!=null) {
+            question.setWrongAnswerString_2(question.getWrongAnswerString_2().trim());
+        }
+
+        if (question.getWrongAnswerString_3()!=null) {
+            question.setWrongAnswerString_3(question.getWrongAnswerString_3().trim());
+        }
+
+        if (question.getWrongAnswerString_4()!=null) {
+            question.setWrongAnswerString_4(question.getWrongAnswerString_4().trim());
+        }
+
+        if (question.getWrongAnswerString_5()!=null) {
+            question.setWrongAnswerString_5(question.getWrongAnswerString_5().trim());
+        }
+    }
+
 
     public Question getQuestion() {
         return question;

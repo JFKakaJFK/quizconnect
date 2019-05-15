@@ -37,7 +37,7 @@ public class UserServiceTest {
     @Test
 	@WithMockUser(username = "user1", authorities = { "MANAGER" })
     public void testDatainitialization() {
-		Assert.assertEquals("Insufficient amount of users initialized for test data source", 8, userService.getAllUsers().size());
+		Assert.assertEquals("Insufficient amount of users initialized for test data source", 21, userService.getAllUsers().size());
         for (User user : userService.getAllUsers()) {
 			if ("user1".equals(user.getUsername()))
 			{
@@ -77,7 +77,72 @@ public class UserServiceTest {
 			else if ("veryLongUserName".equals(user.getUsername()))
 			{
 				Assert.assertTrue("User \"veryLongUserName\" does not have role PLAYER", user.getRole().equals(UserRole.PLAYER));
-				Assert.assertNotNull("User \"veryLongUserName7\" does not have a createDate defined", user.getCreateDate());
+				Assert.assertNotNull("User \"veryLongUserName\" does not have a createDate defined", user.getCreateDate());
+			}
+			else if ("Sidhu Moose Wala".equals(user.getUsername()))
+			{
+				Assert.assertTrue("User \"Sidhu Moose Wala\" does not have role PLAYER", user.getRole().equals(UserRole.PLAYER));
+				Assert.assertNotNull("User \"Sidhu Moose Wala\" does not have a createDate defined", user.getCreateDate());
+			}
+			else if ("Elon Musk".equals(user.getUsername()))
+			{
+				Assert.assertTrue("User \"Elon Musk\" does not have role PLAYER", user.getRole().equals(UserRole.PLAYER));
+				Assert.assertNotNull("User \"Elon Musk\" does not have a createDate defined", user.getCreateDate());
+			}
+			else if ("Jeff Bezos".equals(user.getUsername()))
+			{
+				Assert.assertTrue("User \"Jeff Bezos\" does not have role PLAYER", user.getRole().equals(UserRole.PLAYER));
+				Assert.assertNotNull("User \"Jeff Bezos\" does not have a createDate defined", user.getCreateDate());
+			}
+			else if ("Benedict Cucumberbatch".equals(user.getUsername()))
+			{
+				Assert.assertTrue("User \"Benedict Cucumberbatch\" does not have role PLAYER", user.getRole().equals(UserRole.PLAYER));
+				Assert.assertNotNull("User \"Benedict Cucumberbatch\" does not have a createDate defined", user.getCreateDate());
+			}
+			else if ("Kim Jong Un".equals(user.getUsername()))
+			{
+				Assert.assertTrue("User \"Kim Jong Un\" does not have role PLAYER", user.getRole().equals(UserRole.PLAYER));
+				Assert.assertNotNull("User \"Kim Jong Un\" does not have a createDate defined", user.getCreateDate());
+			}
+			else if ("Sauron".equals(user.getUsername()))
+			{
+				Assert.assertTrue("User \"Sauron\" does not have role PLAYER", user.getRole().equals(UserRole.PLAYER));
+				Assert.assertNotNull("User \"Sauron\" does not have a createDate defined", user.getCreateDate());
+			}
+			else if ("Bilbo Baggins".equals(user.getUsername()))
+			{
+				Assert.assertTrue("User \"Bilbo Baggins\" does not have role PLAYER", user.getRole().equals(UserRole.PLAYER));
+				Assert.assertNotNull("User \"Bilbo Baggins\" does not have a createDate defined", user.getCreateDate());
+			}
+			else if ("Harry Potter".equals(user.getUsername()))
+			{
+				Assert.assertTrue("User \"Harry Potter\" does not have role PLAYER", user.getRole().equals(UserRole.PLAYER));
+				Assert.assertNotNull("User \"Harry Potter\" does not have a createDate defined", user.getCreateDate());
+			}
+			else if ("Donald J. Trump".equals(user.getUsername()))
+			{
+				Assert.assertTrue("User \"Donald J. Trump\" does not have role PLAYER", user.getRole().equals(UserRole.PLAYER));
+				Assert.assertNotNull("User \"Donald J. Trump\" does not have a createDate defined", user.getCreateDate());
+			}
+			else if ("Barack Obama".equals(user.getUsername()))
+			{
+				Assert.assertTrue("User \"Barack Obama\" does not have role PLAYER", user.getRole().equals(UserRole.PLAYER));
+				Assert.assertNotNull("User \"Barack Obama\" does not have a createDate defined", user.getCreateDate());
+			}
+			else if ("Voldemort".equals(user.getUsername()))
+			{
+				Assert.assertTrue("User \"Voldemort\" does not have role PLAYER", user.getRole().equals(UserRole.PLAYER));
+				Assert.assertNotNull("User \"Voldemort\" does not have a createDate defined", user.getCreateDate());
+			}
+			else if ("Freddy Mercury".equals(user.getUsername()))
+			{
+				Assert.assertTrue("User \"Freddy Mercury\" does not have role PLAYER", user.getRole().equals(UserRole.PLAYER));
+				Assert.assertNotNull("User \"Freddy Mercury\" does not have a createDate defined", user.getCreateDate());
+			}
+			else if ("Heiner Bernadinho".equals(user.getUsername()))
+			{
+				Assert.assertTrue("User \"Heiner Bernadinho\" does not have role PLAYER", user.getRole().equals(UserRole.PLAYER));
+				Assert.assertNotNull("User \"Heiner Bernadinho\" does not have a createDate defined", user.getCreateDate());
 			}
 			else
 			{
@@ -97,7 +162,7 @@ public class UserServiceTest {
 
         userService.deleteUser(toBeDeletedUser);
 
-		Assert.assertEquals("No user has been deleted after calling UserService.deleteUser", 7, userService.getAllUsers().size());
+		Assert.assertEquals("No user has been deleted after calling UserService.deleteUser", 20, userService.getAllUsers().size());
 		User deletedUser = userService.loadUser("user2");
 		Assert.assertNull("Deleted User2 could still be loaded from test data source via UserService.loadUser", deletedUser);
 

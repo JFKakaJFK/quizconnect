@@ -40,15 +40,21 @@
                         <h:commandLink action="/player/home?faces-redirect=true" value="Home"/>
                     </li>
                     <li class="my-3">
-                        <a href="/quizroom/join.html">Join Game</a>
+                        <a href="/quizroom/index.html">Join Game</a>
                     </li>
                     <li class="my-3">
                         <a href="/quizroom/createRoom.xhtml?faces-redirect=true">Create Game</a>
                     </li>
                     <li class="my-3">
+                        <!--
                         <h:link outcome="/players/profile" value="My Stats">
-                            <f:param name="id" value="#{sessionInfoBean.currentUser.player.id}"/>
+                            <f:param name="id" value="# {sessionInfoBean.currentUser.player.id}"/>
                         </h:link>
+                        -->
+                        <h:commandLink action="/players/profile?faces-redirect=true" value="My Stats">
+                            <f:ajax execute="@this" render="@none"/>
+                            <f:setPropertyActionListener value="#{sessionInfoBean.currentUser.player}" target="#{profileBean.player}"/>
+                        </h:commandLink>
                     </li>
                     <li class="my-3">
                         <h:commandLink action="/players/all?faces-redirect=true" value="View Players"/>

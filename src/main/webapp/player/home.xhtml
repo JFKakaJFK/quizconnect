@@ -45,8 +45,7 @@
                         <f:ajax execute="@this" render="@none" />
                     </h:commandLink>
 
-                    <!-- TODO convert join.html to .xhtml & use template?? -->
-                    <a class="btn btn-primary btn-lg" href="/quizroom/join.html">Join Game</a>
+                    <a class="btn btn-primary btn-lg" href="/quizroom/index.html">Join Game</a>
                 </div>
             </h:panelGroup>
 
@@ -61,7 +60,6 @@
                       footerId="footer"
                       disableConfirm="#{changeAvatarBean.disabled}"
                        >
-                <!-- TODO: disableConfirm="#{changeAvatarBean.disabled}" -->
 
                 <div jsf:id="preview" class="preview">
                     <h:graphicImage p:id="preview" value="#{avatarBean.getAvatar((changeAvatarBean.filename == null ? sessionInfoBean.currentUser.player.avatarPath : changeAvatarBean.filename))}" alt="avatar" />

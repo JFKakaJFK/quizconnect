@@ -10,6 +10,7 @@
 
 .info .stat.pin h3 {
     letter-spacing: .5rem;
+    font-weight: 400;
 }
 
 @media only screen and (min-width: 300px) {
