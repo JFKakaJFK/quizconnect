@@ -189,6 +189,11 @@ const renderLobby = ( {info} ) => {
 
   // renders the players
   renderPlayers(players, info);
+
+  let allReady = info.players.filter(p => !p.ready).length === 0;
+  if(allReady){
+    console.log("TODO; do 5s timer") // TODO
+  }
 };
 
 // TODO structure, rerender only on change
@@ -289,16 +294,11 @@ const renderAnswers = ( parent, { answers }) => {
         // delete if not in answers
         if(answer === undefined){
           // change to default // TODO
-          console.log(node);
-          node.classList.add('answer-placeholder');
-          node.removeAttribute('data-questionId');
-          node.removeAttribute('data-answerId');
-          node.removeAllListeners('click');
-          let lc = node.lastChild;
-          while(lc){
-            node.removeChild(lc);
-            lc = node.lastChild;
-          }
+          let placeholder = document.createElement('div');
+          node.parentNode.replaceChild(placeholder, node); // removes event listeners
+          placeholder.classList.add('answer-placeholder');
+          placeholder.classList.add('answer');
+          placeholder.classList.add('box');
           // parent.removeChild(node);
         }
 
@@ -308,10 +308,12 @@ const renderAnswers = ( parent, { answers }) => {
     });
   }
 
+
   const emptyNodes = parent.querySelectorAll('.answer-placeholder');
   // add new answers
   if(copy.length > 0){
     // first populate placeholders
+    /*
     for (let node of emptyNodes) {
       if(copy.length > 0){
         let answer = copy.pop();
@@ -319,20 +321,12 @@ const renderAnswers = ( parent, { answers }) => {
         let pseudo = document.createElement('div');
         pseudo.innerHTML = renderAnswer(answer);
 
-        node.parentNode.insertBefore(pseudo.firstChild, node.nextSibling);
-
-        parent.removeChild(node);
-        /*
-        node.classList.remove('answer-placeholder');
-        node.removeAttribute('data-questionId');
-        node.removeAttribute('data-answerId');
-        node.removeAllListeners('click');
-        */
-        // tODO
+        node.parentNode.replaceChild(pseudo.firstChild, node);
       } else {
         break;
       }
     }
+  */
     // then create new answers
     if(copy.length > 0){
       copy.forEach(a => parent.innerHTML += renderAnswer(a));
@@ -342,10 +336,10 @@ const renderAnswers = ( parent, { answers }) => {
   }
 
   // delete all empty nodes at end of parent (only placeholders in between) // TODO
-  let lastNode = parent.lastChild;
+  let lastNode = parent.lastElementChild;
   while(lastNode !== null && lastNode !== undefined && lastNode.classList.contains('answer-placeholder')){
-    parent.removeChild(lastNode);
-    lastNode = parent.lastChild;
+    //parent.removeChild(lastNode);
+    //lastNode = parent.lastElementChild;
   }
 };
 
@@ -427,6 +421,8 @@ const renderGameEnd = ({game}) => {
 };
 
 const render = (state) => {
+  const start = performance.now();
+
   if(state.timeoutIsActive){
     renderTimeOutModal(state.timeoutRemainingTime);
   }
@@ -437,4 +433,7 @@ const render = (state) => {
   } else if(state.state === FINISHED){
     renderGameEnd(state)
   }
+
+  const time = performance.now() - start;
+  console.debug(`RENDER: rendering took ${time}ms`)
 };

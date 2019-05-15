@@ -9,7 +9,7 @@
 
 .answer-placeholder {
     opacity: .5;
-    filter: blur(15px);
+    filter: blur(5px);
     background: var(--gray-3);
 }
 
