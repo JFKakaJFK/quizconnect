@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * Tests for the {@link QuestionSetPerformanceService}
  */
-
+@Deprecated
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @WebAppConfiguration

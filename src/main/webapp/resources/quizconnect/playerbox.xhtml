@@ -3,12 +3,12 @@
         PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:composite="http://java.sun.com/jsf/composite"
+      xmlns:cc="http://java.sun.com/jsf/composite"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:qc="http://java.sun.com/jsf/composite/quizconnect"
       xml:lang="en"
       lang="en">
-    <composite:interface>
+    <cc:interface>
 
         <!--=============================================
 
@@ -17,16 +17,14 @@
 
         - player the player of the box
         - online [ true | false ]
-        - rank (default: Beginner)
 
         ==============================================-->
-        <composite:attribute name="player" type="at.qe.sepm.skeleton.model.Player" required="true" />
-        <composite:attribute name="online" default="false" />
-        <composite:attribute name="rank" default="None" />
+        <cc:attribute name="player" type="at.qe.sepm.skeleton.model.Player" required="true" />
+        <cc:attribute name="online" default="false" />
 
-    </composite:interface>
+    </cc:interface>
 
-    <composite:implementation>
+    <cc:implementation>
         <div id="#{cc.clientId}" class="playerbox py-3 px-3" data-ingame="#{cc.attrs.online}" data-id="#{cc.attrs.player.id}"><!-- TODO: change online source -->
             <div class="playerbox-avatar mx-2 my-2">
                 <h:graphicImage value="#{avatarBean.getAvatar(cc.attrs.player.avatarPath)}" alt="avatar"/>
@@ -34,7 +32,7 @@
 
             <div class="playerbox-info mx-2 my-2">
                 <div class="playerbox-actions text-right">
-                    <composite:insertChildren/>
+                    <cc:insertChildren/>
                 </div>
 
                 <div class="playerbox-info-row">
@@ -44,7 +42,7 @@
                              size="lg"
                              styleClass="playerbox-info-name" />
 
-                    <qc:stat value="#{cc.attrs.rank}"
+                    <qc:stat value="#{cc.attrs.player.playerRank}"
                              label="rank"
                              size="sm"
                              align="right" />
@@ -52,5 +50,5 @@
 
             </div>
         </div>
-    </composite:implementation>
+    </cc:implementation>
 </html>

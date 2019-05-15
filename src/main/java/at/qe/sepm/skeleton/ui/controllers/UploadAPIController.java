@@ -7,22 +7,26 @@ import at.qe.sepm.skeleton.services.UserService;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.*;
+import java.security.Principal;
 import java.util.List;
 
+/**
+ * This {@link Controller} handles all file uploads
+ */
 @Controller
+@Scope("request") // TODO move @UploadService.clearUploads here & adjust unit tests, then revert scope
 public class UploadAPIController {
 
     private UserService userService;
@@ -52,8 +56,12 @@ public class UploadAPIController {
      * @param files
      * @return
      */
-    @RequestMapping(value = "/uploads/{username}", method = RequestMethod.POST)
-    public ResponseEntity handleUpload(@RequestParam("files[]") List<MultipartFile> files, @PathVariable String username){
+    @RequestMapping(value = "/uploads", method = RequestMethod.POST)
+    public ResponseEntity handleUpload(@RequestParam("files[]") List<MultipartFile> files, Principal principal){
+        if(principal == null){
+            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+        }
+        String username = principal.getName();
         MultipartFile file = null;
         for(int i = 0; i < files.size(); i++){
             MultipartFile f = files.get(i);
@@ -68,7 +76,7 @@ public class UploadAPIController {
         }
 
         User user = userService.loadUser(username);
-        if(user == null){ // TODO could be generalized to allow uploads by non logged in actors, but meh (set manager id to default & done [also in uploadservice])
+        if(user == null){
             return new ResponseEntity(HttpStatus.UNAUTHORIZED);
         }
         int managerId = user.getManager() == null ? managerService.getManagerOfPlayer(user.getPlayer()).getId() : user.getManager().getId();

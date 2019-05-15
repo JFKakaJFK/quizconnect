@@ -43,7 +43,7 @@
             <h:panelGroup id="players" class="players px-3" layout="block">
                 <ui:repeat value="#{allPlayersBean.players}" var="player">
 
-                    <qc:playerbox player="#{player}" online="#{randomOnlineTestBean.online}" rank="Beginner">
+                    <qc:playerbox player="#{player}" online="#{randomOnlineTestBean.online}">
                         <!--
                         <h:link outcome="profile" styleClass="ml-2">
                             <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-9a1 1 0 0 1 1 1v4a1 1 0 0 1-2 0v-4a1 1 0 0 1 1-1zm0-4a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>

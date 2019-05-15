@@ -21,8 +21,9 @@ const connect = () => {
     // console.debug(frame);
     stompClient.subscribe(`${WS_SOURCE}/${state.pin}`, event => handleServerEvent(JSON.parse(event.body)));
     // sendAlivePing();
-    // getGameInfo();
-    // getRoomPlayers();
+    console.debug(`SOCKET: connected`)
+
+    sendAlivePing();// TODO
     getRoomInfo();
   });
 };
@@ -40,6 +41,7 @@ const disconnect = () => {
         clearInterval(state.alivePing);
         state.alivePing = null;
     }
+  console.debug(`SOCKET: disconnected`)
 };
 
 /**
@@ -48,5 +50,10 @@ const disconnect = () => {
  * @param event
  */
 const sendEvent = (event) => {
+  try {
     stompClient.send(`${WS_TARGET}/${state.pin}`, {}, JSON.stringify(event));
+  } catch (e) {
+    console.warn('SOCKET: failed to send message')
+  }
+
 };

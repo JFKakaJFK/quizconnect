@@ -21,14 +21,14 @@ const REMOVE_QUESTION = "removeQuestion";
  *
  * @param response
  */
-let playersHandled = false;
 let infoHandled = false;
 const handleServerEvent = (response) => {
   // do nothing if event is no action
   if(response === undefined || response.event === "success" || response.event === "error"){
     return;
   }
-  console.log(response); // TODO remove
+  // console.log(response); // TODO remove
+  console.debug(`SERVER: received '${response.event}' event, state is ${state.state === INGAME ? 'INGAME' : state.state === LOBBY ? 'LOBBY' : state.state === JOIN ? 'JOIN' : 'FINISHED'}`);
   if(state.state === INGAME){ // handle game events w/ priority
     switch (response.event){
       case TIMER_SYNC:
@@ -50,81 +50,36 @@ const handleServerEvent = (response) => {
         return handleGameStart(response);
       case READY_UP:
         return handleReadyUp(response);
-      case PLAYER_JOIN:
-        return handlePlayerJoin(response);
     }
   }
   switch (response.event){  // handle events where the state doesn't matter
-    case TIMEOUT_START: // TODO only ingame??
+    case TIMEOUT_START:
       return handleTimeoutStart(response);
+    case PLAYER_JOIN:
+      return handlePlayerJoin(response);
     case KICK:
       return handleKick(response);
-    case PLAYER_LEAVE: // TODO only ingame?
+    case PLAYER_LEAVE:
       return handlePlayerLeave(response);
     default:
-      /*
-      if(!playersHandled && response.event === ROOM_PLAYERS){
-        playersHandled = true;
-        return handleRoomPlayers(response)
-      } else if(!infoHandled && response.event === GAME_INFO){
-        infoHandled = true;
-        return handleGameInfo(response)
-      } else { // TODO remove case after debugging
-        console.error(`Invalid event: ${response.event}`);
-      }
-      */
       if(!infoHandled && response.event === ROOM_INFO){
         infoHandled = true;
         return handleRoomInfo(response);
       } else {
-        console.log(`Received '${response.event}' event`)
+        console.debug(`SERVER: received '${response.event}' event`)
       }
   }
 };
 
 /* Event Handlers */
 
-// update game info
-const handleGameInfo = ({ pin, difficulty, mode, questionSets, score, alivePingInterval, numJokers }) => {
-  setState({
-    alivePing: setInterval(sendAlivePing, alivePingInterval - 50), // account for latency
-    info: {
-      settings: {
-        pin,
-        difficulty,
-        mode,
-        questionSets,
-        score,
-        alivePingInterval,
-        numJokers,
-      }
-    },
-    game: {
-      jokersLeft: numJokers,
-    }
-  });
-  console.info(`Info updated`);
-};
-
-// update room players
-const handleRoomPlayers = ({ num, players }) => {
-  setState({
-    info: {
-      num,
-      players,
-    }
-  });
-  console.info(`Players updated`);
-};
-
-// TODO add state to event & update localStorage periodically
 const handleRoomInfo = ({ pin, difficulty, mode, questionSets, score, alivePingInterval, numJokers, num, players, state }) => {
   if(state === INGAME){
     sendAlivePing();
   }
   setState({
     state,
-    alivePing: state === INGAME ? setInterval(sendAlivePing, alivePingInterval - 50) : null,
+    alivePing: state === INGAME ? setInterval(sendAlivePing, alivePingInterval - 50) : null, // TODO always set aliveping once backend supports it
     gameSessionTimer: setInterval(updateLocalStorage(), 45000),
     info: {
       settings: {
@@ -144,7 +99,7 @@ const handleRoomInfo = ({ pin, difficulty, mode, questionSets, score, alivePingI
       jokersLeft: numJokers,
     }
   });
-  console.info(`room info updated`);
+  console.debug(`SERVER: room info updated`);
 };
 
 // set the player to ready
@@ -159,7 +114,7 @@ const handleReadyUp = ({ playerId }) => {
       }),
     },
   });
-  console.info(`Player ${playerId} is ready`);
+  console.debug(`SERVER: player ${playerId} is ready`);
 };
 
 // on join add player to state.info.players
@@ -169,7 +124,7 @@ const handlePlayerJoin = ({ player }) => {
       players: state.info.players.concat([player])
     },
   });
-  console.info(`Player ${player.id} joined`);
+  console.debug(`SERVER: player ${player.id} joined`);
 };
 
 // remove player from state.info.players
@@ -179,7 +134,7 @@ const handlePlayerLeave = ({ playerId }) => {
       players: state.info.players.filter(p => p.id !== playerId),
     }
   });
-  console.info(`Player ${playerId} left`)
+  console.debug(`SERVER: player ${playerId} left`)
 };
 
 // set state.state = INGAME
@@ -189,14 +144,13 @@ const handleGameStart = (event) => {
     alivePing: setInterval(sendAlivePing, state.info.settings.alivePingInterval - 50), // account for latency
     state: INGAME,
   });
-  // TODO only send if in timeout? <- DO THIS (DONE)
-  // TODO or register every 1s & unregister on activity -> only 1 call of cancelTimeout/s -> less bandwidth <- DO THIS TOO
+  // TODO or register every 1s & unregister on activity -> only 1 call of cancelTimeout/s
   /*
   document.addEventListener('click', cancelTimeout);
   document.addEventListener('touchstart', cancelTimeout);
   document.addEventListener('mousemove', cancelTimeout);
   */
-  console.info(`Game started`)
+  console.debug(`SERVER: game started`)
 };
 
 // set state.state = FINISH
@@ -209,11 +163,12 @@ const handleGameEnd = (event) => {
     clearInterval(state.gameSessionTimer);
     state.gameSessionTimer = null;
   }
+  disconnect();
   clearLocalStorage();
   setState({
     state: FINISHED,
   });
-  console.info(`Game ended`)
+  console.debug(`SERVER: game ended`)
 };
 
 // update jokersLeft
@@ -223,7 +178,7 @@ const handleJokerUse = ({ remaining }) => {
       jokersLeft: remaining,
     }
   });
-  console.info(`Joker was used (${remaining} remaining)`)
+  console.debug(`SERVER: joker was used (${remaining} jokers remaining)`)
 };
 
 // update score
@@ -233,12 +188,10 @@ const handleScoreChange = ({ newScore }) => {
       score: newScore,
     }
   });
-  console.info(`Score changed to ${newScore}`)
+  console.debug(`SERVER: score changed to ${newScore}`)
 };
 
 const handleTimerSync = ({ questionId, remaining }) => {
-  // TODO: update time left (gets changed & rendered @ fixed interval, so nothing to do else?)
-  // TODO change updated values if deepmerge in setState
   if(state.game.question == null){
     return;
   }
@@ -249,7 +202,7 @@ const handleTimerSync = ({ questionId, remaining }) => {
       }
     })
   }
-  console.log(`timer sync, question ${questionId} has ${remaining/1000}s left`);
+  console.debug(`SERVER: timer sync, question ${questionId} has ${remaining/1000}s left`);
 };
 
 const handleTimeoutStart = ({ playerId, remaining }) => {
@@ -264,7 +217,7 @@ const handleTimeoutStart = ({ playerId, remaining }) => {
     timeoutIsActive: true,
     timeoutRemainingTime: remaining,
   });
-  console.log(`timeout started, ${remaining / 1000}s left`)
+  console.debug(`SERVER: timeout started, ${remaining / 1000}s left`)
 };
 
 const handleKick = ({ playerId }) => {
@@ -273,7 +226,7 @@ const handleKick = ({ playerId }) => {
     clearLocalStorage();
     window.location.href = URL_KICKED;
   }
-  console.info(`Player ${playerId} was kicked`)
+  console.debug(`SERVER: player ${playerId} was kicked`)
 };
 
 /**
@@ -304,7 +257,7 @@ const handleAssignQuestion = ({ questionId, type, question, playerId, timeRemain
         }
       }
     });
-    console.log("new question for me");
+    console.debug(`SERVER: new question assigned to this player`);
   }
   // if new answers for player, add answers
   if(answers.find(a => a.playerId === state.id) !== undefined){
@@ -321,9 +274,8 @@ const handleAssignQuestion = ({ questionId, type, question, playerId, timeRemain
         ),
       }
     });
-    console.log("new answers for me");
+    console.debug(`SERVER: new answers assigned to this player`);
   }
-  // console.log("new question");
 };
 
 const handleRemoveQuestion = ({ questionId }) => {
@@ -343,5 +295,5 @@ const handleRemoveQuestion = ({ questionId }) => {
       }
     })
   }
-  console.log("remove question");
+  console.debug(`SERVER: question ${questionId} was removed`);
 };

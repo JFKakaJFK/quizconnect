@@ -8,21 +8,15 @@ import at.qe.sepm.skeleton.services.StorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.faces.context.FacesContext;
 import java.io.*;
 import java.nio.file.Files;
 
 // TODO jdoc
 
 @Controller
+@Scope("view")
 public class ChangeAvatarBean implements Serializable {
 
     private static final Logger log = LoggerFactory.getLogger(ChangeAvatarBean.class);
@@ -48,6 +42,7 @@ public class ChangeAvatarBean implements Serializable {
     // TODO jdoc
     public void handleFileUpload(){
         if(file != null){
+            log.debug("file for " + player.getUser().getUsername() + "is " + file.getName());
             if(filename != null){
                 storageService.deleteAvatar(filename);
             }
