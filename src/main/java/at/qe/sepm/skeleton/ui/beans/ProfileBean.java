@@ -1,27 +1,28 @@
 package at.qe.sepm.skeleton.ui.beans;
 
 import at.qe.sepm.skeleton.model.Player;
-import at.qe.sepm.skeleton.model.User;
 import at.qe.sepm.skeleton.services.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
-import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
+
+/**
+ * Bean for {@link Player} profiles
+ */
 @Controller
 @Scope("session")
-//@Scope("view")
 public class ProfileBean implements Serializable {
+
+    Logger log = LoggerFactory.getLogger(this.getClass());
 
     private ManagerService managerService;
     private PlayerService playerService;
@@ -73,7 +74,7 @@ public class ProfileBean implements Serializable {
             try {
                 FacesContext.getCurrentInstance().getExternalContext().redirect("/players/all.xhtml?faces-redirect=true");
             } catch (IOException e){
-                // TODO
+                log.warn("Failed to redirect");
             }
         }
         this.player = player;

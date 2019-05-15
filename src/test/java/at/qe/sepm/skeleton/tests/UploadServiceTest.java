@@ -58,9 +58,11 @@ public class UploadServiceTest {
         testFile = new File("src/test/resources/testImage1.jpg");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testGetUploadNullUser(){
-        uploadService.getUpload(null);
+        File f = uploadService.getUpload();
+
+        Assert.assertNull("The file is not null if no user is logged in", f);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -73,7 +75,7 @@ public class UploadServiceTest {
     public void testGetUploadPlayer() throws IOException {
         User u = userService.loadUser("user3");
         Path p = storeFile(u);
-        File f = uploadService.getUpload(u);
+        File f = uploadService.getUpload();
 
         Assert.assertNotNull("No file found", f);
         Assert.assertEquals("Retrieved wrong file", p.toFile(), f);
@@ -86,7 +88,7 @@ public class UploadServiceTest {
     public void testGetUploadManager() throws IOException {
         User u = userService.loadUser("user1");
         Path p = storeFile(u);
-        File f = uploadService.getUpload(u);
+        File f = uploadService.getUpload();
 
         Assert.assertNotNull("No file found", f);
         Assert.assertEquals("Retrieved wrong file", p.toFile(), f);

@@ -3,8 +3,6 @@
 /* ======================== CLIENT EVENTS ========================= */
 
 /* CLIENT EVENTS */
-const GAME_INFO = "getGameInfo";
-const ROOM_PLAYERS = "getRoomPlayers";
 const READY = "readyUp";
 const ANSWER_QUESTION = "answerQuestion";
 const USE_JOKER = "useJoker";
@@ -17,18 +15,12 @@ const ROOM_INFO = "getRoomInfo";
 
 const getRoomInfo = () => {
   sendEvent({ event: ROOM_INFO });
-};
-
-const getGameInfo = () => {
-  sendEvent({event: GAME_INFO});
-};
-
-const getRoomPlayers = () => {
-  sendEvent({event: ROOM_PLAYERS});
+  console.debug(`CLIENT: getting room info`)
 };
 
 const readyUp = () => {
   sendEvent({event: READY, playerId: state.id});
+  console.debug(`CLIENT: this player is ready`)
 };
 
 const answerQuestion = (questionId, answerId) => {
@@ -38,21 +30,25 @@ const answerQuestion = (questionId, answerId) => {
     answerId,
     questionId,
   })
+  console.debug(`CLIENT: answered question ${questionId}`)
 };
 
 // TODO disable joker for x seconds after click & no multiple joker waste (easy sync w/ server)
 const useJoker = () => {
   sendEvent({event: USE_JOKER, playerId: state.id})
+  console.debug(`CLIENT: using joker`)
 };
 
 const leaveRoom = () => {
-  sendEvent({event: LEAVE_ROOM, playerId: state.id})
-  disconnect()
+  sendEvent({event: LEAVE_ROOM, playerId: state.id});
+  disconnect();
+  clearLocalStorage();
+  console.debug(`CLIENT: leaving room`)
 };
 
 const cancelTimeout = () => {
-  sendEvent({event: CANCEL_TIMEOUT, playerId: state.id})
-  if(state.timeoutTimer){ // TODO do w/ setState?!!
+  sendEvent({event: CANCEL_TIMEOUT, playerId: state.id});
+  if(state.timeoutTimer){
     clearInterval(state.timeoutTimer);
     state.timeoutTimer = null;
     setState({
@@ -63,6 +59,7 @@ const cancelTimeout = () => {
   document.removeEventListener('click', cancelTimeout);
   document.removeEventListener('touchstart', cancelTimeout);
   document.removeEventListener('mousemove', cancelTimeout);
+  console.debug(`CLIENT: timeout cancelled`)
 };
 
 const sendAlivePing = () => {

@@ -23,7 +23,7 @@ import java.util.*;
  */
 
 @Controller
-@Scope("session")
+@Scope("view")
 
 public class QuestionSetBean implements Serializable {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -40,9 +40,6 @@ public class QuestionSetBean implements Serializable {
     @Autowired
     private SessionInfoBean sessionInfoBean;
 
-    @Autowired
-    private QSOverviewBean overviewBean;
-
     private List<String> types = Arrays.asList("text", "picture");
     private List<String> difficulty = Arrays.asList("easy", "hard");
 
@@ -53,28 +50,28 @@ public class QuestionSetBean implements Serializable {
 
     @PostConstruct
     public void init() {
-        // questions is the internal list of questions created
-        questions = new HashSet<Question>();
-        // current user for setting the author of the QuestionSet
         currentUser = sessionInfoBean.getCurrentUser();
-        // because of the session-scope, this needs to be cleared just in case something remained in the inputs. Shouldn't be necessary!
-        clearQuestions();
-        clearQuestion();
-        clearQuestionSet();
+
+        // creates internal set ("questions") of questions created in this process which is later assigned to the questionSet
+        initQuestions();
+        // create an empty question on startup
+        initQuestion();
+        // create a new QuestionSet
+        initQuestionSet();
 
 
     }
 
-    public void clearQuestion() {
+    private void initQuestion() {
         question = new Question();
         question.setType(QuestionType.text);
     }
 
-    public void clearQuestions() {
+    private void initQuestions() {
         questions = new HashSet<Question>();
     }
 
-    public void clearQuestionSet() {
+    private void initQuestionSet() {
         questionSet = new QuestionSet();
         questionSet.setDifficulty(QuestionSetDifficulty.easy);
     }
@@ -86,10 +83,13 @@ public class QuestionSetBean implements Serializable {
             question.setQuestionSet(questionSet);
             questionService.saveQuestion(question);
             logger.info("Added question to Database - ID: " + question.getId());
-            clearQuestion();
+            initQuestion();
     }
 
-    /* Called by exitCreateQuestionSet (which is triggered by modal button - NO) */
+    /* Called on button "Step 2: Add new questions"
+    * Currently a questionSet is saved even if the manager decides to navigate to another page before adding a question (-> Empty questionSet is allowed)
+    * */
+
     public void saveNewQuestionSet() {
         logger.info("saveNewQuestionSet invoked");
         if (currentUser.getRole() == UserRole.MANAGER) {
@@ -103,7 +103,6 @@ public class QuestionSetBean implements Serializable {
     /* Called on modal button "add another question - NO" Saves the currently entered question and saves the whole QuestionSet */
     public void exitCreateQuestionSet() {
         saveNewQuestion();
-        saveNewQuestionSet();
 
         // redirect to overview
         try {
@@ -112,14 +111,6 @@ public class QuestionSetBean implements Serializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        /* add QuestionSet to QSOverviewBean internal list, which gets returned by getter (used in ui:repeat to show all questionSets) */
-        overviewBean.addQuestionSetForDisplay(questionSet);
-
-        /* clear all*/
-        clearQuestion();
-        clearQuestionSet();
-        clearQuestions();
     }
 
     /**
