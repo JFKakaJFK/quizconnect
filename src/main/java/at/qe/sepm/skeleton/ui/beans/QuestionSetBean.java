@@ -1,8 +1,7 @@
 package at.qe.sepm.skeleton.ui.beans;
 
 import at.qe.sepm.skeleton.model.*;
-import at.qe.sepm.skeleton.services.QuestionService;
-import at.qe.sepm.skeleton.services.QuestionSetService;
+import at.qe.sepm.skeleton.services.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +11,10 @@ import org.springframework.stereotype.Controller;
 
 import javax.annotation.PostConstruct;
 import javax.faces.context.FacesContext;
+import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.Files;
 import java.util.*;
 
 /**
@@ -48,6 +49,12 @@ public class QuestionSetBean implements Serializable {
     private Set<Question> questions;
     private Question question;
 
+    private StorageService storageService;
+    private ManagerService managerService;
+    private PlayerService playerService;
+
+    private String property = "questionString";
+
     @PostConstruct
     public void init() {
         currentUser = sessionInfoBean.getCurrentUser();
@@ -58,12 +65,101 @@ public class QuestionSetBean implements Serializable {
         initQuestion();
         // create a new QuestionSet
         initQuestionSet();
+    }
 
+    @Autowired
+    public QuestionSetBean(StorageService storageService, PlayerService playerService, ManagerService managerService){
+        assert storageService != null;
+        assert playerService != null;
+        assert managerService != null;
+        this.storageService = storageService;
+        this.playerService = playerService;
+        this.managerService = managerService;
+    }
+
+    private String filename = null;
+    private File file;
+
+    public void handleFileUpload(String property){
+        if(file != null){
+            logger.debug("file for someone");
+            if(filename != null){
+                storageService.deleteAnswer(filename);
+            }
+            try {
+                Manager manager = currentUser.getManager();
+                filename = storageService.storeAnswer(file, manager.getId().toString());
+                Files.deleteIfExists(file.toPath());
+            } catch (IOException e){
+                filename = null;
+                logger.error("Exception while saving Question");
+            }
+        }
+        logger.info("Filename:" + filename);
+        saveQuestionPicture(property);
+    }
+
+    public void saveQuestionPicture(String property) {
+        logger.info("---> saveQuestionPicture called! <---");
+        if(filename == null){
+            return;
+        }
+        switch(property) {
+            case "questionString":
+                logger.info("well at least the right case!");
+                question.setQuestionString(filename);
+                break;
+            case "rightAnswerString":
+                question.setRightAnswerString(filename);
+                break;
+            case "wrongAnswerString_1":
+                question.setWrongAnswerString_1(filename);
+                break;
+            case "wrongAnswerString_2":
+                question.setWrongAnswerString_2(filename);
+                break;
+            case "wrongAnswerString_3":
+                question.setWrongAnswerString_3(filename);
+                break;
+            case "wrongAnswerString_4":
+                question.setWrongAnswerString_4(filename);
+                break;
+            case "wrongAnswerString_5":
+                question.setWrongAnswerString_5(filename);
+                break;
+            default:
+                logger.info("well, something in the switch-case went wrong");
+        }
+        filename = null;
+    }
+
+    //TODO: JavaDoc for abort
+    public void abort(){
+        if(filename != null){
+            storageService.deleteAvatar(filename);
+            filename = null;
+        }
+    }
+
+    public void none() {
 
     }
 
+
+
+
+
+
+
+
+
+
+
+
     private void initQuestion() {
         question = new Question();
+
+        //pre-selection for radio buttons
         question.setType(QuestionType.text);
     }
 
@@ -78,6 +174,7 @@ public class QuestionSetBean implements Serializable {
 
     /* Called on modal button "add another question - YES" */
     public void saveNewQuestion() {
+            logger.info("saveNewQuestion called");
             removeSpaces(question);
             questions.add(question);
             question.setQuestionSet(questionSet);
@@ -164,5 +261,21 @@ public class QuestionSetBean implements Serializable {
 
     public List<String> getDifficulty() {
         return difficulty;
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
 }

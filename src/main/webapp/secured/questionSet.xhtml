@@ -10,6 +10,7 @@
                 template="/WEB-INF/templates/main.xhtml">
     <ui:define name="site-specific-css">
         <link rel="stylesheet" type="text/css" href="/resources/css/login.css"/>
+        <script type="text/javascript" src="../resources/quizconnect/js/QCUpload.js"></script>
     </ui:define>
 
     <ui:define name="content">
@@ -70,68 +71,17 @@
 
             </h:form>
 
-            <h:form id="questionForm" rendered="#{questionSetBean.questionSet.name != null}">
-                <div class="form-group">
-                    <label for="question">Question</label>
-                    <h:inputText type="text" styleClass="form-control"
-                                 value="#{questionSetBean.question.questionString}"
-                                 name="question" id="question" pt:autocomplete="off" pt:required="true" pt:pattern="[\s\S]*\S[\s\S]*"/>
-                    <h:message for="question" styleClass="state-error"/>
-                </div>
-
-                <div class="form-group">
-                    <label for="corrAnswer">Correct answer</label>
-                    <h:inputText type="text" styleClass="form-control"
-                                 value="#{questionSetBean.question.rightAnswerString}"
-                                 name="corrAnswer" id="corrAnswer" pt:autocomplete="off" pt:required="true" pt:pattern="[\s\S]*\S[\s\S]*"/>
-                </div>
-
-                <div class="form-group">
-                    <label for="wrongAnswer1">Wrong answer #1</label>
-                    <h:inputText type="text" styleClass="form-control"
-                                 value="#{questionSetBean.question.wrongAnswerString_1}" name="wrongAnswer1"
-                                 pt:required="true" id="wrongAnswer1" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*"/>
-                </div>
-
-                <div class="form-group">
-                    <label for="wrongAnswer2">Wrong answer #2</label>
-                    <h:inputText type="text" styleClass="form-control"
-                                 value="#{questionSetBean.question.wrongAnswerString_2}" name="wrongAnswer2"
-                                 id="wrongAnswer2" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*"/>
-                </div>
-
-                <div class="form-group">
-                    <label for="wrongAnswer3">Wrong answer #3</label>
-                    <h:inputText type="text" styleClass="form-control"
-                                 value="#{questionSetBean.question.wrongAnswerString_3}" name="wrongAnswer3"
-                                 id="wrongAnswer3" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*"/>
-                </div>
-
-                <div class="form-group">
-                    <label for="wrongAnswer4">Wrong answer #4</label>
-                    <h:inputText type="text" styleClass="form-control"
-                                 value="#{questionSetBean.question.wrongAnswerString_4}" name="wrongAnswer4"
-                                 id="wrongAnswer4" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*"/>
-                </div>
-
-                <div class="form-group">
-                    <label for="wrongAnswer5">Wrong answer #5</label>
-                    <h:inputText type="text" styleClass="form-control"
-                                 value="#{questionSetBean.question.wrongAnswerString_5}" name="wrongAnswer3"
-                                 id="wrongAnswer5" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*"/>
-                </div>
-
-
+            <h:form id="setTypeForm" rendered="#{questionSetBean.questionSet.name != null}">
                 <div class="container-fluid mx-0 px-0 my-5">
                     <div class="row">
                         <ui:repeat id="items" value="#{questionSetBean.types}" var="item">
-
-
                             <div class="form-check form-check-inline w-50 mx-0 px-0 justify-content-center">
                                 <input type="radio" class="form-check-input" jsf:id="item"
                                        pt:name="#{hiddenItem.clientId}"
                                        value="#{item}"
-                                       pt:checked="#{item eq questionSetBean.question.type ? 'checked' : null}"/>
+                                       pt:checked="#{item eq questionSetBean.question.type ? 'checked' : null}">
+                                    <f:ajax event="click" render="questionForm"/>
+                                </input>
                                 <h:outputLabel styleClass="form-check-label"
                                                value="#{capitalizeConverter.capitalize(item)}"/>
                             </div>
@@ -142,6 +92,103 @@
                                        value="#{questionSetBean.question.type}"
                                        rendered="#{facesContext.currentPhaseId.ordinal ne 6}"/>
                     </div>
+                </div>
+            </h:form>
+
+            <h:form id="questionForm" rendered="#{questionSetBean.questionSet.name != null}">
+                <div class="form-group">
+                    <label for="question">Question</label>
+                    <h:inputText type="text" styleClass="form-control"
+                                 value="#{questionSetBean.question.questionString}"
+                                 rendered="#{questionSetBean.question.type == 'text'}"
+                                 name="question" id="question" pt:autocomplete="off" pt:required="true" pt:pattern="[\s\S]*\S[\s\S]*"/>
+                    <h:message for="question" styleClass="state-error"/>
+
+                    <qc:upload target="#{questionSetBean.file}"
+                               listenerString="#{questionSetBean.handleFileUpload('questionString')}"
+                               listener="#{questionSetBean.none}"
+                               accept="image/*"
+                               text="Upload Picture"
+                               rendered="#{questionSetBean.question.type == 'picture'}"
+                               update="questionForm:previewQuestion"
+                    />
+
+                    <h:panelGroup layout="block" id="previewQuestion" styleClass="preview" rendered="#{questionSetBean.question.type == 'picture'}">
+                        <h:graphicImage pt:id="preview" value="#{answerPictureBean.getAnswers((questionSetBean.filename == null ? questionSetBean.question.questionString : questionSetBean.filename))}" alt="Question picture" />
+                    </h:panelGroup>
+                </div>
+
+                <div class="form-group">
+                    <label for="corrAnswer">Correct answer</label>
+                    <h:inputText type="text" styleClass="form-control"
+                                 value="#{questionSetBean.question.rightAnswerString}"
+                                 rendered="#{questionSetBean.question.type == 'text'}"
+                                 name="corrAnswer" id="corrAnswer" pt:autocomplete="off" pt:required="true" pt:pattern="[\s\S]*\S[\s\S]*"/>
+
+                    <qc:upload target="#{questionSetBean.file}"
+                               listenerString="#{questionSetBean.handleFileUpload('rightAnswerString')}"
+                               listener="#{questionSetBean.none}"
+                               accept="image/*"
+                               text="Upload Picture"
+                               rendered="#{questionSetBean.question.type == 'picture'}"
+                               update="questionForm:rightAnswerString"
+                    />
+
+                    <h:panelGroup layout="block" id="rightAnswerString" styleClass="preview" rendered="#{questionSetBean.question.type == 'picture'}">
+                        <h:graphicImage pt:id="preview" value="#{answerPictureBean.getAnswers((questionSetBean.filename == null ? questionSetBean.question.rightAnswerString : questionSetBean.filename))}" alt="Question picture" />
+                    </h:panelGroup>
+                </div>
+
+                <div class="form-group">
+                    <label for="wrongAnswer1">Wrong answer #1</label>
+                    <h:inputText type="text" styleClass="form-control"
+                                 value="#{questionSetBean.question.wrongAnswerString_1}" name="wrongAnswer1"
+                                 rendered="#{questionSetBean.question.type == 'text'}"
+                                 pt:required="true" id="wrongAnswer1" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*"/>
+                    <qc:upload target="#{questionSetBean.file}"
+                               listenerString="#{questionSetBean.handleFileUpload('wrongAnswerString_1')}"
+                               listener="#{questionSetBean.none}"
+                               accept="image/*"
+                               text="Upload Picture"
+                               rendered="#{questionSetBean.question.type == 'picture'}"
+                               update="questionForm:wrongAnswer1Pic"
+                    />
+
+                    <h:panelGroup layout="block" id="wrongAnswer1Pic" styleClass="preview" rendered="#{questionSetBean.question.type == 'picture'}">
+                        <h:graphicImage pt:id="preview" value="#{answerPictureBean.getAnswers((questionSetBean.filename == null ? questionSetBean.question.wrongAnswerString_1 : questionSetBean.filename))}" alt="Question picture" />
+                    </h:panelGroup>
+                </div>
+
+                <div class="form-group">
+                    <label for="wrongAnswer2">Wrong answer #2</label>
+                    <h:inputText type="text" styleClass="form-control"
+                                 value="#{questionSetBean.question.wrongAnswerString_2}" name="wrongAnswer2"
+                                 rendered="#{questionSetBean.question.type == 'text'}"
+                                 id="wrongAnswer2" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*"/>
+                </div>
+
+                <div class="form-group">
+                    <label for="wrongAnswer3">Wrong answer #3</label>
+                    <h:inputText type="text" styleClass="form-control"
+                                 value="#{questionSetBean.question.wrongAnswerString_3}" name="wrongAnswer3"
+                                 rendered="#{questionSetBean.question.type == 'text'}"
+                                 id="wrongAnswer3" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*"/>
+                </div>
+
+                <div class="form-group">
+                    <label for="wrongAnswer4">Wrong answer #4</label>
+                    <h:inputText type="text" styleClass="form-control"
+                                 value="#{questionSetBean.question.wrongAnswerString_4}" name="wrongAnswer4"
+                                 rendered="#{questionSetBean.question.type == 'text'}"
+                                 id="wrongAnswer4" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*"/>
+                </div>
+
+                <div class="form-group">
+                    <label for="wrongAnswer5">Wrong answer #5</label>
+                    <h:inputText type="text" styleClass="form-control"
+                                 value="#{questionSetBean.question.wrongAnswerString_5}" name="wrongAnswer3"
+                                 rendered="#{questionSetBean.question.type == 'text'}"
+                                 id="wrongAnswer5" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*"/>
                 </div>
 
 

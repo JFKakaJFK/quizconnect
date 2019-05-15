@@ -37,6 +37,7 @@
     ==============================================-->
 
     <cc:attribute name="listener" required="true" method-signature="void listener()"/>
+    <cc:attribute name="listenerString" required="false" method-signature="void listener(java.lang.String"/>
     <cc:attribute name="target" required="true" type="java.io.File"/>
 
     <cc:attribute name="text" required="false" default="Upload File" />
@@ -50,11 +51,18 @@
 
 <cc:implementation>
     <input type="file" accept="#{cc.attrs.accept}"  name="files[]" id="#{cc.clientId}" class="jsf-hide" />
-    <label for="#{cc.clientId}" class="btn btn-primary #{cc.attrs.styleClass}">Upload File</label>
-    <h:commandButton styleClass="upload-ajax-btn jsf-hide" action="#{cc.attrs.listener}">
+    <label for="#{cc.clientId}" class="btn btn-primary #{cc.attrs.styleClass}">#{cc.attrs.text}</label>
+
+    <h:commandButton styleClass="upload-ajax-btn jsf-hide" action="#{cc.attrs.listener}" rendered="#{empty cc.attrs.listenerString}">
         <f:setPropertyActionListener value="#{uploadService.getUpload()}" target="#{cc.attrs.target}"/>
         <f:ajax execute="@this" render="#{cc.attrs.update}" />
     </h:commandButton>
+
+    <h:commandButton styleClass="upload-ajax-btn jsf-hide" action="#{cc.attrs.listenerString}" rendered="#{not empty cc.attrs.listener}">
+        <f:setPropertyActionListener value="#{uploadService.getUpload()}" target="#{cc.attrs.target}"/>
+        <f:ajax execute="@this" render="#{cc.attrs.update}" />
+    </h:commandButton>
+
     <h:outputScript>
         QCUpload.upload('#{cc.clientId}', #{cc.attrs.ajax}, #{cc.attrs.required});
     </h:outputScript>
