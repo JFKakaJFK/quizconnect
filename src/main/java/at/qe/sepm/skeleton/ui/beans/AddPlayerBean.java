@@ -22,6 +22,7 @@ public class AddPlayerBean {
     private String username = "";
     private String password = "";
 
+
     @Autowired
     public AddPlayerBean(PlayerService playerService,
                          SessionInfoBean sessionInfoBean,
