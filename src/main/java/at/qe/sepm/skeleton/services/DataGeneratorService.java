@@ -63,17 +63,17 @@ public class DataGeneratorService {
 
         AuthenticationUtil.configureAuthentication("MANAGER");
 
-        generatePlayer(random.nextInt(20 * countMultiplier) + (30 * countMultiplier));
+        generatePlayer(random.nextInt(10 * countMultiplier)); // +  (30 * countMultiplier));
 
-        generateManager(random.nextInt(5 * countMultiplier) + (10 * countMultiplier));
+        //generateManager(random.nextInt(5 * countMultiplier) + (10 * countMultiplier));
 
-        generateQuestion(random.nextInt( 50 * countMultiplier) + (60 * countMultiplier));
+        //generateQuestion(random.nextInt( 50 * countMultiplier) + (60 * countMultiplier));
 
-        generateQuestionSet(random.nextInt(20 * countMultiplier) + (20 * countMultiplier));
+        //generateQuestionSet(random.nextInt(20 * countMultiplier) + (20 * countMultiplier));
 
-        generateQuestionSetAndQuestions(random.nextInt(20 * countMultiplier) + (10 *countMultiplier));
+        //generateQuestionSetAndQuestions(random.nextInt(20 * countMultiplier) + (10 *countMultiplier));
 
-        generateQuestionSetPerformance(random.nextInt(10 *countMultiplier) + (10 * countMultiplier));
+        //generateQuestionSetPerformance(random.nextInt(10 *countMultiplier) + (10 * countMultiplier));
 
         AuthenticationUtil.clearAuthentication();
     }

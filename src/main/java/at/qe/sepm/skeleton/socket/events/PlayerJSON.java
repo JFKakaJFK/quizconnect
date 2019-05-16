@@ -18,8 +18,8 @@ public class PlayerJSON {
         this.username = p.getUser().getUsername();
         this.ready = false;
         String path = p.getAvatarPath();
-        this.avatar = "/" + pathPrefix + ( path == null || !path.matches(".*/.*\\.(png|jpg)")
-                ? "default/avatar.png" : path );
+        this.avatar = path == null || !path.matches(".*/.*\\.(png|jpg)") // TODO
+                ? "https://avatars.dicebear.com/v2/gridy/" + username + ".svg" : "/" + pathPrefix + path;
 
     }
 

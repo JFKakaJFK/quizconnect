@@ -29,7 +29,7 @@
     <composite:implementation>
         <div id="#{cc.clientId}" class="playerbox py-3 px-3" data-ingame="#{cc.attrs.online}" data-id="#{cc.attrs.player.id}"><!-- TODO: change online source -->
             <div class="playerbox-avatar mx-2 my-2">
-                <h:graphicImage value="#{avatarBean.getAvatar(cc.attrs.player.avatarPath)}" alt="avatar"/>
+                <h:graphicImage value="#{avatarBean.getAvatar(cc.attrs.player)}" alt="avatar"/>
             </div>
 
             <div class="playerbox-info mx-2 my-2">
