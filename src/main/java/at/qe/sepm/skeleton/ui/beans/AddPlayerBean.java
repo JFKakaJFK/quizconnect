@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 @Controller
 @Scope("session")
@@ -22,6 +23,7 @@ public class AddPlayerBean {
 
     private String username = "";
     private String password = "";
+
 
     @Autowired
     public AddPlayerBean(PlayerService playerService,
