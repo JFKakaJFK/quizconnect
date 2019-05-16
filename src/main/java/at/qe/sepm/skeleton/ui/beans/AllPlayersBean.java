@@ -87,7 +87,7 @@ public class AllPlayersBean implements Serializable {
      * @return
      */
     public boolean isEditable(Player p){
-        return isDeletable(p) || (user.getPlayer() != null && user.getPlayer().equals(p));
+        return (user.getPlayer() != null && user.getPlayer().equals(p)) || isDeletable(p);
     }
 
     /**
