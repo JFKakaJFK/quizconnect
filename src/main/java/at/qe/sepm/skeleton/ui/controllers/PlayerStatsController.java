@@ -46,18 +46,22 @@ public class PlayerStatsController {
         if(profileBean.getPlayer() == null){
             return ResponseEntity.badRequest().body(null);
         }
-        // TODO save id, name + count since duplicate names are allowed
-        Map<String, Integer> setPlayCounts = new HashMap<>();
+
+        // transform the map of ids into name and value arrays (luckily JSON preserves order)
         Map<Integer, Integer> qSetPlayCounts = profileBean.getPlayer().getqSetPlayCounts();
+        String[] playedSets = new String[qSetPlayCounts.size()];
+        int[] setPlayCounts = new int[qSetPlayCounts.size()];
+        int i = 0; // keeping a second counter probably is better than rewriting the keySet to an Array
         for(int key: qSetPlayCounts.keySet()){
             QuestionSet qs = questionSetService.getQuestionSetById(key);
             if(qs == null){
                 profileBean.getPlayer().removeQSetFromPlayed(key);
                 playerService.savePlayer(profileBean.getPlayer());
             } else {
-                setPlayCounts.put(qs.getName(), qSetPlayCounts.get(key));
+                playedSets[i] = qs.getName();
+                setPlayCounts[i++] = qSetPlayCounts.get(key);
             }
         }
-        return ResponseEntity.ok(new PlayerStatJSON(setPlayCounts));
+        return ResponseEntity.ok(new PlayerStatJSON(playedSets, setPlayCounts, profileBean.getPlayer().getLastGameScores()));
     }
 }

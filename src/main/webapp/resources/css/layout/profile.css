@@ -21,6 +21,11 @@
     grid-template-columns: 1fr 1fr;
 }
 
+.qs-chart {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
 body .apexcharts-canvas,
 body .apexcharts-canvas.dark {
     background: var(--bg);

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
  * course "Softwaredevelopment and Project Management" offered by the University
  * of Innsbruck.
  */
+@Deprecated // TODO do we even use thin?
 @Component
 @Scope("view")
 public class UserDetailController {

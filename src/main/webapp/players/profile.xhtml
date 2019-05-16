@@ -10,11 +10,6 @@
     </ui:define>
 
     <ui:define name ="content">
-        <!--
-        <f:metadata>
-            <f:viewParam name="id" value="# {profileBean.id}"/>
-        </f:metadata>
-        -->
 
         <h:form>
             <h:commandLink action="all?faces-redirect=true" styleClass="back-btn">
@@ -42,15 +37,15 @@
 
                 <h:panelGroup layout="block" id="qs-stats" styleClass="qs-stats box">
                     <!-- TODO -->
-                    <qc:stat value="#{'Silicon Valley Trivia'}" label="questionset" />
-                    <qc:stat value="#{'2454'}" label="highscore" />
-                    <qc:stat value="#{'52%'}" label="accuracy" />
-                    <qc:stat value="#{'14'}" label="times played" />
+                    <qc:stat value="#{profileBean.player.totalScore}" label="total score" />
+                    <qc:stat value="#{profileBean.player.correctAnswersCount}" label="correct answers" />
+                    <qc:stat value="#{profileBean.player.totalAnswers - profileBean.player.correctAnswersCount}" label="wrong answers" />
+                    <qc:stat value="#{profileBean.player.lastGameScores[9]}" label="score of last game" />
                 </h:panelGroup>
 
                 <h:panelGroup layout="block" id="qs-chart" styleClass="qs-chart box">
-                    <div id="line">LOADING</div>
-                    <div id="pie">LOADING</div>
+                    <div id="line">This player has not played yet.</div>
+                    <div id="pie"></div>
                 </h:panelGroup>
 
             </h:panelGroup>
@@ -84,6 +79,7 @@
     <ui:define name="site-specific-javascript">
         <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
         <script>
+            // TODO dont worry this code will change
             // TODO move to external script, fetch data from backend via requestmapping n'stuff
             // TODO get a managers student average  display apex chart annotation? https://apexcharts.com/docs/annotations/
             const line = document.querySelector("#line")
@@ -110,6 +106,7 @@
             */
             chart: {
               width: '100%',
+              height: 'auto',
               type: 'area'
             },
             series: [{
@@ -162,10 +159,7 @@
             }
           }
 
-          var chart = new ApexCharts(line, options);
 
-            line.innerHTML = '';
-          chart.render();
 
             var options1 = {
               theme: {
@@ -173,6 +167,8 @@
                 palette: 'palette1',
               },
               chart: {
+                width: '100%',
+                height: 'auto',
                 type: 'donut',
               },
               dataLabels: {
@@ -215,11 +211,25 @@
                 return response;
               })
               .then(response => response.json())
-              .then(({ setPlayCounts }) => {
-                console.log(setPlayCounts)
+              .then(({ playedSets, setPlayCounts, lastGameScores }) => {
+                console.debug(playedSets, setPlayCounts, lastGameScores);
+
+                if(lastGameScores.reduce((acc, val) => acc + val, 0) === 0) return;
+
+                options.series = [{
+                  name: 'Scores of last games',
+                  data: lastGameScores}];
+
+                let chart = new ApexCharts(line, options);
+
+                line.innerHTML = '';
+                chart.render();
+
+                if(playedSets.length !== setPlayCounts.length || playedSets.length === 0) return;
+
                 // TODO handle null values
-                options1.labels = Object.keys(setPlayCounts);
-                options1.series = Object.values(setPlayCounts);
+                options1.labels = playedSets;
+                options1.series = setPlayCounts;
 
                 var chart1 = new ApexCharts(
                   pie,
