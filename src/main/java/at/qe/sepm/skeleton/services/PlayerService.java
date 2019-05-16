@@ -126,6 +126,7 @@ public class PlayerService
 		player.setUser(savedUser); // set player user
 		player.setPlayedWithLast(null);
 		player.setqSetPlayCounts(new HashMap<Integer, Integer>());
+		player.setLastScores(new HashMap<Long, Integer>());
 		player.setHighScore(0);
 		Player savedPlayer = playerRepository.save(player); // save player to DB
 		

@@ -404,4 +404,41 @@ public class PlayerServiceTest
 		assertEquals("Map has wrong number for QSet 300", new Integer(1), map.get(300));
 		assertEquals("Map has wrong number for QSet 301", new Integer(1), map.get(301));
 	}
+	
+	@Test
+	@WithMockUser(username = "user1", authorities = { "MANAGER" })
+	public void testAddLastGameScore()
+	{
+		Player player = playerService.getPlayerById(201);
+		assertNotNull("Player not loaded!", player);
+		
+		int[] values1 = player.getLastGameScores();
+		assertEquals("Array has wrong size!", 10, values1.length);
+		assertEquals("Array has wrong value!", 0, values1[0]);
+		assertEquals("Array has wrong value!", 0, values1[9]);
+		
+		player.addGameScore(1000, 80085);
+		player.addGameScore(2000, 1337);
+		
+		int[] values2 = player.getLastGameScores();
+		assertEquals("Array has wrong size!", 10, values2.length);
+		assertEquals("Array has wrong value!", 0, values2[0]);
+		assertEquals("Array has wrong value!", 1337, values2[9]);
+		assertEquals("Array has wrong value!", 80085, values2[8]);
+		
+		Player player2 = playerService.savePlayer(player);
+		int[] values3 = player2.getLastGameScores();
+		assertEquals("Array has wrong size!", 10, values3.length);
+		assertEquals("Array has wrong value!", 0, values3[0]);
+		assertEquals("Array has wrong value!", 1337, values3[9]);
+		assertEquals("Array has wrong value!", 80085, values3[8]);
+		
+		Player player3 = playerService.getPlayerById(201);
+		assertNotNull("Player not loaded!", player3);
+		int[] values4 = player3.getLastGameScores();
+		assertEquals("Array has wrong size!", 10, values4.length);
+		assertEquals("Array has wrong value!", 0, values4[0]);
+		assertEquals("Array has wrong value!", 1337, values4[9]);
+		assertEquals("Array has wrong value!", 80085, values4[8]);
+	}
 }

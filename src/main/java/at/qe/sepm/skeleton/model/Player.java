@@ -1,6 +1,8 @@
 package at.qe.sepm.skeleton.model;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +27,8 @@ import org.springframework.data.domain.Persistable;
 public class Player implements Persistable<Integer>
 {
 	private static final long serialVersionUID = 1L;
+	
+	private static final int maxSavedRecentGameScores = 10;
 	
 	@Id
 	@GeneratedValue
@@ -61,6 +65,12 @@ public class Player implements Persistable<Integer>
 	 */
 	@ElementCollection(fetch = FetchType.EAGER)
 	private List<String> playedWithLast;
+	
+	/**
+	 * Map storing the final scores of the last 10 games played by this Player. Mapping from time stamp of game end to the score.
+	 */
+	@ElementCollection(fetch = FetchType.EAGER)
+	private Map<Long, Integer> lastScores;
 	
 	/**
 	 * Returns the List of usernames of the Players in the last game this Player played.
@@ -267,6 +277,70 @@ public class Player implements Persistable<Integer>
 	public void setqSetPlayCounts(Map<Integer, Integer> qSetPlayCounts)
 	{
 		this.qSetPlayCounts = qSetPlayCounts;
+	}
+	
+	/**
+	 * Adds a game score to the last played games score list. Automatically limits the list size to 10. Don't forget to save the Player after updating any stats!
+	 * 
+	 * @param timestamp
+	 *            Time stamp of game end.
+	 * @param score
+	 *            Final score of the game.
+	 */
+	public void addGameScore(long timestamp, int score)
+	{
+		if (lastScores == null)
+			throw new IllegalStateException("lastScores of Player is null, please save the Player before use!");
+		
+		lastScores.put(timestamp, score);
+		
+		if (lastScores.size() > maxSavedRecentGameScores)
+		{
+			long min = Long.MAX_VALUE;
+			for (long time : lastScores.keySet())
+			{
+				if (time < min)
+					min = time;
+			}
+			
+			lastScores.remove(min);
+		}
+	}
+	
+	/**
+	 * Computes and returns an array of scores of the last 10 games played. The scores are sorted by time from least recently (index 0) to most recently (index 9). If less than 10 games were saved the
+	 * missing values are set to 0 (values are aligned to index 9). e.g. At 4 games played (44 being the score of the most recent one) the returned array would be [0, 0, 0, 0, 0, 0, 11, 22, 33, 44].
+	 * 
+	 * @return The sorted score array.
+	 */
+	public int[] getLastGameScores()
+	{
+		if (lastScores == null)
+			throw new IllegalStateException("lastScores of Player is null, please save the Player before use!");
+		
+		List<Long> times = new LinkedList<>();
+		times.addAll(lastScores.keySet());
+		times.sort(Comparator.naturalOrder());
+		
+		int[] values = new int[maxSavedRecentGameScores];
+		int missing = maxSavedRecentGameScores - times.size();
+		for (int i = 0; i < maxSavedRecentGameScores; i++)
+		{
+			if (i < missing)
+				values[i] = 0;
+			else
+				values[i] = lastScores.get(times.get(i - missing));
+		}
+		
+		return values;
+	}
+	
+	/**
+	 * Gets called automatically upon Player creation - DO NOT USE OTHERWISE!
+	 */
+	public void setLastScores(Map<Long, Integer> map)
+	{
+		this.lastScores = map;
 	}
 	
 	public User getUser()
