@@ -41,12 +41,9 @@ public class DeletePlayerBean {
      * @param player
      */
     public void deletePlayer(Player player){
-        System.out.println("called delete");
         if(player == null || player.isNew() || !sessionInfoBean.getCurrentUser().getUsername().equals(managerService.getManagerOfPlayer(player).getUser().getUsername())){
-            System.out.println(player);
             return;
         }
-        System.out.println("Can delete");
         User user;
         user = player.getUser();
         /* TODO test if cascade on entity is enough

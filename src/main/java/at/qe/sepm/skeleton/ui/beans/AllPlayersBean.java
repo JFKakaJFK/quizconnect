@@ -26,7 +26,6 @@ public class AllPlayersBean implements Serializable {
 
     private List<Player> allPlayers;
     private List<Player> allByManager;
-    private List<Player> players;
     private String searchPhrase = "";
     private User user;
     private boolean onlyByManager;
@@ -36,52 +35,71 @@ public class AllPlayersBean implements Serializable {
     public AllPlayersBean(PlayerService playerService, SessionInfoBean sessionInfoBean){
         this.playerService = playerService;
         this.user = sessionInfoBean.getCurrentUser();
-        this.paginator = new ScrollPaginator<>(2);
+        this.paginator = new ScrollPaginator<>(getAllPlayers(), 5); // TODO adjust partSize
     }
 
     /**
      * Updates the currently shown players by filtering accoriding to user input
      *
      * @param event
-     */ // TODO save searchstring & upate => filter & seach at same time
+     */
     public void handleSearch(AjaxBehaviorEvent event){
-        players = allPlayers.stream()
-                .filter(player -> player.getUser().getUsername().toLowerCase().contains(searchPhrase.toLowerCase())) // || player.getId().toString().toLowerCase().contains(searchPhrase.toLowerCase()))
-                .collect(Collectors.toList());
+        filterAndUpdatePlayers();
     }
 
     /**
-     * Returns all {@link Player}s or all {@link Player}s by the {@link at.qe.sepm.skeleton.model.Manager}, depending on the current selection
+     * Filters the {@link Player}s using {@link this#searchPhrase} and updates {@link this#paginator}.
+     *
+     * Any mutation of {@link this#allPlayers} or {@link this#allByManager} must call this method to update the {@link ScrollPaginator}.
+     */
+    private void filterAndUpdatePlayers(){
+        paginator.updateList((onlyByManager && isManager() ? getAllByManager() : getAllPlayers()).stream()
+                .filter(player -> player.getUser().getUsername().toLowerCase().contains(searchPhrase.toLowerCase())) // || player.getId().toString().toLowerCase().contains(searchPhrase.toLowerCase()))
+                .collect(Collectors.toList()));
+    }
+
+    /**
+     * Returns all {@link Player}s by the currently logged in {@link at.qe.sepm.skeleton.model.Manager} or {@link null}
+     * if the current {@link User} is no {@link at.qe.sepm.skeleton.model.Manager}. Fetches from the Database if necessary.
      *
      * @return
      */
-    private List<Player> getAllPlayers() {
-        if(onlyByManager && user.getManager() != null){
-            if(allByManager == null){
-                allByManager = playerService.getPlayersOfManager(user.getManager());
-            }
-            return allByManager;
+    private List<Player> getAllByManager(){
+        if(isManager() && allByManager == null){
+            allByManager = playerService.getPlayersOfManager(user.getManager());
         }
+        return allByManager;
+    }
+
+    /**
+     * Returns true if the current {@link User} is a {@link at.qe.sepm.skeleton.model.Manager}
+     *
+     * @return
+     */
+    public boolean isManager(){
+        return user.getManager() != null;
+    }
+
+    /**
+     * Returns true if the current {@link User} is allowed to edit the {@link Player}
+     *
+     * @param p
+     * @return
+     */
+    public boolean isEditable(Player p){
+        return isManager() && getAllByManager().contains(p);
+    }
+
+    /**
+     * Returns all {@link Player}s . Fetches from the Database if necessary.
+     *
+     * @return
+     */
+    private List<Player> getAllPlayers(){
         if(allPlayers == null){
             allPlayers = new ArrayList<>(playerService.getAllPlayers());
         }
         return allPlayers;
-    }
-
-    public void setAllPlayers(List<Player> allPlayers) {
-        this.allPlayers = allPlayers;
-    }
-
-    public List<Player> getPlayers() {
-        if(players == null){
-            this.players = getAllPlayers();
-            paginator.updateList(players);
-        }
-        return players;
-    }
-
-    public void setPlayers(List<Player> players) {
-        this.players = players;
     }
 
     public String getSearchPhrase() {
@@ -98,7 +116,7 @@ public class AllPlayersBean implements Serializable {
 
     public void setOnlyByManager(boolean onlyByManager) {
         this.onlyByManager = onlyByManager;
-        this.players = null;
+        filterAndUpdatePlayers();
     }
 
     /**
@@ -117,8 +135,14 @@ public class AllPlayersBean implements Serializable {
         } else {
             allByManager.add(p);
         }
+        filterAndUpdatePlayers();
     }
 
+    /**
+     * Removes a {@link Player} from the list of {@link Player}s
+     *
+     * @param p {@link Player} to remove
+     */
     public void removePlayer(Player p){
         if(allPlayers == null){
             this.allPlayers = new ArrayList<>(playerService.getAllPlayers());
@@ -130,6 +154,7 @@ public class AllPlayersBean implements Serializable {
         } else {
             allByManager.remove(p);
         }
+        filterAndUpdatePlayers();
     }
 
     public ScrollPaginator<Player> getPaginator() {
