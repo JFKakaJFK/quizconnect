@@ -517,13 +517,15 @@ public class QuizRoom implements IPlayerAction
 	private void updatePlayerStats()
 	{
 		PlayerService playerService = manager.getPlayerService();
-		long gameTime = (new Date().getTime()) - gameStartTime;
+		long endTime = new Date().getTime();
+		long gameTime = endTime - gameStartTime;
 		for (Player player : players)
 		{
 			player.addToTotalScore(score);
 			player.addPlayTime(gameTime);
 			player.setPlayedWithLast(players);
 			player.addPlayToQSets(questionSets);
+			player.addGameScore(endTime, score);
 			
 			if (!correctlyAnsweredQuestions.containsKey(player))
 				LOGGER.error("### ERROR ### Missing correct answers entry for Player (id " + player.getId() + ")!");
