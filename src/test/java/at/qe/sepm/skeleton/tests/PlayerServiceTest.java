@@ -441,4 +441,28 @@ public class PlayerServiceTest
 		assertEquals("Array has wrong value!", 1337, values4[9]);
 		assertEquals("Array has wrong value!", 80085, values4[8]);
 	}
+	
+	@Test
+	@WithMockUser(username = "user1", authorities = { "MANAGER" })
+	public void testAddLastGameScoresOverflow()
+	{
+		Player player = playerService.getPlayerById(202);
+		assertNotNull("Player not loaded!", player);
+		
+		int[] values1 = player.getLastGameScores();
+		assertEquals("Array has wrong size!", 10, values1.length);
+		assertEquals("Array has wrong value!", 0, values1[0]);
+		assertEquals("Array has wrong value!", 0, values1[9]);
+		
+		for (int i = 1; i < 13; i++)
+		{
+			player.addGameScore(i * 100, i * 10);
+		}
+		int[] values2 = player.getLastGameScores();
+		for (int i = 0; i < 10; i++)
+		{
+			assertEquals("Array has wrong value at index " + i, (i + 3) * 10, values2[i]);
+		}
+		
+	}
 }
