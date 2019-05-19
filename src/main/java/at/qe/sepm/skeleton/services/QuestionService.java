@@ -1,16 +1,16 @@
 package at.qe.sepm.skeleton.services;
 
-import at.qe.sepm.skeleton.model.Question;
-import at.qe.sepm.skeleton.model.QuestionType;
-import at.qe.sepm.skeleton.repositories.QuestionRepository;
+import java.util.Collection;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
+import at.qe.sepm.skeleton.model.Question;
+import at.qe.sepm.skeleton.model.QuestionType;
+import at.qe.sepm.skeleton.repositories.QuestionRepository;
 
 /**
  * Service for accessing and manipulating {@link Question} entities.
@@ -99,7 +99,8 @@ public class QuestionService {
         if(question.getWrongAnswerString_1() == null){
             throw new IllegalArgumentException("At least one wrong answer is required");
         }
-        if(question.getWrongAnswerString_4() != null && question.getWrongAnswerString_1().length() > 200){
+		if (question.getWrongAnswerString_1() != null && question.getWrongAnswerString_1().length() > 200)
+		{
             throw new IllegalArgumentException("Wrong Answer 1 is too long(MAX: 200Chars)");
         }
         if(question.getWrongAnswerString_2() != null && question.getWrongAnswerString_2().length() > 200) {
