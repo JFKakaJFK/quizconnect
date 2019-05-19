@@ -45,7 +45,7 @@ public class AddPlayerBean {
             return;
         }
         Player p = new Player();
-        p.setAvatarPath("default/avatar.png"); // TODO more default avatars @Simon
+        p.setAvatarPath(null); // the default avatar is loaded automatically
         p.setCreator(manager);
 		playerService.saveNewPlayer(p, username, passwordBean.encodePassword(password));
         clear();
