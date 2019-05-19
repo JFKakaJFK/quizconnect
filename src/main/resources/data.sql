@@ -20,10 +20,8 @@ insert into user (username, password, enabled, create_date, role) values ('Volde
 insert into user (username, password, enabled, create_date, role) values ('Freddy Mercury', '$2a$06$4MKRUgff3iP5mUS.KSk4Fu5nJiaVhAPhCWMziYyHUrQkHpivlr.Xe', TRUE, '2016-01-01 00:00:00', 'PLAYER')
 insert into user (username, password, enabled, create_date, role) values ('Heiner Bernadinho', '$2a$06$4MKRUgff3iP5mUS.KSk4Fu5nJiaVhAPhCWMziYyHUrQkHpivlr.Xe', TRUE, '2016-01-01 00:00:00', 'PLAYER')
 
-
 insert into manager (id, user_username, email, institution) values (101, 'user1', 'user1@email.asdf', 'institution_01')
 insert into manager (id, user_username, email, institution) values (102, 'user2', 'user2@email.asdf', 'institution_02')
-insert into manager (id, user_username, email, institution) values (103, 'user3', 'user3@email.asdf', 'institution_03')
 
 insert into player (id, user_username, creator_id, avatar_path) values (201, 'user3', 101, NULL)
 insert into player (id, user_username, creator_id, avatar_path) values (202, 'user4', 101, NULL)
@@ -53,7 +51,7 @@ insert into player_played_with_last (player_id, played_with_last) values (202, '
 
 insert into question_set (id, description, difficulty, name, author_id) values (300, 'description', 'easy', 'TestSet1', 101)
 insert into question_set (id, description, difficulty, name, author_id) values (301, 'description', 'easy', 'TestSet2', 102)
-insert into question_set (id, description, difficulty, name, author_id) values (302, 'description', 'easy', 'TestSet2', 103)
+insert into question_set (id, description, difficulty, name, author_id) values (302, 'description', 'easy', 'TestSet2', 102)
 
 insert into question (id, question_string, right_answer_string, type, wrong_answer_string_1, wrong_answer_string_2, wrong_answer_string_3, wrong_answer_string_4, wrong_answer_string_5, question_set_id) values (400, 'TestQuestion1', 'RightAnswer1', 'text', 'WrongAnswerString1_1', 'WrongAnswerString2_1', 'WrongAnswerString3_1', 'WrongAnswerString4_1', 'WrongAnswerString5_1', 300)
 insert into question (id, question_string, right_answer_string, type, wrong_answer_string_1, wrong_answer_string_2, wrong_answer_string_3, wrong_answer_string_4, wrong_answer_string_5, question_set_id) values (401, 'TestQuestion2', 'RightAnswer2', 'text', 'WrongAnswerString1_2', 'WrongAnswerString2_2', 'WrongAnswerString3_2', 'WrongAnswerString4_2', 'WrongAnswerString5_2', 300)
@@ -79,7 +77,6 @@ insert into question (id, question_string, right_answer_string, type, wrong_answ
 insert into question (id, question_string, right_answer_string, type, wrong_answer_string_1, wrong_answer_string_2, wrong_answer_string_3, wrong_answer_string_4, wrong_answer_string_5, question_set_id) values (427, 'TestQuestion10', 'RightAnswer10', 'text', 'WrongAnswerString1_10', 'WrongAnswerString2_10', 'WrongAnswerString3_10', 'WrongAnswerString4_10', 'WrongAnswerString5_10', 300)
 insert into question (id, question_string, right_answer_string, type, wrong_answer_string_1, wrong_answer_string_2, wrong_answer_string_3, wrong_answer_string_4, wrong_answer_string_5, question_set_id) values (428, 'TestQuestion11', 'RightAnswer11', 'text', 'WrongAnswerString1_11', 'WrongAnswerString2_11', 'WrongAnswerString3_11', 'WrongAnswerString4_11', 'WrongAnswerString5_11', 300)
 insert into question (id, question_string, right_answer_string, type, wrong_answer_string_1, wrong_answer_string_2, wrong_answer_string_3, question_set_id) values (429, 'TestQuestion12', 'RightAnswer12', 'text', 'WrongAnswerString1_12', 'WrongAnswerString2_12', 'WrongAnswerString3_12', 300)
-
 
 insert into question (id, question_string, right_answer_string, type, wrong_answer_string_1, wrong_answer_string_2, wrong_answer_string_3, question_set_id) values (403, 'TestQuestion4', 'RightAnswer4', 'text', 'WrongAnswerString1_4', 'WrongAnswerString2_4', 'WrongAnswerString3_4', 301)
 insert into question (id, question_string, right_answer_string, type, wrong_answer_string_1, wrong_answer_string_2, wrong_answer_string_3, question_set_id) values (404, 'TestQuestion5', 'RightAnswer5', 'text', 'WrongAnswerString1_5', 'WrongAnswerString2_5', 'WrongAnswerString3_5', 301)

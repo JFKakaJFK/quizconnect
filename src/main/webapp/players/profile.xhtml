@@ -10,13 +10,8 @@
     </ui:define>
 
     <ui:define name ="content">
-        <!--
-        <f:metadata>
-            <f:viewParam name="id" value="# {profileBean.id}"/>
-        </f:metadata>
-        -->
 
-        <h:form>
+        <h:form id="form">
             <h:commandLink action="all?faces-redirect=true" styleClass="back-btn">
                 <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M5.41 11H21a1 1 0 0 1 0 2H5.41l5.3 5.3a1 1 0 0 1-1.42 1.4l-7-7a1 1 0 0 1 0-1.4l7-7a1 1 0 0 1 1.42 1.4L5.4 11z"/></svg>All Players
             </h:commandLink>
@@ -30,11 +25,21 @@
 
                 <h:panelGroup layout="block" id="avatar" styleClass="avatar">
                     <qc:playerbox player="#{profileBean.player}" online="#{randomOnlineTestBean.online}" rank="Beginner">
+
                         <h:commandLink p:class="ml-2" p:data-toggle="modal" p:data-target="#deletePlayer"
-                                       rendered="#{profileBean.deletable}">
-                            <svg role="img" width="24" height="24" viewBox="0 0 24 24" aria-labelledby="binIconTitle binIconDesc"><title id="binIconTitle">Bin</title><desc id="binIconDesc">Icon of a bin (trash)</desc><path  d="M19 6L5 6M14 5L10 5M6 10L6 20C6 20.6666667 6.33333333 21 7 21 7.66666667 21 11 21 17 21 17.6666667 21 18 20.6666667 18 20 18 19.3333333 18 16 18 10"/></svg>
-                            <f:ajax execute="@form" render="@none" />
+                                       rendered="#{allPlayersBean.isDeletable(profileBean.player)}">
+                            <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M8 6V4c0-1.1.9-2 2-2h4a2 2 0 0 1 2 2v2h5a1 1 0 0 1 0 2h-1v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8H3a1 1 0 1 1 0-2h5zM6 8v12h12V8H6zm8-2V4h-4v2h4zm-4 4a1 1 0 0 1 1 1v6a1 1 0 0 1-2 0v-6a1 1 0 0 1 1-1zm4 0a1 1 0 0 1 1 1v6a1 1 0 0 1-2 0v-6a1 1 0 0 1 1-1z"/></svg>                                    <f:ajax execute="@form" render="@none" />
+                            <f:ajax execute="@this" render="@none"/>
+                            <f:setPropertyActionListener value="#{profileBean.player}" target="#{playerDetailController.player}"/>
                         </h:commandLink>
+
+                        <h:commandLink p:class="ml-2" p:data-toggle="modal" p:data-target="#editPlayer"
+                                       rendered="#{allPlayersBean.isEditable(profileBean.player)}">
+                            <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M9 4.58V4c0-1.1.9-2 2-2h2a2 2 0 0 1 2 2v.58a8 8 0 0 1 1.92 1.11l.5-.29a2 2 0 0 1 2.74.73l1 1.74a2 2 0 0 1-.73 2.73l-.5.29a8.06 8.06 0 0 1 0 2.22l.5.3a2 2 0 0 1 .73 2.72l-1 1.74a2 2 0 0 1-2.73.73l-.5-.3A8 8 0 0 1 15 19.43V20a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-.58a8 8 0 0 1-1.92-1.11l-.5.29a2 2 0 0 1-2.74-.73l-1-1.74a2 2 0 0 1 .73-2.73l.5-.29a8.06 8.06 0 0 1 0-2.22l-.5-.3a2 2 0 0 1-.73-2.72l1-1.74a2 2 0 0 1 2.73-.73l.5.3A8 8 0 0 1 9 4.57zM7.88 7.64l-.54.51-1.77-1.02-1 1.74 1.76 1.01-.17.73a6.02 6.02 0 0 0 0 2.78l.17.73-1.76 1.01 1 1.74 1.77-1.02.54.51a6 6 0 0 0 2.4 1.4l.72.2V20h2v-2.04l.71-.2a6 6 0 0 0 2.41-1.4l.54-.51 1.77 1.02 1-1.74-1.76-1.01.17-.73a6.02 6.02 0 0 0 0-2.78l-.17-.73 1.76-1.01-1-1.74-1.77 1.02-.54-.51a6 6 0 0 0-2.4-1.4l-.72-.2V4h-2v2.04l-.71.2a6 6 0 0 0-2.41 1.4zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0-2a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/></svg>                                    <f:ajax execute="@form" render="@none" />
+                            <f:ajax execute="@this" render="@none"/>
+                            <f:setPropertyActionListener value="#{profileBean.player}" target="#{playerDetailController.player}"/>
+                        </h:commandLink>
+
                     </qc:playerbox>
                 </h:panelGroup>
 
@@ -58,27 +63,33 @@
                     <p>Do some nice graphs w/ ApexCharts</p>
                 </h:panelGroup>
 
-            <!--
-                            <qc:modal id="deletePlayer"
-                                      target="deletePlayer"
-                                      title="Delete Player"
-                                      confirm="Delete Player"
-                                      abort="Cancel"
-                                      confirmAction="# {deletePlayerBean.deletePlayer(profileBean.player)}"
-                                      update="player">
-                                Are you sure? This cannot be undone.
-                            </qc:modal>
-            -->
-                        </h:panelGroup>
+            </h:panelGroup>
 
             <qc:modal id="deletePlayer"
                       target="deletePlayer"
                       title="Delete Player"
                       confirm="Delete Player"
                       abort="Cancel"
-                      confirmAction="#{deletePlayerBean.deletePlayer(profileBean.player)}"
-                      update="player">
+                      confirmAction="#{playerDetailController.deletePlayer}"
+                      update="@this">
                 Are you sure? This cannot be undone.
+            </qc:modal>
+
+            <qc:modal id="editPlayer"
+                      target="editPlayer"
+                      title="Edit Password"
+                      confirm="Edit Password"
+                      abort="Cancel"
+                      bodyId="body" footerId="footer"
+                      confirmAction="#{playerDetailController.changePassword}"
+                      disableConfirm="#{!playerDetailController.passwordValid}"
+                      update="@this">
+                <h:inputSecret p:placeholder="New password" value="#{playerDetailController.password}" p:autocomplete="new-password" styleClass="form-control">
+                    <f:ajax event="keyup" execute="@this" render=":form:editPlayer:footer"/>
+                </h:inputSecret>
+                <h:inputSecret p:placeholder="Repeat new password" value="#{playerDetailController.repeatPassword}" p:autocomplete="new-password" styleClass="form-control">
+                    <f:ajax event="keyup" execute="@this" render=":form:editPlayer:footer"/>
+                </h:inputSecret>
             </qc:modal>
             
             <h:panelGroup layout="block" styleClass="players px-3">
