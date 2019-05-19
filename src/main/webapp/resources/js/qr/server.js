@@ -27,6 +27,9 @@ const handleServerEvent = (response) => {
   if(response === undefined || response.event === "success" || response.event === "error"){
     return;
   }
+  if(!infoHandled && response.event !== ROOM_INFO){
+    getRoomInfo();
+  }
   // console.log(response); // TODO remove
   console.debug(`SERVER: received '${response.event}' event, state is ${state.state === INGAME ? 'INGAME' : state.state === LOBBY ? 'LOBBY' : state.state === JOIN ? 'JOIN' : 'FINISHED'}`);
   if(state.state === INGAME){ // handle game events w/ priority

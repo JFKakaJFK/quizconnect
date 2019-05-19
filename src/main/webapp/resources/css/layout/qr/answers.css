@@ -1,6 +1,7 @@
 .answers {
     display: grid;
     grid-gap: 1rem;
+    font-size: 1.5rem;
 }
 
 .answer:hover {
@@ -9,8 +10,12 @@
 
 .answer-placeholder {
     opacity: .5;
-    filter: blur(15px);
+    filter: blur(5px);
     background: var(--gray-3);
+}
+
+.answer-placeholder p {
+    height: 1.5rem;
 }
 
 .answer.answer-placeholder:hover {
