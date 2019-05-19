@@ -6,23 +6,33 @@ import at.qe.sepm.skeleton.services.ManagerService;
 import at.qe.sepm.skeleton.services.PlayerService;
 import at.qe.sepm.skeleton.services.StorageService;
 import at.qe.sepm.skeleton.services.UserService;
+import at.qe.sepm.skeleton.ui.beans.AllPlayersBean;
 import at.qe.sepm.skeleton.ui.beans.PasswordBean;
 import at.qe.sepm.skeleton.ui.beans.SessionInfoBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
+import javax.faces.context.FacesContext;
+import java.io.IOException;
 import java.io.Serializable;
 
 @Controller
 @Scope("view")
 public class PlayerDetailController implements Serializable {
 
+    private Logger log = LoggerFactory.getLogger(this.getClass());
+
+    private final String PROFILE = "/players/profile.xhtml";
+
     private PasswordBean passwordBean;
     private UserService userService;
     private PlayerService playerService;
     private StorageService storageService;
     private ManagerService managerService;
+    private AllPlayersBean allPlayersBean;
 
     private User currentUser;
     private Player player;
@@ -36,13 +46,15 @@ public class PlayerDetailController implements Serializable {
             StorageService storageService,
             PlayerService playerService,
             SessionInfoBean sessionInfoBean,
-            ManagerService managerService){
+            ManagerService managerService,
+            AllPlayersBean allPlayersBean){
         assert passwordBean != null;
         assert userService != null;
         assert managerService != null;
         assert playerService != null;
         assert storageService != null;
         assert sessionInfoBean != null;
+        assert allPlayersBean != null;
 
         this.passwordBean = passwordBean;
         this.userService = userService;
@@ -50,6 +62,7 @@ public class PlayerDetailController implements Serializable {
         this.playerService = playerService;
         this.currentUser = sessionInfoBean.getCurrentUser();
         this.managerService = managerService;
+        this.allPlayersBean = allPlayersBean;
     }
 
     public void deletePlayer(){
@@ -66,9 +79,21 @@ public class PlayerDetailController implements Serializable {
         playerService.deletePlayer(player);
         userService.deleteUser(user);
 
+        allPlayersBean.removePlayer(player);
+        log.info("Player " + player.getUser().getUsername() + " was successfully deleted");
         player = null;
 
-        // TODO detect if view is profile, if yes, redirect else remove from allplayersbean
+
+        FacesContext fc = FacesContext.getCurrentInstance();
+        String viewId = fc.getViewRoot().getViewId();
+
+        if(viewId.equals(PROFILE)){
+            try {
+                fc.getExternalContext().redirect("/players/all.xhtml?faces-redirect=true");
+            } catch (IOException e){
+                log.warn("Failed to redirect");
+            }
+        }
     }
 
     /**

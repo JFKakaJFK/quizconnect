@@ -16,10 +16,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Bean that shows all players for the {@link Player} overview
+ * Bean that shows all players for the {@link Player} overview.
+ * For each online user, the users are loaded only once per session and
+ * are locally updated if the {@link User} adds/removes a {@link Player}.
  */
 @Controller
-@Scope("view")
+@Scope("session")
 public class AllPlayersBean implements Serializable {
 
     private PlayerService playerService;
@@ -35,7 +37,7 @@ public class AllPlayersBean implements Serializable {
     public AllPlayersBean(PlayerService playerService, SessionInfoBean sessionInfoBean){
         this.playerService = playerService;
         this.user = sessionInfoBean.getCurrentUser();
-        this.paginator = new ScrollPaginator<>(getAllPlayers(), 5); // TODO adjust partSize
+        this.paginator = new ScrollPaginator<>(getAllPlayers(), 12); // 12 is about the number fitting into one viewport
     }
 
     /**

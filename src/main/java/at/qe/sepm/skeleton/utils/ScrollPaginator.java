@@ -11,7 +11,7 @@ import java.util.List;
 public class ScrollPaginator <T> {
 
     private static final int DEFAULT_SIZE = 18;
-    private static final int INITIAL_PART_SIZE = 3;
+    private static final int INITIAL_PART_SIZE = 2;
 
     private int partSize;
     private int initialized;
