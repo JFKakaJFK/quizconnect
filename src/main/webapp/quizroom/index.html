@@ -16,9 +16,9 @@
 
     <div data-pushbar-id="bar" class="pushbar from_left">
         <div class="pushbar-close">
-                    <span data-pushbar-close="" class="py-2 px-2 my-2 mx-3">
-                        <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M16.24 14.83a1 1 0 0 1-1.41 1.41L12 13.41l-2.83 2.83a1 1 0 0 1-1.41-1.41L10.59 12 7.76 9.17a1 1 0 0 1 1.41-1.41L12 10.59l2.83-2.83a1 1 0 0 1 1.41 1.41L13.41 12l2.83 2.83z"/></svg>
-                    </span>
+            <span data-pushbar-close="" class="py-2 px-2 my-2 mx-3">
+                <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M16.24 14.83a1 1 0 0 1-1.41 1.41L12 13.41l-2.83 2.83a1 1 0 0 1-1.41-1.41L10.59 12 7.76 9.17a1 1 0 0 1 1.41-1.41L12 10.59l2.83-2.83a1 1 0 0 1 1.41 1.41L13.41 12l2.83 2.83z"/></svg>
+            </span>
         </div>
 
         <nav class="pushbar-nav pl-4 pr-3 py-4">
@@ -48,9 +48,12 @@
 
             <!-- JOIN VIEW (Why use JS if it can be done w/ HTML? -->
             <div class="join">
-                <div class="stat stat-lg">
-                    <input id="pin" type="number" placeholder="000000" max="999999" min="1" />
-                    <p>enter pin</p>
+                <div>
+                    <div class="stat stat-lg">
+                        <input id="pin" type="number" placeholder="000000" max="999999" min="1" />
+                        <p>enter pin</p>
+                    </div>
+                    <span id="errors" style="display: block; text-align: center; color: var(--alert);"></span>
                 </div>
             </div>
 
@@ -63,7 +66,9 @@
                 <div class="modal-header">
                     <h5 class="modal-title" id="leaveModal">Leave Game</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                        <span aria-hidden="true">
+                            <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M16.24 14.83a1 1 0 0 1-1.41 1.41L12 13.41l-2.83 2.83a1 1 0 0 1-1.41-1.41L10.59 12 7.76 9.17a1 1 0 0 1 1.41-1.41L12 10.59l2.83-2.83a1 1 0 0 1 1.41 1.41L13.41 12l2.83 2.83z"/></svg>
+                        </span>
                     </button>
                 </div>
                 <div class="modal-body">
@@ -84,7 +89,9 @@
                 <div class="modal-header">
                     <h5 class="modal-title" id="timeoutModal">Timeout</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                        <span aria-hidden="true">
+                            <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M16.24 14.83a1 1 0 0 1-1.41 1.41L12 13.41l-2.83 2.83a1 1 0 0 1-1.41-1.41L10.59 12 7.76 9.17a1 1 0 0 1 1.41-1.41L12 10.59l2.83-2.83a1 1 0 0 1 1.41 1.41L13.41 12l2.83 2.83z"/></svg>
+                        </span>
                     </button>
                 </div>
                 <div class="modal-body">
@@ -103,7 +110,9 @@
                 <div class="modal-header">
                     <h5 class="modal-title" id="confirmReadyModal">Ready Up</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                        <span aria-hidden="true">
+                            <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M16.24 14.83a1 1 0 0 1-1.41 1.41L12 13.41l-2.83 2.83a1 1 0 0 1-1.41-1.41L10.59 12 7.76 9.17a1 1 0 0 1 1.41-1.41L12 10.59l2.83-2.83a1 1 0 0 1 1.41 1.41L13.41 12l2.83 2.83z"/></svg>
+                        </span>
                     </button>
                 </div>
                 <div class="modal-body">

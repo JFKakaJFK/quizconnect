@@ -1,4 +1,4 @@
-1"use strict";
+"use strict";
 
 /* ======================== RENDER FUNCTIONS ========================= */
 
@@ -171,6 +171,7 @@ const renderPlayers = ( parent, { players }) => {
 const countdown = (remaining, nodeId) => {
   const node = document.getElementById(nodeId);
   if(remaining > 0){
+    console.debug(`COUNTDOWN: ${remaining}`);
     node.innerHTML = remaining.toString();
     setTimeout(() => countdown(remaining - 1, nodeId), 1000)
   } else {
@@ -192,16 +193,18 @@ const renderLobby = ( {info} ) => {
   console.debug('RENDER: rendering lobby')
 
   let allReady = info.players.filter(p => !p.ready).length === 0;
-  if(allReady && document.getElementById('countdown') === null){
-    console.log("TODO; do 5s timer") // TODO
-    clearScreen();
-    ROOT.innerHTML = `
+  if(allReady){
+    if(document.getElementById('countdown') === null){
+      clearScreen();
+      ROOT.innerHTML = `
       <div>
         <h1>Game will start in <span id="countdown">5</span>s</h1>
       </div>
     `;
-    countdown(5, 'countdown');
-    console.log("started timer")
+      countdown(5, 'countdown');
+      console.log("started timer")
+    }
+    return;
   }
 
   let elem = ROOT.querySelector('.info');
