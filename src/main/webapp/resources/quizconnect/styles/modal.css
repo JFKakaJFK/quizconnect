@@ -48,5 +48,5 @@
 
 /*TODO: Select color for edit-modal*/
 .modal-edit .modal-header, .modal-edit .modal-body, .modal-edit .modal-footer {
-    background-color: var(--warning);
+    background-color: var(--col-2-d);
 }

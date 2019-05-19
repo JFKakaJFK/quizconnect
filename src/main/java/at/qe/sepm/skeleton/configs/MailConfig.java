@@ -19,7 +19,7 @@ public class MailConfig {
         javaMailSender.setPort(587);
 
         javaMailSender.setUsername("mail@quizconnect.rocks");
-        javaMailSender.setPassword(")Fm:49]6gfnvp");
+        //javaMailSender.setPassword("");
 
         Properties props = javaMailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");

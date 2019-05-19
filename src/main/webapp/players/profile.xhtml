@@ -10,13 +10,8 @@
     </ui:define>
 
     <ui:define name ="content">
-        <!--
-        <f:metadata>
-            <f:viewParam name="id" value="# {profileBean.id}"/>
-        </f:metadata>
-        -->
 
-        <h:form>
+        <h:form id="form">
             <h:commandLink action="all?faces-redirect=true" styleClass="back-btn">
                 <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M5.41 11H21a1 1 0 0 1 0 2H5.41l5.3 5.3a1 1 0 0 1-1.42 1.4l-7-7a1 1 0 0 1 0-1.4l7-7a1 1 0 0 1 1.42 1.4L5.4 11z"/></svg>All Players
             </h:commandLink>
@@ -30,11 +25,21 @@
 
                 <h:panelGroup layout="block" id="avatar" styleClass="avatar">
                     <qc:playerbox player="#{profileBean.player}" online="#{randomOnlineTestBean.online}" rank="Beginner">
+
                         <h:commandLink p:class="ml-2" p:data-toggle="modal" p:data-target="#deletePlayer"
-                                       rendered="#{profileBean.deletable}">
-                            <svg role="img" width="24" height="24" viewBox="0 0 24 24" aria-labelledby="binIconTitle binIconDesc"><title id="binIconTitle">Bin</title><desc id="binIconDesc">Icon of a bin (trash)</desc><path  d="M19 6L5 6M14 5L10 5M6 10L6 20C6 20.6666667 6.33333333 21 7 21 7.66666667 21 11 21 17 21 17.6666667 21 18 20.6666667 18 20 18 19.3333333 18 16 18 10"/></svg>
-                            <f:ajax execute="@form" render="@none" />
+                                       rendered="#{allPlayersBean.isDeletable(profileBean.player)}">
+                            <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M8 6V4c0-1.1.9-2 2-2h4a2 2 0 0 1 2 2v2h5a1 1 0 0 1 0 2h-1v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8H3a1 1 0 1 1 0-2h5zM6 8v12h12V8H6zm8-2V4h-4v2h4zm-4 4a1 1 0 0 1 1 1v6a1 1 0 0 1-2 0v-6a1 1 0 0 1 1-1zm4 0a1 1 0 0 1 1 1v6a1 1 0 0 1-2 0v-6a1 1 0 0 1 1-1z"/></svg>                                    <f:ajax execute="@form" render="@none" />
+                            <f:ajax execute="@this" render="@none"/>
+                            <f:setPropertyActionListener value="#{profileBean.player}" target="#{playerDetailController.player}"/>
                         </h:commandLink>
+
+                        <h:commandLink p:class="ml-2" p:data-toggle="modal" p:data-target="#editPlayer"
+                                       rendered="#{allPlayersBean.isEditable(profileBean.player)}">
+                            <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M9 4.58V4c0-1.1.9-2 2-2h2a2 2 0 0 1 2 2v.58a8 8 0 0 1 1.92 1.11l.5-.29a2 2 0 0 1 2.74.73l1 1.74a2 2 0 0 1-.73 2.73l-.5.29a8.06 8.06 0 0 1 0 2.22l.5.3a2 2 0 0 1 .73 2.72l-1 1.74a2 2 0 0 1-2.73.73l-.5-.3A8 8 0 0 1 15 19.43V20a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-.58a8 8 0 0 1-1.92-1.11l-.5.29a2 2 0 0 1-2.74-.73l-1-1.74a2 2 0 0 1 .73-2.73l.5-.29a8.06 8.06 0 0 1 0-2.22l-.5-.3a2 2 0 0 1-.73-2.72l1-1.74a2 2 0 0 1 2.73-.73l.5.3A8 8 0 0 1 9 4.57zM7.88 7.64l-.54.51-1.77-1.02-1 1.74 1.76 1.01-.17.73a6.02 6.02 0 0 0 0 2.78l.17.73-1.76 1.01 1 1.74 1.77-1.02.54.51a6 6 0 0 0 2.4 1.4l.72.2V20h2v-2.04l.71-.2a6 6 0 0 0 2.41-1.4l.54-.51 1.77 1.02 1-1.74-1.76-1.01.17-.73a6.02 6.02 0 0 0 0-2.78l-.17-.73 1.76-1.01-1-1.74-1.77 1.02-.54-.51a6 6 0 0 0-2.4-1.4l-.72-.2V4h-2v2.04l-.71.2a6 6 0 0 0-2.41 1.4zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0-2a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/></svg>                                    <f:ajax execute="@form" render="@none" />
+                            <f:ajax execute="@this" render="@none"/>
+                            <f:setPropertyActionListener value="#{profileBean.player}" target="#{playerDetailController.player}"/>
+                        </h:commandLink>
+
                     </qc:playerbox>
                 </h:panelGroup>
 
@@ -53,33 +58,186 @@
                 </h:panelGroup>
 
                 <h:panelGroup layout="block" id="qs-chart" styleClass="qs-chart box">
-                    <p>Add recently played with players</p>
+                    <div id="line">LOADING</div>
+                    <div id="pie">LOADING</div>
+                    <p>Do some nice graphs w/ ApexCharts</p>
                 </h:panelGroup>
 
-            <!--
-                            <qc:modal id="deletePlayer"
-                                      target="deletePlayer"
-                                      title="Delete Player"
-                                      confirm="Delete Player"
-                                      abort="Cancel"
-                                      confirmAction="# {deletePlayerBean.deletePlayer(profileBean.player)}"
-                                      update="player">
-                                Are you sure? This cannot be undone.
-                            </qc:modal>
-            -->
-                        </h:panelGroup>
+            </h:panelGroup>
 
-                                    <qc:modal id="deletePlayer"
-                                              target="deletePlayer"
-                                              title="Delete Player"
-                                              confirm="Delete Player"
-                                              abort="Cancel"
-                                              confirmAction="#{deletePlayerBean.deletePlayer(profileBean.player)}"
-                                              update="player">
-                                        Are you sure? This cannot be undone.
-                                    </qc:modal>
+            <qc:modal id="deletePlayer"
+                      target="deletePlayer"
+                      title="Delete Player"
+                      confirm="Delete Player"
+                      abort="Cancel"
+                      confirmAction="#{playerDetailController.deletePlayer}"
+                      update="@this">
+                Are you sure? This cannot be undone.
+            </qc:modal>
 
-                    </h:form>
+            <qc:modal id="editPlayer"
+                      target="editPlayer"
+                      title="Edit Password"
+                      confirm="Edit Password"
+                      abort="Cancel"
+                      bodyId="body" footerId="footer"
+                      confirmAction="#{playerDetailController.changePassword}"
+                      disableConfirm="#{!playerDetailController.passwordValid}"
+                      update="@this">
+                <h:inputSecret p:placeholder="New password" value="#{playerDetailController.password}" p:autocomplete="new-password" styleClass="form-control">
+                    <f:ajax event="keyup" execute="@this" render=":form:editPlayer:footer"/>
+                </h:inputSecret>
+                <h:inputSecret p:placeholder="Repeat new password" value="#{playerDetailController.repeatPassword}" p:autocomplete="new-password" styleClass="form-control">
+                    <f:ajax event="keyup" execute="@this" render=":form:editPlayer:footer"/>
+                </h:inputSecret>
+            </qc:modal>
+            
+            <h:panelGroup layout="block" styleClass="players px-3">
+                <ui:repeat value="#{profileBean.recentlyPlayedWith}" var="player">
+                    <qc:playerbox player="#{player}" online="#{randomOnlineTestBean.online}" rank="Beginner">
+                        <h:commandLink action="profile?faces-redirect=true" styleClass="ml-2">
+                            <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-9a1 1 0 0 1 1 1v4a1 1 0 0 1-2 0v-4a1 1 0 0 1 1-1zm0-4a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+                            <f:ajax execute="@this" render="@none"/>
+                            <f:setPropertyActionListener value="#{player}" target="#{profileBean.player}"/>
+                        </h:commandLink>
+                    </qc:playerbox>
+                </ui:repeat>
+            </h:panelGroup>
 
-                </ui:define>
-            </ui:composition>
+        </h:form>
+
+    </ui:define>
+
+    <ui:define name="site-specific-javascript">
+        <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+        <script>
+            // TODO move to external script, fetch data from backend via requestmapping n'stuff
+            // TODO get a managers student average  display apex chart annotation? https://apexcharts.com/docs/annotations/
+            const line = document.querySelector("#line")
+            const pie = document.querySelector("#pie")
+          var options = {
+            theme: {
+              palette: 'palette1',
+              mode: 'dark',
+              /*
+              monochrome: {
+                enabled: true,
+                color: '#13CFB8',
+                // color: 'var(--col-4-m)',
+              }
+              */
+            },
+            /*
+            colors: [
+              'var(--col-2-m)',
+              'var(--col-3-m)',
+              'var(--col-4-m)',
+              'var(--col-5-m)',
+            ],
+            */
+            chart: {
+              width: '100%',
+              type: 'area'
+            },
+            series: [{
+                name: 'question set 1',
+                data: [30,40,35,50,49,60,70,91,125]
+              },
+              {
+                name: 'question set 2',
+                data: [60,50,22,18,23,45,56,77,69]
+              },
+              {
+                name: 'question set3',
+                data: [88, 120, 95, 80, 95, 76, 40, 50, 45]
+              },
+              {
+                name: 'average',
+                data: [60, 70, 60, 55, 45, 40, 35, 40, 50]
+              },
+            ],
+            dataLabels: {
+              enabled: false,
+            },
+            tooltip: {
+              enabled: false,
+            },
+            toolbar: {
+              show: false,
+              tools: {
+                download: false,
+              }
+            },
+            yaxis: {
+              show: true,
+              labels: {
+                show: true,
+                style: {
+                  color: 'var(--fg)',
+                },
+                formatter: (value) => value,
+              }
+            },
+            xaxis: {
+              categories: [1991,1992,1993,1994,1995,1996,1997, 1998,1999]
+            },
+            legend: {
+              show: true,
+              labels: {
+                colors: 'var(--fg)',
+              }
+            }
+          }
+
+          var chart = new ApexCharts(line, options);
+
+            line.innerHTML = '';
+          chart.render();
+
+            var options1 = {
+              theme: {
+                mode: 'dark',
+                palette: 'palette1',
+              },
+              chart: {
+                type: 'donut',
+              },
+              dataLabels: {
+                enabled: false,
+              },
+              tooltip: {
+                enabled: false,
+              },
+              stroke: {
+                show: false,
+                width: 0,
+              },
+              series: [44, 55, 41, 17, 15],
+              responsive: [{
+                breakpoint: 480,
+                options: {
+                  chart: {
+                    width: 200
+                  },
+                  legend: {
+                    position: 'bottom'
+                  }
+                }
+              }],
+              plotOptions: {
+                pie: {
+                  expandOnClick: false
+                }
+              }
+            }
+
+            var chart1 = new ApexCharts(
+              pie,
+              options1
+            );
+            pie.innerHTML = '';
+            chart1.render();
+
+        </script>
+    </ui:define>
+</ui:composition>
