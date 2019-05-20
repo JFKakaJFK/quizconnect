@@ -20,6 +20,11 @@ let state = {
   info: {
     settings: {
       questionSets: [],
+      difficulty: '',
+      mode: '',
+      numJokers: 0,
+      score: 0,
+      pin: 0,
     },
     players: [],
   },
@@ -28,6 +33,7 @@ let state = {
     question: null,
     answers: [],
   },
+  messages: [],
 };
 
 // if pin & playerId not set, redirect to join page

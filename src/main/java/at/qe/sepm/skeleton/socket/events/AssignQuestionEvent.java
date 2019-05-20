@@ -7,7 +7,7 @@ import at.qe.sepm.skeleton.model.QuestionType;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AssignQuestionEvent extends ServerEvent {
+public class AssignQuestionEvent extends SocketEvent {
 
     private int questionId;
     private QuestionType type;

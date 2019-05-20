@@ -20,6 +20,7 @@ import org.springframework.stereotype.Controller;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 @Controller
@@ -32,6 +33,8 @@ public class QRWebSocketConnection implements IRoomAction {
     private HashMap<Integer, IPlayerAction> rooms;
     private HashMap<Integer, HashMap<Integer, Player>> players;
 
+    private HashMap<Integer, List<ChatMessageJSON>> chatMessages;
+
     @Value("${qr.ws.server}")
     private String serverEndpoint;
     @Value("${storage.api.avatars}")
@@ -43,6 +46,7 @@ public class QRWebSocketConnection implements IRoomAction {
         this.messagingTemplate = messagingTemplate;
         this.rooms = new HashMap<>();
         this.players = new HashMap<>();
+        this.chatMessages = new HashMap<>();
         log.debug("QRWSController started");
     }
 
@@ -63,7 +67,7 @@ public class QRWebSocketConnection implements IRoomAction {
 
     @Override
     public void onReadyUp(int pin, Player p, int totalReady) {
-        ServerEvent event = new ReadyUpEvent(p, totalReady);
+        SocketEvent event = new ReadyUpEvent(p, totalReady);
         event.setEvent(READY_UP);
         broadcast(event, pin);
         log.debug("Game " + pin + ": player " + p.getId() + " is ready");
@@ -71,7 +75,7 @@ public class QRWebSocketConnection implements IRoomAction {
 
     @Override
     public void onPlayerJoin(int pin, Player p) {
-        ServerEvent event = new PlayerJoinEvent(p, avatars);
+        SocketEvent event = new PlayerJoinEvent(p, avatars);
         event.setEvent(PLAYER_JOIN);
         broadcast(event, pin);
         log.debug("Game " + pin + ": player " + p.getId() + " joined");
@@ -79,7 +83,7 @@ public class QRWebSocketConnection implements IRoomAction {
 
     @Override
     public void onGameStart(int pin) {
-        ServerEvent event = new GenericServerEvent(GAME_START);
+        SocketEvent event = new GenericSocketEvent(GAME_START);
         broadcast(event, pin);
         log.debug("Game " + pin + ": game started");
     }
@@ -87,14 +91,14 @@ public class QRWebSocketConnection implements IRoomAction {
     @Override // TODO: move all server logic out of here, call remove method of this controller on gameend
     public void onGameEnd(int pin) {
         gameEnd(pin);
-        ServerEvent event = new GenericServerEvent(GAME_END);
+        SocketEvent event = new GenericSocketEvent(GAME_END);
         broadcast(event, pin);
         log.debug("Game " + pin + ": game ended");
     }
 
     @Override
     public void onJokerUse(int pin, int remaining) {
-        ServerEvent event = new JokerUseEvent(remaining);
+        SocketEvent event = new JokerUseEvent(remaining);
         event.setEvent(JOKER_USE);
         broadcast(event, pin);
         log.debug("Game " + pin + ": joker was used");
@@ -102,7 +106,7 @@ public class QRWebSocketConnection implements IRoomAction {
 
     @Override
     public void onPlayerLeave(int pin, Player p, String reason) {
-        ServerEvent event = new PlayerLeaveEvent(p, reason);
+        SocketEvent event = new PlayerLeaveEvent(p, reason);
         event.setEvent(PLAYER_LEAVE);
         broadcast(event, pin);
         log.debug("Game " + pin + ": player " + p.getId() + " left");
@@ -110,7 +114,7 @@ public class QRWebSocketConnection implements IRoomAction {
 
     @Override
     public void onScoreChange(int pin, int newScore) {
-        ServerEvent event = new ScoreChangeEvent(newScore);
+        SocketEvent event = new ScoreChangeEvent(newScore);
         event.setEvent(SCORE_CHANGE);
         broadcast(event, pin);
         log.debug("Game " + pin + ": score changed to " + newScore);
@@ -118,7 +122,7 @@ public class QRWebSocketConnection implements IRoomAction {
 
     @Override
     public void onTimeoutStart(int pin, Player player, long timeoutTime) {
-        ServerEvent event = new PlayerTimeoutEvent(player, timeoutTime);
+        SocketEvent event = new PlayerTimeoutEvent(player, timeoutTime);
         event.setEvent(TIMEOUT_START);
         broadcast(event, pin);
         log.debug("Game " + pin + ": time remaining until player " + player.getId() + " is kicked: " + timeoutTime + "ms");
@@ -126,7 +130,7 @@ public class QRWebSocketConnection implements IRoomAction {
 
     @Override
     public void onTimerSync(int pin, Player p, ActiveQuestion q, long remaining) {
-        ServerEvent event = new TimerSyncEvent(q, remaining);
+        SocketEvent event = new TimerSyncEvent(q, remaining);
         event.setEvent(TIMER_SYNC);
         broadcast(event, pin);
         log.debug("Game " + pin + ": time remaining of question " + q.question.getId() + " is " + remaining + "ms");
@@ -134,7 +138,7 @@ public class QRWebSocketConnection implements IRoomAction {
 
     @Override
     public void onKick(int pin, Player p) {
-        ServerEvent event = new PlayerKickEvent(p);
+        SocketEvent event = new PlayerKickEvent(p);
         event.setEvent(KICK);
         broadcast(event, pin);
         log.debug("Game " + pin + ": player " + p.getId() + " was kicked");
@@ -142,7 +146,7 @@ public class QRWebSocketConnection implements IRoomAction {
 
     @Override
     public void assignQuestion(int pin, ActiveQuestion q) {
-        ServerEvent event = new AssignQuestionEvent(q);
+        SocketEvent event = new AssignQuestionEvent(q);
         event.setEvent(ASSIGN_QUESTION);
         broadcast(event, pin);
         log.debug("Game " + pin + ": Question " + q.question.getId() + " assigned");
@@ -150,7 +154,7 @@ public class QRWebSocketConnection implements IRoomAction {
 
     @Override
     public void removeQuestion(int pin, ActiveQuestion q) {
-        ServerEvent event = new RemoveQuestionEvent(q);
+        SocketEvent event = new RemoveQuestionEvent(q);
         event.setEvent(REMOVE_QUESTION);
         broadcast(event, pin);
         log.debug("Game " + pin + ": Question " + q.question.getId() + " removed");
@@ -166,13 +170,16 @@ public class QRWebSocketConnection implements IRoomAction {
     private final String CANCEL_TIMEOUT = "cancelTimeout";
     private final String ALIVE_PING = "sendAlivePing";
 
+    private final String CHAT_MESSAGE = "chatMessage";
+    private final String CHAT_MESSAGES = "getChatMessages";
+
     private final String SUCCESS = "success";
     private final String ERROR = "error";
 
-    private ServerEvent handleGetRoomInfo(int pin){
+    private SocketEvent handleGetRoomInfo(int pin){
         IPlayerAction qr = rooms.get(pin);
         if(qr == null){
-            return new GenericServerEvent(ERROR);
+            return new GenericSocketEvent(ERROR);
         }
         boolean inLobby = qr.isRoomInWaitingMode();
         List<PlayerJSON> players = new ArrayList<>();
@@ -188,7 +195,7 @@ public class QRWebSocketConnection implements IRoomAction {
             }
         }
 
-        ServerEvent event = new RoomInfoEvent(pin,
+        SocketEvent event = new RoomInfoEvent(pin,
                 qr.getRoomDifficulty().name(),
                 qr.getRoomMode().name(),
                 qr.getRoomQuestionSets(),
@@ -201,66 +208,87 @@ public class QRWebSocketConnection implements IRoomAction {
         return event;
     }
 
-    private ServerEvent handleReadyUp(int pin, ClientEvent event){
+    private SocketEvent handleReadyUp(int pin, ClientEvent event){
         IPlayerAction qr = rooms.get(pin);
         Player p = players.get(pin).get(event.getPlayerId());
         if(p == null){
-            return new GenericServerEvent(ERROR);
+            return new GenericSocketEvent(ERROR);
         }
         qr.readyUp(p);
-        return new GenericServerEvent(SUCCESS);
+        return new GenericSocketEvent(SUCCESS);
     }
 
-    private ServerEvent handleAnswerQuestion(int pin, ClientEvent event){
+    private SocketEvent handleAnswerQuestion(int pin, ClientEvent event){
         IPlayerAction qr = rooms.get(pin);
         Player p = players.get(pin).get(event.getPlayerId());
         if(p == null){
-            return new GenericServerEvent(ERROR);
+            return new GenericSocketEvent(ERROR);
         }
         // Cant check validity of ints, since 0 per default
         qr.answerQuestion(p, event.getQuestionId(), event.getAnswerId());
-        return new GenericServerEvent(SUCCESS);
+        return new GenericSocketEvent(SUCCESS);
     }
 
-    private ServerEvent handleUseJoker(int pin, ClientEvent event){
+    private SocketEvent handleUseJoker(int pin, ClientEvent event){
         IPlayerAction qr = rooms.get(pin);
         Player p = players.get(pin).get(event.getPlayerId());
         if(p == null){
-            return new GenericServerEvent(ERROR);
+            return new GenericSocketEvent(ERROR);
         }
         qr.useJoker(p);
-        return new GenericServerEvent(SUCCESS);
+        return new GenericSocketEvent(SUCCESS);
     }
 
-    private ServerEvent handleLeaveRoom(int pin, ClientEvent event){
+    private SocketEvent handleLeaveRoom(int pin, ClientEvent event){
         IPlayerAction qr = rooms.get(pin);
         Player p = players.get(pin).get(event.getPlayerId());
         if(p == null){
-            return new GenericServerEvent(ERROR);
+            return new GenericSocketEvent(ERROR);
         }
         qr.leaveRoom(p);
         players.get(pin).remove(event.getPlayerId());
-        return new GenericServerEvent(SUCCESS);
+        return new GenericSocketEvent(SUCCESS);
     }
 
-    private ServerEvent handleCancelTimeout(int pin, ClientEvent event){
+    private SocketEvent handleCancelTimeout(int pin, ClientEvent event){
         IPlayerAction qr = rooms.get(pin);
         Player p = players.get(pin).get(event.getPlayerId());
         if(p == null){
-            return new GenericServerEvent(ERROR);
+            return new GenericSocketEvent(ERROR);
         }
         qr.cancelTimeout(p);
-        return new GenericServerEvent(SUCCESS);
+        return new GenericSocketEvent(SUCCESS);
     }
 
-    private ServerEvent handleSendAlivePing(int pin, ClientEvent event){
+    private SocketEvent handleSendAlivePing(int pin, ClientEvent event){
         IPlayerAction qr = rooms.get(pin);
         Player p = players.get(pin).get(event.getPlayerId());
         if(p == null){
-            return new GenericServerEvent(ERROR);
+            return new GenericSocketEvent(ERROR);
         }
         qr.sendAlivePing(p);
-        return new GenericServerEvent(SUCCESS);
+        return new GenericSocketEvent(SUCCESS);
+    }
+
+    private SocketEvent handleChatMessage(int pin, ClientEvent event){
+        if(event.getMessage() == null){
+            return new GenericSocketEvent(ERROR);
+        }
+        ChatMessageEvent message;
+        if(players.get(pin) == null){
+            return new GenericSocketEvent(ERROR);
+        }
+        Player p = players.get(pin).get(event.getPlayerId());
+        if(p == null){
+            return new GenericSocketEvent(ERROR);
+        }
+        message = new ChatMessageEvent(event.getMessage(), p.getUser().getUsername(), p.getId(), chatMessages.get(pin).size());
+        chatMessages.get(pin).add(message.getMessage());
+        return message;
+    }
+
+    private SocketEvent handleGetChatMessages(int pin, ClientEvent event){
+        return new ChatHistoryEvent(chatMessages.get(pin));
     }
 
     /**
@@ -269,7 +297,7 @@ public class QRWebSocketConnection implements IRoomAction {
      * @param event
      * @param pin
      */
-    private void broadcast(ServerEvent event, int pin){
+    private void broadcast(SocketEvent event, int pin){
         this.messagingTemplate.convertAndSend(serverEndpoint + "/" + pin, event);
     }
 
@@ -282,11 +310,11 @@ public class QRWebSocketConnection implements IRoomAction {
      */
     @MessageMapping("/events/{pin}")
     @SendTo("/server/events/{pin}") // works but broadcast
-    private ServerEvent handleEvent(@Payload ClientEvent request, Principal user, @DestinationVariable int pin){
+    private SocketEvent handleEvent(@Payload ClientEvent request, Principal user, @DestinationVariable int pin){
 
         if(!rooms.containsKey(pin) || rooms.get(pin) == null){
             log.warn("Game " + pin + ": QuizRoom " + pin + " does not exist");
-            return new GenericServerEvent(ERROR);
+            return new GenericSocketEvent(ERROR);
         }
 
         if(!request.getEvent().equals(ALIVE_PING)){ // TODO remove
@@ -309,12 +337,16 @@ public class QRWebSocketConnection implements IRoomAction {
                     return handleGetRoomInfo(pin);
                 case READY:
                     return handleReadyUp(pin, request);
+                case CHAT_MESSAGE:
+                    return handleChatMessage(pin, request);
+                case CHAT_MESSAGES:
+                    return handleGetChatMessages(pin, request);
                 default:
-                    return new GenericServerEvent("error");
+                    return new GenericSocketEvent("error");
             }
         } catch (NullPointerException e){
             log.warn("Game " + pin + " failed to close correctly");
-            return new GenericServerEvent(ERROR);
+            return new GenericSocketEvent(ERROR);
         }
     }
 
@@ -323,9 +355,16 @@ public class QRWebSocketConnection implements IRoomAction {
             rooms.put(pin, qr);
             players.put(pin, new HashMap<>());
         }
+        players.computeIfAbsent(pin, k -> new HashMap<>());
+        chatMessages.computeIfAbsent(pin, k -> new LinkedList<>());
+        /* // TODO remove
         if(players.get(pin) == null){
            players.put(pin, new HashMap<>());
         }
+        if(chatMessages.get(pin) == null){
+            chatMessages.put(pin, new LinkedList<>());
+        }
+        */
         players.get(pin).put(p.getId(), p);
     }
 
@@ -334,11 +373,8 @@ public class QRWebSocketConnection implements IRoomAction {
     }
 
     private void gameEnd(int pin){
-        if(rooms.containsKey(pin)){
-            rooms.remove(pin);
-        }
-        if(players.containsKey(pin)){
-            players.remove(pin);
-        }
+        rooms.remove(pin);
+        players.remove(pin);
+        chatMessages.remove(pin);
     }
 }

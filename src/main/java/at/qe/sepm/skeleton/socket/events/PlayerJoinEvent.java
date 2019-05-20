@@ -1,9 +1,8 @@
 package at.qe.sepm.skeleton.socket.events;
 
 import at.qe.sepm.skeleton.model.Player;
-import com.fasterxml.jackson.annotation.JsonRootName;
 
-public class PlayerJoinEvent extends ServerEvent {
+public class PlayerJoinEvent extends SocketEvent {
 
     private PlayerJSON player;
 

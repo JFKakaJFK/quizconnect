@@ -24,6 +24,7 @@ const connect = () => {
     console.debug(`SOCKET: connected`)
     getRoomInfo();
     sendAlivePing();// TODO
+    getChatMessages();
   });
 };
 

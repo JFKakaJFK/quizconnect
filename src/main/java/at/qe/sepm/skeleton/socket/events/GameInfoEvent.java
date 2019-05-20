@@ -2,7 +2,7 @@ package at.qe.sepm.skeleton.socket.events;
 
 import java.util.List;
 
-public class GameInfoEvent extends ServerEvent {
+public class GameInfoEvent extends SocketEvent {
 
     private int pin;
     private String difficulty;

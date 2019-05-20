@@ -5,6 +5,8 @@
 const DOMAIN = 'localhost:8080'; // TODO
 // TODO change url destinations if routes change
 
+const INFO = "INFO";
+
 // States
 const LOBBY = 0;
 const INGAME = 1;

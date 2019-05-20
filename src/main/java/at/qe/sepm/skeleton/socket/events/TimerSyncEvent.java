@@ -2,7 +2,7 @@ package at.qe.sepm.skeleton.socket.events;
 
 import at.qe.sepm.skeleton.logic.ActiveQuestion;
 
-public class TimerSyncEvent extends ServerEvent {
+public class TimerSyncEvent extends SocketEvent {
 
     private long remaining;
     private int questionId;
