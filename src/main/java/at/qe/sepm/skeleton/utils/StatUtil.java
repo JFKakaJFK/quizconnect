@@ -1,5 +1,6 @@
 package at.qe.sepm.skeleton.utils;
 
+import at.qe.sepm.skeleton.model.Player;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
@@ -55,5 +56,17 @@ public class StatUtil implements Serializable {
             return String.valueOf(minutes) + "min";
         }
         return String.valueOf(hours) + "hrs " + String.valueOf(minutes) + "min";
+    }
+
+    /**
+     * Returns the number of games the player has played.
+     *
+     * @param p
+     * @return
+     */
+    public int getGamesPlayed(Player p){
+        if(p == null) return 0;
+        return p.getqSetPlayCounts().values().stream()
+                .reduce(0, Integer::sum);
     }
 }

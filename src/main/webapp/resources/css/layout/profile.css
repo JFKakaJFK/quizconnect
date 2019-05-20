@@ -23,7 +23,12 @@
 
 .qs-chart {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+}
+
+@media only screen and (min-width: 576px) {
+    .qs-chart {
+        grid-template-columns: 1fr 1fr;
+    }
 }
 
 body .apexcharts-canvas,

@@ -10,7 +10,7 @@ import at.qe.sepm.skeleton.services.PlayerService;
 import at.qe.sepm.skeleton.services.UserService;
 
 @Controller
-@Scope("session")
+@Scope("view")
 public class AddPlayerBean {
 
     private PlayerService playerService;
@@ -53,12 +53,12 @@ public class AddPlayerBean {
     }
 
     public boolean validateInput(){
-        if(username == null || userService.loadUser(username) != null || username.length() < 3){
+        if(username == null || userService.loadUser(username) != null || username.length() < 3 || username.length() > 100){
             // TODO message username already taken
             return false;
         }
 
-        if(password == null || password.length() < 3){
+        if(password == null || password.length() < 3 || password.length() > 100){
             // TODO same pw validation as w/ manager creation || or just make one long boolean exp
             return false;
         }

@@ -33,6 +33,12 @@
             <qc:stat value="#{statUtil.msToString(cc.attrs.player.playTime)}" label="time played" />
             <qc:stat value="#{statUtil.roundPercent(cc.attrs.player.playerAccuracy)}" label="accuracy" />
             <qc:stat value="#{cc.attrs.player.totalAnswers}" label="questions answered" />
+            <!-- TODO
+            <qc:stat value="# {profileBean.player.totalScore}" label="total score" />
+            <qc:stat value="# {profileBean.player.correctAnswersCount}" label="correct answers" />
+            <qc:stat value="# {profileBean.player.totalAnswers - profileBean.player.correctAnswersCount}" label="wrong answers" />
+            <qc:stat value="# {profileBean.player.lastGameScores[9]}" label="score of last game" />
+            -->
         </h:panelGroup>
     </cc:implementation>
 </html>
