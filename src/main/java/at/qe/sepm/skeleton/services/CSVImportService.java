@@ -1,7 +1,11 @@
 package at.qe.sepm.skeleton.services;
 
 import at.qe.sepm.skeleton.model.*;
+import at.qe.sepm.skeleton.ui.beans.MessageBean;
+import at.qe.sepm.skeleton.ui.beans.QSOverviewBean;
 import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvBadConverterException;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Stream;
 
 @Service
 public class CSVImportService {
@@ -28,25 +33,45 @@ public class CSVImportService {
     @Autowired
     private QuestionService questionService;
 
+    @Autowired
+    private ManagerService managerService;
+
     private QuestionSet questionSet;
 
     public void init(String location) {
         Path CSVLocation = Paths.get(location);
+        Manager manager = getAuthorManagerfromDB();
+       /*Iterator iterator = FileUtils.iterateFiles(CSVLocation.toFile(), null, false);
+        while (iterator.hasNext()){
+            importQuestionSetFromCSV(iterator.next(), manager, "Name", "DESC");
+        }
+        */
+       File dir = new File(CSVLocation.toUri());
+       File [] dirlisting = dir.listFiles();
+       if (dirlisting != null) {
+           for (File child : dirlisting){
+               importQuestionSetFromCSV(child, manager, child.getName(), "This is a QuestionSet about " + child.getName());
+           }
+       }
+       else {
+           return;
+       }
+
         // get manager from db
         // TODO call CSV import method for all files in CSVLocation
     }
 
     public void importQuestionSetFromCSV(File file, Manager manager, String name, String description){
-
+        arrayToDatabase(addQuestionsFromCSV(file), name, description);
     }
 
-    private List<String> questionVariables = new ArrayList<>(Arrays.asList("getWrongAnswerString_1","getWrongAnswerString_2","getWrongAnswerString_3","getWrongAnswerString_4","getWrongAnswerString_5"));
+    //private List<String> questionVariables = new ArrayList<>(Arrays.asList("getWrongAnswerString_1","getWrongAnswerString_2","getWrongAnswerString_3","getWrongAnswerString_4","getWrongAnswerString_5"));
 
 
-    private List<List<String>> addQuestionsFromCSV() {
+    private List<List<String>> addQuestionsFromCSV(File file) {
         logger.info("addQuestionsFromCSV invoked");
         List<List<String>> records = new ArrayList<List<String>>();
-        try (CSVReader csvReader = new CSVReader(new InputStreamReader(new FileInputStream(filename.toFile())))) {
+        try (CSVReader csvReader = new CSVReader(new InputStreamReader(new FileInputStream(file)))) {
             String[] values;
             while ((values = csvReader.readNext()) != null) {
                 records.add(Arrays.asList(values));
@@ -56,7 +81,7 @@ public class CSVImportService {
             e.printStackTrace();
         } finally {
             try {
-                Files.deleteIfExists(filename);
+                Files.deleteIfExists(file.toPath());
             } catch (IOException e){
                 logger.error("could not delete");
             }
@@ -64,11 +89,11 @@ public class CSVImportService {
         return records;
     }
 
-    private void arrayToDatabase(List<List<String>> data) {
+    private void arrayToDatabase(List<List<String>> data, String name, String description) {
         logger.info("arrayToDatabase invoked");
 
         questionSet = new QuestionSet();
-        initQuestionSet(); //new QuestionSet, set difficulty, author, name, description, and connect to HashSet of individual questions
+        initQuestionSet(name, description); //new QuestionSet, set difficulty, author, name, description, and connect to HashSet of individual questions
         questionSetService.saveQuestionSet(questionSet);
 
         Set<Question> questions = new HashSet<Question>();
@@ -102,26 +127,33 @@ public class CSVImportService {
         questionSet.setQuestions(questions);
 
         // add them to the internal list used in the ui:repeat to show it without time-consuming load from the DB
-        QSOverviewBean.addQuestionSetForDisplay(questionSet);
+        // QSOverviewBean.addQuestionSetForDisplay(questionSet);
 
         // clear for new import
-        nameCSV = null;
-        descriptionCSV = null;
+        //nameCSV = null;
+        //descriptionCSV = null;
 
         // update to show the new Set
+        /*
         messageBean.updateComponent("formOverview-QSets:overview-QSets");
 
         String message = String.format("Successfully imported CSV");
         messageBean.showGlobalInformation(message);
         messageBean.updateComponent("messages");
+
+         */
     }
 
 
-    public void initQuestionSet() {
+    public void initQuestionSet(String nameCSV, String descriptionCSV) {
         questionSet.setDifficulty(QuestionSetDifficulty.easy);
-        questionSet.setAuthor(manager);
+        questionSet.setAuthor(getAuthorManagerfromDB());
         questionSet.setName(nameCSV);
         questionSet.setDescription(descriptionCSV);
         questionSet.setQuestions(new HashSet<>());
+    }
+
+    private Manager getAuthorManagerfromDB() {
+        return managerService.getManagerById(101);
     }
 }
