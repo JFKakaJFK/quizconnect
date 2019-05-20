@@ -93,24 +93,26 @@ public class FileSystemStorageService implements StorageService {
     /**
      * Stores a file in the service
      *
-     * @return filename of stored file, needed to retrieve file
-     * @throws IOException
+     * @param file to store
+     * @param managerId
+     * @param qSetId
+     * @return
      */
     @Override
-    public String storeAnswer(File file, String managerId) {
-        return store(file, managerId, answers, answerSize, answerType);
+    public String storeAnswer(File file, String managerId, String qSetId) {
+        return store(file, managerId + "/" + qSetId, answers, answerSize, answerType);
     }
 
     /**
      * First stores the stream contents in a temporary directory, resizes the image and
      * then saves it to {root}/{managerId}/{uniqueFilename.ext}
      * @param file
-     * @param managerId
+     * @param pathPrefix
      * @param root
      * @param size
      * @return
      */
-    private String store(File file, String managerId, Path root, int size, String type){
+    private String store(File file, String pathPrefix, Path root, int size, String type){
         String extension = FilenameUtils.getExtension(file.getName());
 
         Path tempFile = null;
@@ -118,9 +120,9 @@ public class FileSystemStorageService implements StorageService {
         try(InputStream inputStream = new FileInputStream(file)) {
             tempFile = Files.createTempFile(temp, "answer", "." + extension);
             Files.copy(inputStream, tempFile, StandardCopyOption.REPLACE_EXISTING);
-            Files.createDirectories(root.resolve(managerId));
+            Files.createDirectories(root.resolve(pathPrefix));
 
-            filePath = imageService.resizeImage(tempFile, root.resolve(managerId), size, size, type);
+            filePath = imageService.resizeImage(tempFile, root.resolve(pathPrefix), size, size, type);
         } catch (IOException e){
             log.error("Failed to store uploaded file in temporary directory");
             return null;
@@ -132,7 +134,7 @@ public class FileSystemStorageService implements StorageService {
             }
         }
 
-        return managerId + "/" + filePath.getFileName();
+        return pathPrefix + "/" + filePath.getFileName();
     }
 
     /**

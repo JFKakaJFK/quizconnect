@@ -54,6 +54,7 @@ public class FileSystemStorageTest {
 
     private File testFile;
     private String manager;
+    private String qSetId;
 
     @Autowired
     public void init(
@@ -69,7 +70,8 @@ public class FileSystemStorageTest {
     @Before
     public void setUp(){
         testFile = new File("src/test/resources/testImage1.jpg");
-        manager = "manager";
+        manager = "101";
+        qSetId = "412";
     }
 
     @Test
@@ -102,7 +104,7 @@ public class FileSystemStorageTest {
     public void testStoreAnswer() throws IOException {
         String rightPath = answers.toString();
 
-        String stored = fileSystemStorageService.storeAnswer(testFile, manager);
+        String stored = fileSystemStorageService.storeAnswer(testFile, manager, qSetId);
 
         Assert.assertTrue("Stored answer exists", Files.exists(answers.resolve(stored)));
         Assert.assertTrue("Stored answer has right path", answers.resolve(stored).toString().contains(rightPath));
@@ -123,7 +125,7 @@ public class FileSystemStorageTest {
     public void testEmptyAnswer() throws IOException {
         File testFile = folder.newFile("testPic.jpg");
 
-        fileSystemStorageService.storeAnswer(testFile, manager);
+        fileSystemStorageService.storeAnswer(testFile, manager, qSetId);
     }
 
     @Test
@@ -160,7 +162,7 @@ public class FileSystemStorageTest {
 
     @Test
     public void testLoadAnswer() throws IOException {
-        String stored = fileSystemStorageService.storeAnswer(testFile, manager);
+        String stored = fileSystemStorageService.storeAnswer(testFile, manager, qSetId);
 
         Path loaded = fileSystemStorageService.loadAnswer(stored);
 
@@ -183,7 +185,7 @@ public class FileSystemStorageTest {
     @Test
     public void testDeleteAnswer() {
 
-        String stored = fileSystemStorageService.storeAnswer(testFile, manager);
+        String stored = fileSystemStorageService.storeAnswer(testFile, manager, qSetId);
 
         fileSystemStorageService.deleteAnswer(stored);
 
