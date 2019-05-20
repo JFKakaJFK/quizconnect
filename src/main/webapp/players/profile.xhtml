@@ -45,7 +45,7 @@
 
                 <ui:fragment rendered="#{statUtil.getGamesPlayed(profileBean.player) == 0}">
                     <div class="box">
-                        No played games
+                        No stats available. #{sessionInfoBean.currentUser.equals(profileBean.player.user) ? 'Play a game to see your stats.' : 'This user has not played yet.'}
                     </div>
                 </ui:fragment>
                 <ui:fragment rendered="#{statUtil.getGamesPlayed(profileBean.player) != 0}">
