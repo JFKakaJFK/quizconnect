@@ -19,6 +19,7 @@ import java.util.List;
  * @author Johannes Koch
  *
  */
+@Deprecated
 @Component
 @Scope("application")
 public class QuestionSetPerformanceService {

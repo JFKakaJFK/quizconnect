@@ -49,5 +49,10 @@ const disconnect = () => {
  * @param event
  */
 const sendEvent = (event) => {
+  try {
     stompClient.send(`${WS_TARGET}/${state.pin}`, {}, JSON.stringify(event));
+  } catch (e) {
+    console.warn('SOCKET: failed to send message')
+  }
+
 };

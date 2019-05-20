@@ -39,7 +39,7 @@
                     <ui:repeat value="#{allPlayersBean.paginator.parts}" var="part">
                         <ui:repeat value="#{part.items}" var="player">
 
-                            <qc:playerbox player="#{player}" online="#{randomOnlineTestBean.online}" rank="Beginner">
+                            <qc:playerbox player="#{player}" online="#{randomOnlineTestBean.online}">
 
                                 <h:commandLink p:class="ml-2" p:data-toggle="modal" p:data-target="#deletePlayer"
                                                rendered="#{allPlayersBean.isDeletable(player)}">
@@ -68,6 +68,7 @@
                 </h:panelGroup>
 
                 <qc:paginator paginator="#{allPlayersBean.paginator}" update=":form:players"/>
+
             </h:panelGroup>
 
             <qc:modal id="addPlayer"

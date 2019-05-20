@@ -12,6 +12,7 @@ import at.qe.sepm.skeleton.model.QuestionSetPerformance;
  * @author Lorenz_Smidt
  *
  */
+@Deprecated
 public interface QuestionSetPerformanceRepository extends AbstractRepository<QuestionSetPerformance, Integer>
 {
 	QuestionSetPerformance findByPlayerAndQuestionSet(Player player, QuestionSet questionSet);

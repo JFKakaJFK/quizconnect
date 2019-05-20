@@ -14,6 +14,7 @@ import org.springframework.data.domain.Persistable;
  * @author Lorenz_Smidt
  *
  */
+@Deprecated
 @Entity
 public class QuestionSetPerformance implements Persistable<Integer>
 {
