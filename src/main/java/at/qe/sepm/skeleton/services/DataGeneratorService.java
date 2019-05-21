@@ -1,8 +1,10 @@
 package at.qe.sepm.skeleton.services;
 
 
-import at.qe.sepm.skeleton.model.*;
-import at.qe.sepm.skeleton.utils.AuthenticationUtil;
+import java.util.HashSet;
+import java.util.Random;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +13,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
+import at.qe.sepm.skeleton.model.Manager;
+import at.qe.sepm.skeleton.model.Player;
+import at.qe.sepm.skeleton.model.Question;
+import at.qe.sepm.skeleton.model.QuestionSet;
+import at.qe.sepm.skeleton.model.QuestionSetDifficulty;
+import at.qe.sepm.skeleton.model.QuestionType;
+import at.qe.sepm.skeleton.model.User;
+import at.qe.sepm.skeleton.utils.AuthenticationUtil;
 
 /**
  * Service for generating test data
@@ -47,9 +53,6 @@ public class DataGeneratorService {
     @Autowired
     QuestionSetService questionSetService;
 
-    @Autowired
-    QuestionSetPerformanceService questionSetPerformanceService;
-
     /**
      * Method to control all following generator-functions
      * Do use getRandomString setters have to be adjusted according to the MaxLength in the JavaDoc
@@ -63,17 +66,15 @@ public class DataGeneratorService {
 
         AuthenticationUtil.configureAuthentication("MANAGER");
 
-        generatePlayer(random.nextInt(20 * countMultiplier) + (30 * countMultiplier));
+        generatePlayer(random.nextInt(10 * countMultiplier)); // +  (30 * countMultiplier));
 
-        generateManager(random.nextInt(5 * countMultiplier) + (10 * countMultiplier));
+        //generateManager(random.nextInt(5 * countMultiplier) + (10 * countMultiplier));
 
-        generateQuestion(random.nextInt( 50 * countMultiplier) + (60 * countMultiplier));
+        //generateQuestion(random.nextInt( 50 * countMultiplier) + (60 * countMultiplier));
 
-        generateQuestionSet(random.nextInt(20 * countMultiplier) + (20 * countMultiplier));
+        //generateQuestionSet(random.nextInt(20 * countMultiplier) + (20 * countMultiplier));
 
-        generateQuestionSetAndQuestions(random.nextInt(20 * countMultiplier) + (10 *countMultiplier));
-
-        generateQuestionSetPerformance(random.nextInt(10 *countMultiplier) + (10 * countMultiplier));
+        //generateQuestionSetAndQuestions(random.nextInt(20 * countMultiplier) + (10 *countMultiplier));
 
         AuthenticationUtil.clearAuthentication();
     }
@@ -258,26 +259,4 @@ public class DataGeneratorService {
         logger.info(count + "QuestionSet and " + count*30 + " Questions have been created");
     }
 
-    /**
-     * Method ro generate QuestionSetPerformances and associated Players (for test purposes only)
-     * MaxLength: Username = 100
-     * @param count
-     */
-    private void generateQuestionSetPerformance(int count){
-        for (int i = 1; i <= count; i++){
-            Manager creator = managerService.getManagerById(101);
-            Random random = new Random();
-
-            QuestionSet questionSet = getQuestionSet(i);
-            questionSetService.saveQuestionSet(questionSet);
-
-            Player player = new Player();
-            player.setCreator(creator);
-            playerService.saveNewPlayer(player, "GeneratedNameForQSP" + i, "passwd" + i);
-
-
-            questionSetPerformanceService.updatePlayerStats(questionSet, player, random.nextInt(50) + 300, random.nextInt(100) + 200);
-        }
-        logger.info(count + " QuestionSetPerformances and " + count + " Players have been created");
-    }
 }

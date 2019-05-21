@@ -1,17 +1,16 @@
 package at.qe.sepm.skeleton.ui.beans;
 
-import at.qe.sepm.skeleton.model.Manager;
-import at.qe.sepm.skeleton.model.Player;
-import at.qe.sepm.skeleton.services.PlayerService;
-import at.qe.sepm.skeleton.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
-import java.util.ArrayList;
+import at.qe.sepm.skeleton.model.Manager;
+import at.qe.sepm.skeleton.model.Player;
+import at.qe.sepm.skeleton.services.PlayerService;
+import at.qe.sepm.skeleton.services.UserService;
 
 @Controller
-@Scope("session")
+@Scope("view")
 public class AddPlayerBean {
 
     private PlayerService playerService;
@@ -22,6 +21,7 @@ public class AddPlayerBean {
 
     private String username = "";
     private String password = "";
+
 
     @Autowired
     public AddPlayerBean(PlayerService playerService,
@@ -45,21 +45,20 @@ public class AddPlayerBean {
             return;
         }
         Player p = new Player();
-        p.setAvatarPath("default/avatar.png"); // TODO more default avatars @Simon
+        p.setAvatarPath(null); // the default avatar is loaded automatically
         p.setCreator(manager);
-        p.setqSetPerformances(new ArrayList<>());
-        playerService.saveNewPlayer(p, username, passwordBean.encodePassword(password));
+		playerService.saveNewPlayer(p, username, passwordBean.encodePassword(password));
         clear();
         allPlayersBean.addPlayer(p);
     }
 
     public boolean validateInput(){
-        if(username == null || userService.loadUser(username) != null || username.length() < 3){
+        if(username == null || userService.loadUser(username) != null || username.length() < 3 || username.length() > 100){
             // TODO message username already taken
             return false;
         }
 
-        if(password == null || password.length() < 3){
+        if(password == null || password.length() < 3 || password.length() > 100){
             // TODO same pw validation as w/ manager creation || or just make one long boolean exp
             return false;
         }

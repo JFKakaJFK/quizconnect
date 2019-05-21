@@ -22,6 +22,7 @@ public interface StorageService {
      * Stores a user avatar {@link File} in the service
      *
      * @param file to store
+     * @param managerId
      * @return filename of the stored file, needed for retrieval of stored file
      * @throws IOException
      */
@@ -31,10 +32,12 @@ public interface StorageService {
      * Stores an answer {@link File} in the service
      *
      * @param file to store
+     * @param managerId
+     * @param qSetId
      * @return filename of the stored file, needed for retrieval of stored file
      * @throws IOException
      */
-    String storeAnswer(File file, String managerId) throws IOException;
+    String storeAnswer(File file, String managerId, String qSetId) throws IOException;
 
     /**
      * Returns a stored avatar
