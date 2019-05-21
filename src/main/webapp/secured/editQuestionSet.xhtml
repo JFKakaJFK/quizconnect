@@ -5,6 +5,9 @@
                 xmlns:qc="http://java.sun.com/jsf/composite/quizconnect"
                 xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
                 template="/WEB-INF/templates/main.xhtml">
+    <ui:define name="site-specific-css">
+        <link rel="stylesheet" type="text/css" href="/resources/css/editquestionset.css"/>
+    </ui:define>
     <ui:define name="content">
         <h:form id="addQuestionToSet">
             <h:panelGroup id="addQ" layout="block" styleClass="boxes px-3">
@@ -34,24 +37,61 @@
                             <f:ajax execute="@this" render=":formQSEdit"/>
                         </h:commandLink>
 
+                        <ui:fragment rendered="#{question.type == 'text'}">
+                            <p>#{question.questionString}</p>
+                            <p>#{question.rightAnswerString}</p>
+                            <p>#{question.wrongAnswerString_1}</p>
+                            <ui:fragment rendered="#{not empty question.wrongAnswerString_2}">
+                                <p>#{question.wrongAnswerString_2}</p>
+                            </ui:fragment>
 
-                        <p>#{question.questionString}</p>
-                        <p>#{question.rightAnswerString}</p>
-                        <p>#{question.wrongAnswerString_1}</p>
-                        <ui:fragment rendered="#{not empty question.wrongAnswerString_2}">
-                            <p>#{question.wrongAnswerString_2}</p>
+                            <ui:fragment rendered="#{not empty question.wrongAnswerString_3}">
+                                <p>#{question.wrongAnswerString_3}</p>
+                            </ui:fragment>
+
+                            <ui:fragment rendered="#{not empty question.wrongAnswerString_4}">
+                                <p>#{question.wrongAnswerString_4}</p>
+                            </ui:fragment>
+
+                            <ui:fragment rendered="#{not empty question.wrongAnswerString_5}">
+                                <p>#{question.wrongAnswerString_5}</p>
+                            </ui:fragment>
                         </ui:fragment>
 
-                        <ui:fragment rendered="#{not empty question.wrongAnswerString_3}">
-                            <p>#{question.wrongAnswerString_3}</p>
-                        </ui:fragment>
+                        <ui:fragment rendered="#{question.type == 'picture'}">
+                            <p>#{question.questionString}</p>
 
-                        <ui:fragment rendered="#{not empty question.wrongAnswerString_4}">
-                            <p>#{question.wrongAnswerString_4}</p>
-                        </ui:fragment>
+                            <h:panelGroup layout="block" id="previewCorrectAnswer" styleClass="preview-overview">
+                                <h:graphicImage pt:id="preview" value="#{answerPictureBean.getAnswers(question.rightAnswerString)}" alt="Right answer picture" />
+                            </h:panelGroup>
 
-                        <ui:fragment rendered="#{not empty question.wrongAnswerString_5}">
-                            <p>#{question.wrongAnswerString_5}</p>
+                            <h:panelGroup layout="block" id="previewWrongAnswer1" styleClass="preview-overview">
+                                <h:graphicImage pt:id="preview" value="#{answerPictureBean.getAnswers(question.wrongAnswerString_1)}" alt="Wrong answer 1 picture" />
+                            </h:panelGroup>
+
+                            <ui:fragment rendered="#{not empty question.wrongAnswerString_2}">
+                                <h:panelGroup layout="block" id="previewWrongAnswer2" styleClass="preview-overview">
+                                    <h:graphicImage pt:id="preview" value="#{answerPictureBean.getAnswers(question.wrongAnswerString_2)}" alt="Wrong answer 2 picture" />
+                                </h:panelGroup>
+                            </ui:fragment>
+
+                            <ui:fragment rendered="#{not empty question.wrongAnswerString_3}">
+                                <h:panelGroup layout="block" id="previewWrongAnswer3" styleClass="preview-overview">
+                                    <h:graphicImage pt:id="preview" value="#{answerPictureBean.getAnswers(question.wrongAnswerString_3)}" alt="Wrong answer 3 picture" />
+                                </h:panelGroup>
+                            </ui:fragment>
+
+                            <ui:fragment rendered="#{not empty question.wrongAnswerString_4}">
+                                <h:panelGroup layout="block" id="previewWrongAnswer4" styleClass="preview-overview">
+                                    <h:graphicImage pt:id="preview" value="#{answerPictureBean.getAnswers(question.wrongAnswerString_4)}" alt="Wrong answer 4 picture" />
+                                </h:panelGroup>
+                            </ui:fragment>
+
+                            <ui:fragment rendered="#{not empty question.wrongAnswerString_5}">
+                                <h:panelGroup layout="block" id="previewWrongAnswer5" styleClass="preview-overview">
+                                    <h:graphicImage pt:id="preview" value="# {answerPictureBean.getAnswers((questionSetBean.filename == null ? questionSetBean.question.questionString : questionSetBean.filename))}" alt="Question picture" />
+                                </h:panelGroup>
+                            </ui:fragment>
                         </ui:fragment>
                     </qc:generic-box>
                 </ui:repeat>
@@ -61,58 +101,128 @@
 
 
         <h:form id="changesForQuestion">
-            <qc:modal target="questionEditModal" id="editModal" closable="false" modaltype="edit" title="Edit Question"
+            <qc:modal target="questionEditModal" id="editModal" closable="false" modaltype="edit" title="Add new Question"
                       abort="Discard changes" confirm="Save" abortAction="#{editQuestionBean.discard}"
                       executeOnAbort="@none" closeOnConfirm="true" confirmAction="#{editQuestionBean.save}" update=":formQSEdit">
-                <div class="form-group">
-                    <label for="question">Question</label>
-                    <h:inputText type="text" styleClass="form-control"
-                                 value="#{editQuestionBean.selectedQuestion.questionString}"
-                                 name="question" id="question" pt:autocomplete="off" pt:required="true" pt:pattern="[\s\S]*\S[\s\S]*"/>
-                    <h:message for="question" styleClass="state-error"/>
-                </div>
 
-                <div class="form-group">
-                    <label for="corrAnswer">Correct answer</label>
-                    <h:inputText type="text" styleClass="form-control"
-                                 value="#{editQuestionBean.selectedQuestion.rightAnswerString}"
-                                 name="corrAnswer" id="corrAnswer" pt:autocomplete="off" pt:required="true" pt:pattern="[\s\S]*\S[\s\S]*"/>
-                </div>
+                <ui:fragment rendered="#{editQuestionBean.selectedQuestion.type == 'text'}">
+                    <div class="form-group">
+                        <label for="question">Question</label>
+                        <h:inputText type="text" styleClass="form-control"
+                                     value="#{editQuestionBean.selectedQuestion.questionString}"
+                                     rendered="#{editQuestionBean.selectedQuestion.type == 'picture'}"
+                                     name="question" id="question" pt:autocomplete="off" pt:required="true" pt:pattern="[\s\S]*\S[\s\S]*"/>
+                        <h:message for="question" styleClass="state-error"/>
+                    </div>
 
-                <div class="form-group">
-                    <label for="wrongAnswer1">Wrong answer #1</label>
-                    <h:inputText type="text" styleClass="form-control"
-                                 value="#{editQuestionBean.selectedQuestion.wrongAnswerString_1}" name="wrongAnswer1"
-                                 pt:required="true" id="wrongAnswer1" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*"/>
-                </div>
+                    <div class="form-group">
+                        <label for="corrAnswer">Correct answer</label>
+                        <h:inputText type="text" styleClass="form-control"
+                                     value="#{editQuestionBean.selectedQuestion.rightAnswerString}"
+                                     rendered="#{editQuestionBean.selectedQuestion.type == 'text'}"
+                                     name="corrAnswer" id="corrAnswer" pt:autocomplete="off" pt:required="true" pt:pattern="[\s\S]*\S[\s\S]*"/>
+                    </div>
 
-                <div class="form-group">
-                    <label for="wrongAnswer2">Wrong answer #2</label>
-                    <h:inputText type="text" styleClass="form-control"
-                                 value="#{editQuestionBean.selectedQuestion.wrongAnswerString_2}" name="wrongAnswer2"
-                                 id="wrongAnswer2" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*"/>
-                </div>
+                    <div class="form-group">
+                        <label for="wrongAnswer1">Wrong answer #1</label>
+                        <h:inputText type="text" styleClass="form-control"
+                                     value="#{editQuestionBean.selectedQuestion.wrongAnswerString_1}" name="wrongAnswer1"
+                                     rendered="#{editQuestionBean.selectedQuestion.type == 'text'}"
+                                     pt:required="true" id="wrongAnswer1" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*"/>
+                    </div>
 
-                <div class="form-group">
-                    <label for="wrongAnswer3">Wrong answer #3</label>
-                    <h:inputText type="text" styleClass="form-control"
-                                 value="#{editQuestionBean.selectedQuestion.wrongAnswerString_3}" name="wrongAnswer3"
-                                 id="wrongAnswer3" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*"/>
-                </div>
+                    <div class="form-group">
+                        <label for="wrongAnswer2">Wrong answer #2</label>
+                        <h:inputText type="text" styleClass="form-control"
+                                     value="#{editQuestionBean.selectedQuestion.wrongAnswerString_2}" name="wrongAnswer2"
+                                     rendered="#{editQuestionBean.selectedQuestion.type == 'text'}"
+                                     id="wrongAnswer2" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*"/>
+                    </div>
 
-                <ui:fragment rendered="#{not empty editQuestionBean.selectedQuestion.wrongAnswerString_4}">
-                    <label for="wrongAnswer4">Wrong answer #4</label>
-                    <h:inputText type="text" styleClass="form-control"
-                                 value="#{editQuestionBean.selectedQuestion.wrongAnswerString_4}" name="wrongAnswer4"
-                                 id="wrongAnswer4" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*"/>
+                    <div class="form-group">
+                        <label for="wrongAnswer3">Wrong answer #3</label>
+                        <h:inputText type="text" styleClass="form-control"
+                                     value="#{editQuestionBean.selectedQuestion.wrongAnswerString_3}" name="wrongAnswer3"
+                                     rendered="#{editQuestionBean.selectedQuestion.type == 'text'}"
+                                     id="wrongAnswer3" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*"/>
+                    </div>
+
+                    <ui:fragment rendered="#{not empty editQuestionBean.selectedQuestion.wrongAnswerString_4}">
+                        <label for="wrongAnswer4">Wrong answer #4</label>
+                        <h:inputText type="text" styleClass="form-control"
+                                     value="#{editQuestionBean.selectedQuestion.wrongAnswerString_4}" name="wrongAnswer4"
+                                     id="wrongAnswer4" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*"/>
+                    </ui:fragment>
+
+                    <ui:fragment rendered="#{not empty editQuestionBean.selectedQuestion.wrongAnswerString_5}">
+                        <label for="wrongAnswer5">Wrong answer #5</label>
+                        <h:inputText type="text" styleClass="form-control"
+                                     value="#{editQuestionBean.selectedQuestion.wrongAnswerString_5}" name="wrongAnswer5"
+                                     id="wrongAnswer5" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*"/>
+                    </ui:fragment>
                 </ui:fragment>
 
-                <ui:fragment rendered="#{not empty editQuestionBean.selectedQuestion.wrongAnswerString_5}">
-                    <label for="wrongAnswer5">Wrong answer #5</label>
-                    <h:inputText type="text" styleClass="form-control"
-                                 value="#{editQuestionBean.selectedQuestion.wrongAnswerString_5}" name="wrongAnswer5"
-                                 id="wrongAnswer5" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*"/>
+                <ui:fragment rendered="#{editQuestionBean.selectedQuestion.type == 'picture'}">
+                    <div class="form-group">
+                        <label for="questionPicture">Question</label>
+                        <h:inputText type="text" styleClass="form-control"
+                                     value="#{editQuestionBean.selectedQuestion.questionString}"
+                                     rendered="#{editQuestionBean.selectedQuestion.type == 'picture'}"
+                                     name="question" id="questionPicture" pt:autocomplete="off" pt:required="true" pt:pattern="[\s\S]*\S[\s\S]*"/>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="corrAnswerPicture">Correct answer</label>
+                        <h:panelGroup styleClass="preview-overview" layout="block">
+                            <h:graphicImage pt:id="corrAnswerPicture" id="corrAnswerPicture" styleClass="preview-overview" value="#{answerPictureBean.getAnswers(question.rightAnswerString)}" alt="Right answer picture" />
+                        </h:panelGroup>
+
+                        <qc:upload target="#{questionSetBean.file}"
+                                   listenerString="#{questionSetBean.handleFileUpload('rightAnswerString')}"
+                                   listener="#{questionSetBean.none}"
+                                   accept="image/*"
+                                   text="Upload Picture"
+                                   update="questionForm:rightAnswerString"
+                        />
+
+                    </div>
+
+                    <div class="form-group">
+                        <label for="wrongAnswer1Picture">Wrong answer #1</label>
+                        <h:panelGroup styleClass="preview-overview" layout="block">
+                            <h:graphicImage pt:id="corrAnswer1Picture" id="wrongAnswer1Picture" styleClass="preview-overview" value="#{answerPictureBean.getAnswers(question.wrongAnswerString_1)}" alt="Right answer picture" />
+                        </h:panelGroup>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="wrongAnswer2Picture">Wrong answer #2</label>
+                        <h:panelGroup styleClass="preview-overview" layout="block">
+                            <h:graphicImage pt:id="wrongAnswer2Picture" id="wrongAnswer2Picture" styleClass="preview-overview" value="#{answerPictureBean.getAnswers(question.wrongAnswerString_2)}" alt="Right answer picture" />
+                        </h:panelGroup>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="wrongAnswer3Picture">Wrong answer #3</label>
+                        <h:panelGroup styleClass="preview-overview" layout="block">
+                            <h:graphicImage pt:id="wrongAnswer3Picture" id="wrongAnswer3Picture" styleClass="preview-overview" value="#{answerPictureBean.getAnswers(question.wrongAnswerString_3)}" alt="Right answer picture" />
+                        </h:panelGroup>
+                    </div>
+
+                    <ui:fragment rendered="#{not empty editQuestionBean.selectedQuestion.wrongAnswerString_4}">
+                        <label for="wrongAnswer4Picture">Wrong answer #4</label>
+                        <h:panelGroup styleClass="preview-overview" layout="block">
+                            <h:graphicImage pt:id="wrongAnswer4Picture" id="wrongAnswer4Picture" styleClass="preview-overview" value="#{answerPictureBean.getAnswers(question.wrongAnswerString_4)}" alt="Right answer picture" />
+                        </h:panelGroup>
+                    </ui:fragment>
+
+                    <ui:fragment rendered="#{not empty editQuestionBean.selectedQuestion.wrongAnswerString_5}">
+                        <label for="wrongAnswer5">Wrong answer #5</label>
+                        <h:panelGroup styleClass="preview-overview" layout="block">
+                            <h:graphicImage pt:id="wrongAnswer5Picture" id="wrongAnswer5Picture" styleClass="preview-overview" value="#{answerPictureBean.getAnswers(question.wrongAnswerString_5)}" alt="Right answer picture" />
+                        </h:panelGroup>
+                    </ui:fragment>
                 </ui:fragment>
+
             </qc:modal>
         </h:form>
     </ui:define>

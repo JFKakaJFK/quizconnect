@@ -100,22 +100,25 @@
                     <label for="question">Question</label>
                     <h:inputText type="text" styleClass="form-control"
                                  value="#{questionSetBean.question.questionString}"
-                                 rendered="#{questionSetBean.question.type == 'text'}"
                                  name="question" id="question" pt:autocomplete="off" pt:required="true" pt:pattern="[\s\S]*\S[\s\S]*"/>
                     <h:message for="question" styleClass="state-error"/>
 
-                    <qc:upload target="#{questionSetBean.file}"
+
+                    <!--
+                    <qc:upload target="# {questionSetBean.file}"
                                listenerString="#{questionSetBean.handleFileUpload('questionString')}"
-                               listener="#{questionSetBean.none}"
+                               listener="# {questionSetBean.none}"
                                accept="image/*"
                                text="Upload Picture"
-                               rendered="#{questionSetBean.question.type == 'picture'}"
+                               rendered="# {questionSetBean.question.type == 'picture'}"
                                update="questionForm:previewQuestion"
                     />
 
-                    <h:panelGroup layout="block" id="previewQuestion" styleClass="preview" rendered="#{questionSetBean.question.type == 'picture'}">
-                        <h:graphicImage pt:id="preview" value="#{answerPictureBean.getAnswers((questionSetBean.filename == null ? questionSetBean.question.questionString : questionSetBean.filename))}" alt="Question picture" />
+                    <h:panelGroup layout="block" id="previewQuestion" styleClass="preview" rendered="# {questionSetBean.question.type == 'picture'}">
+                        <h:graphicImage pt:id="preview" value="# {answerPictureBean.getAnswers((questionSetBean.filename == null ? questionSetBean.question.questionString : questionSetBean.filename))}" alt="Question picture" />
                     </h:panelGroup>
+
+                    -->
                 </div>
 
                 <div class="form-group">
