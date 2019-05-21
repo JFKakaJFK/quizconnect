@@ -31,52 +31,26 @@ import java.util.*;
 
 public class CSVImportBean implements Serializable {
 
-
     private static final Logger logger = LoggerFactory.getLogger(ChangeAvatarBean.class);
-
-    @Autowired
-    private QuestionSetService questionSetService;
-
-    @Autowired
-    private QuestionService questionService;
-
-    @Autowired
-    private QSOverviewBean QSOverviewBean;
-
-    @Autowired
-    private MessageBean messageBean;
-
-    private List<String> questionVariables = new ArrayList<>(Arrays.asList("getWrongAnswerString_1","getWrongAnswerString_2","getWrongAnswerString_3","getWrongAnswerString_4","getWrongAnswerString_5"));
 
     private Path temp;
 
     private String nameCSV;
     private String descriptionCSV;
 
-    private QuestionSet questionSet;
-    private Question question;
-
-    private StorageService storageService;
-    private PlayerService playerService;
-    private ManagerService managerService;
-
     @Autowired
-    public CSVImportBean(StorageService storageService,
-                         PlayerService playerService,
-                         ManagerService managerService,
+    public CSVImportBean(CSVImportService csvImportService,
                          @Value("${storage.uploads.temporary}") String temp) {
-        assert storageService != null;
-        assert playerService != null;
-        assert managerService != null;
-        this.storageService = storageService;
-        this.playerService = playerService;
-        this.managerService = managerService;
+        assert csvImportService != null;
+
         this.temp = Paths.get(temp);
+        this.csvImportService = csvImportService;
     }
 
     private Path filename = null;
     private File file;
     private Manager manager;
+    private CSVImportService csvImportService;
 
 
     @PostConstruct
