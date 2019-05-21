@@ -3,6 +3,7 @@ package at.qe.sepm.skeleton.services;
 import at.qe.sepm.skeleton.model.*;
 import at.qe.sepm.skeleton.ui.beans.MessageBean;
 import at.qe.sepm.skeleton.ui.beans.QSOverviewBean;
+import at.qe.sepm.skeleton.utils.AuthenticationUtil;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvBadConverterException;
 import org.apache.commons.io.FileUtils;
@@ -41,11 +42,12 @@ public class CSVImportService {
     public void init(String location) {
         Path CSVLocation = Paths.get(location);
         Manager manager = getAuthorManagerfromDB();
+        //AuthenticationUtil.configureAuthentication("MANAGER");
        /*Iterator iterator = FileUtils.iterateFiles(CSVLocation.toFile(), null, false);
         while (iterator.hasNext()){
             importQuestionSetFromCSV(iterator.next(), manager, "Name", "DESC");
         }
-        */
+
        File dir = new File(CSVLocation.toUri());
        File [] dirlisting = dir.listFiles();
        if (dirlisting != null) {
@@ -56,6 +58,8 @@ public class CSVImportService {
        else {
            return;
        }
+
+        */
 
         // get manager from db
         // TODO call CSV import method for all files in CSVLocation
