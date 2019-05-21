@@ -3,11 +3,11 @@
         PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:composite="http://java.sun.com/jsf/composite"
+      xmlns:cc="http://java.sun.com/jsf/composite"
       xmlns:h="http://java.sun.com/jsf/html" xmlns:c="http://java.sun.com/jsp/jstl/core"
       xml:lang="en"
       lang="en">
-    <composite:interface name="box">
+    <cc:interface name="box">
 
         <!--=============================================
 
@@ -24,25 +24,25 @@
         - TODO: Adapt
 
         ==============================================-->
-        <composite:attribute name="styleClass" default="" />
-        <composite:attribute name="size" default="md" />
-        <composite:attribute name="align" default="center" />
-        <composite:attribute name="showSettings" default="true" />
-        <composite:attribute method-signature="void action()" name="editAction" />
-        <composite:attribute name="editIcon" default="fas fa-cog" />
-        <composite:attribute name="showEdit" default="false"/>
-        <composite:attribute method-signature="void action()" name="deleteAction" />
-        <composite:attribute name="deleteIcon" default="fas fa-cog" />
-        <composite:attribute name="showDelete" default="false" />
-        <composite:attribute name="update"/>
+        <cc:attribute name="styleClass" default="" />
+        <cc:attribute name="size" default="md" />
+        <cc:attribute name="align" default="center" />
+        <cc:attribute name="showSettings" default="true" />
+        <cc:attribute method-signature="void action()" name="editAction" />
+        <cc:attribute name="editIcon" default="fas fa-cog" />
+        <cc:attribute name="showEdit" default="false"/>
+        <cc:attribute method-signature="void action()" name="deleteAction" />
+        <cc:attribute name="deleteIcon" default="fas fa-cog" />
+        <cc:attribute name="showDelete" default="false" />
+        <cc:attribute name="update"/>
 
-    </composite:interface>
+    </cc:interface>
 
-    <composite:implementation>
+    <cc:implementation>
         <h:panelGroup layout="block" styleClass="box box-#{cc.attrs.size} box-#{cc.attrs.align} #{cc.attrs.styleClass}">
                 <h:commandLink rendered="#{cc.attrs.showEdit}" id="editLink" action="#{cc.attrs.editAction}"><i class="#{cc.attrs.editIcon}"></i></h:commandLink>
                 <h:commandLink rendered="#{cc.attrs.showDelete}" id="deleteLink" action="#{cc.attrs.deleteAction}"><i class="#{cc.attrs.deleteIcon}"></i></h:commandLink>
-            <composite:insertChildren/>
+            <cc:insertChildren/>
         </h:panelGroup>
-    </composite:implementation>
+    </cc:implementation>
 </html>
