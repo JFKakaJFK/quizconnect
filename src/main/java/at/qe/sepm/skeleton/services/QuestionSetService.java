@@ -29,7 +29,7 @@ import at.qe.sepm.skeleton.repositories.QuestionSetRepository;
 @Scope("application")
 public class QuestionSetService {
 
-    private Logger log = LoggerFactory.getLogger(QuestionSetPerformanceService.class);
+	private Logger log = LoggerFactory.getLogger(QuestionSetService.class);
 
     @Autowired
     QuestionSetRepository questionSetRepositoryRepository;

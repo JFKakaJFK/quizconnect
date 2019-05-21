@@ -18,6 +18,7 @@ import org.springframework.stereotype.Controller;
 
 import at.qe.sepm.skeleton.model.Player;
 import at.qe.sepm.skeleton.model.QuestionSet;
+import at.qe.sepm.skeleton.services.PlayerService;
 
 /**
  * Manager for creating and joining {@link QuizRoom}s.
@@ -37,6 +38,9 @@ public class QuizRoomManager implements ApplicationListener<ContextRefreshedEven
 	@Autowired
 	@Qualifier("threadPoolTaskScheduler")
 	ThreadPoolTaskScheduler taskScheduler;
+	
+	@Autowired
+	PlayerService playerService;
 	
 	private HashMap<Integer, QuizRoom> rooms;
 	
@@ -137,6 +141,14 @@ public class QuizRoomManager implements ApplicationListener<ContextRefreshedEven
 	public boolean doesRoomExist(int pin)
 	{
 		return rooms.containsKey(pin);
+	}
+	
+	/**
+	 * Returns an Instance of the PlayerService. For use by {@link QuizRoom} only! Needed to update the stats of the Players at the end of a game.
+	 */
+	public PlayerService getPlayerService()
+	{
+		return playerService;
 	}
 	
 	/**

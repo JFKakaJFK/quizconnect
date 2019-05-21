@@ -12,6 +12,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 
+@Deprecated // TODO remove
 @Controller
 public class QCUploadTestController {
 

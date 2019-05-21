@@ -1,15 +1,15 @@
 package at.qe.sepm.skeleton.services;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
-import at.qe.sepm.skeleton.model.Manager;
-import at.qe.sepm.skeleton.model.QuestionSetPerformance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
+import at.qe.sepm.skeleton.model.Manager;
 import at.qe.sepm.skeleton.model.Player;
 import at.qe.sepm.skeleton.model.User;
 import at.qe.sepm.skeleton.repositories.PlayerRepository;
@@ -124,6 +124,10 @@ public class PlayerService
 		User savedUser = userService.saveUser(newUser);
 		
 		player.setUser(savedUser); // set player user
+		player.setPlayedWithLast(null);
+		player.setqSetPlayCounts(new HashMap<Integer, Integer>());
+		player.setLastScores(new HashMap<Long, Integer>());
+		player.setHighScore(0);
 		Player savedPlayer = playerRepository.save(player); // save player to DB
 		
 		savedUser.setPlayer(savedPlayer); // automatically sets role

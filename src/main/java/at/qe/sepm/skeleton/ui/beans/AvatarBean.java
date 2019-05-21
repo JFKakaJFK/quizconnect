@@ -24,6 +24,9 @@ public class AvatarBean {
     }
 
     public String getAvatar(Player player) {
+        if(player == null){
+            return "";
+        }
         String path = player.getAvatarPath();
         if(path == null || !path.matches(".*/.*\\.(png|jpg)")){
             return "https://avatars.dicebear.com/v2/" + TYPE + "/" + player.getUser().getUsername() + ".svg";

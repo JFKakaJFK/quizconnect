@@ -17,6 +17,7 @@ import at.qe.sepm.skeleton.model.Player;
 import at.qe.sepm.skeleton.model.Question;
 import at.qe.sepm.skeleton.model.QuestionSet;
 import at.qe.sepm.skeleton.model.QuestionSetDifficulty;
+import at.qe.sepm.skeleton.services.PlayerService;
 
 /**
  * Class representing a QuizRoom containing all major logic required. For illustrations on how this class works please see the 'Documentation' folder.
@@ -58,8 +59,10 @@ public class QuizRoom implements IPlayerAction
 	private volatile List<Question> questionsPoolEasy; // list of all unused easy questions
 	private volatile List<Question> questionsPoolHard; // list of all unused hard questions
 	private volatile int completedQuestions; // total number of answered questions
-	private volatile int correctlyAnsweredQuestions; // number of correctly answered questions
+	private volatile HashMap<Player, Integer> correctlyAnsweredQuestions; // map for storing number of correctly answered Questions per player
+	private volatile HashMap<Player, Integer> totalAnsweredQuestions; // map for storing total number of Questions answered per player
 	private volatile int missingQuestions; // number of players without questions (used for hot-joining the room)
+	private volatile long gameStartTime; // time stamp of game start, used for play time calculation
 	
 	private volatile List<Player> players; // players in the room
 	private IRoomAction playerInterface; // interface for all players
@@ -118,16 +121,17 @@ public class QuizRoom implements IPlayerAction
 		
 		numReshuffleJokers = defaultNumberJokers;
 		completedQuestions = 0;
-		correctlyAnsweredQuestions = 0;
+		correctlyAnsweredQuestions = new HashMap<>();
+		totalAnsweredQuestions = new HashMap<>();
 		missingQuestions = 0;
 		score = 0;
 		
 		activeQuestions = new LinkedList<>();
-		activeByQuestionId = new HashMap<>(maxPlayers);
-		playerQuestions = new HashMap<>(maxPlayers);
-		playerAnswers = new HashMap<>(maxPlayers);
-		playerActivityTimestamps = new HashMap<>(maxPlayers);
-		playerAlivePingTimestamps = new HashMap<>(maxPlayers);
+		activeByQuestionId = new HashMap<>();
+		playerQuestions = new HashMap<>();
+		playerAnswers = new HashMap<>();
+		playerActivityTimestamps = new HashMap<>();
+		playerAlivePingTimestamps = new HashMap<>();
 		inactivePlayers = new LinkedList<>();
 		
 		readyPlayers = new LinkedList<>();
@@ -369,6 +373,9 @@ public class QuizRoom implements IPlayerAction
 		playerQuestions.put(player, null);
 		playerAnswers.put(player, new LinkedList<>());
 		
+		correctlyAnsweredQuestions.put(player, 0);
+		totalAnsweredQuestions.put(player, 0);
+		
 		eventCall(x -> {
 			x.onPlayerJoin(pin, player);
 		});
@@ -379,7 +386,7 @@ public class QuizRoom implements IPlayerAction
 			long now = new Date().getTime();
 			playerActivityTimestamps.put(player, now);
 			playerAlivePingTimestamps.put(player, now);
-			
+
 			// add additional question to distribute on next call
 			missingQuestions++;
 		}
@@ -461,6 +468,8 @@ public class QuizRoom implements IPlayerAction
 		
 		playerActivityTimestamps.remove(player);
 		playerAlivePingTimestamps.remove(player);
+		correctlyAnsweredQuestions.remove(player);
+		totalAnsweredQuestions.remove(player);
 	}
 	
 	/**
@@ -479,6 +488,7 @@ public class QuizRoom implements IPlayerAction
 		}
 		
 		wfpMode = false;
+		gameStartTime = new Date().getTime();
 		
 		eventCall(x -> {
 			x.onGameStart(pin);
@@ -499,13 +509,47 @@ public class QuizRoom implements IPlayerAction
 		
 		wfpMode = true; // prevent processing of any frameUpdate calls on any runtime structures
 		
-		// TODO update player stats
+		// update player stats
+		updatePlayerStats();
 		
 		delayQueue.clear();
 		timerFrameUpdate.stop();
 		manager.removeRoom(pin);
 		
 		LOGGER.debug("QuizRoom [" + pin + "] closed after " + timerFrameUpdate.getElapsedTime() + " ms.");
+	}
+	
+	/**
+	 * Updates the statistics of all Players currently in the Room with the tracked values. Called at the end of a game.
+	 */
+	private void updatePlayerStats()
+	{
+		PlayerService playerService = manager.getPlayerService();
+		long endTime = new Date().getTime();
+		long gameTime = endTime - gameStartTime;
+		for (Player player : players)
+		{
+			player.addToTotalScore(score);
+			player.addPlayTime(gameTime);
+			player.setPlayedWithLast(players);
+			player.addPlayToQSets(questionSets);
+			player.addGameScore(endTime, score);
+			
+			if (!correctlyAnsweredQuestions.containsKey(player))
+				LOGGER.error("### ERROR ### Missing correct answers entry for Player (id " + player.getId() + ")!");
+			else
+				player.AddCorrectAnswers(correctlyAnsweredQuestions.get(player));
+			
+			if (!totalAnsweredQuestions.containsKey(player))
+				LOGGER.error("### ERROR ### Missing total answers entry for Player (id " + player.getId() + ")!");
+			else
+				player.addTotalAnswers(totalAnsweredQuestions.get(player));
+			
+			if (score > player.getHighScore())
+				player.setHighScore(score);
+			
+			playerService.savePlayer(player);
+		}
 	}
 	
 	/**
@@ -885,11 +929,22 @@ public class QuizRoom implements IPlayerAction
 		if (index == 0 && q.playerAnswer == p)
 		{
 			changeScore(q.questionDifficulty == QuestionSetDifficulty.easy ? 2 : 3, q.timeRemaining);
+			
+			if (!correctlyAnsweredQuestions.containsKey(p))
+				LOGGER.error("### ERROR ### Missing correctly answered entry for Player (id " + p.getId() + ")!");
+			else
+				correctlyAnsweredQuestions.put(p, correctlyAnsweredQuestions.get(p) + 1);
 		}
 		else
 		{
 			changeScore(q.questionDifficulty == QuestionSetDifficulty.easy ? 0 : 1, q.timeRemaining);
 		}
+		
+		if (!totalAnsweredQuestions.containsKey(p))
+			LOGGER.error("### ERROR ### Missing total answered entry for Player (id " + p.getId() + ")!");
+		else
+			totalAnsweredQuestions.put(p, totalAnsweredQuestions.get(p) + 1);
+		
 		removeQuestion(q);
 		
 		distributeQuestion();
@@ -916,11 +971,9 @@ public class QuizRoom implements IPlayerAction
 			break;
 		case 2:
 			score += (difficulty == RoomDifficulty.easy ? 100 : 125) + (int) (timeRemaining / 1000);
-			correctlyAnsweredQuestions++;
 			break;
 		case 3:
 			score += (difficulty == RoomDifficulty.easy ? 125 : 150) + (int) (timeRemaining / 1000);
-			correctlyAnsweredQuestions++;
 			break;
 		case 4:
 			score -= (difficulty == RoomDifficulty.easy ? 50 : 75);
