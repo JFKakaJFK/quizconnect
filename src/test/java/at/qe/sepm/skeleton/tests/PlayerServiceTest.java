@@ -385,17 +385,17 @@ public class PlayerServiceTest
 	{
 		Player player = playerService.getPlayerById(201);
 		assertNotNull("Player not loaded!", player);
-		assertEquals("Map already contains entries!", 0, player.getqSetPlayCounts().size());
+		assertEquals("Map already contains wrong number of entries!", 1, player.getqSetPlayCounts().size());
 		
 		List<QuestionSet> qsets = new ArrayList<>();
 		qsets.add(questionSetService.getQuestionSetById(300));
 		qsets.add(questionSetService.getQuestionSetById(301));
 		
 		player.addPlayToQSets(qsets);
-		assertEquals("Map doesn't contain entries for newly added QuestionSets!", 2, player.getqSetPlayCounts().size());
+		assertEquals("Map doesn't contain entries for newly added QuestionSets!", 3, player.getqSetPlayCounts().size());
 		
 		Player savedPlayer = playerService.savePlayer(player);
-		assertEquals("Map doesn't contain entries for newly added QuestionSets on savedPlayer!", 2, savedPlayer.getqSetPlayCounts().size());
+		assertEquals("Map doesn't contain entries for newly added QuestionSets on savedPlayer!", 3, savedPlayer.getqSetPlayCounts().size());
 		
 		Map<Integer, Integer> map = savedPlayer.getqSetPlayCounts();
 		assertEquals("Map missing entry for QSet 300", true, map.containsKey(300));
@@ -415,7 +415,7 @@ public class PlayerServiceTest
 		int[] values1 = player.getLastGameScores();
 		assertEquals("Array has wrong size!", 10, values1.length);
 		assertEquals("Array has wrong value!", 0, values1[0]);
-		assertEquals("Array has wrong value!", 0, values1[9]);
+		assertEquals("Array has wrong value!", 1435, values1[9]);
 		
 		player.addGameScore(1000, 80085);
 		player.addGameScore(2000, 1337);
@@ -452,7 +452,7 @@ public class PlayerServiceTest
 		int[] values1 = player.getLastGameScores();
 		assertEquals("Array has wrong size!", 10, values1.length);
 		assertEquals("Array has wrong value!", 0, values1[0]);
-		assertEquals("Array has wrong value!", 0, values1[9]);
+		assertEquals("Array has wrong value!", 1435, values1[9]);
 		
 		for (int i = 1; i < 13; i++)
 		{
