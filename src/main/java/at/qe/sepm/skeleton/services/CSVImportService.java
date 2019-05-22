@@ -48,6 +48,7 @@ public class CSVImportService {
         this.managerService = managerService;
     }
 
+    // TODO Description String has to be adjusted -- Difficulty has to be adapted
     public void init(String location) {
         Path CSVLocation = Paths.get(location);
         manager = getAuthorManagerFromDB();
@@ -95,6 +96,7 @@ public class CSVImportService {
         return records;
     }
 
+    // TODO check for accurate arguments
     private void arrayToDatabase(List<List<String>> data, String name, String description) {
         logger.info("arrayToDatabase invoked");
 
