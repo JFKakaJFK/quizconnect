@@ -48,28 +48,21 @@ public class CSVImportService {
         this.managerService = managerService;
     }
 
-    // TODO Description String has to be adjusted -- Difficulty has to be adapted
-    public void init(String location) {
+    // TODO Fix it
+    public void init(String location) throws NoSuchElementException {
         Path CSVLocation = Paths.get(location);
         manager = getAuthorManagerFromDB();
 
         File directory = new File(CSVLocation.toUri());
         File [] directoryListing = directory.listFiles();
-        if (directoryListing != null) {
-           for (File current : directoryListing){
-               importQuestionSetFromCSV(current, manager, current.getName(), "This is a QuestionSet about " + current.getName());
-               logger.info("QuestionSet with name " + current.getName() + " was added");
-           }
+        if (directoryListing == null) {
+            throw new NoSuchElementException("Directory with QuestionSets CSVs cannot be null");
         }
-        else {
-            logger.info("Directory for QuestionSets is empty");
-            return;
-        }
-
+        Arrays.stream(directoryListing).forEach(set -> importQuestionSetFromCSV(set , manager, set.getName(), "This is a QuestionSet about " + stringModifier(set.getName())));
     }
 
     public void importQuestionSetFromCSV(File file, Manager manager, String name, String description){
-        arrayToDatabase(addQuestionsFromCSV(file), name, description);
+        arrayToDatabase(addQuestionsFromCSV(file), manager, name, description);
     }
 
     //private List<String> questionVariables = new ArrayList<>(Arrays.asList("getWrongAnswerString_1","getWrongAnswerString_2","getWrongAnswerString_3","getWrongAnswerString_4","getWrongAnswerString_5"));
@@ -97,11 +90,11 @@ public class CSVImportService {
     }
 
     // TODO check for accurate arguments
-    private void arrayToDatabase(List<List<String>> data, String name, String description) {
+    private void arrayToDatabase(List<List<String>> data, Manager manager, String name, String description) {
         logger.info("arrayToDatabase invoked");
 
         questionSet = new QuestionSet();
-        initQuestionSet(name, description); //new QuestionSet, set difficulty, author, name, description, and connect to HashSet of individual questions
+        initQuestionSet(manager, name, description); //new QuestionSet, set difficulty, author, name, description, and connect to HashSet of individual questions
         questionSetService.saveQuestionSet(questionSet);
 
         Set<Question> questions = new HashSet<Question>();
@@ -152,11 +145,30 @@ public class CSVImportService {
          */
     }
 
+    /**
+     * Initializes QuestionSet and defines Difficulty by checking nameCSV ending number
+     * Currently does not work with Upload --> TODO
+     * @param nameCSV
+     * @param descriptionCSV
+     */
+    private void initQuestionSet(Manager manager, String nameCSV, String descriptionCSV) {
+        if (nameCSV.contains("1")){
+            questionSet.setDifficulty(QuestionSetDifficulty.easy);
+        }
+        else if (nameCSV.contains("2")){
+            questionSet.setDifficulty(QuestionSetDifficulty.hard);
+        }
+        else{
+            questionSet.setDifficulty(QuestionSetDifficulty.easy);
+        }
 
-    public void initQuestionSet(String nameCSV, String descriptionCSV) {
-        questionSet.setDifficulty(QuestionSetDifficulty.easy);
-        questionSet.setAuthor(getAuthorManagerFromDB());
-        questionSet.setName(nameCSV);
+        if (nameCSV.contains(".csv")){
+            questionSet.setName(stringModifier(nameCSV));
+        }
+        else{
+            questionSet.setName(nameCSV);
+        }
+        questionSet.setAuthor(manager);
         questionSet.setDescription(descriptionCSV);
         questionSet.setQuestions(new HashSet<>());
     }
@@ -165,4 +177,16 @@ public class CSVImportService {
         AuthenticationUtil.configureAuthentication("MANAGER");
         return managerService.getManagerById(101);
     }
+
+    /**
+     * This way of changing the name of QSet is ugly and has to replaced
+     * @param string
+     * @return
+     */
+    private String stringModifier(String string){
+        string = string.replaceFirst(string.substring(0,1), string.substring(0, 1).toUpperCase());
+        string = string.substring(0, string.length()-6);
+        return string;
+    }
+
 }
