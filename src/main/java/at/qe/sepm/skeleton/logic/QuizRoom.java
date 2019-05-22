@@ -52,12 +52,6 @@ public class QuizRoom implements IPlayerAction
 	private volatile long timerSyncTime; // ms since last timer sync
 	
 	private List<QuestionSet> questionSets;
-	/*
-	private volatile List<Question> questionsPoolEasy; // list of all unused easy questions
-	private volatile List<Question> questionsPoolHard; // list of all unused hard questions
-	private volatile int completedQuestions; // total number of answered questions
-	private volatile int missingQuestions; // number of players without questions (used for hot-joining the room)
-	*/
 	private volatile HashMap<Player, Integer> correctlyAnsweredQuestions; // map for storing number of correctly answered Questions per player
 	private volatile HashMap<Player, Integer> totalAnsweredQuestions; // map for storing total number of Questions answered per player
 	private volatile long gameStartTime; // time stamp of game start, used for play time calculation
@@ -66,12 +60,6 @@ public class QuizRoom implements IPlayerAction
 	protected IRoomAction playerInterface; // interface for all players
 	private volatile List<DelayedAction> delayQueue; // queue of delayed actions
 	
-	/*
-	private volatile List<ActiveQuestion> activeQuestions; // list of currently active questions
-	private volatile HashMap<Integer, ActiveQuestion> activeByQuestionId; // map for finding active questions by the qid;
-	private volatile HashMap<Player, ActiveQuestion> playerQuestions; // map for storing assigned questions of players
-	private volatile HashMap<Player, List<ActiveQuestion>> playerAnswers; // map for storing assigned answers of players, both right and wrong
-	*/
 	private volatile HashMap<Player, Long> playerActivityTimestamps; // map for storing activity time stamps of players
 	private volatile int score; // current room score
 	private volatile int numReshuffleJokers; // number of jokers available
@@ -80,9 +68,7 @@ public class QuizRoom implements IPlayerAction
 	
 	private volatile List<Player> readyPlayers; // list of players who declared themselves ready
 	protected volatile boolean wfpMode; // true if the room is in 'waiting for players' mode
-	/*
-	private volatile boolean isJokerTimeout; // true while joker timeout is going on (= time between joker call and distribution of new questions)
-	*/
+	
 	/**
 	 * Initializes a new QR.
 	 * 
