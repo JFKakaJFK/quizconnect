@@ -62,7 +62,7 @@ public class Main extends SpringBootServletInitializer {
                            @Value("${storage.questionsets.csv.location}") String location) {
         return (args) -> {
             storageService.init();
-            //csvImportService.init(location);
+            csvImportService.init(location);
         };
     }
 

@@ -28,38 +28,44 @@ public class CSVImportService {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired
+
     private QuestionSetService questionSetService;
-
-    @Autowired
     private QuestionService questionService;
-
-    @Autowired
     private ManagerService managerService;
 
     private QuestionSet questionSet;
 
+    private Manager manager;
+
+    @Autowired
+    public CSVImportService(QuestionSetService questionSetService, QuestionService questionService, ManagerService managerService){
+        assert questionSetService != null;
+        assert questionService != null;
+        assert managerService != null;
+
+        this.questionService = questionService;
+        this.questionSetService = questionSetService;
+        this.managerService = managerService;
+    }
+
     public void init(String location) {
         Path CSVLocation = Paths.get(location);
-        Manager manager = getAuthorManagerfromDB();
-        //AuthenticationUtil.configureAuthentication("MANAGER");
-       /*Iterator iterator = FileUtils.iterateFiles(CSVLocation.toFile(), null, false);
-        while (iterator.hasNext()){
-            importQuestionSetFromCSV(iterator.next(), manager, "Name", "DESC");
+        AuthenticationUtil.configureAuthentication("MANAGER");
+        manager = getAuthorManagerFromDB();
+
+        File directory = new File(CSVLocation.toUri());
+        File [] directoryListing = directory.listFiles();
+        if (directoryListing != null) {
+           for (File current : directoryListing){
+               importQuestionSetFromCSV(current, manager, current.getName(), "This is a QuestionSet about " + current.getName());
+               logger.info("QuestionSet with name " + current.getName() + " was added");
+           }
+        }
+        else {
+            logger.info("Directory for QuestionSets is empty");
+            return;
         }
 
-       File dir = new File(CSVLocation.toUri());
-       File [] dirlisting = dir.listFiles();
-       if (dirlisting != null) {
-           for (File child : dirlisting){
-               importQuestionSetFromCSV(child, manager, child.getName(), "This is a QuestionSet about " + child.getName());
-           }
-       }
-       else {
-           return;
-       }
-
-        */
 
         // get manager from db
         // TODO call CSV import method for all files in CSVLocation
@@ -151,13 +157,13 @@ public class CSVImportService {
 
     public void initQuestionSet(String nameCSV, String descriptionCSV) {
         questionSet.setDifficulty(QuestionSetDifficulty.easy);
-        questionSet.setAuthor(getAuthorManagerfromDB());
+        questionSet.setAuthor(getAuthorManagerFromDB());
         questionSet.setName(nameCSV);
         questionSet.setDescription(descriptionCSV);
         questionSet.setQuestions(new HashSet<>());
     }
 
-    private Manager getAuthorManagerfromDB() {
+    private Manager getAuthorManagerFromDB() {
         return managerService.getManagerById(101);
     }
 }
