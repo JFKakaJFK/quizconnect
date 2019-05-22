@@ -50,7 +50,6 @@ public class CSVImportService {
 
     public void init(String location) {
         Path CSVLocation = Paths.get(location);
-        AuthenticationUtil.configureAuthentication("MANAGER");
         manager = getAuthorManagerFromDB();
 
         File directory = new File(CSVLocation.toUri());
@@ -66,9 +65,6 @@ public class CSVImportService {
             return;
         }
 
-
-        // get manager from db
-        // TODO call CSV import method for all files in CSVLocation
     }
 
     public void importQuestionSetFromCSV(File file, Manager manager, String name, String description){
@@ -164,6 +160,7 @@ public class CSVImportService {
     }
 
     private Manager getAuthorManagerFromDB() {
+        AuthenticationUtil.configureAuthentication("MANAGER");
         return managerService.getManagerById(101);
     }
 }
