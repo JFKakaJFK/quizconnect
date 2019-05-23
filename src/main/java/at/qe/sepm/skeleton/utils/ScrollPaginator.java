@@ -62,6 +62,10 @@ public class ScrollPaginator <T> {
      * bigger than the following parts.
      */
     private void update(){
+        if(all.isEmpty()){
+            this.parts = new ArrayList<>(0);
+            return;
+        }
         this.parts = new ArrayList<>(((int) (((float) all.size()) / (float) partSize)) + 1);
         // first Part gets more items
         parts.add(new ScrollPart<>(all.subList(0, Math.min(all.size(), INITIAL_PART_SIZE * partSize))));
