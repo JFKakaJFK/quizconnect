@@ -21,10 +21,11 @@ const REMOVE_QUESTION = "removeQuestion";
  *
  * @param response
  */
+let messagesHandled = false;
 let infoHandled = false;
 const handleServerEvent = (response) => {
   // do nothing if event is no action
-  if(response === undefined || response.event === "success" || response.event === "error"){
+  if(response === undefined || response.event === null || response.event === "success" || response.event === "error"){
     return;
   }
   if(!infoHandled && response.event !== ROOM_INFO){
@@ -64,10 +65,18 @@ const handleServerEvent = (response) => {
       return handleKick(response);
     case PLAYER_LEAVE:
       return handlePlayerLeave(response);
+    case CHAT_MESSAGE:
+      return handleChatMessage(response);
     default:
       if(!infoHandled && response.event === ROOM_INFO){
         infoHandled = true;
-        return handleRoomInfo(response);
+        handleRoomInfo(response);
+        return getChatMessages();
+      } else if(!messagesHandled && response.event === CHAT_MESSAGES) {
+        messagesHandled = true;
+        return handleChatMessages(response);
+      } else if(!messagesHandled){
+        getChatMessages();
       } else {
         console.debug(`SERVER: received '${response.event}' event`)
       }
@@ -83,7 +92,7 @@ const handleRoomInfo = ({ pin, difficulty, mode, questionSets, score, alivePingI
   setState({
     state,
     alivePing: state === INGAME ? setInterval(sendAlivePing, alivePingInterval - 50) : null, // TODO always set aliveping once backend supports it
-    gameSessionTimer: setInterval(updateLocalStorage(), 45000),
+    gameSessionTimer: setInterval(updateLocalStorage, 10 * 1000),
     info: {
       settings: {
         pin,
@@ -117,6 +126,8 @@ const handleReadyUp = ({ playerId }) => {
       }),
     },
   });
+  let p = state.info.players.find(p => p.id === playerId);
+  if(p !== undefined) showChatMessage(`${p.username} is ready`);
   console.debug(`SERVER: player ${playerId} is ready`);
 };
 
@@ -127,6 +138,7 @@ const handlePlayerJoin = ({ player }) => {
       players: state.info.players.concat([player])
     },
   });
+  showChatMessage(`${player.username} joined the game`);
   console.debug(`SERVER: player ${player.id} joined`);
 };
 
@@ -137,6 +149,8 @@ const handlePlayerLeave = ({ playerId }) => {
       players: state.info.players.filter(p => p.id !== playerId),
     }
   });
+  let p = state.info.players.find(p => p.id === playerId);
+  if(p !== undefined) showChatMessage(`${p.username} left the game`);
   console.debug(`SERVER: player ${playerId} left`)
 };
 
@@ -171,6 +185,7 @@ const handleGameEnd = (event) => {
   setState({
     state: FINISHED,
   });
+  showChatMessage(`Game ended.`);
   console.debug(`SERVER: game ended`)
 };
 
@@ -181,6 +196,7 @@ const handleJokerUse = ({ remaining }) => {
       jokersLeft: remaining,
     }
   });
+  showChatMessage(`A joker was used`);
   console.debug(`SERVER: joker was used (${remaining} jokers remaining)`)
 };
 
@@ -229,6 +245,8 @@ const handleKick = ({ playerId }) => {
     clearLocalStorage();
     window.location.href = URL_KICKED;
   }
+  let p = state.info.players.find(p => p.id === playerId);
+  if(p !== undefined) showChatMessage(`${p.username} was kicked`);
   console.debug(`SERVER: player ${playerId} was kicked`)
 };
 
@@ -299,4 +317,18 @@ const handleRemoveQuestion = ({ questionId }) => {
     })
   }
   console.debug(`SERVER: question ${questionId} was removed`);
+};
+
+const handleChatMessage = ({ message }) => {
+  setState({
+    messages: state.messages.concat([message]),
+  });
+  console.debug(`SERVER: received '${message.message}' from '${message.from}'`)
+};
+
+const handleChatMessages = ({ messages }) => {
+  setState({
+    messages,
+  });
+  console.debug(`SERVER: received all chat messages`)
 };

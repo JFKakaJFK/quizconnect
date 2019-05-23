@@ -7,7 +7,7 @@ import at.qe.sepm.skeleton.logic.ActiveQuestion;
 import at.qe.sepm.skeleton.logic.QR_Question;
 import at.qe.sepm.skeleton.model.QuestionType;
 
-public class AssignQuestionEvent extends ServerEvent {
+public class AssignQuestionEvent extends SocketEvent {
 
     private int questionId;
     private QuestionType type;

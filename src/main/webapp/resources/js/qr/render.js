@@ -172,10 +172,11 @@ const countdown = (remaining, nodeId) => {
   const node = document.getElementById(nodeId);
   if(remaining > 0){
     console.debug(`COUNTDOWN: ${remaining}`);
-    node.innerHTML = remaining.toString();
+    if(node !== null) node.innerHTML = remaining.toString();
+    showChatMessage(`Game will start in ${remaining}s`);
     setTimeout(() => countdown(remaining - 1, nodeId), 1000)
   } else {
-    node.innerHTML = '0';
+    if(node !== null) node.innerHTML = '0';
   }
 };
 
@@ -192,7 +193,7 @@ const renderLobby = ( {info} ) => {
   }
   console.debug('RENDER: rendering lobby')
 
-  let allReady = info.players.filter(p => !p.ready).length === 0;
+  let allReady = info.players.filter(p => !p.ready).length === 0 && info.players.length > 0;
   if(allReady){
     if(document.getElementById('countdown') === null){
       clearScreen();
@@ -202,7 +203,6 @@ const renderLobby = ( {info} ) => {
       </div>
     `;
       countdown(5, 'countdown');
-      console.log("started timer")
     }
     return;
   }
@@ -509,18 +509,69 @@ const renderGameEnd = ({game}) => {
   }
 };
 
+const renderChatMessage = ({ message, from, playerId, id, timestamp }) => {
+  let ts = new Date(timestamp);
+  let escapedMessage = escapeHTML(message);
+  let escapedFrom = escapeHTML(from);
+  return `<div class="chat chat-message ${state.id === playerId ? 'chat-outgoing' : from === INFO ? 'chat-info' : ''}" data-id="${id}">
+    <span class="chat chat-timestamp">[${ts.getHours()}:${ts.getMinutes()}]</span>
+    ${from === INFO ? '' : `<span class="chat chat-from">${escapedFrom}:</span>`}
+    ${escapedMessage}
+  </div>`
+};
+
+const renderChatMessages = ({ messages }) => {
+  let copy = [...messages];
+
+  const container = document.getElementById('messages');
+  /*
+  const messageNodes = container.querySelectorAll('.message');
+
+
+  // remove already rendered nodes from copy
+  messageNodes.forEach(node => {
+    let nodeId = parseInt(node.getAttribute('data-id'));
+    if(copy.find(msg => msg.id === nodeId) === undefined){ // removes duplicates
+      container.removeChild(node);
+    }
+
+    copy = copy.filter(msg => msg.id !== nodeId);
+  });
+  */
+  if(copy.length > 0){
+    copy.forEach(m => {
+      container.innerHTML += renderChatMessage(m);
+    })
+  }
+  state.messages = []; // remove all rendered messages from state without triggering a rerender
+};
+
+const clearMessages = () => {
+  const MESSAGES = document.getElementById('messages');
+  let lc = MESSAGES.lastChild;
+  while(lc){
+    MESSAGES.removeChild(lc);
+    lc = MESSAGES.lastChild;
+  }
+};
+
+
 const render = (state) => {
+  const container = document.getElementById('messages');
   const start = performance.now();
 
   if(state.timeoutIsActive){
     renderTimeOutModal(state.timeoutRemainingTime);
   }
   if(state.state === INGAME){
-    renderGame(state)
+    renderGame(state);
+    renderChatMessages(state);
   } else if(state.state === LOBBY){
-    renderLobby(state)
+    renderLobby(state);
+    renderChatMessages(state);
   } else if(state.state === FINISHED){
-    renderGameEnd(state)
+    renderGameEnd(state);
+    clearMessages();
   }
 
   const time = performance.now() - start;

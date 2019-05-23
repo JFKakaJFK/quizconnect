@@ -2,7 +2,7 @@ package at.qe.sepm.skeleton.socket.events;
 
 import java.util.List;
 
-public class RoomPlayersEvent extends ServerEvent {
+public class RoomPlayersEvent extends SocketEvent {
 
     private int num;
     private List<PlayerJSON> players;

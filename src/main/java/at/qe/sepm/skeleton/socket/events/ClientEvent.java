@@ -6,6 +6,7 @@ public class ClientEvent {
     private int playerId;
     private int questionId;
     private int answerId;
+    private String message;
 
 
     public ClientEvent(){}
@@ -40,5 +41,13 @@ public class ClientEvent {
 
     public void setAnswerId(int answerId) {
         this.answerId = answerId;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

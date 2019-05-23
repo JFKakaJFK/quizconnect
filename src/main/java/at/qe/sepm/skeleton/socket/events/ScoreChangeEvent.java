@@ -1,6 +1,6 @@
 package at.qe.sepm.skeleton.socket.events;
 
-public class ScoreChangeEvent extends ServerEvent {
+public class ScoreChangeEvent extends SocketEvent {
 
     private int newScore;
 

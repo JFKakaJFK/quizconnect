@@ -58,6 +58,13 @@
             </div>
 
         </div>
+        <div class="chat chat-wrapper">
+            <div id="messages" class="chat chat-messages">
+
+            </div>
+            <input class="chat chat-input" type="text" placeholder="Chat with your teammates..." onkeyup="if(event.key === 'Enter'){sendChatMessage(this.value.substring(0, 100)); this.value = '';}"/>
+        </div>
+
     </div>
 
     <div class="modal fade" id="leave" tabindex="-1" role="dialog" aria-labelledby="leaveModal" aria-hidden="true">
@@ -138,6 +145,7 @@
     <!-- Websocket & QuizRoom JS -->
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script src="../resources/js/qr/util.js"></script>
     <script src="../resources/js/qr/constants.js"></script>
     <script src="../resources/js/qr/render.js"></script>
     <script src="../resources/js/qr/state.js"></script>
@@ -145,6 +153,7 @@
     <script src="../resources/js/qr/server.js"></script>
     <script src="../resources/js/qr/socket.js"></script>
     <script src="../resources/js/qr/join.js"></script>
+    <script src="../resources/js/qr/chat.js"></script>
     <script src="../resources/js/qr/init.js"></script>
 
     <!-- Pushbar JS -->
