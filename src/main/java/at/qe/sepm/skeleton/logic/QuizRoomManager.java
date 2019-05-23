@@ -30,7 +30,6 @@ import at.qe.sepm.skeleton.services.PlayerService;
 @Controller
 public class QuizRoomManager implements ApplicationListener<ContextRefreshedEvent>
 {
-	public static boolean DEBUG = true;
 	private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 	
 	private final int minimumPlayers = 3;
@@ -74,8 +73,6 @@ public class QuizRoomManager implements ApplicationListener<ContextRefreshedEven
 			throw new IllegalArgumentException("QuizRoom max players cannot less than " + minimumPlayers + "!");
 		else if (roomAction == null)
 			throw new IllegalArgumentException("roomAction interface provided cannot be null!");
-		// else if (qSets == null || qSets.size() == 0)
-		// throw new IllegalArgumentException("QuizRoom question sets must contain at least one set!");
 		
 		int newPin = generatePin();
 		QuizRoom newRoom = new QuizRoom(taskScheduler, this, newPin, maxPlayers, difficulty, gameMode, qSets, roomAction);
@@ -170,9 +167,6 @@ public class QuizRoomManager implements ApplicationListener<ContextRefreshedEven
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent arg0)
 	{
-		if (!DEBUG)
-			return;
 		LOGGER.debug("start");
-		// int pin = createRoom(10, RoomDifficulty.easy, GameMode.normal, null);
 	}
 }
