@@ -431,6 +431,58 @@ const renderGame = ( {game} ) => {
   renderJoker(ROOT.querySelector('.joker'), game.jokersLeft);
 };
 
+const r = (min, max) => {
+  return Math.random() * (max - min) + min;
+};
+
+const confettiShower = (times, particleCount = r(50, 100)) => {
+  if(times <= 0){
+    return;
+  }
+  confetti({
+    angle: 270,
+    spread: r(50, 100),
+    particleCount: particleCount,
+    origin: {
+      y: -0.6
+    }
+  });
+  setTimeout(() => confettiShower(times - 1), 300);
+};
+
+const confettiCannon = (times, particleCount = r(50, 100)) => {
+  if(times <= 0){
+    return;
+  }
+  confetti({
+    angle: r(55, 125),
+    spread: r(50, 70),
+    particleCount: particleCount,
+    origin: {
+      y: 0.6
+    }
+  });
+  setTimeout(() => confettiCannon(times - 1), 300);
+};
+
+const fireworks = (end, particleCount = r(50, 100)) => {
+  if(Date.now() > end){
+    return;
+  }
+  confetti({
+    startVelocity: 30,
+    spread: 360,
+    ticks: 60,
+    particleCount: particleCount,
+    origin: {
+      x: Math.random(),
+      // since they fall down, start a bit higher than random
+      y: Math.random() - 0.2
+    }
+  });
+  setTimeout(() => fireworks(end), 300);
+};
+
 const renderGameEnd = ({game}) => {
   if(ROOT.getAttribute('data-state') == null || parseInt(ROOT.getAttribute('data-state')) !== FINISHED) {
     ROOT.setAttribute('data-state', FINISHED.toString());
@@ -446,6 +498,14 @@ const renderGameEnd = ({game}) => {
     </div>
     <a href="/player/home.xhtml" class="btn btn-primary">Home</a>
     `;
+
+    if(game.score > 1500){ // somewhat good
+      fireworks(Date.now() + (10 * 1000)); // for 10s
+    } else if (game.score > 0){
+      confettiCannon(Math.max(3, game.score / 150)); // 3 - 10 times, depending on score
+    } else {
+      confettiShower(1, 5);
+    }
   }
 };
 
