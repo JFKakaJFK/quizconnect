@@ -70,7 +70,8 @@ const handleServerEvent = (response) => {
     default:
       if(!infoHandled && response.event === ROOM_INFO){
         infoHandled = true;
-        return handleRoomInfo(response);
+        handleRoomInfo(response);
+        return getChatMessages();
       } else if(!messagesHandled && response.event === CHAT_MESSAGES) {
         messagesHandled = true;
         return handleChatMessages(response);
@@ -91,7 +92,7 @@ const handleRoomInfo = ({ pin, difficulty, mode, questionSets, score, alivePingI
   setState({
     state,
     alivePing: state === INGAME ? setInterval(sendAlivePing, alivePingInterval - 50) : null, // TODO always set aliveping once backend supports it
-    gameSessionTimer: setInterval(updateLocalStorage(), 45000),
+    gameSessionTimer: setInterval(updateLocalStorage, 10 * 1000),
     info: {
       settings: {
         pin,

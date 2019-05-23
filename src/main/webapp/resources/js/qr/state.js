@@ -36,13 +36,6 @@ let state = {
   messages: [],
 };
 
-// if pin & playerId not set, redirect to join page
-/*
-if(!state.pin || !state.id){
-  window.location.href = URL_JOIN;
-}
-*/
-
 const setState = (newState) => {
   // console.log("new", newState);
 

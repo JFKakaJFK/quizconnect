@@ -88,6 +88,7 @@ const clearLocalStorage = () => {
 
 const updateLocalStorage = () => {
   console.debug('STATE: updating localStorage');
+  console.error('STATE: updating localStorage');
   if(state.state === JOIN || state.state === FINISHED){
     clearLocalStorage();
   } else {
