@@ -2,5 +2,5 @@ package at.qe.sepm.skeleton.logic;
 
 public enum GameMode
 {
-	normal, reverse
+	normal, reverse, mathgod
 }
