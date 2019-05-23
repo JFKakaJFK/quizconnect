@@ -28,8 +28,9 @@ public class QR_QuestionSystem
 {
 	private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 	
-	protected final int playerAnswerSlots = 6; // number of answers a Player can have at most
+	private final int playerAnswerSlots = 6; // number of answers a Player can have at most
 	private final int maxQuestions = 30; // maximum number of questions until game ends
+	private final boolean skipDuplicateQuestions = false; // if true skips loading all Questions with questions / answers matching other Questions.
 	
 	private QuizRoom quizRoom;
 	
@@ -67,13 +68,10 @@ public class QR_QuestionSystem
 		questionsPoolEasy = new LinkedList<>();
 		questionsPoolHard = new LinkedList<>();
 		
-		// TODO generate runtime Question objects depending on game mode
-		
-		if (gameMode == GameMode.normal)
+		if (gameMode == GameMode.normal || gameMode == GameMode.reverse)
 		{
-			/**
-			 * Normal game mode, load all Questions from the QuestionSets, remove duplicate questions / answers, put in appropriate pools depending on difficulty.
-			 */
+			// Normal game mode, load all Questions from the QuestionSets, remove duplicate questions / answers, put in appropriate pools depending on difficulty.
+			
 			Set<String> questionStrings = new HashSet<>();
 			Set<String> rightAnswers = new HashSet<>();
 			int nextID = 1;
@@ -83,7 +81,7 @@ public class QR_QuestionSystem
 				{
 					String questionString = q.getQuestionString().toLowerCase().trim();
 					String rightAnswer = q.getRightAnswerString().toLowerCase().trim();
-					if (questionStrings.contains(questionString) || rightAnswers.contains(rightAnswer))
+					if (skipDuplicateQuestions && (questionStrings.contains(questionString) || rightAnswers.contains(rightAnswer)))
 					{
 						LOGGER.debug("### INFO ### skipped Question on load with duplicate question / answer!");
 						continue;
@@ -91,8 +89,17 @@ public class QR_QuestionSystem
 					questionStrings.add(questionString);
 					rightAnswers.add(rightAnswer);
 					
-					QR_Question nQ = new QR_Question(nextID++, q.getType(), q.getQuestionString(), q.getRightAnswerString(), q.getWrongAnswerString_1(),
-							q.getWrongAnswerString_2(), q.getWrongAnswerString_3(), q.getWrongAnswerString_4(), q.getWrongAnswerString_5());
+					QR_Question nQ;
+					if (gameMode == GameMode.normal)
+					{
+						nQ = new QR_Question(nextID++, q.getType(), q.getQuestionString(), q.getRightAnswerString(), q.getWrongAnswerString_1(),
+								q.getWrongAnswerString_2(), q.getWrongAnswerString_3(), q.getWrongAnswerString_4(), q.getWrongAnswerString_5());
+					}
+					else
+					{
+						nQ = new QR_Question(nextID++, q.getType(), q.getRightAnswerString(), q.getQuestionString(), q.getWrongAnswerString_1(),
+								q.getWrongAnswerString_2(), q.getWrongAnswerString_3(), q.getWrongAnswerString_4(), q.getWrongAnswerString_5());
+					}
 					
 					if (qSet.getDifficulty() == QuestionSetDifficulty.easy)
 						questionsPoolEasy.add(nQ);
@@ -100,6 +107,10 @@ public class QR_QuestionSystem
 						questionsPoolHard.add(nQ);
 				}
 			}
+		}
+		else if (gameMode == GameMode.mathgod)
+		{
+			// TODO generate questions for mathgod mode
 		}
 		LOGGER.debug("### INFO ### QuizRoom loaded " + questionsPoolEasy.size() + " easy Questions and " + questionsPoolHard.size() + " hard Questions.");
 	}

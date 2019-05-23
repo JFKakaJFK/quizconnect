@@ -1,11 +1,11 @@
 package at.qe.sepm.skeleton.socket.events;
 
-import at.qe.sepm.skeleton.logic.ActiveQuestion;
-import at.qe.sepm.skeleton.model.Question;
-import at.qe.sepm.skeleton.model.QuestionType;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import at.qe.sepm.skeleton.logic.ActiveQuestion;
+import at.qe.sepm.skeleton.logic.QR_Question;
+import at.qe.sepm.skeleton.model.QuestionType;
 
 public class AssignQuestionEvent extends ServerEvent {
 
@@ -19,7 +19,7 @@ public class AssignQuestionEvent extends ServerEvent {
     public AssignQuestionEvent(){}
 
     public AssignQuestionEvent(ActiveQuestion aq){
-        Question q = aq.question;
+		QR_Question q = aq.question;
         this.questionId = q.getId();
         this.type = q.getType();
         this.question = q.getQuestionString();
