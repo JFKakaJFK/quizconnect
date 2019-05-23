@@ -108,7 +108,23 @@ public class Player implements Persistable<Integer>
 	public String getPlayerRank()
 	{
 		long actualScore = (long) (stat_totalScore * getPlayerAccuracy());
-		if (actualScore < 5000)
+		if (actualScore < -100000)
+			return "Just stop playing (please)";
+		else if (actualScore < -80000)
+			return "Falling off the earth";
+		else if (actualScore < -60000)
+			return "Austrialian Astronaut";
+		else if (actualScore < -40000)
+			return "Australian";
+		else if (actualScore < -20000)
+			return "Squid";
+		else if (actualScore < -10000)
+			return "Atlantis";
+		else if (actualScore < -5000)
+			return "Submarine";
+		else if (actualScore < 0)
+			return "Scuba Diver";
+		else if (actualScore < 5000)
 			return "Noob";
 		else if (actualScore < 10000)
 			return "Beginner";
