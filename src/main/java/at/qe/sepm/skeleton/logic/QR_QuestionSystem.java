@@ -32,7 +32,7 @@ public class QR_QuestionSystem
 	private final int maxQuestions = 30; // maximum number of questions until game ends
 	private final boolean skipDuplicateQuestions = false; // if true skips loading all Questions with questions / answers matching other Questions.
 	
-	private QuizRoom quizRoom;
+	private QuizRoom quizRoom; // static reference to associated QuizRoom
 	
 	private volatile List<QR_Question> questionsPoolEasy; // list of all unused easy questions
 	private volatile List<QR_Question> questionsPoolHard; // list of all unused hard questions
