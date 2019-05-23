@@ -4,9 +4,11 @@ import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +18,12 @@ import at.qe.sepm.skeleton.model.Question;
 import at.qe.sepm.skeleton.model.QuestionSet;
 import at.qe.sepm.skeleton.model.QuestionSetDifficulty;
 
+/**
+ * System for any Question management of a {@link QuizRoom}. Each QR has one of these systems during runtime. Handles Question loading / generation, distribution, and removal.
+ * 
+ * @author Lorenz_Smidt
+ *
+ */
 public class QR_QuestionSystem
 {
 	private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
@@ -25,8 +33,8 @@ public class QR_QuestionSystem
 	
 	private QuizRoom quizRoom;
 	
-	private volatile List<Question> questionsPoolEasy; // list of all unused easy questions
-	private volatile List<Question> questionsPoolHard; // list of all unused hard questions
+	private volatile List<QR_Question> questionsPoolEasy; // list of all unused easy questions
+	private volatile List<QR_Question> questionsPoolHard; // list of all unused hard questions
 	private volatile int completedQuestions; // total number of answered questions
 	private volatile int missingQuestions; // number of players without questions (used for hot-joining the room)
 
@@ -52,7 +60,7 @@ public class QR_QuestionSystem
 	}
 	
 	/**
-	 * Called on QuizRoom creation; Loads all Questions contained in the QuestionSets to be used into the respective pools.
+	 * Called on QuizRoom creation; Loads / generates all Questions to be used into the respective pools.
 	 */
 	private void loadQuestions(GameMode gameMode, List<QuestionSet> questionSets)
 	{
@@ -61,14 +69,36 @@ public class QR_QuestionSystem
 		
 		// TODO generate runtime Question objects depending on game mode
 		
-		for (QuestionSet qSet : questionSets)
+		if (gameMode == GameMode.normal)
 		{
-			for (Question q : qSet.getQuestions())
+			/**
+			 * Normal game mode, load all Questions from the QuestionSets, remove duplicate questions / answers, put in appropriate pools depending on difficulty.
+			 */
+			Set<String> questionStrings = new HashSet<>();
+			Set<String> rightAnswers = new HashSet<>();
+			int nextID = 1;
+			for (QuestionSet qSet : questionSets)
 			{
-				if (qSet.getDifficulty() == QuestionSetDifficulty.easy)
-					questionsPoolEasy.add(q);
-				else if (qSet.getDifficulty() == QuestionSetDifficulty.hard)
-					questionsPoolHard.add(q);
+				for (Question q : qSet.getQuestions())
+				{
+					String questionString = q.getQuestionString().toLowerCase().trim();
+					String rightAnswer = q.getRightAnswerString().toLowerCase().trim();
+					if (questionStrings.contains(questionString) || rightAnswers.contains(rightAnswer))
+					{
+						LOGGER.debug("### INFO ### skipped Question on load with duplicate question / answer!");
+						continue;
+					}
+					questionStrings.add(questionString);
+					rightAnswers.add(rightAnswer);
+					
+					QR_Question nQ = new QR_Question(nextID++, q.getType(), q.getQuestionString(), q.getRightAnswerString(), q.getWrongAnswerString_1(),
+							q.getWrongAnswerString_2(), q.getWrongAnswerString_3(), q.getWrongAnswerString_4(), q.getWrongAnswerString_5());
+					
+					if (qSet.getDifficulty() == QuestionSetDifficulty.easy)
+						questionsPoolEasy.add(nQ);
+					else if (qSet.getDifficulty() == QuestionSetDifficulty.hard)
+						questionsPoolHard.add(nQ);
+				}
 			}
 		}
 		LOGGER.debug("### INFO ### QuizRoom loaded " + questionsPoolEasy.size() + " easy Questions and " + questionsPoolHard.size() + " hard Questions.");
@@ -78,6 +108,7 @@ public class QR_QuestionSystem
 	 * Called from QuizRoom when a new Player joins; Creates all needed data structures.
 	 * 
 	 * @param player
+	 *            Player to be added.
 	 */
 	protected synchronized void addPlayer(Player player)
 	{
@@ -89,6 +120,7 @@ public class QR_QuestionSystem
 	 * Called from QuizRoom when a Player leaves; Removes all player data structures and re-distributes questions if necessary.
 	 * 
 	 * @param player
+	 *            Player to be removed.
 	 */
 	protected synchronized void removePlayer(Player player)
 	{
@@ -125,7 +157,7 @@ public class QR_QuestionSystem
 			else
 			{
 				LOGGER.error(
-						"Illegal state for ActiveQuestion detected - playerAnswers has AQ registered but AQ not player as playerAnswer or playersWrongAnswers!");
+						"Illegal state for ActiveQuestion detected - playerAnswers has AQ registered but AQ does not player as playerAnswer or playersWrongAnswers!");
 			}
 		}
 		
@@ -246,14 +278,14 @@ public class QR_QuestionSystem
 			return;
 		}
 		
-		AbstractMap.SimpleEntry<Question, QuestionSetDifficulty> pair = selectQuestion();
+		AbstractMap.SimpleEntry<QR_Question, QuestionSetDifficulty> pair = selectQuestion();
 		if (pair == null)
 		{ // close when no more Questions available or if maximum number of Questions answered.
 			quizRoom.onRoomClose();
 			return;
 		}
 		
-		Question question = pair.getKey();
+		QR_Question question = pair.getKey();
 		
 		List<Player> questionFreePlayers = new ArrayList<>(); // players with no questions
 		List<Player> answerFreePlayers = new ArrayList<>(); // players with open answer slots (multiple slots open = multiple times in list)
@@ -338,7 +370,7 @@ public class QR_QuestionSystem
 	/**
 	 * Returns a Question (+ its difficulty) at random from either the easy or the hard pool (depending on emptiness / difficulty) or null if game end reached.
 	 */
-	private AbstractMap.SimpleEntry<Question, QuestionSetDifficulty> selectQuestion()
+	private AbstractMap.SimpleEntry<QR_Question, QuestionSetDifficulty> selectQuestion()
 	{
 		Random random = new Random();
 		int bound = quizRoom.difficulty == RoomDifficulty.easy ? 66 : 33;
@@ -365,7 +397,7 @@ public class QR_QuestionSystem
 			easy = false;
 		}
 		
-		Question question;
+		QR_Question question;
 		if (easy)
 		{
 			int index = random.nextInt(questionsPoolEasy.size());
@@ -379,7 +411,7 @@ public class QR_QuestionSystem
 			questionsPoolHard.remove(index);
 		}
 		
-		return new AbstractMap.SimpleEntry<Question, QuestionSetDifficulty>(question, easy ? QuestionSetDifficulty.easy : QuestionSetDifficulty.hard);
+		return new AbstractMap.SimpleEntry<QR_Question, QuestionSetDifficulty>(question, easy ? QuestionSetDifficulty.easy : QuestionSetDifficulty.hard);
 	}
 	
 	/**
@@ -393,6 +425,7 @@ public class QR_QuestionSystem
 		long playerBonus = 5000; // ms added for each player in the room
 		double scaleFactor = 0.3; // factor affecting time reduction towards end of game
 		
+		// TODO change times depending on gamemode
 		long base = 0;
 		if (quizRoom.difficulty == RoomDifficulty.easy)
 		{
@@ -496,7 +529,6 @@ public class QR_QuestionSystem
 	 */
 	protected synchronized void useJoker()
 	{
-		
 		for (int i = activeQuestions.size() - 1; i >= 0; i--)
 		{
 			ActiveQuestion aq = activeQuestions.get(i);

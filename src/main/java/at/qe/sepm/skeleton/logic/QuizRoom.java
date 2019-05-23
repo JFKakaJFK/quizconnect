@@ -272,8 +272,6 @@ public class QuizRoom implements IPlayerAction
 			}
 		}
 	}
-	
-	
 
 	/**
 	 * Called by the {@link QuizRoomManager} if a Player tries to join the QuizRoom.

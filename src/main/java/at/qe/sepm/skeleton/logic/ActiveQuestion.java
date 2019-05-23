@@ -3,22 +3,26 @@ package at.qe.sepm.skeleton.logic;
 import java.util.List;
 
 import at.qe.sepm.skeleton.model.Player;
-import at.qe.sepm.skeleton.model.Question;
 import at.qe.sepm.skeleton.model.QuestionSetDifficulty;
 
+/**
+ * Class representing a Question currently in play (= distributed to at least 2 players). The remaining time to answer this question is also saved within this data structure.
+ * 
+ * @author Lorenz_Smidt
+ *
+ */
 public class ActiveQuestion
 {
-	public Question question;
+	public QR_Question question;
 	public QuestionSetDifficulty questionDifficulty;
 	public Player playerQuestion;
 	public Player playerAnswer;
 	public List<Player> playersWrongAnswers;
 	public long timeRemaining;
 	
-	public ActiveQuestion(Question question, QuestionSetDifficulty difficulty, Player playerQuestion, Player playerAnswer, List<Player> playersWrongAnswers,
+	public ActiveQuestion(QR_Question question, QuestionSetDifficulty difficulty, Player playerQuestion, Player playerAnswer, List<Player> playersWrongAnswers,
 			long timeRemaining)
 	{
-		super();
 		this.question = question;
 		this.questionDifficulty = difficulty;
 		this.playerQuestion = playerQuestion;
