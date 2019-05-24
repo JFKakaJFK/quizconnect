@@ -11,7 +11,8 @@
     display: grid;
 
     overflow-y: scroll;
-    align-items: end;
+    /* align-items: end; */
+    grid-auto-rows: 1.5rem;
 }
 
 .chat.chat-input {
