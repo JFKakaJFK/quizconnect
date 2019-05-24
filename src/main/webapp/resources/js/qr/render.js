@@ -7,6 +7,7 @@ const TIMEOUT_MODAL = $('#timeout'); // TODO bootstrap only works w/ jQuery Sele
 // document.getElementById('timeout');
 const TIMEOUT_COUNTER = document.getElementById('timeoutRemainingTime');
 //TIMEOUT_MODAL.querySelector('#timeoutRemainingTime');
+const SHARE_MODAL = $('#sharePin');
 
 /**
  * Clears all elements within the ROOT
@@ -37,6 +38,26 @@ const renderTimeOutModal = (remaining) => {
   setTimeout(() => TIMEOUT_MODAL.modal('hide'), 10000); // TODO?
 };
 
+const copyToClipboard = str => {
+  const el = document.createElement('textarea');  // Create a <textarea> element
+  el.value = str;                                 // Set its value to the string that you want copied
+  el.setAttribute('readonly', '');                // Make it readonly to be tamper-proof
+  el.style.position = 'absolute';
+  el.style.left = '-9999px';                      // Move outside the screen to make it invisible
+  document.body.appendChild(el);                  // Append the <textarea> element to the HTML document
+  const selected =
+    document.getSelection().rangeCount > 0        // Check if there is any content selected previously
+      ? document.getSelection().getRangeAt(0)     // Store selection if found
+      : false;                                    // Mark as false to know no selection existed before
+  el.select();                                    // Select the <textarea> content
+  document.execCommand('copy');                   // Copy - only works as a result of a user action (e.g. click events)
+  document.body.removeChild(el);                  // Remove the <textarea> element
+  if (selected) {                                 // If a selection existed before copying
+    document.getSelection().removeAllRanges();    // Unselect everything on the HTML document
+    document.getSelection().addRange(selected);   // Restore the original selection
+  }
+};
+
 /**
  * Takes in a JS Object with following attributes
  *
@@ -49,6 +70,22 @@ const renderTimeOutModal = (remaining) => {
  * @param info
  */
 const renderGameInfo = ({ settings }) => {
+  const sharePin = document.getElementById('sharePin');
+
+  const sp = sharePin.querySelector('#share_pin');
+  sp.innerHTML = settings.pin.toString().padStart(6, '0');
+
+  const wa = sharePin.querySelector('#share_whatsapp');
+  wa.href = SHARE_WHATSAPP(SHARE_PIN_MESSAGE(settings.pin.toString().padStart(6, '0')));
+
+  const twitter = sharePin.querySelector('#share_twitter');
+  twitter.href = SHARE_TWITTER(SHARE_PIN_MESSAGE(settings.pin.toString().padStart(6, '0')));
+
+  const fb = sharePin.querySelector('#share_fb');
+  fb.href = SHARE_FACEBOOK(SHARE_JOIN_URL(settings.pin.toString().padStart(6, '0')));
+  /* copy to clipboard */
+
+  // TODO share icon
   return `
     <div class="info box">
       <div class="stat">
@@ -64,11 +101,9 @@ const renderGameInfo = ({ settings }) => {
         <p>difficulty</p>
       </div>
       <div class="stat stat-lg pin">
-        <h3>${settings.pin.toString().padStart(6, '0')}${false ? 'share pin here' : ''}</h3> 
+        <h3>${settings.pin.toString().padStart(6, '0')} <a href="#" data-toggle="modal" data-target="#sharePin">Share</a></h3> 
         <p>pin</p>
       </div>
-      ${/* TODO: implement share functionality + copy to clipboard */""}
-      <a href="https://wa.me/?text=${encodeURIComponent(SHARE_PIN_WHATSAPP(settings.pin.toString().padStart(6, '0')))}" target="_blank" rel="noopener noreferrer nofollow">Share via WhatsApp</a>
     </div>
   `;
 };
