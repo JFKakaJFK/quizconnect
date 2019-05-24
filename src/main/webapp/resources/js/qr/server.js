@@ -91,7 +91,7 @@ const handleRoomInfo = ({ pin, difficulty, mode, questionSets, score, alivePingI
   }
   setState({
     state,
-    alivePing: state === INGAME ? setInterval(sendAlivePing, alivePingInterval - 50) : null, // TODO always set aliveping once backend supports it
+    alivePing: setInterval(sendAlivePing, alivePingInterval - 50),
     gameSessionTimer: setInterval(updateLocalStorage, 10 * 1000),
     info: {
       settings: {
@@ -158,7 +158,7 @@ const handlePlayerLeave = ({ playerId }) => {
 const handleGameStart = (event) => {
   sendAlivePing();
   setState({
-    alivePing: setInterval(sendAlivePing, state.info.settings.alivePingInterval - 50), // account for latency
+    // alivePing: setInterval(sendAlivePing, state.info.settings.alivePingInterval - 50), // account for latency // TODO remove
     state: INGAME,
   });
   // TODO or register every 1s & unregister on activity -> only 1 call of cancelTimeout/s
