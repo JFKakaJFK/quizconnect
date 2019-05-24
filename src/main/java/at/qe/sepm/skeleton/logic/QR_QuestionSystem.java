@@ -30,6 +30,7 @@ public class QR_QuestionSystem
 	
 	private final int playerAnswerSlots = 6; // number of answers a Player can have at most
 	private final int maxQuestions = 30; // maximum number of questions until game ends
+	// TODO set to true after test question sets are fixed
 	private final boolean skipDuplicateQuestions = false; // if true skips loading all Questions with questions / answers matching other Questions.
 	
 	private QuizRoom quizRoom; // static reference to associated QuizRoom
@@ -45,6 +46,16 @@ public class QR_QuestionSystem
 	private volatile HashMap<Player, List<ActiveQuestion>> playerAnswers; // map for storing assigned answers of players, both right and wrong
 	private volatile boolean isJokerTimeout; // true while joker timeout is going on (= time between joker call and distribution of new questions)
 	
+	/**
+	 * Creates and initializes a new QR_QuestionSystem.
+	 * 
+	 * @param quizRoom
+	 *            QuizRoom to be associated with this QuestionService.
+	 * @param gameMode
+	 *            GameMode for this QuestionService to operate in.
+	 * @param questionSets
+	 *            List of QuestionSets for the Questions to be loaded form. May be ignored depending on gamemode.
+	 */
 	protected QR_QuestionSystem(QuizRoom quizRoom, GameMode gameMode, List<QuestionSet> questionSets)
 	{
 		this.quizRoom = quizRoom;
@@ -110,7 +121,10 @@ public class QR_QuestionSystem
 		}
 		else if (gameMode == GameMode.mathgod)
 		{
-			// TODO generate questions for mathgod mode
+			// generate questions for mathgod gamemode
+			MathGenerator generator = new MathGenerator();
+			questionsPoolEasy = generator.generateQuestions(QuestionSetDifficulty.easy, maxQuestions, 1);
+			questionsPoolHard = generator.generateQuestions(QuestionSetDifficulty.hard, maxQuestions, 2 * maxQuestions);
 		}
 		LOGGER.debug("### INFO ### QuizRoom loaded " + questionsPoolEasy.size() + " easy Questions and " + questionsPoolHard.size() + " hard Questions.");
 	}
@@ -145,6 +159,10 @@ public class QR_QuestionSystem
 		int redistCount = 0;
 		for (ActiveQuestion activeQuestion : playerAnswers.get(player))
 		{
+			// is AQ already removed?
+			if (!activeByQuestionId.containsKey(activeQuestion.question.getId()))
+				continue;
+			
 			if (activeQuestion.playerAnswer == player)
 			{
 				// return question to appropriate pool and remove from current play
@@ -217,6 +235,9 @@ public class QR_QuestionSystem
 	
 	/**
 	 * Called every frameUpdate from QuizRoom, reduces remaining time and checks for all ActiveQuestions if time has run out. Removes a Question from all Players associated if time has run out.
+	 * 
+	 * @param deltaTime
+	 *            Time in ms since last call to this function.
 	 */
 	protected synchronized void checkQuestionTimes(long deltaTime)
 	{
@@ -242,6 +263,11 @@ public class QR_QuestionSystem
 	
 	/**
 	 * Called every timerSyncTimeStep, calls the onTimerSync event on all Players, sending the current remaining time on the Question timer.
+	 * 
+	 * @param playerInterface
+	 *            IRoomAction interface to be used for the event calls.
+	 * @param pin
+	 *            Pin of the QuizRoom.
 	 */
 	protected synchronized void synchronizeTimers(IRoomAction playerInterface, int pin)
 	{
@@ -379,7 +405,7 @@ public class QR_QuestionSystem
 	}
 	
 	/**
-	 * Returns a Question (+ its difficulty) at random from either the easy or the hard pool (depending on emptiness / difficulty) or null if game end reached.
+	 * @return A Question (+ its difficulty) at random from either the easy or the hard pool (depending on emptiness / difficulty) or null if game end reached.
 	 */
 	private AbstractMap.SimpleEntry<QR_Question, QuestionSetDifficulty> selectQuestion()
 	{
@@ -429,7 +455,9 @@ public class QR_QuestionSystem
 	 * Computes the answer time for a question based on the room difficulty, question difficulty, player count, completed questions count, and some constants.
 	 * 
 	 * @param questionDifficulty
-	 * @return
+	 *            The difficulty of the Question to have a time computed.
+	 * 
+	 * @return The time in ms for the Question to be answered.
 	 */
 	private long computeQuestionTime(QuestionSetDifficulty questionDifficulty)
 	{
@@ -460,6 +488,7 @@ public class QR_QuestionSystem
 	 * Removes the ActiveQuestion from all Players involved (question + answers).
 	 * 
 	 * @param q
+	 *            ActiveQuestion to be removed from play.
 	 */
 	protected synchronized void removeQuestion(ActiveQuestion q)
 	{
@@ -490,10 +519,9 @@ public class QR_QuestionSystem
 	}
 	
 	/**
-	 * Returns an ActiveQuestion by the runtime Question id. Returns null if none was found.
-	 * 
 	 * @param questionId
-	 * @return
+	 *            Runtime id of a QR_Question.
+	 * @return An ActiveQuestion by the runtime QR_Question id. Returns null if none was found (=QR_Question is not currently active).
 	 */
 	protected ActiveQuestion getActiveQuestionById(int questionId)
 	{
