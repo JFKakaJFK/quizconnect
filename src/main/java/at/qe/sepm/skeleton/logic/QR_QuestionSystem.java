@@ -110,7 +110,10 @@ public class QR_QuestionSystem
 		}
 		else if (gameMode == GameMode.mathgod)
 		{
-			// TODO generate questions for mathgod mode
+			// generate questions for mathgod gamemode
+			MathGenerator generator = new MathGenerator();
+			questionsPoolEasy = generator.generateEasyQuestions(maxQuestions, 1);
+			questionsPoolHard = generator.generateHardQuestions(maxQuestions, 2 * maxQuestions);
 		}
 		LOGGER.debug("### INFO ### QuizRoom loaded " + questionsPoolEasy.size() + " easy Questions and " + questionsPoolHard.size() + " hard Questions.");
 	}
