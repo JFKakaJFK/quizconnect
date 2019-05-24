@@ -339,6 +339,13 @@ public class QuizRoom implements IPlayerAction
 			onRoomClose();
 			return;
 		}
+		else if (!wfpMode && players.size() == 2) // not lobby and only one player left
+		{
+			players.remove(player);
+			players.remove(0);
+			onRoomClose();
+			return;
+		}
 		
 		questionSystem.removePlayer(player);
 		players.remove(player);
