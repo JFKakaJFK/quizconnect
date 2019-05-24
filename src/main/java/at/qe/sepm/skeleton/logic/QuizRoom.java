@@ -145,15 +145,15 @@ public class QuizRoom implements IPlayerAction
 		}
 		checkDelayQueue();
 		
+		aliveCheckTime += deltaTime;
+		if (aliveCheckTime >= aliveTimeStep)
+		{
+			checkPlayerAlivePings();
+			aliveCheckTime = 0;
+		}
+		
 		if (!wfpMode) // disable during wfp mode
 		{
-			aliveCheckTime += deltaTime;
-			if (aliveCheckTime >= aliveTimeStep)
-			{
-				checkPlayerAlivePings();
-				aliveCheckTime = 0;
-			}
-			
 			activityCheckTime += deltaTime;
 			if (activityCheckTime >= activityTimeStep)
 			{
@@ -298,6 +298,7 @@ public class QuizRoom implements IPlayerAction
 		
 		correctlyAnsweredQuestions.put(player, 0);
 		totalAnsweredQuestions.put(player, 0);
+		playerAlivePingTimestamps.put(player, new Date().getTime());
 		
 		eventCall(x -> {
 			x.onPlayerJoin(pin, player);
@@ -360,7 +361,6 @@ public class QuizRoom implements IPlayerAction
 		{
 			// initialize time stamps
 			playerActivityTimestamps.put(player, now);
-			playerAlivePingTimestamps.put(player, now);
 		}
 		
 		wfpMode = false;
@@ -668,7 +668,7 @@ public class QuizRoom implements IPlayerAction
 	@Override
 	public synchronized void sendAlivePing(Player p)
 	{
-		if (!playerActivityTimestamps.containsKey(p))
+		if (!playerAlivePingTimestamps.containsKey(p))
 		{
 			LOGGER.error("### ERROR ### [QR " + pin + "] Illegal call to sendAlivePing! Player is not in QuizRoom! (id: " + p.getId() + ")");
 			return;
