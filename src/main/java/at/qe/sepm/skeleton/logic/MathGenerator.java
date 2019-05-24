@@ -150,7 +150,7 @@ public class MathGenerator
 	private QR_Question genEasy_T1(int id)
 	{
 		int[] nums = getNumbers(new numSize[] { numSize.low, numSize.mid, numSize.low });
-		String question = nums[0] + " + " + nums[1] + " * " + nums[2] + " = ?";
+		String question = nums[0] + " + " + nums[1] + " \\cdot " + nums[2] + " = ?";
 		String answer = "= " + (nums[0] + (nums[1] * nums[2]));
 		String wrong1 = "= " + ((nums[0] + nums[1]) * nums[2]);
 		String wrong2 = "= " + ((nums[0] * nums[2]) + nums[1]);
@@ -169,7 +169,7 @@ public class MathGenerator
 	private QR_Question genEasy_T2(int id)
 	{
 		int[] nums = getNumbers(new numSize[] { numSize.low, numSize.mid, numSize.low, numSize.mid });
-		String question = nums[0] + " * " + nums[1] + " - " + nums[2] + " * " + nums[3] + " = ?";
+		String question = nums[0] + " \\cdot " + nums[1] + " - " + nums[2] + " \\cdot " + nums[3] + " = ?";
 		String answer = "= " + ((nums[0] * nums[1]) - (nums[2] * nums[3]));
 		String wrong1 = "= " + (nums[0] * (nums[1] - nums[2]) * nums[3]);
 		String wrong2 = "= " + ((nums[0] * nums[1]) + (nums[2] * nums[3]));
@@ -188,7 +188,7 @@ public class MathGenerator
 	private QR_Question genEasy_T3(int id)
 	{
 		int[] nums = getNumbers(new numSize[] { numSize.low, numSize.mid, numSize.low });
-		String question = nums[0] + " - " + nums[1] + " * " + nums[2] + " = ?";
+		String question = nums[0] + " - " + nums[1] + " \\cdot " + nums[2] + " = ?";
 		String answer = "= " + (nums[0] - (nums[1] * nums[2]));
 		String wrong1 = "= " + ((nums[0] - nums[1]) * nums[2]);
 		String wrong2 = "= " + ((nums[0] * nums[2]) - nums[1]);
@@ -226,7 +226,7 @@ public class MathGenerator
 	private QR_Question genEasy_T5(int id)
 	{
 		int[] nums = getNumbers(new numSize[] { numSize.low, numSize.mid, numSize.low, numSize.mid });
-		String question = nums[0] + " * ( " + nums[1] + " + " + nums[2] + " ) - " + nums[3] + " = ?";
+		String question = nums[0] + " \\cdot ( " + nums[1] + " + " + nums[2] + " ) - " + nums[3] + " = ?";
 		String answer = "= " + (nums[0] * (nums[1] + nums[2]) - nums[3]);
 		String wrong1 = "= " + (nums[0] * (nums[1] - nums[2]) - nums[3]);
 		String wrong2 = "= " + ((nums[0] + 1) * (nums[1] + nums[2]) - nums[3]);
@@ -246,7 +246,7 @@ public class MathGenerator
 	{
 		int[] nums = getNumbers(new numSize[] { numSize.low, numSize.low, numSize.mid });
 		int a = nums[2] * nums[2] - nums[0];
-		String question = "sqrt( " + a + " + " + nums[0] + " ) * " + nums[1] + " = ?";
+		String question = "\\sqrt{" + a + " + " + nums[0] + "} \\cdot " + nums[1] + " = ?";
 		String answer = "= " + (nums[2] * nums[1]);
 		String wrong1 = "= " + (nums[2] * (nums[1] - 1));
 		String wrong2 = "= " + (nums[2] * (nums[1] + 1));
@@ -267,7 +267,7 @@ public class MathGenerator
 		int[] nums = getNumbers(new numSize[] { numSize.low, numSize.low, numSize.low, numSize.low });
 		int a = nums[2] * nums[3];
 		int c = nums[0] * nums[2] + nums[1];
-		String question = "( " + a + " * " + nums[0] + " ) / (" + c + " - " + nums[1] + ") = ?";
+		String question = "\\frac{" + a + " \\cdot " + nums[0] + "} {" + c + " - " + nums[1] + "} = ?";
 		String answer = "= " + (nums[3]);
 		String wrong1 = "= " + (nums[3] + nums[1]);
 		String wrong2 = "= " + (nums[3] * nums[0]);
@@ -286,7 +286,7 @@ public class MathGenerator
 	private QR_Question genHard_T3(int id)
 	{
 		int[] nums = getNumbers(new numSize[] { numSize.high, numSize.mid, numSize.low, numSize.mid });
-		String question = "( " + nums[0] + " - " + nums[1] + " ) * " + nums[2] + " + " + nums[3] + " = ?";
+		String question = "( " + nums[0] + " - " + nums[1] + " ) \\cdot " + nums[2] + " + " + nums[3] + " = ?";
 		String answer = "= " + ((nums[0] - nums[1]) * nums[2] + nums[3]);
 		String wrong1 = "= " + ((nums[0] - nums[1]) * nums[2]);
 		String wrong2 = "= " + ((nums[0] - nums[1] + 1) * nums[2] + nums[3]);
@@ -305,7 +305,7 @@ public class MathGenerator
 	private QR_Question genHard_T4(int id)
 	{
 		int[] nums = getNumbers(new numSize[] { numSize.low, numSize.mid, numSize.low, numSize.high });
-		String question = nums[0] + " * " + nums[1] + " * " + nums[2] + " - " + nums[3] + " = ?";
+		String question = nums[0] + " \\cdot " + nums[1] + " \\cdot " + nums[2] + " - " + nums[3] + " = ?";
 		String answer = "= " + (nums[0] * nums[1] * nums[2] - nums[3]);
 		String wrong1 = "= " + (nums[0] * nums[1] * nums[2]);
 		String wrong2 = "= " + (nums[0] * nums[1] - nums[3]);
@@ -325,7 +325,7 @@ public class MathGenerator
 	{
 		int[] nums = getNumbers(new numSize[] { numSize.low, numSize.low, numSize.low });
 		int a = nums[1] * nums[2] - nums[0];
-		String question = "( " + a + " + " + nums[0] + ") / " + nums[1] + " = ?";
+		String question = "\\frac{" + a + " + " + nums[0] + "} {" + nums[1] + "} = ?";
 		String answer = "= " + (nums[2]);
 		String wrong1 = "= " + (nums[2] + nums[0]);
 		String wrong2 = "= " + (a - nums[2]);
