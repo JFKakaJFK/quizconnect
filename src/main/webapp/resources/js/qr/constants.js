@@ -21,6 +21,8 @@ const MAX_ANSWERS = 6;
 const ANSWERTYPE_TEXT = 'text';
 const ANSWERTYPE_PICTURE = 'picture';
 
+const PREFIX_ANSWER_PICTURE = (path) => `/answers/${path}`;
+
 const SHARE_PIN_WHATSAPP = (pin) =>  `Your QuizConnect pin is ${pin.toString().padStart(6, '0')}:
 
 http://www.${DOMAIN}/quizroom/join.html?pin=${pin.toString().padStart(6, '0')}`; // TODO www subdomain doesnt work for localhost (of couse) but WA needs it to detect it as link

@@ -253,7 +253,7 @@ const renderTextAnswer = (answer) => {
 
 const renderPictureAnswer = (answer) => {
   return {
-    content: `<img src="${answer}" alt="answer image" />`,
+    content: `<img src="${PREFIX_ANSWER_PICTURE(answer)}" alt="answer image" />`,
     classes: 'answer-img',
   };
 };

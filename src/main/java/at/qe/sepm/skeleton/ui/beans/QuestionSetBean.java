@@ -80,7 +80,7 @@ public class QuestionSetBean implements Serializable {
     private String filename = null;
     private File file;
 
-    public void handleFileUpload(String property){
+    public void handleFileUpload(String property, Question question){
         if(file != null){
             logger.debug("file for someone");
             if(filename != null){
@@ -96,10 +96,10 @@ public class QuestionSetBean implements Serializable {
             }
         }
         logger.info("Filename:" + filename);
-        saveQuestionPicture(property);
+        saveQuestionPicture(property, question);
     }
 
-    public void saveQuestionPicture(String property) {
+    public void saveQuestionPicture(String property, Question question) {
         logger.info("---> saveQuestionPicture called! <---");
         if(filename == null){
             return;
@@ -144,17 +144,6 @@ public class QuestionSetBean implements Serializable {
     public void none() {
 
     }
-
-
-
-
-
-
-
-
-
-
-
 
     private void initQuestion() {
         question = new Question();

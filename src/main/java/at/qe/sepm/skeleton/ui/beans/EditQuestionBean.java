@@ -33,6 +33,9 @@ public class EditQuestionBean implements Serializable {
     private List<Question> questions;
     private Question selectedQuestion;
 
+    //indicates that the question is edited and not a new one
+    boolean edit;
+
 
     /**
      * Clicking the edit-button (QuestionSet Overview page) on one of the QuestionSets calls the method with
@@ -53,12 +56,10 @@ public class EditQuestionBean implements Serializable {
     }
 
     public void setNewQuestion() {
+        edit = false;
         selectedQuestion = new Question();
         selectedQuestion.setQuestionSet(questionSet);
         selectedQuestion.setType(QuestionType.text);
-        questionSet.getQuestions().add(selectedQuestion);
-        questions.add(selectedQuestion);
-        logger.info("Added new question to existing set");
     }
 
     public void deleteQuestion(Question question) {
@@ -70,10 +71,15 @@ public class EditQuestionBean implements Serializable {
     }
 
     public void discard() {
-        logger.info("called abort");
+        logger.info("called discard");
     }
 
     public void save() {
+        if (!edit) {
+            questionSet.getQuestions().add(selectedQuestion);
+            questions.add(selectedQuestion);
+            logger.info("Added new question to existing set");
+        }
         questionService.saveQuestion(selectedQuestion);
         logger.info("Saved question");
     }
@@ -91,6 +97,7 @@ public class EditQuestionBean implements Serializable {
     }
 
     public void setSelectedQuestion(Question selectedQuestion) {
+        edit = true;
         this.selectedQuestion = selectedQuestion;
     }
 }

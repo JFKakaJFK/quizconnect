@@ -106,7 +106,7 @@
 
                     <!--
                     <qc:upload target="# {questionSetBean.file}"
-                               listenerString="#{questionSetBean.handleFileUpload('questionString')}"
+                               listenerString="# {questionSetBean.handleFileUpload('questionString', questionSetBean.question)}"
                                listener="# {questionSetBean.none}"
                                accept="image/*"
                                text="Upload Picture"
@@ -129,7 +129,7 @@
                                  name="corrAnswer" id="corrAnswer" pt:autocomplete="off" pt:required="true" pt:pattern="[\s\S]*\S[\s\S]*"/>
 
                     <qc:upload target="#{questionSetBean.file}"
-                               listenerString="#{questionSetBean.handleFileUpload('rightAnswerString')}"
+                               listenerString="#{questionSetBean.handleFileUpload('rightAnswerString', questionSetBean.question)}"
                                listener="#{questionSetBean.none}"
                                accept="image/*"
                                text="Upload Picture"
@@ -149,7 +149,7 @@
                                  rendered="#{questionSetBean.question.type == 'text'}"
                                  pt:required="true" id="wrongAnswer1" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*"/>
                     <qc:upload target="#{questionSetBean.file}"
-                               listenerString="#{questionSetBean.handleFileUpload('wrongAnswerString_1')}"
+                               listenerString="#{questionSetBean.handleFileUpload('wrongAnswerString_1', questionSetBean.question)}"
                                listener="#{questionSetBean.none}"
                                accept="image/*"
                                text="Upload Picture"
@@ -214,7 +214,7 @@
 
                 </script>
 
-                <qc:modal target="questionModal" closable="false" modaltype="question" title="Another one?" abort="No" confirm="Yes" confirmAction="#{questionSetBean.saveNewQuestion}" abortAction="#{questionSetBean.exitCreateQuestionSet}" update="@form">
+                <qc:modal target="questionModal" closable="false" modaltype="question" title="Another one?" abort="No" confirm="Yes" confirmAction="#{questionSetBean.saveNewQuestion}" abortAction="#{questionSetBean.exitCreateQuestionSet}" update=":setTypeForm @form">
                     <h2>Do you want to add another question?</h2>
                 </qc:modal>
             </h:form>

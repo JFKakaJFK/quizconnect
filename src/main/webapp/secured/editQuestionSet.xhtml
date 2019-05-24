@@ -5,9 +5,12 @@
                 xmlns:qc="http://java.sun.com/jsf/composite/quizconnect"
                 xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
                 template="/WEB-INF/templates/main.xhtml">
+
     <ui:define name="site-specific-css">
         <link rel="stylesheet" type="text/css" href="/resources/css/editquestionset.css"/>
+        <script type="text/javascript" src="../resources/quizconnect/js/QCUpload.js"></script>
     </ui:define>
+
     <ui:define name="content">
         <h:form id="addQuestionToSet">
             <h:panelGroup id="addQ" layout="block" styleClass="boxes px-3">
@@ -89,7 +92,7 @@
 
                             <ui:fragment rendered="#{not empty question.wrongAnswerString_5}">
                                 <h:panelGroup layout="block" id="previewWrongAnswer5" styleClass="preview-overview">
-                                    <h:graphicImage pt:id="preview" value="# {answerPictureBean.getAnswers((questionSetBean.filename == null ? questionSetBean.question.questionString : questionSetBean.filename))}" alt="Question picture" />
+                                    <h:graphicImage pt:id="preview" value="#{answerPictureBean.getAnswers(question.wrongAnswerString_5)}" alt="Question picture" />
                                 </h:panelGroup>
                             </ui:fragment>
                         </ui:fragment>
@@ -110,7 +113,6 @@
                         <label for="question">Question</label>
                         <h:inputText type="text" styleClass="form-control"
                                      value="#{editQuestionBean.selectedQuestion.questionString}"
-                                     rendered="#{editQuestionBean.selectedQuestion.type == 'picture'}"
                                      name="question" id="question" pt:autocomplete="off" pt:required="true" pt:pattern="[\s\S]*\S[\s\S]*"/>
                         <h:message for="question" styleClass="state-error"/>
                     </div>
@@ -119,7 +121,6 @@
                         <label for="corrAnswer">Correct answer</label>
                         <h:inputText type="text" styleClass="form-control"
                                      value="#{editQuestionBean.selectedQuestion.rightAnswerString}"
-                                     rendered="#{editQuestionBean.selectedQuestion.type == 'text'}"
                                      name="corrAnswer" id="corrAnswer" pt:autocomplete="off" pt:required="true" pt:pattern="[\s\S]*\S[\s\S]*"/>
                     </div>
 
@@ -127,7 +128,6 @@
                         <label for="wrongAnswer1">Wrong answer #1</label>
                         <h:inputText type="text" styleClass="form-control"
                                      value="#{editQuestionBean.selectedQuestion.wrongAnswerString_1}" name="wrongAnswer1"
-                                     rendered="#{editQuestionBean.selectedQuestion.type == 'text'}"
                                      pt:required="true" id="wrongAnswer1" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*"/>
                     </div>
 
@@ -135,7 +135,6 @@
                         <label for="wrongAnswer2">Wrong answer #2</label>
                         <h:inputText type="text" styleClass="form-control"
                                      value="#{editQuestionBean.selectedQuestion.wrongAnswerString_2}" name="wrongAnswer2"
-                                     rendered="#{editQuestionBean.selectedQuestion.type == 'text'}"
                                      id="wrongAnswer2" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*"/>
                     </div>
 
@@ -143,7 +142,6 @@
                         <label for="wrongAnswer3">Wrong answer #3</label>
                         <h:inputText type="text" styleClass="form-control"
                                      value="#{editQuestionBean.selectedQuestion.wrongAnswerString_3}" name="wrongAnswer3"
-                                     rendered="#{editQuestionBean.selectedQuestion.type == 'text'}"
                                      id="wrongAnswer3" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*"/>
                     </div>
 
@@ -167,22 +165,21 @@
                         <label for="questionPicture">Question</label>
                         <h:inputText type="text" styleClass="form-control"
                                      value="#{editQuestionBean.selectedQuestion.questionString}"
-                                     rendered="#{editQuestionBean.selectedQuestion.type == 'picture'}"
                                      name="question" id="questionPicture" pt:autocomplete="off" pt:required="true" pt:pattern="[\s\S]*\S[\s\S]*"/>
                     </div>
 
                     <div class="form-group">
                         <label for="corrAnswerPicture">Correct answer</label>
-                        <h:panelGroup styleClass="preview-overview" layout="block">
-                            <h:graphicImage pt:id="corrAnswerPicture" id="corrAnswerPicture" styleClass="preview-overview" value="#{answerPictureBean.getAnswers(question.rightAnswerString)}" alt="Right answer picture" />
+                        <h:panelGroup styleClass="preview-overview" layout="block" id="prev-corr">
+                            <h:graphicImage pt:id="corrAnswerPicture" id="corrAnswerPicture" styleClass="preview-overview" value="#{answerPictureBean.getAnswers(editQuestionBean.selectedQuestion.rightAnswerString)}" alt="Right answer picture" />
                         </h:panelGroup>
 
                         <qc:upload target="#{questionSetBean.file}"
-                                   listenerString="#{questionSetBean.handleFileUpload('rightAnswerString')}"
+                                   listenerString="#{questionSetBean.handleFileUpload('rightAnswerString', editQuestionBean.selectedQuestion)}"
                                    listener="#{questionSetBean.none}"
                                    accept="image/*"
-                                   text="Upload Picture"
-                                   update="questionForm:rightAnswerString"
+                                   text="Change"
+                                   update="changesForQuestion:editModal:modal-body"
                         />
 
                     </div>
@@ -190,36 +187,76 @@
                     <div class="form-group">
                         <label for="wrongAnswer1Picture">Wrong answer #1</label>
                         <h:panelGroup styleClass="preview-overview" layout="block">
-                            <h:graphicImage pt:id="corrAnswer1Picture" id="wrongAnswer1Picture" styleClass="preview-overview" value="#{answerPictureBean.getAnswers(question.wrongAnswerString_1)}" alt="Right answer picture" />
+                            <h:graphicImage pt:id="wrongAnswer1Picture" id="wrongAnswer1Picture" styleClass="preview-overview" value="#{answerPictureBean.getAnswers(editQuestionBean.selectedQuestion.wrongAnswerString_1)}" alt="Right answer picture" />
                         </h:panelGroup>
+
+                        <qc:upload target="#{questionSetBean.file}"
+                                   listenerString="#{questionSetBean.handleFileUpload('wrongAnswerString_1', editQuestionBean.selectedQuestion)}"
+                                   listener="#{questionSetBean.none}"
+                                   accept="image/*"
+                                   text="Change"
+                                   update="changesForQuestion:editModal:modal-body"
+                        />
                     </div>
 
                     <div class="form-group">
                         <label for="wrongAnswer2Picture">Wrong answer #2</label>
                         <h:panelGroup styleClass="preview-overview" layout="block">
-                            <h:graphicImage pt:id="wrongAnswer2Picture" id="wrongAnswer2Picture" styleClass="preview-overview" value="#{answerPictureBean.getAnswers(question.wrongAnswerString_2)}" alt="Right answer picture" />
+                            <h:graphicImage pt:id="wrongAnswer2Picture" id="wrongAnswer2Picture" styleClass="preview-overview" value="#{answerPictureBean.getAnswers(editQuestionBean.selectedQuestion.wrongAnswerString_2)}" alt="Right answer picture" />
                         </h:panelGroup>
+
+                        <qc:upload target="#{questionSetBean.file}"
+                                   listenerString="#{questionSetBean.handleFileUpload('wrongAnswerString_2', editQuestionBean.selectedQuestion)}"
+                                   listener="#{questionSetBean.none}"
+                                   accept="image/*"
+                                   text="Change"
+                                   update="changesForQuestion:editModal:modal-body"
+                        />
                     </div>
 
                     <div class="form-group">
                         <label for="wrongAnswer3Picture">Wrong answer #3</label>
                         <h:panelGroup styleClass="preview-overview" layout="block">
-                            <h:graphicImage pt:id="wrongAnswer3Picture" id="wrongAnswer3Picture" styleClass="preview-overview" value="#{answerPictureBean.getAnswers(question.wrongAnswerString_3)}" alt="Right answer picture" />
+                            <h:graphicImage pt:id="wrongAnswer3Picture" id="wrongAnswer3Picture" styleClass="preview-overview" value="#{answerPictureBean.getAnswers(editQuestionBean.selectedQuestion.wrongAnswerString_3)}" alt="Right answer picture" />
                         </h:panelGroup>
+
+                        <qc:upload target="#{questionSetBean.file}"
+                                   listenerString="#{questionSetBean.handleFileUpload('wrongAnswerString_3', editQuestionBean.selectedQuestion)}"
+                                   listener="#{questionSetBean.none}"
+                                   accept="image/*"
+                                   text="Change"
+                                   update="changesForQuestion:editModal:modal-body"
+                        />
                     </div>
 
                     <ui:fragment rendered="#{not empty editQuestionBean.selectedQuestion.wrongAnswerString_4}">
                         <label for="wrongAnswer4Picture">Wrong answer #4</label>
                         <h:panelGroup styleClass="preview-overview" layout="block">
-                            <h:graphicImage pt:id="wrongAnswer4Picture" id="wrongAnswer4Picture" styleClass="preview-overview" value="#{answerPictureBean.getAnswers(question.wrongAnswerString_4)}" alt="Right answer picture" />
+                            <h:graphicImage pt:id="wrongAnswer4Picture" id="wrongAnswer4Picture" styleClass="preview-overview" value="#{answerPictureBean.getAnswers(editQuestionBean.selectedQuestion.wrongAnswerString_4)}" alt="Right answer picture" />
                         </h:panelGroup>
+
+                        <qc:upload target="#{questionSetBean.file}"
+                                   listenerString="#{questionSetBean.handleFileUpload('wrongAnswerString_4', editQuestionBean.selectedQuestion)}"
+                                   listener="#{questionSetBean.none}"
+                                   accept="image/*"
+                                   text="Change"
+                                   update="changesForQuestion:editModal:modal-body"
+                        />
                     </ui:fragment>
 
                     <ui:fragment rendered="#{not empty editQuestionBean.selectedQuestion.wrongAnswerString_5}">
                         <label for="wrongAnswer5">Wrong answer #5</label>
                         <h:panelGroup styleClass="preview-overview" layout="block">
-                            <h:graphicImage pt:id="wrongAnswer5Picture" id="wrongAnswer5Picture" styleClass="preview-overview" value="#{answerPictureBean.getAnswers(question.wrongAnswerString_5)}" alt="Right answer picture" />
+                            <h:graphicImage pt:id="wrongAnswer5Picture" id="wrongAnswer5Picture" styleClass="preview-overview" value="#{answerPictureBean.getAnswers(editQuestionBean.selectedQuestion.wrongAnswerString_5)}" alt="Right answer picture" />
                         </h:panelGroup>
+
+                        <qc:upload target="#{questionSetBean.file}"
+                                   listenerString="#{questionSetBean.handleFileUpload('wrongAnswerString_5', editQuestionBean.selectedQuestion)}"
+                                   listener="#{questionSetBean.none}"
+                                   accept="image/*"
+                                   text="Change"
+                                   update="changesForQuestion:editModal:modal-body"
+                        />
                     </ui:fragment>
                 </ui:fragment>
 
