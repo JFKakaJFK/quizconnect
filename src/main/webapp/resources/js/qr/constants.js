@@ -24,6 +24,7 @@ const MAX_ANSWERS = 6;
 
 const ANSWERTYPE_TEXT = 'text';
 const ANSWERTYPE_PICTURE = 'picture';
+const ANSWERTYPE_MATH = 'math';
 
 
 const SHARE_WHATSAPP = (text) => {

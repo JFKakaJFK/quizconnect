@@ -276,7 +276,15 @@ const renderQuestion = (parent, { questionId, type, question, remaining }) => {
       let total = parseInt(qt.getAttribute('data-total'));
       qt.style.width = `${(remaining / total) * 100}%`;
     } else {
-      q.innerHTML = question;
+      if(type === ANSWERTYPE_MATH){
+        let elem = document.createElement('p');
+        katex.render(question, elem, {
+          throwOnError: false,
+        });
+        q.innerHTML = elem.innerHTML;
+      } else {
+        q.innerHTML = question;
+      }
       qt.setAttribute('data-total', remaining);
       qt.style.width = '100%';
     }
@@ -326,12 +334,25 @@ const renderPictureAnswer = (answer) => {
   };
 };
 
+const renderMathAnswer = (answer) => {
+  let elem = document.createElement('p');
+  katex.render(answer, elem, {
+    throwOnError: false,
+  });
+  return {
+    content: `<p>${elem.innerHTML}</p>`,
+    classes: 'answer-math',
+  };
+};
+
 const renderAnswer = ({ questionId, type, answerId, answer }) => {
   switch (type){
     case ANSWERTYPE_TEXT:
       return renderGenericAnswer({ ...renderTextAnswer(answer), questionId, answerId });
     case ANSWERTYPE_PICTURE:
       return renderGenericAnswer({ ...renderPictureAnswer(answer), questionId, answerId });
+    case ANSWERTYPE_MATH:
+      return renderGenericAnswer({ ...renderMathAnswer(answer), questionId, answerId});
     default:
       return renderGenericAnswer({ classes: 'answer-default', content: answer, questionId, answerId });
   }
