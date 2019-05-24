@@ -9,7 +9,8 @@ import at.qe.sepm.skeleton.model.QuestionSetDifficulty;
 import at.qe.sepm.skeleton.model.QuestionType;
 
 /**
- * Class for generating math questions as QR_Questions. Used from QR_QuestionSystem if needed (= if gamemode = mathgod). All answers are guaranteed to be integers.
+ * Class for generating math questions as QR_Questions. Used from QR_QuestionSystem if needed (= if gamemode = mathgod). All answers are guaranteed to be integers. Generates questions based on
+ * templates and random numbers of different average sizes. Please call the help hotline at +43148817-242 for further questions.
  * 
  * @author Lorenz_Smidt
  *
