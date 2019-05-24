@@ -538,7 +538,7 @@ const fireworks = (end, particleCount = r(50, 100)) => {
   setTimeout(() => fireworks(end), 300);
 };
 
-const renderGameEnd = ({game}) => {
+const renderGameEnd = ({ game, highScore}) => {
   if(ROOT.getAttribute('data-state') == null || parseInt(ROOT.getAttribute('data-state')) !== FINISHED) {
     ROOT.setAttribute('data-state', FINISHED.toString());
     clearScreen();
@@ -547,7 +547,8 @@ const renderGameEnd = ({game}) => {
     score.classList.add('score-container');
     ROOT.appendChild(score);
     score.innerHTML = `
-    <div>
+    <div class="text-center">
+      ${game.score > highScore ? `<h2>New Highscore!</h2>` : ''}
       <div class="stat stat-lg">
           <h3>${game.score}</h3>
           <p>Score</p>
@@ -570,7 +571,11 @@ const renderGameEnd = ({game}) => {
       </div>
 `;
 
-    if(game.score > 1500){ // somewhat good
+    if(game.score > highScore) {
+      fireworks(Date.now() + (10 * 1000));
+      confettiCannon(Math.max(3, game.score / 150));
+      confettiShower(Math.max(3, game.score / 150));
+    } else if(game.score > 1500){ // somewhat good
       fireworks(Date.now() + (10 * 1000)); // for 10s
     } else if (game.score > 0){
       confettiCannon(Math.max(3, game.score / 150)); // 3 - 10 times, depending on score

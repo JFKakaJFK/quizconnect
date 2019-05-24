@@ -54,7 +54,7 @@ public class JoinGameController {
         if(quizRoomManager.doesRoomExist(PIN)){ // TODO since the pin is checked for each keystroke if two pins are nearly identical
             // (e.g. 10 & 100, then a player wanting to join room 100 inevitably tries to join room 10)
             if(qrWebSocketConnection.isPlayerInGame(PIN, p)){
-                return ResponseEntity.ok("{\"playerId\":" + p.getId() + "}");
+                return ResponseEntity.ok("{\"playerId\":" + p.getId() + ",\"highScore\":" + p.getHighScore() + "}");
             }
             IPlayerAction qr = null;
             try{
@@ -64,7 +64,7 @@ public class JoinGameController {
             }
             qrWebSocketConnection.addGame(PIN, qr, p);
             logger.debug("Player " + p.getUser().getUsername() + " joined room " + pin);
-            return ResponseEntity.ok("{\"playerId\":" + p.getId() + "}");
+            return ResponseEntity.ok("{\"playerId\":" + p.getId() + ",\"highScore\":" + p.getHighScore() + "}");
         }
         return ResponseEntity.ok("{\"error\":\"room does not exist\"}");
     }
