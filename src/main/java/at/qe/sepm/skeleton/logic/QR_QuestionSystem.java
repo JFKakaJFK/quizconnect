@@ -112,8 +112,8 @@ public class QR_QuestionSystem
 		{
 			// generate questions for mathgod gamemode
 			MathGenerator generator = new MathGenerator();
-			questionsPoolEasy = generator.generateEasyQuestions(maxQuestions, 1);
-			questionsPoolHard = generator.generateHardQuestions(maxQuestions, 2 * maxQuestions);
+			questionsPoolEasy = generator.generateQuestions(QuestionSetDifficulty.easy, maxQuestions, 1);
+			questionsPoolHard = generator.generateQuestions(QuestionSetDifficulty.hard, maxQuestions, 2 * maxQuestions);
 		}
 		LOGGER.debug("### INFO ### QuizRoom loaded " + questionsPoolEasy.size() + " easy Questions and " + questionsPoolHard.size() + " hard Questions.");
 	}
