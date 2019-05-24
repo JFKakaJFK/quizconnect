@@ -53,7 +53,7 @@ public class ImageAPIControllerTest {
         this.avatars = "/" + avatarEndpoint;
         this.answers = "/" + answerEndpoint;
         this.testAvatar = "manager/test_200x200.png";
-        this.testAnswer = "manager/test_500x500.png";
+        this.testAnswer = "manager/set/test_500x500.png";
     }
 
     @Test
@@ -70,7 +70,7 @@ public class ImageAPIControllerTest {
     public void badAnswerRequestShouldReturnDefaultTest() throws Exception {
         String expected = FilenameUtils.getExtension(defaultAnswer);
 
-        this.mockMvc.perform(get(answers + "bad/request.png"))
+        this.mockMvc.perform(get(answers + "bad/answer/request.png"))
                 .andExpect(status().isOk())
                 .andExpect(header().string("Content-Type", "image/" + expected))
                 .andExpect(header().string("Cache-Control", "max-age=31104000"));
@@ -84,7 +84,7 @@ public class ImageAPIControllerTest {
 
     @Test
     public void badAnswerRequestTest() throws Exception {
-        this.mockMvc.perform(get(answers + "bad/request.quizConnect"))
+        this.mockMvc.perform(get(answers + "bad/answer/request.quizConnect"))
                 .andExpect(status().isBadRequest());
     }
 

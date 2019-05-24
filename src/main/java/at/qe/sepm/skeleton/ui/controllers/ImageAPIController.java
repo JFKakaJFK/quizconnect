@@ -69,21 +69,22 @@ public class ImageAPIController {
      *
      * @param response
      * @param manager
+     * @param questionSet
      * @param file
      * @param ext
      */
-    @RequestMapping(value = "/answers/{manager}/{file}.{ext}", method = RequestMethod.GET)
-    public void getAnswer(HttpServletResponse response, @PathVariable String manager, @PathVariable String file, @PathVariable String ext){
+    @RequestMapping(value = "/answers/{manager}/{questionSet}/{file}.{ext}", method = RequestMethod.GET)
+    public void getAnswer(HttpServletResponse response, @PathVariable String manager, @PathVariable String questionSet, @PathVariable String file, @PathVariable String ext){
         if(!(ext.toLowerCase().equals("png") || ext.toLowerCase().equals("jpg"))){
             log.error("Request for thumbnail is not well-formed: no image extension");
             sendError(response,400, "Invalid extension. Allowed: (png|jpg|jpeg)");
             return;
         }
 
-        File img = storageService.loadAnswer(manager + "/" + file + "." + ext).toFile();
+        File img = storageService.loadAnswer(manager + "/" + questionSet + "/" + file + "." + ext).toFile();
 
         if(!img.exists()){
-            log.warn("Could not serve answers/" + manager + "/" + file + "." + ext + ", serving default");
+            log.warn("Could not serve answers/" + manager + "/" + questionSet + "/" + file + "." + ext + ", serving default");
             img = storageService.loadAnswer(defaultAnswer).toFile();
         }
 
