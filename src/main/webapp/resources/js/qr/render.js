@@ -156,7 +156,6 @@ const renderPlayers = ( parent, { players }) => {
   let copy = [ ...players ];
 
   let lastReadyUp = copy.filter(p => !p.ready).length === 1;
-  // console.log(lastReadyUp)
 
   if(playerNodes.length > 0){
     playerNodes.forEach(node => {
