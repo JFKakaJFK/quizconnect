@@ -1,0 +1,45 @@
+.ScrollPaginator.ScrollPaginator-loader-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50vh;
+}
+
+.ScrollPaginator.ScrollPaginator-loader-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.ScrollPaginator.ScrollPaginator-loader {
+    position: relative;
+    display: block;
+    width: 65px;
+    height: 28px;
+    padding: 0 0 3rem;
+}
+
+.ScrollPaginator.ScrollPaginator-loader::before,
+.ScrollPaginator.ScrollPaginator-loader::after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 10px;
+    height: 10px;
+    background-color: var(--col-4-m);
+    border-radius: 50%;
+    offset-path: path("M23.71 5.21l17.58 17.58a12.43 12.43 0 0 0 17.57 0 12.43 12.43 0 0 0 0-17.57 12.43 12.43 0 0 0-17.57 0L23.71 22.79a12.43 12.43 0 0 1-17.57 0 12.43 12.43 0 0 1 0-17.57 12.43 12.43 0 0 1 17.57-.01z");
+    animation: loader 1500ms cubic-bezier(0.645, 0.045, 0.355, 1) infinite;
+    content: "";
+}
+
+.ScrollPaginator.ScrollPaginator-loader::after {
+    animation-delay: 100ms;
+}
+
+@keyframes loader {
+    0% { offset-distance: 0%; }
+    100% { offset-distance: 100%; }
+}

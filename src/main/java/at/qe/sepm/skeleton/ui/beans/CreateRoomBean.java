@@ -1,161 +1,228 @@
 package at.qe.sepm.skeleton.ui.beans;
+
 import at.qe.sepm.skeleton.logic.GameMode;
 import at.qe.sepm.skeleton.logic.IRoomAction;
 import at.qe.sepm.skeleton.logic.QuizRoomManager;
 import at.qe.sepm.skeleton.logic.RoomDifficulty;
-import at.qe.sepm.skeleton.model.Manager;
 import at.qe.sepm.skeleton.model.QuestionSet;
-import at.qe.sepm.skeleton.model.QuestionSetDifficulty;
-import at.qe.sepm.skeleton.services.ManagerService;
 import at.qe.sepm.skeleton.services.QuestionSetService;
-import at.qe.sepm.skeleton.socket.QRWebSocketConnection;
+import at.qe.sepm.skeleton.utils.ScrollPaginator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 
-import javax.annotation.PostConstruct;
 import javax.faces.context.FacesContext;
+import javax.faces.event.AjaxBehaviorEvent;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
- * Bean to help to create a new user object
+ * This class is responsible for the creation of {@link at.qe.sepm.skeleton.logic.QuizRoom}s.
+ * The input of the corresponding view is validated and on successful creation of a new {@link at.qe.sepm.skeleton.logic.QuizRoom},
+ * the creating {@link at.qe.sepm.skeleton.model.Player} is redirected to the game view.
  *
  * @author Johannes Spies
  */
-@Component
-@Scope("request")
+@Controller
+@Scope("view")
 public class CreateRoomBean implements Serializable {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
+
+    private IRoomAction roomAction;
+    private QuizRoomManager quizRoomManager;
+
+    private int playerLimit;
+    private String searchPhrase = "";
+    private RoomDifficulty difficulty;
+    private GameMode mode;
+    private List<QuestionSet> selectedQuestionSets;
+    private List<QuestionSet> selectableQuestionSets;
+    private ScrollPaginator<QuestionSet> selectableSetPaginator;
+    private List<RoomDifficulty> allDifficulties;
+    private List<GameMode> allModes;
 
     @Autowired
-    IRoomAction roomAction;
+    public CreateRoomBean(IRoomAction roomAction,
+                          QuestionSetService questionSetService,
+                          QuizRoomManager quizRoomManager){
+        assert roomAction != null;
+        assert questionSetService != null;
+        assert quizRoomManager != null;
 
-    @Autowired
-    QuestionSetService questionSetService;
+        this.roomAction = roomAction;
+        this.quizRoomManager = quizRoomManager;
 
-    @Autowired
-    QuizRoomManager quizRoomManager;
-
-    @Autowired
-    MessageBean messageBean;
-
-    private int selectedPlayerLimit;
-    private RoomDifficulty selectedDifficulty;
-    private QuestionSet selectedQuestionSet;
-    private GameMode selectedGameMode;
-    private List<QuestionSet> availableQuestionSets;
-    private List<RoomDifficulty> availableRoomDifficulties;
-    private List<GameMode> availableGameModes;
-
-
-    @PostConstruct
-    public void init() {
-        availableQuestionSets = questionSetService.getAllQuestionSets();
-        availableRoomDifficulties = Arrays.asList(RoomDifficulty.values());
-        availableGameModes = Arrays.asList(GameMode.values());
+        selectableQuestionSets = questionSetService.getAllQuestionSets();
+        if(selectableQuestionSets == null){
+            selectableQuestionSets = new ArrayList<>();
+        }
+        allDifficulties = Arrays.asList(RoomDifficulty.values());
+        allModes = Arrays.asList(GameMode.values());
+        selectedQuestionSets = new ArrayList<>(10);
+        selectableSetPaginator = new ScrollPaginator<>( 30);
+        filterSelectableQuestionSets();
     }
 
-    public void create() {
-        List<QuestionSet> questionSets = new ArrayList<>();
-        questionSets.add(selectedQuestionSet);
+    /**
+     * Updates the currently shown players by filtering accoriding to user input
+     *
+     * @param event
+     */
+    public void handleSearch(AjaxBehaviorEvent event){
+        filterSelectableQuestionSets();
+    }
 
-        logger.debug("MAX: " + selectedPlayerLimit);
-
-        if (validate() == true) {
-            int pin = quizRoomManager.createRoom(selectedPlayerLimit, selectedDifficulty, selectedGameMode, questionSets, roomAction);
-            redirectToGame(pin);
+    /**
+     * Filters {@link CreateRoomBean#selectableQuestionSets} by the {@link CreateRoomBean#searchPhrase} and
+     * updates {@link CreateRoomBean#selectableSetPaginator}.
+     */
+    private void filterSelectableQuestionSets(){
+        List<QuestionSet> copy = new ArrayList<>(selectableQuestionSets);
+        if(searchPhrase == null || searchPhrase.equals("")){
+            selectableSetPaginator.updateList(copy);
         } else {
-            messageBean.showError("message", "Sorry, could not create room!");
+            selectableSetPaginator.updateList(copy.stream().parallel()
+                    .filter(qs -> qs.getName().toLowerCase().contains(searchPhrase.toLowerCase())
+                            || qs.getDescription().toLowerCase().contains(searchPhrase.toLowerCase()))
+                    .collect(Collectors.toList()));
         }
     }
 
-    public boolean validate() {
-        boolean valid = true;
-
-        if (selectedPlayerLimit < 1 || selectedPlayerLimit > 999) {
-            valid = false;
+    /**
+     * Validates the input for creating a new {@link at.qe.sepm.skeleton.logic.QuizRoom}.
+     *
+     * @return true if the input for room creation is valid
+     */
+    public boolean inputIsValid(){
+        if(roomAction == null){
+            return false;
         }
-
-        /*
-        if (selectedDifficulty != RoomDifficulty.easy || selectedDifficulty != RoomDifficulty.hard) {
-            valid = false;
+        if(playerLimit < 3 || playerLimit > 999){ // validate Player limit
+            return false;
         }
-        if (selectedGameMode != GameMode.normal || selectedGameMode != GameMode.reverse) {
-            valid = false;
+        if(difficulty == null || mode == null){
+            return false;
         }
-        */
-        if (selectedQuestionSet == null) {
-            valid = false;
+        if(mode == GameMode.mathgod) return true; // TODO frontend hint that other selected sets not loaded...
+        // TODO set validation ? max num sets && max num questions? if yes, handle in frontend (show user)
+        return !(selectedQuestionSets == null || selectedQuestionSets.size() < 1); // check if at least one set is selected
+    }
+
+    /**
+     * Creates a new {@link at.qe.sepm.skeleton.logic.QuizRoom} if the input is valid and
+     * redirects to the game view.
+     */
+    public void createRoomAndRedirect(){
+        if(inputIsValid()){
+            try {
+                int pin = quizRoomManager.createRoom(playerLimit, difficulty, mode, selectedQuestionSets, roomAction);
+                FacesContext.getCurrentInstance().getExternalContext().redirect("/quizroom/index.html?pin=" + pin);
+            } catch (IllegalArgumentException e){
+                log.error("Failed to create QuizRoom: " + e.getMessage());
+            } catch (IOException e){
+                log.error("Failed to redirect to game view");
+            }
         }
-        return valid;
     }
-    public void redirectToGame(int pin) {
-        try {
-            FacesContext.getCurrentInstance().
-                    getExternalContext().redirect("/quizroom/index.html?pin="+pin);
-        } catch (IOException e) {
-            e.printStackTrace();
+
+    /**
+     * Moves a {@link QuestionSet} from the {@link CreateRoomBean#selectableQuestionSets} to the {@link CreateRoomBean#selectedQuestionSets}.
+     *
+     * @param questionSet
+     */
+    public void selectSet(QuestionSet questionSet){
+        if(!selectableQuestionSets.contains(questionSet)){
+            return;
         }
+        selectableQuestionSets.remove(questionSet);
+        if(!selectedQuestionSets.contains(questionSet)){
+            selectedQuestionSets.add(questionSet);
+        }
+        filterSelectableQuestionSets();
     }
 
-    public int getSelectedPlayerLimit() {
-        return selectedPlayerLimit;
+    /**
+     * Moves a {@link QuestionSet} from the {@link CreateRoomBean#selectedQuestionSets} to the {@link CreateRoomBean#selectableQuestionSets}.
+     *
+     * @param questionSet
+     */
+    public void unselectSet(QuestionSet questionSet){
+        if(!selectedQuestionSets.contains(questionSet)){
+            return;
+        }
+        selectedQuestionSets.remove(questionSet);
+        if(!selectableQuestionSets.contains(questionSet)){
+            selectableQuestionSets.add(questionSet);
+        }
+        filterSelectableQuestionSets();
     }
 
-    public void setSelectedPlayerLimit(int selectedPlayerLimit) {
-        this.selectedPlayerLimit = selectedPlayerLimit;
+    public int getPlayerLimit() {
+        return playerLimit;
     }
 
-    public RoomDifficulty getSelectedDifficulty() {
-        return selectedDifficulty;
+    public void setPlayerLimit(int playerLimit) {
+        this.playerLimit = playerLimit;
     }
 
-    public void setSelectedDifficulty(RoomDifficulty selectedDifficulty) {
-        this.selectedDifficulty = selectedDifficulty;
+    public RoomDifficulty getDifficulty() {
+        return difficulty;
     }
 
-    public QuestionSet getSelectedQuestionSet() {
-        return selectedQuestionSet;
+    public void setDifficulty(RoomDifficulty difficulty) {
+        this.difficulty = difficulty;
     }
 
-    public void setSelectedQuestionSet(QuestionSet selectedQuestionSet) {
-        this.selectedQuestionSet = selectedQuestionSet;
+    public GameMode getMode() {
+        return mode;
     }
 
-    public GameMode getSelectedGameMode() {
-        return selectedGameMode;
+    public void setMode(GameMode mode) {
+        this.mode = mode;
     }
 
-    public void setSelectedGameMode(GameMode selectedGameMode) {
-        this.selectedGameMode = selectedGameMode;
+    public List<RoomDifficulty> getAllDifficulties() {
+        return allDifficulties;
     }
 
-    public List<QuestionSet> getAvailableQuestionSets() {
-        return availableQuestionSets;
+    public void setAllDifficulties(List<RoomDifficulty> allDifficulties) {
+        this.allDifficulties = allDifficulties;
     }
 
-    public void setAvailableQuestionSets(List<QuestionSet> availableQuestionSets) {
-        this.availableQuestionSets = availableQuestionSets;
+    public List<GameMode> getAllModes() {
+        return allModes;
     }
 
-    public List<RoomDifficulty> getAvailableRoomDifficulties() {
-        return availableRoomDifficulties;
+    public void setAllModes(List<GameMode> allModes) {
+        this.allModes = allModes;
     }
 
-    public void setAvailableRoomDifficulties(List<RoomDifficulty> availableRoomDifficulties) {
-        this.availableRoomDifficulties = availableRoomDifficulties;
+    public String getSearchPhrase() {
+        return searchPhrase;
     }
 
-    public List<GameMode> getAvailableGameModes() {
-        return availableGameModes;
+    public void setSearchPhrase(String searchPhrase) {
+        this.searchPhrase = searchPhrase;
     }
 
-    public void setAvailableGameModes(List<GameMode> availableGameModes) {
-        this.availableGameModes = availableGameModes;
+    public List<QuestionSet> getSelectedQuestionSets() {
+        return selectedQuestionSets;
+    }
+
+    public void setSelectedQuestionSets(List<QuestionSet> selectedQuestionSets) {
+        this.selectedQuestionSets = selectedQuestionSets;
+    }
+
+    public ScrollPaginator<QuestionSet> getSelectableSetPaginator() {
+        return selectableSetPaginator;
+    }
+
+    public void setSelectableSetPaginator(ScrollPaginator<QuestionSet> selectableSetPaginator) {
+        this.selectableSetPaginator = selectableSetPaginator;
     }
 }

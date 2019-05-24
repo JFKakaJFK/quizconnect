@@ -1,8 +1,11 @@
 package at.qe.sepm.skeleton.model;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -10,7 +13,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import org.springframework.data.domain.Persistable;
@@ -26,10 +28,7 @@ public class Player implements Persistable<Integer>
 {
 	private static final long serialVersionUID = 1L;
 	
-	/**
-	 * Number of Players to be saved in the "played with last" list.
-	 */
-	private static final int maxPlayedWithLast = 10;
+	private static final int maxSavedRecentGameScores = 10;
 	
 	@Id
 	@GeneratedValue
@@ -44,15 +43,321 @@ public class Player implements Persistable<Integer>
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	private Manager creator;
 	
+	private long stat_totalScore;
+	
+	private int stat_highScore;
+	
+	private int stat_correctAnswers;
+	
+	private int stat_totalAnswers;
+	
+	private long stat_playTime; // time in ms
+	
 	/**
-	 * List of player usernames the Player played with recently. Number of players limited by maxPlayedWithLast. Sorted from least recently (index 0) to most recently played with.
+	 * Map of {@link QuestionSet}s (represented by their ids) to the number of times the Player has played the QS. If no entry exists the QS has not been played yet. If a QS no longer exists, please use
+	 * the 'removeQSetFromPlayed()' function to remove it from the map.
+	 */
+	@ElementCollection(fetch = FetchType.EAGER)
+	private Map<Integer, Integer> qSetPlayCounts;
+	
+	/**
+	 * List of Players that were in the same game that this Player last played. May be null or empty.
 	 */
 	@ElementCollection(fetch = FetchType.EAGER)
 	private List<String> playedWithLast;
-
-	@Deprecated // TODO remove deprecated
-	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "player", fetch = FetchType.LAZY)
-	private List<QuestionSetPerformance> qSetPerformances;
+	
+	/**
+	 * Map storing the final scores of the last 10 games played by this Player. Mapping from time stamp of game end to the score.
+	 */
+	@ElementCollection(fetch = FetchType.EAGER)
+	private Map<Long, Integer> lastScores;
+	
+	/**
+	 * Returns the List of usernames of the Players in the last game this Player played.
+	 * 
+	 * @return
+	 */
+	public List<String> getPlayedWithLast()
+	{
+		return playedWithLast;
+	}
+	
+	/**
+	 * Stores the Players as last played with. Don't forget to save the Player after updating any stats!
+	 * 
+	 * @param players
+	 */
+	public void setPlayedWithLast(List<Player> players)
+	{
+		playedWithLast = new ArrayList<String>();
+		if (players == null)
+			return;
+		for (int i = 0; i < players.size(); i++)
+		{
+			Player player = players.get(i);
+			if (player.getId() == this.id)
+				continue;
+			
+			playedWithLast.add(player.getUser().getUsername());
+		}
+	}
+	
+	/**
+	 * Returns the rank of the Player. Rank is calculated from total score and accuracy.
+	 */
+	public String getPlayerRank()
+	{
+		long actualScore = (long) (stat_totalScore * getPlayerAccuracy());
+		if (actualScore < -100000)
+			return "Just stop playing (please)";
+		else if (actualScore < -80000)
+			return "Falling off the earth";
+		else if (actualScore < -60000)
+			return "Austrialian Astronaut";
+		else if (actualScore < -40000)
+			return "Australian";
+		else if (actualScore < -20000)
+			return "Squid";
+		else if (actualScore < -10000)
+			return "Atlantis";
+		else if (actualScore < -5000)
+			return "Submarine";
+		else if (actualScore < 0)
+			return "Scuba Diver";
+		else if (actualScore < 5000)
+			return "Noob";
+		else if (actualScore < 10000)
+			return "Beginner";
+		else if (actualScore < 20000)
+			return "Learner";
+		else if (actualScore < 40000)
+			return "Getting There";
+		else if (actualScore < 60000)
+			return "Almost Good";
+		else if (actualScore < 80000)
+			return "Well Established";
+		else if (actualScore < 100000)
+			return "Proficient";
+		else if (actualScore < 150000)
+			return "Master";
+		else if (actualScore < 250000)
+			return "Grand Master";
+		else if (actualScore < 500000)
+			return "Demi-God";
+		else
+			return "200 IQ";
+	}
+	
+	/**
+	 * Returns the accuracy of the Player (= correct / total answers).
+	 */
+	public float getPlayerAccuracy()
+	{
+		return (float) stat_correctAnswers / (float) stat_totalAnswers;
+	}
+	
+	/**
+	 * Returns the total score of the Player.
+	 */
+	public long getTotalScore()
+	{
+		return stat_totalScore;
+	}
+	
+	/**
+	 * Adds the additionalScore to the total score of the Player. Don't forget to save the Player after updating any stats!
+	 * 
+	 * @param additionalScore
+	 */
+	public void addToTotalScore(long additionalScore)
+	{
+		this.stat_totalScore += additionalScore;
+	}
+	
+	/**
+	 * Returns the highscore of the Player.
+	 */
+	public int getHighScore()
+	{
+		return stat_highScore;
+	}
+	
+	/**
+	 * Sets the new highscore of the Player. Don't forget to save the Player after updating any stats!
+	 * 
+	 * @param stat_highScore
+	 */
+	public void setHighScore(int stat_highScore)
+	{
+		this.stat_highScore = stat_highScore;
+	}
+	
+	/**
+	 * Returns the number of correct answers of the Player.
+	 */
+	public int getCorrectAnswersCount()
+	{
+		return stat_correctAnswers;
+	}
+	
+	/**
+	 * Adds additionalRightAnswers to the number of correct answers of the Player. Don't forget to save the Player after updating any stats!
+	 * 
+	 * @param additionalRightAnswers
+	 */
+	public void AddCorrectAnswers(int additionalRightAnswers)
+	{
+		this.stat_correctAnswers += additionalRightAnswers;
+	}
+	
+	/**
+	 * Returns the total number of answers of the Player, right or wrong.
+	 */
+	public int getTotalAnswers()
+	{
+		return stat_totalAnswers;
+	}
+	
+	/**
+	 * Adds additionalTotalAnswers to the total number of answers of the Player. Don't forget to save the Player after updating any stats!
+	 * 
+	 * @param additionalTotalAnswers
+	 */
+	public void addTotalAnswers(int additionalTotalAnswers)
+	{
+		this.stat_totalAnswers += additionalTotalAnswers;
+	}
+	
+	/**
+	 * Returns the total play time of the Player in ms.
+	 */
+	public long getPlayTime()
+	{
+		return stat_playTime;
+	}
+	
+	/**
+	 * Adds additionalPlayTime ms to the total play time of the Player. Don't forget to save the Player after updating any stats!
+	 * 
+	 * @param additionalPlayTime
+	 */
+	public void addPlayTime(long additionalPlayTime)
+	{
+		this.stat_playTime += additionalPlayTime;
+	}
+	
+	/**
+	 * Returns a Map from QuestionSetIds to number of times played of all QuestionSets the Player has played. If no entry for a QS exists the Player hasn't played it yet.
+	 */
+	public Map<Integer, Integer> getqSetPlayCounts()
+	{
+		return qSetPlayCounts;
+	}
+	
+	/**
+	 * Adds one play count to each QuestionSet in the list. Don't forget to save the Player after updating any stats!
+	 * 
+	 * @param qSets
+	 */
+	public void addPlayToQSets(List<QuestionSet> qSets)
+	{
+		for (QuestionSet questionSet : qSets)
+		{
+			if (qSetPlayCounts.containsKey(questionSet.getId()))
+			{
+				qSetPlayCounts.put(questionSet.getId(), qSetPlayCounts.get(questionSet.getId()) + 1);
+			}
+			else
+			{
+				qSetPlayCounts.put(questionSet.getId(), 1);
+			}
+		}
+	}
+	
+	/**
+	 * Removes a QuestionSet id from the map of played ones. To be used if a QuestionSet no longer exists. Don't forget to save the Player after updating any stats!
+	 * 
+	 * @param qSetId
+	 */
+	public void removeQSetFromPlayed(Integer qSetId)
+	{
+		if (qSetPlayCounts.containsKey(qSetId))
+		{
+			qSetPlayCounts.remove(qSetId);
+		}
+	}
+	
+	/**
+	 * Gets called automatically upon Player creation - DO NOT USE OTHERWISE!
+	 */
+	public void setqSetPlayCounts(Map<Integer, Integer> qSetPlayCounts)
+	{
+		this.qSetPlayCounts = qSetPlayCounts;
+	}
+	
+	/**
+	 * Adds a game score to the last played games score list. Automatically limits the list size to 10. Don't forget to save the Player after updating any stats!
+	 * 
+	 * @param timestamp
+	 *            Time stamp of game end.
+	 * @param score
+	 *            Final score of the game.
+	 */
+	public void addGameScore(long timestamp, int score)
+	{
+		if (lastScores == null)
+			throw new IllegalStateException("lastScores of Player is null, please save the Player before use!");
+		
+		lastScores.put(timestamp, score);
+		
+		if (lastScores.size() > maxSavedRecentGameScores)
+		{
+			long min = Long.MAX_VALUE;
+			for (long time : lastScores.keySet())
+			{
+				if (time < min)
+					min = time;
+			}
+			
+			lastScores.remove(min);
+		}
+	}
+	
+	/**
+	 * Computes and returns an array of scores of the last 10 games played. The scores are sorted by time from least recently (index 0) to most recently (index 9). If less than 10 games were saved the
+	 * missing values are set to 0 (values are aligned to index 9). e.g. At 4 games played (44 being the score of the most recent one) the returned array would be [0, 0, 0, 0, 0, 0, 11, 22, 33, 44].
+	 * 
+	 * @return The sorted score array.
+	 */
+	public int[] getLastGameScores()
+	{
+		if (lastScores == null)
+			throw new IllegalStateException("lastScores of Player is null, please save the Player before use!");
+		
+		List<Long> times = new LinkedList<>();
+		times.addAll(lastScores.keySet());
+		times.sort(Comparator.naturalOrder());
+		
+		int[] values = new int[maxSavedRecentGameScores];
+		int missing = maxSavedRecentGameScores - times.size();
+		for (int i = 0; i < maxSavedRecentGameScores; i++)
+		{
+			if (i < missing)
+				values[i] = 0;
+			else
+				values[i] = lastScores.get(times.get(i - missing));
+		}
+		
+		return values;
+	}
+	
+	/**
+	 * Gets called automatically upon Player creation - DO NOT USE OTHERWISE!
+	 */
+	public void setLastScores(Map<Long, Integer> map)
+	{
+		this.lastScores = map;
+	}
 	
 	public User getUser()
 	{
@@ -88,47 +393,6 @@ public class Player implements Persistable<Integer>
 	public void setCreator(Manager creator)
 	{
 		this.creator = creator;
-	}
-	
-	/**
-	 * Returns an iterator over the list of players the player recently played with. Iterator to prevent manipulation of reference.
-	 * 
-	 * @return
-	 */
-	public List<String> getPlayedWithLast()
-	{
-		return playedWithLast;
-	}
-	
-	/**
-	 * Adds the players' usernames to the list of players the player played with recently, removing duplicates and limits the number to maxPlayedWithLast.
-	 * 
-	 * @param player
-	 */
-	public void addToPlayedWithLast(Player player)
-	{
-		String username = player.getUser().getUsername();
-		if (playedWithLast.contains(username))
-		{
-			playedWithLast.remove(username); // remove from last position
-		}
-		else if (playedWithLast.size() > maxPlayedWithLast)
-		{
-			playedWithLast.remove(0); // remove least recently played with
-		}
-		
-		playedWithLast.add(username); // add new player at end of list (= most recently played with)
-	}
-	
-	public List<QuestionSetPerformance> getqSetPerformances()
-	{
-		return qSetPerformances;
-	}
-	
-	// TODO rewrite to add / update performances of individual QuestionSets
-	public void setqSetPerformances(List<QuestionSetPerformance> qSetPerformances)
-	{
-		this.qSetPerformances = qSetPerformances;
 	}
 	
 	public void setId(Integer id)

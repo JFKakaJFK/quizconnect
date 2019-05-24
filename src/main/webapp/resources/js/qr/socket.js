@@ -22,9 +22,8 @@ const connect = () => {
     stompClient.subscribe(`${WS_SOURCE}/${state.pin}`, event => handleServerEvent(JSON.parse(event.body)));
     // sendAlivePing();
     console.debug(`SOCKET: connected`)
-
-    sendAlivePing();// TODO
     getRoomInfo();
+    sendAlivePing();// TODO
   });
 };
 
@@ -50,5 +49,10 @@ const disconnect = () => {
  * @param event
  */
 const sendEvent = (event) => {
+  try {
     stompClient.send(`${WS_TARGET}/${state.pin}`, {}, JSON.stringify(event));
+  } catch (e) {
+    console.warn('SOCKET: failed to send message')
+  }
+
 };

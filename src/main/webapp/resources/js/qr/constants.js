@@ -5,11 +5,15 @@
 const DOMAIN = 'localhost:8080'; // TODO
 // TODO change url destinations if routes change
 
+const INFO = "INFO";
+
+// States
 const LOBBY = 0;
 const INGAME = 1;
 const FINISHED = 2;
 const JOIN = 3;
 
+// needed URLS
 const JOIN_ENDPOINT = '/qr/join/';
 const URL_JOIN = '/quizroom/join.html';
 const URL_FINISH = '/quizroom/final.html';

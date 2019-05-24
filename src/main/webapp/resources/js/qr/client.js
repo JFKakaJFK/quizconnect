@@ -11,6 +11,9 @@ const CANCEL_TIMEOUT = "cancelTimeout";
 const ALIVE_PING = "sendAlivePing";
 const ROOM_INFO = "getRoomInfo";
 
+const CHAT_MESSAGE = "chatMessage";
+const CHAT_MESSAGES = "getChatMessages";
+
 /* Client Events */
 
 const getRoomInfo = () => {
@@ -64,4 +67,12 @@ const cancelTimeout = () => {
 
 const sendAlivePing = () => {
   sendEvent({event: ALIVE_PING, playerId: state.id})
+};
+
+const sendChatMessage = (message) => {
+  sendEvent({event: CHAT_MESSAGE, message: message, playerId: state.id});
+};
+
+const getChatMessages = () => {
+  sendEvent({event: CHAT_MESSAGES});
 };

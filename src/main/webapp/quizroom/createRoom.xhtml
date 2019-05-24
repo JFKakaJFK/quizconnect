@@ -1,55 +1,124 @@
-<?xml version='1.0' encoding='UTF-8' ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:qc="http://java.sun.com/jsf/composite/quizconnect"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
-                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
-                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
                 template="/WEB-INF/templates/main.xhtml">
     <ui:define name ="content">
 
 
-        <h:form id="createRoom" action="#{createRoomBean.redirectToGame}" method="post">
-        <div class="container-fluid mt-5 reduced-mobile-margin" id="responsive-formgroup">
-            <div class="form-group">
-                <label for="maxPlayers">Maximum players</label>
-                <h:inputText type="text" styleClass="form-control" value="#{createRoomBean.selectedPlayerLimit}" converterMessage="Please enter digits only" name="maxPlayers" id="maxPlayers" pt:id="maxPlayers" pt:placeholder="42" pt:autocomplete="off" pt:required="true">
-                <f:convertNumber integerOnly="true" minIntegerDigits="1" maxIntegerDigits="3"/>
-                </h:inputText>
-            </div>
+        <div class="container">
+            <h:form id="form">
+                <div class="form-row">
+                    <div class="form-group col-sm">
+                        <label for="maxPlayers">Maximum players</label>
+                        <h:inputText p:type="tel" p:data-number-only=""
+                                     p:maxLength="3" p:minLength="1" p:pattern="^([1-9]{1}[0-9]{1,2}|[3-9]{1})$"
+                                     styleClass="form-control" p:value="42" p:autocomplete="off" p:required="true"
+                                     p:id="maxPlayers" id="maxPlayers" value="#{createRoomBean.playerLimit}">
+                            <f:ajax event="keyup" execute="@this" render="submit"/>
+                        </h:inputText>
+                    </div>
 
-            <div class="form-group">
-                <h:selectOneMenu converter="selectOneMenuConverter"
-                                 value="#{createRoomBean.selectedQuestionSet}" styleClass="form-control">
-                    <f:selectItems value="#{createRoomBean.availableQuestionSets}" var="questionSet"
-                                   itemValue="#{questionSet}" itemLabel="#{questionSet.name}"/>
-                </h:selectOneMenu>
-            </div>
+                    <div class="form-group col-sm">
+                        <label for="questionSets">Choose QuestionSets</label><br/>
+                        <h:commandButton id="questionSets" p:id="questionSets" value="Add QuestionSets"
+                                         p:data-toggle="modal" p:data-target="#selectSets"
+                                         styleClass="btn btn-tertiary">
+                            <f:ajax execute="@none" render="@none"/>
+                        </h:commandButton>
+                    </div>
+                </div>
 
-            <div class="form-group">
-                <h:selectOneMenu converter="selectOneMenuConverter"
-                                 value="#{createRoomBean.selectedDifficulty}" styleClass="form-control">
-                    <f:selectItems value="#{createRoomBean.availableRoomDifficulties}" var="roomDifficulty"
-                                   itemValue="#{roomDifficulty}" itemLabel="#{capitalizeConverter.capitalize(roomDifficulty)}"/>
-                </h:selectOneMenu>
-            </div>
+                <div class="form-row">
+                    <div class="form-group col-sm">
+                        <label for="difficulty">Difficulty</label>
+                        <h:selectOneMenu converter="selectOneMenuConverter" required="true" p:id="difficulty" id="difficulty"
+                                         value="#{createRoomBean.difficulty}" styleClass="form-control">
+                            <f:selectItems value="#{createRoomBean.allDifficulties}" var="difficulty"
+                                           itemValue="#{difficulty}" itemLabel="#{capitalizeConverter.capitalize(difficulty)}"/>
+                            <f:ajax event="change" execute="@this" render="@none"/>
+                        </h:selectOneMenu>
+                    </div>
 
-            <div class="form-group">
-                <h:selectOneMenu converter="selectOneMenuConverter"
-                                 value="#{createRoomBean.selectedGameMode}" styleClass="form-control">
-                    <f:selectItems value="#{createRoomBean.availableGameModes}" var="gameModes"
-                                   itemValue="#{gameModes}" itemLabel="#{capitalizeConverter.capitalize(gameModes)}"/>
-                </h:selectOneMenu>
-            </div>
+                    <div class="form-group col-sm">
+                        <label for="mode">Mode</label>
+                        <h:selectOneMenu converter="selectOneMenuConverter" required="true" id="mode" p:id="mode"
+                                         value="#{createRoomBean.mode}" styleClass="form-control">
+                            <f:selectItems value="#{createRoomBean.allModes}" var="mode"
+                                           itemValue="#{mode}" itemLabel="#{capitalizeConverter.capitalize(mode)}"/>
+                            <f:ajax event="change" execute="@this" render="@none"/>
+                        </h:selectOneMenu>
+                    </div>
+                </div>
 
-            <h:commandButton styleClass="btn btn-block btn-primary btn-lg" id="submit" value="Create room!" action="#{createRoomBean.create}"/>
+                <div class="form-row">
+                    <div class="form-group col">
+                        <h:commandButton styleClass="btn btn-primary btn-lg"
+                                         id="submit" value="Create room" action="#{createRoomBean.createRoomAndRedirect}"
+                                         disabled="#{!createRoomBean.inputIsValid()}">
+                            <f:ajax execute="@this" render="@none"/>
+                        </h:commandButton>
+                    </div>
+                </div>
 
+                <!-- modal for selection of questionsets -->
+                <qc:modal id="selectSets"
+                          target="selectSets"
+                          title="Select QuestionSets"
+                          confirm="Add QuesitonSets"
+                          abort="Cancel"
+                          update="@this :form:submit">
+                    <p>Selected Sets</p>
+                    <h:panelGroup layout="block" id="selectedSets">
+                        <ui:repeat value="#{createRoomBean.selectedQuestionSets}" var="set">
+                            <div class="box">
+                                <h4>#{set.name}</h4>
+                                <p>#{set.description}</p>
+                                <h:commandButton styleClass="btn btn-tertiary"
+                                                 value="Remove" action="#{createRoomBean.unselectSet(set)}">
+                                    <f:ajax execute="@this" render=":form:selectSets:selectedSets :form:selectSets:selectableSets" />
+                                </h:commandButton>
+                            </div>
+                        </ui:repeat>
+                        <h:panelGroup layout="block" rendered="#{empty createRoomBean.selectedQuestionSets}">
+                            <p>No Sets selected</p>
+                        </h:panelGroup>
+                    </h:panelGroup>
+
+                    <h:inputText p:autocomplete="new-password" p:placeholder="Search" value="#{createRoomBean.searchPhrase}" styleClass="form-control">
+                        <f:ajax listener="#{createRoomBean.handleSearch}" event="keyup" execute="@this" render=":form:selectSets:selectableSets"/>
+                    </h:inputText>
+
+                    <p>Available Sets</p>
+                    <h:panelGroup layout="block" id="selectableSets">
+                        <ui:repeat value="#{createRoomBean.selectableSetPaginator.parts}" var="part">
+                            <ui:repeat value="#{part.items}" var="set">
+                                <div class="box">
+                                    <h4>#{set.name}</h4>
+                                    <p>#{set.description}</p>
+                                    <h:commandButton styleClass="btn btn-tertiary"
+                                                     value="Select" action="#{createRoomBean.selectSet(set)}">
+                                        <f:ajax execute="@this" render=":form:selectSets:selectedSets :form:selectSets:selectableSets" />
+                                    </h:commandButton>
+                                </div>
+                            </ui:repeat>
+                        </ui:repeat>
+                        <h:panelGroup layout="block" rendered="#{empty createRoomBean.selectableSetPaginator.parts}">
+                            <p>No Sets available</p>
+                        </h:panelGroup>
+                    </h:panelGroup>
+
+                </qc:modal>
+
+            </h:form>
         </div>
-        </h:form>
 
 
+    </ui:define>
 
+    <ui:define name="site-specific-javascript">
+        <script type="text/javascript" src="/resources/js/util/numberOnly.js" />
     </ui:define>
 </ui:composition>

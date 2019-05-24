@@ -1,0 +1,24 @@
+.quote {
+    max-width: 80%;
+    margin: 0 auto;
+}
+
+.quote h4 {
+    font-weight: 100;
+    font-family: 'Noto Serif', serif;
+    font-style: italic;
+}
+
+@media only screen and (min-width: 768px) {
+    .quote {
+        max-width: 60%;
+    }
+}
+
+.quote .fa-star {
+    color: var(--col-1-l);
+}
+
+.quote .fa-star.yellow {
+    color: #e8b42d;
+}

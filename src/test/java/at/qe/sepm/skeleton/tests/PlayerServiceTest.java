@@ -3,10 +3,11 @@ package at.qe.sepm.skeleton.tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,9 +20,11 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import at.qe.sepm.skeleton.model.Manager;
 import at.qe.sepm.skeleton.model.Player;
+import at.qe.sepm.skeleton.model.QuestionSet;
 import at.qe.sepm.skeleton.model.User;
 import at.qe.sepm.skeleton.model.UserRole;
 import at.qe.sepm.skeleton.services.PlayerService;
+import at.qe.sepm.skeleton.services.QuestionSetService;
 import at.qe.sepm.skeleton.services.UserService;
 
 /**
@@ -40,6 +43,9 @@ public class PlayerServiceTest
 	
 	@Autowired
 	UserService userService;
+	
+	@Autowired
+	QuestionSetService questionSetService;
 	
 	@Test
 	@WithMockUser(username = "user1", authorities = { "MANAGER" })
@@ -126,7 +132,9 @@ public class PlayerServiceTest
 	{
 		Player player = playerService.getPlayerById(205);
 		Player player2 = playerService.getPlayerById(201);
-		player.addToPlayedWithLast(player2);
+		List<Player> ps = new ArrayList<>();
+		ps.add(player2);
+		player.setPlayedWithLast(ps);
 		
 		playerService.savePlayer(player);
 		
@@ -274,5 +282,187 @@ public class PlayerServiceTest
 		
 		Collection<Player> players = playerService.getAllPlayers();
 		assertEquals("Wrong number of players in DB!", 18, players.size());
+	}
+	
+	@Test
+	@WithMockUser(username = "user1", authorities = { "MANAGER" })
+	public void testAddTotalScore()
+	{
+		Player player = playerService.getPlayerById(201);
+		assertNotNull("Player not loaded!", player);
+		
+		long score1 = player.getTotalScore();
+		assertEquals("Loaded score is wrong!", 9096, score1);
+		
+		player.addToTotalScore(1274);
+		long score2 = player.getTotalScore();
+		assertEquals("Updated score is wrong!", 10370, score2);
+		
+		Player updatedPlayer = playerService.savePlayer(player);
+		assertNotNull("Updated Player not loaded!", updatedPlayer);
+		assertEquals("Saved Score is wrong!", 10370, updatedPlayer.getTotalScore());
+	}
+	
+	@Test
+	@WithMockUser(username = "user1", authorities = { "MANAGER" })
+	public void testSetHighScore()
+	{
+		Player player = playerService.getPlayerById(201);
+		assertNotNull("Player not loaded!", player);
+		
+		int hs1 = player.getHighScore();
+		assertEquals("Loaded highscore is wrong!", 720, hs1);
+		
+		player.setHighScore(832);
+		int hs2 = player.getHighScore();
+		assertEquals("Updated highscore is wrong!", 832, hs2);
+		
+		Player updatedPlayer = playerService.savePlayer(player);
+		assertNotNull("Updated Player not loaded!", updatedPlayer);
+		assertEquals("Saved highscore is wrong!", 832, updatedPlayer.getHighScore());
+	}
+	
+	@Test
+	@WithMockUser(username = "user1", authorities = { "MANAGER" })
+	public void testAddCorrectAnswers()
+	{
+		Player player = playerService.getPlayerById(201);
+		assertNotNull("Player not loaded!", player);
+		
+		int ca1 = player.getCorrectAnswersCount();
+		assertEquals("Loaded correct answers is wrong!", 18, ca1);
+		
+		player.AddCorrectAnswers(11);
+		int ca2 = player.getCorrectAnswersCount();
+		assertEquals("Updated correct answers is wrong!", 29, ca2);
+		
+		Player updatedPlayer = playerService.savePlayer(player);
+		assertNotNull("Updated Player not loaded!", updatedPlayer);
+		assertEquals("Saved correct answers is wrong!", 29, updatedPlayer.getCorrectAnswersCount());
+	}
+	
+	@Test
+	@WithMockUser(username = "user1", authorities = { "MANAGER" })
+	public void testAddTotalAnswers()
+	{
+		Player player = playerService.getPlayerById(201);
+		assertNotNull("Player not loaded!", player);
+		
+		int ta1 = player.getTotalAnswers();
+		assertEquals("Loaded total answers is wrong!", 24, ta1);
+		
+		player.addTotalAnswers(23);
+		int ta2 = player.getTotalAnswers();
+		assertEquals("Updated total answers is wrong!", 47, ta2);
+		
+		Player updatedPlayer = playerService.savePlayer(player);
+		assertNotNull("Updated Player not loaded!", updatedPlayer);
+		assertEquals("Saved total answers is wrong!", 47, updatedPlayer.getTotalAnswers());
+	}
+	
+	@Test
+	@WithMockUser(username = "user1", authorities = { "MANAGER" })
+	public void testAddPlayTime()
+	{
+		Player player = playerService.getPlayerById(201);
+		assertNotNull("Player not loaded!", player);
+		
+		long pt1 = player.getPlayTime();
+		assertEquals("Loaded playtime is wrong!", 743563, pt1);
+		
+		player.addPlayTime(23698);
+		long pt2 = player.getPlayTime();
+		assertEquals("Updated playtime is wrong!", 767261, pt2);
+		
+		Player updatedPlayer = playerService.savePlayer(player);
+		assertNotNull("Updated Player not loaded!", updatedPlayer);
+		assertEquals("Saved playtime is wrong!", 767261, updatedPlayer.getPlayTime());
+	}
+	
+	@Test
+	@WithMockUser(username = "user1", authorities = { "MANAGER" })
+	public void testAddQSetPlays()
+	{
+		Player player = playerService.getPlayerById(201);
+		assertNotNull("Player not loaded!", player);
+		assertEquals("Map already contains entries!", 0, player.getqSetPlayCounts().size());
+		
+		List<QuestionSet> qsets = new ArrayList<>();
+		qsets.add(questionSetService.getQuestionSetById(300));
+		qsets.add(questionSetService.getQuestionSetById(301));
+		
+		player.addPlayToQSets(qsets);
+		assertEquals("Map doesn't contain entries for newly added QuestionSets!", 2, player.getqSetPlayCounts().size());
+		
+		Player savedPlayer = playerService.savePlayer(player);
+		assertEquals("Map doesn't contain entries for newly added QuestionSets on savedPlayer!", 2, savedPlayer.getqSetPlayCounts().size());
+		
+		Map<Integer, Integer> map = savedPlayer.getqSetPlayCounts();
+		assertEquals("Map missing entry for QSet 300", true, map.containsKey(300));
+		assertEquals("Map missing entry for QSet 301", true, map.containsKey(301));
+		
+		assertEquals("Map has wrong number for QSet 300", new Integer(1), map.get(300));
+		assertEquals("Map has wrong number for QSet 301", new Integer(1), map.get(301));
+	}
+	
+	@Test
+	@WithMockUser(username = "user1", authorities = { "MANAGER" })
+	public void testAddLastGameScore()
+	{
+		Player player = playerService.getPlayerById(201);
+		assertNotNull("Player not loaded!", player);
+		
+		int[] values1 = player.getLastGameScores();
+		assertEquals("Array has wrong size!", 10, values1.length);
+		assertEquals("Array has wrong value!", 0, values1[0]);
+		assertEquals("Array has wrong value!", 0, values1[9]);
+		
+		player.addGameScore(1000, 80085);
+		player.addGameScore(2000, 1337);
+		
+		int[] values2 = player.getLastGameScores();
+		assertEquals("Array has wrong size!", 10, values2.length);
+		assertEquals("Array has wrong value!", 0, values2[0]);
+		assertEquals("Array has wrong value!", 1337, values2[9]);
+		assertEquals("Array has wrong value!", 80085, values2[8]);
+		
+		Player player2 = playerService.savePlayer(player);
+		int[] values3 = player2.getLastGameScores();
+		assertEquals("Array has wrong size!", 10, values3.length);
+		assertEquals("Array has wrong value!", 0, values3[0]);
+		assertEquals("Array has wrong value!", 1337, values3[9]);
+		assertEquals("Array has wrong value!", 80085, values3[8]);
+		
+		Player player3 = playerService.getPlayerById(201);
+		assertNotNull("Player not loaded!", player3);
+		int[] values4 = player3.getLastGameScores();
+		assertEquals("Array has wrong size!", 10, values4.length);
+		assertEquals("Array has wrong value!", 0, values4[0]);
+		assertEquals("Array has wrong value!", 1337, values4[9]);
+		assertEquals("Array has wrong value!", 80085, values4[8]);
+	}
+	
+	@Test
+	@WithMockUser(username = "user1", authorities = { "MANAGER" })
+	public void testAddLastGameScoresOverflow()
+	{
+		Player player = playerService.getPlayerById(202);
+		assertNotNull("Player not loaded!", player);
+		
+		int[] values1 = player.getLastGameScores();
+		assertEquals("Array has wrong size!", 10, values1.length);
+		assertEquals("Array has wrong value!", 0, values1[0]);
+		assertEquals("Array has wrong value!", 0, values1[9]);
+		
+		for (int i = 1; i < 13; i++)
+		{
+			player.addGameScore(i * 100, i * 10);
+		}
+		int[] values2 = player.getLastGameScores();
+		for (int i = 0; i < 10; i++)
+		{
+			assertEquals("Array has wrong value at index " + i, (i + 3) * 10, values2[i]);
+		}
+		
 	}
 }

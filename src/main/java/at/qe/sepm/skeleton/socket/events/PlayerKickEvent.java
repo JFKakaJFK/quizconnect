@@ -2,7 +2,7 @@ package at.qe.sepm.skeleton.socket.events;
 
 import at.qe.sepm.skeleton.model.Player;
 
-public class PlayerKickEvent extends ServerEvent {
+public class PlayerKickEvent extends SocketEvent {
 
     private int playerId;
 

@@ -2,7 +2,7 @@ package at.qe.sepm.skeleton.socket.events;
 
 import at.qe.sepm.skeleton.logic.ActiveQuestion;
 
-public class RemoveQuestionEvent extends ServerEvent {
+public class RemoveQuestionEvent extends SocketEvent {
 
     private int questionId;
 

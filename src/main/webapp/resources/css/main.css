@@ -17,6 +17,6 @@
 @import "../quizconnect/styles/playerbox.css";
 @import "../quizconnect/styles/stat.css";
 @import "../quizconnect/styles/modal.css";
-
+@import "../quizconnect/styles/scrollpaginator.css";
 
 @import "state/state.css";

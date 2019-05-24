@@ -139,13 +139,18 @@ const renderPlayers = ( parent, { players }) => {
           // rerender ready
           readyNode.setAttribute('data-ready', true);
           readyNode.innerHTML = 'ready rerendered';
-          // readyNode.innerHTML = `<div class="ready" data-ready="true">ready rerendered</div>`; // TODO
-        } else if(!player.ready && lastReadyUp && player.id === state.id){ // TODO react to joins of unready players & render for first player... test if makes sense
-          readyNode.setAttribute('data-toggle', 'modal');
-          readyNode.setAttribute('data-target', '#confirmReady');
-          readyNode.setAttribute('onclick', '{}');
-          readyNode.innerHTML = 'last unready';
-          // readyNode.innerHTML = `<div class="ready" data-ready="false" data-toggle="modal" data-target="#confirmReady" onclick="(() => {})()">last unready</div>`;
+        } else if(!player.ready && player.id === state.id){
+          if(lastReadyUp){
+            readyNode.setAttribute('data-toggle', 'modal');
+            readyNode.setAttribute('data-target', '#confirmReady');
+            readyNode.setAttribute('onclick', '{}');
+            readyNode.innerHTML = 'last unready';
+          } else if(!lastReadyUp && readyNode.hasAttribute('data-toggle')){
+            readyNode.removeAttribute('data-toggle');
+            readyNode.removeAttribute('data-target');
+            readyNode.setAttribute('onclick', 'readyUp()');
+            readyNode.innerHTML = 'ready up';
+          }
         }
       } else { // if not in players, delete // TODO test
         parent.removeChild(node);
@@ -159,6 +164,19 @@ const renderPlayers = ( parent, { players }) => {
   // add new players
   if(copy.length > 0){
     copy.forEach(p => parent.innerHTML += renderPlayer(p));
+    // TODO handle ready up if only one player in lobby (show lastready | no ready up at all )??
+  }
+};
+
+const countdown = (remaining, nodeId) => {
+  const node = document.getElementById(nodeId);
+  if(remaining > 0){
+    console.debug(`COUNTDOWN: ${remaining}`);
+    if(node !== null) node.innerHTML = remaining.toString();
+    showChatMessage(`Game will start in ${remaining}s`);
+    setTimeout(() => countdown(remaining - 1, nodeId), 1000)
+  } else {
+    if(node !== null) node.innerHTML = '0';
   }
 };
 
@@ -175,6 +193,20 @@ const renderLobby = ( {info} ) => {
   }
   console.debug('RENDER: rendering lobby')
 
+  let allReady = info.players.filter(p => !p.ready).length === 0 && info.players.length > 0;
+  if(allReady){
+    if(document.getElementById('countdown') === null){
+      clearScreen();
+      ROOT.innerHTML = `
+      <div>
+        <h1>Game will start in <span id="countdown">5</span>s</h1>
+      </div>
+    `;
+      countdown(5, 'countdown');
+    }
+    return;
+  }
+
   let elem = ROOT.querySelector('.info');
 
   // info only is rendered once
@@ -189,6 +221,8 @@ const renderLobby = ( {info} ) => {
 
   // renders the players
   renderPlayers(players, info);
+
+
 };
 
 // TODO structure, rerender only on change
@@ -280,58 +314,62 @@ const renderAnswers = ( parent, { answers }) => {
   if(answerNodes.length > 0){
     // remove answer if not in state
     answerNodes.forEach(node => {
-      /*
       if(!node.classList.contains('answer-placeholder')){
-        // all of the below
+
+        let questionId = parseInt(node.getAttribute('data-questionId'));
+        let answerId = parseInt(node.getAttribute('data-answerId'));
+        let answer = copy.find(a => a.questionId === questionId && a.answerId === answerId);
+
+        // delete if not in answers
+        if(answer === undefined){
+          // change to default // TODO
+          let placeholder = document.createElement('div');
+          node.parentNode.replaceChild(placeholder, node); // removes event listeners
+          placeholder.classList.add('answer-placeholder');
+          placeholder.classList.add('answer');
+          placeholder.classList.add('box');
+          placeholder.innerHTML = `<p></p>`
+          // parent.removeChild(node);
+        }
+
+        // remove answer from copy (make search space smaller)
+        copy = copy.filter(a => a.questionId !== questionId || a.answerId !== answerId);
       }
-      */
-
-      let questionId = parseInt(node.getAttribute('data-questionId'));
-      let answerId = parseInt(node.getAttribute('data-answerId'));
-      let answer = copy.find(a => a.questionId === questionId && a.answerId === answerId);
-
-      // delete if not in answers
-      if(answer === undefined){
-        // change to default // TODO
-        //console.log(node);
-        parent.removeChild(node);
-      }
-
-      // remove answer from copy (make search space smaller)
-      copy = copy.filter(a => a.questionId !== questionId || a.answerId !== answerId);
     });
   }
+
 
   const emptyNodes = parent.querySelectorAll('.answer-placeholder');
   // add new answers
   if(copy.length > 0){
-    // first populate placeholders // TODO
-    /*
+    // first populate placeholders
     for (let node of emptyNodes) {
       if(copy.length > 0){
         let answer = copy.pop();
 
+        let pseudo = document.createElement('div');
+        pseudo.innerHTML = renderAnswer(answer);
+
+        node.parentNode.replaceChild(pseudo.firstElementChild, node);
       } else {
         break;
       }
     }
+
     // then create new answers
     if(copy.length > 0){
       copy.forEach(a => parent.innerHTML += renderAnswer(a));
     }
-    */
 
-    copy.forEach(a => parent.innerHTML += renderAnswer(a));
+    // copy.forEach(a => parent.innerHTML += renderAnswer(a));
   }
 
   // delete all empty nodes at end of parent (only placeholders in between) // TODO
-  /*
-  let lastNode = parent.lastChild;
-  while(lastNode.classList.contains('answer-placeholder')){
+  let lastNode = parent.lastElementChild;
+  while(lastNode !== null && lastNode !== undefined && lastNode.classList.contains('answer-placeholder')){
     parent.removeChild(lastNode);
-    lastNode = parent.lastChild;
+    lastNode = parent.lastElementChild;
   }
-  */
 };
 
 // TODO structure, rerender only on change
@@ -393,6 +431,58 @@ const renderGame = ( {game} ) => {
   renderJoker(ROOT.querySelector('.joker'), game.jokersLeft);
 };
 
+const r = (min, max) => {
+  return Math.random() * (max - min) + min;
+};
+
+const confettiShower = (times, particleCount = r(50, 100)) => {
+  if(times <= 0){
+    return;
+  }
+  confetti({
+    angle: 270,
+    spread: r(50, 100),
+    particleCount: particleCount,
+    origin: {
+      y: -0.6
+    }
+  });
+  setTimeout(() => confettiShower(times - 1), 300);
+};
+
+const confettiCannon = (times, particleCount = r(50, 100)) => {
+  if(times <= 0){
+    return;
+  }
+  confetti({
+    angle: r(55, 125),
+    spread: r(50, 70),
+    particleCount: particleCount,
+    origin: {
+      y: 0.6
+    }
+  });
+  setTimeout(() => confettiCannon(times - 1), 300);
+};
+
+const fireworks = (end, particleCount = r(50, 100)) => {
+  if(Date.now() > end){
+    return;
+  }
+  confetti({
+    startVelocity: 30,
+    spread: 360,
+    ticks: 60,
+    particleCount: particleCount,
+    origin: {
+      x: Math.random(),
+      // since they fall down, start a bit higher than random
+      y: Math.random() - 0.2
+    }
+  });
+  setTimeout(() => fireworks(end), 300);
+};
+
 const renderGameEnd = ({game}) => {
   if(ROOT.getAttribute('data-state') == null || parseInt(ROOT.getAttribute('data-state')) !== FINISHED) {
     ROOT.setAttribute('data-state', FINISHED.toString());
@@ -408,18 +498,82 @@ const renderGameEnd = ({game}) => {
     </div>
     <a href="/player/home.xhtml" class="btn btn-primary">Home</a>
     `;
+
+    if(game.score > 1500){ // somewhat good
+      fireworks(Date.now() + (10 * 1000)); // for 10s
+    } else if (game.score > 0){
+      confettiCannon(Math.max(3, game.score / 150)); // 3 - 10 times, depending on score
+    } else {
+      confettiShower(1, 5);
+    }
   }
 };
 
+const renderChatMessage = ({ message, from, playerId, id, timestamp }) => {
+  let ts = new Date(timestamp);
+  let escapedMessage = escapeHTML(message);
+  let escapedFrom = escapeHTML(from);
+  return `<div class="chat chat-message ${state.id === playerId ? 'chat-outgoing' : from === INFO ? 'chat-info' : ''}" data-id="${id}">
+    <span class="chat chat-timestamp">[${ts.getHours()}:${ts.getMinutes()}]</span>
+    ${from === INFO ? '' : `<span class="chat chat-from">${escapedFrom}:</span>`}
+    ${escapedMessage}
+  </div>`
+};
+
+const renderChatMessages = ({ messages }) => {
+  let copy = [...messages];
+
+  const container = document.getElementById('messages');
+  /*
+  const messageNodes = container.querySelectorAll('.message');
+
+
+  // remove already rendered nodes from copy
+  messageNodes.forEach(node => {
+    let nodeId = parseInt(node.getAttribute('data-id'));
+    if(copy.find(msg => msg.id === nodeId) === undefined){ // removes duplicates
+      container.removeChild(node);
+    }
+
+    copy = copy.filter(msg => msg.id !== nodeId);
+  });
+  */
+  if(copy.length > 0){
+    copy.forEach(m => {
+      container.innerHTML += renderChatMessage(m);
+    })
+  }
+  state.messages = []; // remove all rendered messages from state without triggering a rerender
+};
+
+const clearMessages = () => {
+  const MESSAGES = document.getElementById('messages');
+  let lc = MESSAGES.lastChild;
+  while(lc){
+    MESSAGES.removeChild(lc);
+    lc = MESSAGES.lastChild;
+  }
+};
+
+
 const render = (state) => {
+  const container = document.getElementById('messages');
+  const start = performance.now();
+
   if(state.timeoutIsActive){
     renderTimeOutModal(state.timeoutRemainingTime);
   }
   if(state.state === INGAME){
-    renderGame(state)
+    renderGame(state);
+    renderChatMessages(state);
   } else if(state.state === LOBBY){
-    renderLobby(state)
+    renderLobby(state);
+    renderChatMessages(state);
   } else if(state.state === FINISHED){
-    renderGameEnd(state)
+    renderGameEnd(state);
+    clearMessages();
   }
+
+  const time = performance.now() - start;
+  console.debug(`RENDER: rendering took ${time.toFixed(3)}ms`)
 };

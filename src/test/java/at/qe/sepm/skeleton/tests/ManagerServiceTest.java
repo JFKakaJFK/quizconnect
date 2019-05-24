@@ -50,7 +50,7 @@ public class ManagerServiceTest
 	public void testLoadAllManagers()
 	{
 		Collection<Manager> managers = managerService.getAllManagers();
-		assertEquals("Wrong number of managers loaded!", 3, managers.size());
+		assertEquals("Wrong number of managers loaded!", 2, managers.size());
 		
 		for (Manager manager : managers)
 		{

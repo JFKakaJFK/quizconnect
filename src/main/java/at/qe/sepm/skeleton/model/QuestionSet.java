@@ -44,12 +44,6 @@ public class QuestionSet implements Persistable<Integer>
 	
 	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "questionSet", fetch = FetchType.EAGER)
 	private Set<Question> questions;
-	
-	/**
-	 * For cascading purposes only, DO NOT USE!
-	 */
-	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "questionSet", fetch = FetchType.LAZY)
-	private Set<QuestionSetPerformance> performances;
 
 	public String getName()
 	{

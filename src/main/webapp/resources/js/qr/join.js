@@ -28,8 +28,8 @@ const joinGame = (pin) => {
     if(data.error){
       console.error(data.error);
       console.log('TODO: error animation / progress') // TODO
-    }
-    if(data.playerId){
+      document.getElementById('errors').innerHTML = data.error;
+    } else if(data.playerId){
       console.debug('JOIN: connected as player', data.playerId);
       console.log('TODO: fancy animation'); // TODO
       state.state = LOBBY;
@@ -88,6 +88,7 @@ const clearLocalStorage = () => {
 
 const updateLocalStorage = () => {
   console.debug('STATE: updating localStorage');
+  console.error('STATE: updating localStorage');
   if(state.state === JOIN || state.state === FINISHED){
     clearLocalStorage();
   } else {
