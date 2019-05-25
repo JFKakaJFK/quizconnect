@@ -9,6 +9,7 @@
                 xmlns:pt="http://xmlns.jcp.org/jsf/passthrough" xmlns:qc="http://java.sun.com/jsf/composite/quizconnect"
                 template="/WEB-INF/templates/main.xhtml">
     <ui:define name="site-specific-css">
+        <link rel="stylesheet" type="text/css" href="/resources/css/editquestionset.css"/>
         <link rel="stylesheet" type="text/css" href="/resources/css/login.css"/>
         <script type="text/javascript" src="../resources/quizconnect/js/QCUpload.js"></script>
     </ui:define>
@@ -102,23 +103,6 @@
                                  value="#{questionSetBean.question.questionString}"
                                  name="question" id="question" pt:autocomplete="off" pt:required="true" pt:pattern="[\s\S]*\S[\s\S]*"/>
                     <h:message for="question" styleClass="state-error"/>
-
-
-                    <!--
-                    <qc:upload target="# {questionSetBean.file}"
-                               listenerString="# {questionSetBean.handleFileUpload('questionString', questionSetBean.question)}"
-                               listener="# {questionSetBean.none}"
-                               accept="image/*"
-                               text="Upload Picture"
-                               rendered="# {questionSetBean.question.type == 'picture'}"
-                               update="questionForm:previewQuestion"
-                    />
-
-                    <h:panelGroup layout="block" id="previewQuestion" styleClass="preview" rendered="# {questionSetBean.question.type == 'picture'}">
-                        <h:graphicImage pt:id="preview" value="# {answerPictureBean.getAnswers((questionSetBean.filename == null ? questionSetBean.question.questionString : questionSetBean.filename))}" alt="Question picture" />
-                    </h:panelGroup>
-
-                    -->
                 </div>
 
                 <div class="form-group">
@@ -129,15 +113,16 @@
                                  name="corrAnswer" id="corrAnswer" pt:autocomplete="off" pt:required="true" pt:pattern="[\s\S]*\S[\s\S]*"/>
 
                     <qc:upload target="#{questionSetBean.file}"
-                               listenerString="#{questionSetBean.handleFileUpload('rightAnswerString', questionSetBean.question)}"
+                               listenerString="#{questionSetBean.handleFileUpload('rightAnswerString', questionSetBean.question, questionSetBean.questionSet.id.toString())}"
                                listener="#{questionSetBean.none}"
                                accept="image/*"
                                text="Upload Picture"
                                rendered="#{questionSetBean.question.type == 'picture'}"
+                               required="true"
                                update="questionForm:rightAnswerString"
                     />
 
-                    <h:panelGroup layout="block" id="rightAnswerString" styleClass="preview" rendered="#{questionSetBean.question.type == 'picture'}">
+                    <h:panelGroup layout="block" id="rightAnswerString" styleClass="preview-overview" rendered="#{questionSetBean.question.type == 'picture'}">
                         <h:graphicImage pt:id="preview" value="#{answerPictureBean.getAnswers((questionSetBean.filename == null ? questionSetBean.question.rightAnswerString : questionSetBean.filename))}" alt="Question picture" />
                     </h:panelGroup>
                 </div>
@@ -149,15 +134,16 @@
                                  rendered="#{questionSetBean.question.type == 'text'}"
                                  pt:required="true" id="wrongAnswer1" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*"/>
                     <qc:upload target="#{questionSetBean.file}"
-                               listenerString="#{questionSetBean.handleFileUpload('wrongAnswerString_1', questionSetBean.question)}"
+                               listenerString="#{questionSetBean.handleFileUpload('wrongAnswerString_1', questionSetBean.question, questionSetBean.questionSet.id.toString())}"
                                listener="#{questionSetBean.none}"
                                accept="image/*"
                                text="Upload Picture"
                                rendered="#{questionSetBean.question.type == 'picture'}"
+                               required="true"
                                update="questionForm:wrongAnswer1Pic"
                     />
 
-                    <h:panelGroup layout="block" id="wrongAnswer1Pic" styleClass="preview" rendered="#{questionSetBean.question.type == 'picture'}">
+                    <h:panelGroup layout="block" id="wrongAnswer1Pic" styleClass="preview-overview" rendered="#{questionSetBean.question.type == 'picture'}">
                         <h:graphicImage pt:id="preview" value="#{answerPictureBean.getAnswers((questionSetBean.filename == null ? questionSetBean.question.wrongAnswerString_1 : questionSetBean.filename))}" alt="Question picture" />
                     </h:panelGroup>
                 </div>
@@ -168,6 +154,18 @@
                                  value="#{questionSetBean.question.wrongAnswerString_2}" name="wrongAnswer2"
                                  rendered="#{questionSetBean.question.type == 'text'}"
                                  id="wrongAnswer2" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*"/>
+
+                    <qc:upload target="#{questionSetBean.file}"
+                               listenerString="#{questionSetBean.handleFileUpload('wrongAnswerString_2', questionSetBean.question, questionSetBean.questionSet.id.toString())}"
+                               listener="#{questionSetBean.none}"
+                               accept="image/*"
+                               text="Upload Picture"
+                               rendered="#{questionSetBean.question.type == 'picture'}"
+                               update="questionForm:wrongAnswer2Pic"
+                    />
+                    <h:panelGroup layout="block" id="wrongAnswer2Pic" styleClass="preview-overview" rendered="#{questionSetBean.question.type == 'picture'}">
+                        <h:graphicImage pt:id="preview" value="#{answerPictureBean.getAnswers((questionSetBean.filename == null ? questionSetBean.question.wrongAnswerString_2 : questionSetBean.filename))}" alt="Question picture" />
+                    </h:panelGroup>
                 </div>
 
                 <div class="form-group">
@@ -176,6 +174,19 @@
                                  value="#{questionSetBean.question.wrongAnswerString_3}" name="wrongAnswer3"
                                  rendered="#{questionSetBean.question.type == 'text'}"
                                  id="wrongAnswer3" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*"/>
+
+                    <qc:upload target="#{questionSetBean.file}"
+                               listenerString="#{questionSetBean.handleFileUpload('wrongAnswerString_3', questionSetBean.question, questionSetBean.questionSet.id.toString())}"
+                               listener="#{questionSetBean.none}"
+                               accept="image/*"
+                               text="Upload Picture"
+                               rendered="#{questionSetBean.question.type == 'picture'}"
+                               update="questionForm:wrongAnswer3Pic"
+                    />
+
+                    <h:panelGroup layout="block" id="wrongAnswer3Pic" styleClass="preview-overview" rendered="#{questionSetBean.question.type == 'picture'}">
+                        <h:graphicImage pt:id="preview" value="#{answerPictureBean.getAnswers((questionSetBean.filename == null ? questionSetBean.question.wrongAnswerString_3 : questionSetBean.filename))}" alt="Question picture" />
+                    </h:panelGroup>
                 </div>
 
                 <div class="form-group">
@@ -184,14 +195,39 @@
                                  value="#{questionSetBean.question.wrongAnswerString_4}" name="wrongAnswer4"
                                  rendered="#{questionSetBean.question.type == 'text'}"
                                  id="wrongAnswer4" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*"/>
+
+                    <qc:upload target="#{questionSetBean.file}"
+                               listenerString="#{questionSetBean.handleFileUpload('wrongAnswerString_4', questionSetBean.question, questionSetBean.questionSet.id.toString())}"
+                               listener="#{questionSetBean.none}"
+                               accept="image/*"
+                               text="Upload Picture"
+                               rendered="#{questionSetBean.question.type == 'picture'}"
+                               update="questionForm:wrongAnswer4Pic"
+                    />
+
+                    <h:panelGroup layout="block" id="wrongAnswer4Pic" styleClass="preview-overview" rendered="#{questionSetBean.question.type == 'picture'}">
+                        <h:graphicImage pt:id="preview" value="#{answerPictureBean.getAnswers((questionSetBean.filename == null ? questionSetBean.question.wrongAnswerString_4 : questionSetBean.filename))}" alt="Question picture" />
+                    </h:panelGroup>
                 </div>
 
                 <div class="form-group">
                     <label for="wrongAnswer5">Wrong answer #5</label>
                     <h:inputText type="text" styleClass="form-control"
-                                 value="#{questionSetBean.question.wrongAnswerString_5}" name="wrongAnswer3"
+                                 value="#{questionSetBean.question.wrongAnswerString_5}" name="wrongAnswer5"
                                  rendered="#{questionSetBean.question.type == 'text'}"
                                  id="wrongAnswer5" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*"/>
+                    <qc:upload target="#{questionSetBean.file}"
+                               listenerString="#{questionSetBean.handleFileUpload('wrongAnswerString_5', questionSetBean.question, questionSetBean.questionSet.id.toString())}"
+                               listener="#{questionSetBean.none}"
+                               accept="image/*"
+                               text="Upload Picture"
+                               rendered="#{questionSetBean.question.type == 'picture'}"
+                               update="questionForm:wrongAnswer5Pic"
+                    />
+
+                    <h:panelGroup layout="block" id="wrongAnswer5Pic" styleClass="preview-overview" rendered="#{questionSetBean.question.type == 'picture'}">
+                        <h:graphicImage pt:id="preview" value="#{answerPictureBean.getAnswers((questionSetBean.filename == null ? questionSetBean.question.wrongAnswerString_5 : questionSetBean.filename))}" alt="Question picture" />
+                    </h:panelGroup>
                 </div>
 
 

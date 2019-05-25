@@ -100,4 +100,12 @@ public class EditQuestionBean implements Serializable {
         edit = true;
         this.selectedQuestion = selectedQuestion;
     }
+
+    public QuestionSet getQuestionSet() {
+        return questionSet;
+    }
+
+    public boolean isEdit() {
+        return edit;
+    }
 }

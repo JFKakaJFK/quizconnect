@@ -53,12 +53,9 @@ public class QuestionSetBean implements Serializable {
     private ManagerService managerService;
     private PlayerService playerService;
 
-    private String property = "questionString";
-
     @PostConstruct
     public void init() {
         currentUser = sessionInfoBean.getCurrentUser();
-
         // creates internal set ("questions") of questions created in this process which is later assigned to the questionSet
         initQuestions();
         // create an empty question on startup
@@ -80,7 +77,7 @@ public class QuestionSetBean implements Serializable {
     private String filename = null;
     private File file;
 
-    public void handleFileUpload(String property, Question question){
+    public void handleFileUpload(String property, Question question, String questionSetId){
         if(file != null){
             logger.debug("file for someone");
             if(filename != null){
@@ -88,7 +85,7 @@ public class QuestionSetBean implements Serializable {
             }
             try {
                 Manager manager = currentUser.getManager();
-                filename = storageService.storeAnswer(file, manager.getId().toString());
+                filename = storageService.storeAnswer(file, manager.getId().toString(), questionSetId);
                 Files.deleteIfExists(file.toPath());
             } catch (IOException e){
                 filename = null;
@@ -106,7 +103,6 @@ public class QuestionSetBean implements Serializable {
         }
         switch(property) {
             case "questionString":
-                logger.info("well at least the right case!");
                 question.setQuestionString(filename);
                 break;
             case "rightAnswerString":
@@ -226,7 +222,6 @@ public class QuestionSetBean implements Serializable {
             question.setWrongAnswerString_5(question.getWrongAnswerString_5().trim());
         }
     }
-
 
     public Question getQuestion() {
         return question;

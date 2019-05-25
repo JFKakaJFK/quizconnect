@@ -14,7 +14,7 @@ public class AnswerPictureBean {
     //TODO: JavaDoc for getAvatar
     public String getAnswers(String path) {
         if(path == null || !path.matches(".*/.*\\.(png|jpg)")){
-            return "/" + answers + "default/avatar.png";
+            return "/" + answers + "default/default/default.png";
         }
         return "/" + answers + path;
     }
