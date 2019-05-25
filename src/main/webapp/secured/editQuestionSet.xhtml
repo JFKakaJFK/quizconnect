@@ -171,19 +171,19 @@
                                          id="wrongAnswer3" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*"/>
                         </div>
 
-                        <ui:fragment rendered="#{not empty editQuestionBean.selectedQuestion.wrongAnswerString_4}">
+                        <div class="form-group">
                             <label for="wrongAnswer4">Wrong answer #4</label>
                             <h:inputText type="text" styleClass="form-control"
                                          value="#{editQuestionBean.selectedQuestion.wrongAnswerString_4}" name="wrongAnswer4"
                                          id="wrongAnswer4" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*"/>
-                        </ui:fragment>
+                        </div>
 
-                        <ui:fragment rendered="#{not empty editQuestionBean.selectedQuestion.wrongAnswerString_5}">
+                        <div class="form-group">
                             <label for="wrongAnswer5">Wrong answer #5</label>
                             <h:inputText type="text" styleClass="form-control"
                                          value="#{editQuestionBean.selectedQuestion.wrongAnswerString_5}" name="wrongAnswer5"
                                          id="wrongAnswer5" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*"/>
-                        </ui:fragment>
+                        </div>
                     </ui:fragment>
 
                     <ui:fragment rendered="#{editQuestionBean.selectedQuestion.type == 'picture'}">
