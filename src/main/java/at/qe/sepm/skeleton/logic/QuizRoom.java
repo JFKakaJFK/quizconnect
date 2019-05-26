@@ -566,7 +566,7 @@ public class QuizRoom implements IPlayerAction
 		ActiveQuestion q = questionSystem.getActiveQuestionById(questionId);
 		try
 		{
-			questionSystem.answerQuestion(p, questionId, index);
+			questionSystem.answerQuestion(p, questionId);
 		}
 		catch (IllegalStateException e)
 		{

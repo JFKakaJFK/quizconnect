@@ -1,22 +1,13 @@
 package at.qe.sepm.skeleton.logic;
 
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import at.qe.sepm.skeleton.model.Player;
 import at.qe.sepm.skeleton.model.Question;
 import at.qe.sepm.skeleton.model.QuestionSet;
 import at.qe.sepm.skeleton.model.QuestionSetDifficulty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.*;
 
 /**
  * System for any Question management of a {@link QuizRoom}. Each QR has one of these systems during runtime. Handles Question loading / generation, distribution, and removal.
@@ -24,7 +15,7 @@ import at.qe.sepm.skeleton.model.QuestionSetDifficulty;
  * @author Lorenz_Smidt
  *
  */
-public class QR_QuestionSystem
+class QR_QuestionSystem
 {
 	private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 	
@@ -73,6 +64,11 @@ public class QR_QuestionSystem
 	
 	/**
 	 * Called on QuizRoom creation; Loads / generates all Questions to be used into the respective pools.
+	 *
+	 * @param gameMode
+	 * 		GameMode of the QuizRoom. Controls how / what Questions are loaded.
+	 * @param questionSets
+	 * 		List of QuestionSets to load Questions from if needed.
 	 */
 	private void loadQuestions(GameMode gameMode, List<QuestionSet> questionSets)
 	{
@@ -92,9 +88,16 @@ public class QR_QuestionSystem
 				{
 					String questionString = q.getQuestionString().toLowerCase().trim();
 					String rightAnswer = q.getRightAnswerString().toLowerCase().trim();
-					if (skipDuplicateQuestions && (questionStrings.contains(questionString) || rightAnswers.contains(rightAnswer)))
+					String wrongAnswer1 = q.getWrongAnswerString_1().toLowerCase().trim();
+					String wrongAnswer2 = q.getWrongAnswerString_2().toLowerCase().trim();
+					String wrongAnswer3 = q.getWrongAnswerString_3().toLowerCase().trim();
+					String wrongAnswer4 = q.getWrongAnswerString_4().toLowerCase().trim();
+					String wrongAnswer5 = q.getWrongAnswerString_5().toLowerCase().trim();
+					
+					if (skipDuplicateQuestions && (questionStrings.contains(questionString) || rightAnswers.contains(rightAnswer) || rightAnswer.contains(wrongAnswer1) ||
+							rightAnswer.contains(wrongAnswer2) || rightAnswer.contains(wrongAnswer3) || rightAnswer.contains(wrongAnswer4) || rightAnswer.contains(wrongAnswer5)))
 					{
-						LOGGER.debug("### INFO ### skipped Question on load with duplicate question / answer!");
+						LOGGER.debug("### INFO ### skipped Question (id " + q.getId() + ") on load with duplicate question / answer!");
 						continue;
 					}
 					questionStrings.add(questionString);
@@ -123,9 +126,10 @@ public class QR_QuestionSystem
 		{
 			// generate questions for mathgod gamemode
 			MathGenerator generator = new MathGenerator();
-			questionsPoolEasy = generator.generateQuestions(QuestionSetDifficulty.easy, maxQuestions, 1);
-			questionsPoolHard = generator.generateQuestions(QuestionSetDifficulty.hard, maxQuestions, 2 * maxQuestions);
+			questionsPoolEasy = generator.generateQuestions(QuestionSetDifficulty.easy, 2*maxQuestions, 1);
+			questionsPoolHard = generator.generateQuestions(QuestionSetDifficulty.hard, 2*maxQuestions, 2 * maxQuestions);
 		}
+		
 		LOGGER.debug("### INFO ### QuizRoom loaded " + questionsPoolEasy.size() + " easy Questions and " + questionsPoolHard.size() + " hard Questions.");
 	}
 	
@@ -157,7 +161,8 @@ public class QR_QuestionSystem
 		
 		// redistribute questions with right answer at player, modify activeQuestions with wrong answers at player
 		int redistCount = 0;
-		for (ActiveQuestion activeQuestion : playerAnswers.get(player))
+		List<ActiveQuestion> AQs = new ArrayList<>(playerAnswers.get(player)); // copy into own list
+		for (ActiveQuestion activeQuestion : AQs)
 		{
 			// is AQ already removed?
 			if (!activeByQuestionId.containsKey(activeQuestion.question.getId()))
@@ -193,10 +198,9 @@ public class QR_QuestionSystem
 		// redistribute questions after 0.5sec delay
 		final int rC = redistCount;
 		quizRoom.addDelayedAction(new DelayedAction((new Date().getTime()) + 500, () -> {
-			for (int i = 0; i < rC; i++)
-			{
-				distributeQuestion();
-			}
+			if (rC > 1)
+				addMissingQuestions(rC - 1);
+			distributeQuestion();
 		}));
 		
 		playerQuestions.remove(player);
@@ -205,18 +209,20 @@ public class QR_QuestionSystem
 	
 	/**
 	 * Adds count number of Questions as missing (= to be distributed on next call).
-	 * 
+	 *
 	 * @param count
+	 * 		Number of Questions to add as missing.
 	 */
-	protected void addMissingQuestions(int count)
+	protected synchronized void addMissingQuestions(int count)
 	{
 		missingQuestions += count;
 	}
 	
 	/**
 	 * Sets the total number of missing Questions.
-	 * 
+	 *
 	 * @param count
+	 * 		Number of total Questions to set as missing.
 	 */
 	protected void setMissingQuestions(int count)
 	{
@@ -225,10 +231,11 @@ public class QR_QuestionSystem
 	
 	/**
 	 * Adds count number of completed Questions to be counted.
-	 * 
+	 *
 	 * @param count
+	 * 		Number of Questions to add as completed.
 	 */
-	protected void addCompletedQuestions(int count)
+	protected synchronized void addCompletedQuestions(int count)
 	{
 		completedQuestions += count;
 	}
@@ -373,7 +380,7 @@ public class QR_QuestionSystem
 			else if (i == 4)
 				qString = question.getWrongAnswerString_5();
 			
-			if (answerFreePlayers.size() > 0 && qString != null && qString != "")
+			if (answerFreePlayers.size() > 0 && qString != null && !qString.equals(""))
 			{
 				int index = random.nextInt(answerFreePlayers.size());
 				p = answerFreePlayers.get(index);
@@ -395,9 +402,9 @@ public class QR_QuestionSystem
 		
 		playerAnswers.get(raPlayer).add(newActive);
 		
-		for (int i = 0; i < waPlayers.size(); i++)
+		for (Player waPlayer : waPlayers)
 		{
-			playerAnswers.get(waPlayers.get(i)).add(newActive);
+			playerAnswers.get(waPlayer).add(newActive);
 		}
 		
 		// event call
@@ -410,7 +417,7 @@ public class QR_QuestionSystem
 	private AbstractMap.SimpleEntry<QR_Question, QuestionSetDifficulty> selectQuestion()
 	{
 		Random random = new Random();
-		int bound = quizRoom.difficulty == RoomDifficulty.easy ? 66 : 33;
+		int bound = quizRoom.difficulty == RoomDifficulty.easy ? 90 : 10; //chance to get easy question if both available
 		
 		boolean easy;
 		if ((completedQuestions >= maxQuestions) || (questionsPoolEasy.size() == 0 && questionsPoolHard.size() == 0))
@@ -464,8 +471,7 @@ public class QR_QuestionSystem
 		long playerBonus = 5000; // ms added for each player in the room
 		double scaleFactor = 0.3; // factor affecting time reduction towards end of game
 		
-		// TODO change times depending on gamemode
-		long base = 0;
+		long base;
 		if (quizRoom.difficulty == RoomDifficulty.easy)
 		{
 			if (questionDifficulty == QuestionSetDifficulty.easy)
@@ -537,10 +543,8 @@ public class QR_QuestionSystem
 	 *            Player making the answer call.
 	 * @param questionId
 	 *            Runtime id of the question to be answered.
-	 * @param index
-	 *            Index of the answer option chosen.
 	 */
-	protected synchronized void answerQuestion(Player player, int questionId, int index) throws IllegalStateException
+	protected synchronized void answerQuestion(Player player, int questionId) throws IllegalStateException
 	{
 		if (!activeByQuestionId.containsKey(questionId))
 		{
