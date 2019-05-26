@@ -21,8 +21,7 @@ class QR_QuestionSystem
 	
 	private final int playerAnswerSlots = 6; // number of answers a Player can have at most
 	private final int maxQuestions = 30; // maximum number of questions until game ends
-	// TODO set to true after test question sets are fixed
-	private final boolean skipDuplicateQuestions = false; // if true skips loading all Questions with questions / answers matching other Questions.
+	private final boolean skipDuplicateQuestions = true; // if true skips loading all Questions with questions / answers matching other Questions.
 	
 	private QuizRoom quizRoom; // static reference to associated QuizRoom
 	
