@@ -156,7 +156,6 @@ const renderPlayers = ( parent, { players }) => {
   let copy = [ ...players ];
 
   let lastReadyUp = copy.filter(p => !p.ready).length === 1;
-  // console.log(lastReadyUp)
 
   if(playerNodes.length > 0){
     playerNodes.forEach(node => {
@@ -232,12 +231,22 @@ const renderLobby = ( {info} ) => {
   if(allReady){
     if(document.getElementById('countdown') === null){
       clearScreen();
+      /*
       ROOT.innerHTML = `
-      <div>
-        <h1>Game will start in <span id="countdown">5</span>s</h1>
-      </div>
-    `;
+        <div>
+          <h1>Game will start in <span id="countdown">5</span>s</h1>
+        </div>
+      `;
       countdown(5, 'countdown');
+      */
+      ROOT.innerHTML = `
+        <div class="countdown" id="counter"><div>
+      `;
+      let cd = new Countdown({
+        selector: '#counter',
+        values: 6,
+      });
+      cd.start();
     }
     return;
   }
@@ -277,7 +286,15 @@ const renderQuestion = (parent, { questionId, type, question, remaining }) => {
       let total = parseInt(qt.getAttribute('data-total'));
       qt.style.width = `${(remaining / total) * 100}%`;
     } else {
-      q.innerHTML = question;
+      if(type === ANSWERTYPE_MATH){
+        let elem = document.createElement('p');
+        katex.render(question, elem, {
+          throwOnError: false,
+        });
+        q.innerHTML = elem.innerHTML;
+      } else {
+        q.innerHTML = question;
+      }
       qt.setAttribute('data-total', remaining);
       qt.style.width = '100%';
     }
@@ -327,12 +344,25 @@ const renderPictureAnswer = (answer) => {
   };
 };
 
+const renderMathAnswer = (answer) => {
+  let elem = document.createElement('p');
+  katex.render(answer, elem, {
+    throwOnError: false,
+  });
+  return {
+    content: `<p>${elem.innerHTML}</p>`,
+    classes: 'answer-math',
+  };
+};
+
 const renderAnswer = ({ questionId, type, answerId, answer }) => {
   switch (type){
     case ANSWERTYPE_TEXT:
       return renderGenericAnswer({ ...renderTextAnswer(answer), questionId, answerId });
     case ANSWERTYPE_PICTURE:
       return renderGenericAnswer({ ...renderPictureAnswer(answer), questionId, answerId });
+    case ANSWERTYPE_MATH:
+      return renderGenericAnswer({ ...renderMathAnswer(answer), questionId, answerId});
     default:
       return renderGenericAnswer({ classes: 'answer-default', content: answer, questionId, answerId });
   }
@@ -518,7 +548,7 @@ const fireworks = (end, particleCount = r(50, 100)) => {
   setTimeout(() => fireworks(end), 300);
 };
 
-const renderGameEnd = ({game}) => {
+const renderGameEnd = ({ game, highScore}) => {
   if(ROOT.getAttribute('data-state') == null || parseInt(ROOT.getAttribute('data-state')) !== FINISHED) {
     ROOT.setAttribute('data-state', FINISHED.toString());
     clearScreen();
@@ -527,7 +557,8 @@ const renderGameEnd = ({game}) => {
     score.classList.add('score-container');
     ROOT.appendChild(score);
     score.innerHTML = `
-    <div>
+    <div class="text-center">
+      ${game.score > highScore ? `<h2>New Highscore!</h2>` : ''}
       <div class="stat stat-lg">
           <h3>${game.score}</h3>
           <p>Score</p>
@@ -550,7 +581,11 @@ const renderGameEnd = ({game}) => {
       </div>
 `;
 
-    if(game.score > 1500){ // somewhat good
+    if(game.score > highScore) {
+      fireworks(Date.now() + (10 * 1000));
+      confettiCannon(Math.max(3, game.score / 150));
+      confettiShower(Math.max(3, game.score / 150));
+    } else if(game.score > 1500){ // somewhat good
       fireworks(Date.now() + (10 * 1000)); // for 10s
     } else if (game.score > 0){
       confettiCannon(Math.max(3, game.score / 150)); // 3 - 10 times, depending on score
@@ -565,7 +600,7 @@ const renderChatMessage = ({ message, from, playerId, id, timestamp }) => {
   let escapedMessage = escapeHTML(message);
   let escapedFrom = escapeHTML(from);
   return `<div class="chat chat-message ${state.id === playerId ? 'chat-outgoing' : from === INFO ? 'chat-info' : ''}" data-id="${id}">
-    <span class="chat chat-timestamp">[${ts.getHours()}:${ts.getMinutes()}]</span>
+    <span class="chat chat-timestamp">[${ts.getHours().toString().padStart(2, '0')}:${ts.getMinutes().toString().padStart(2, '0')}:${ts.getSeconds().toString().padStart(2, '0')}]</span>
     ${from === INFO ? '' : `<span class="chat chat-from">${escapedFrom}:</span>`}
     ${escapedMessage}
   </div>`

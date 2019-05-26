@@ -12,6 +12,7 @@ let state = {
   gameSessionTimer: null,
   pin: null,
   id: null, // TODO: refactor as playerId | change docs
+  highScore: null,
   state: JOIN,
   timeoutIsActive: false,
   timeoutRemainingTime: 0,

@@ -8,7 +8,7 @@
       xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:jsf="http://xmlns.jcp.org/jsf"
-      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xml:lang="en"
       lang="en">
 <cc:interface name="modal">
@@ -57,7 +57,9 @@
     <cc:attribute name="bodyId" default="modal-body"/>
 
     <cc:attribute name="abort" default="Close"/>
+    <cc:attribute name="showAbort" default="true" type="boolean"/>
     <cc:attribute name="confirm" default="Save changes"/>
+    <cc:attribute name="showConfirm" default="true" type="boolean"/>
     <cc:attribute name="closeAction" method-signature="void action()" default="#{QCModalController.defaultAction}"/>
     <cc:attribute name="abortAction" method-signature="void action()" default="#{QCModalController.defaultAction}"/>
     <cc:attribute name="executeOnAbort" default="@form"/>
@@ -99,20 +101,21 @@
                 </div>
 
                 <div jsf:id="#{cc.attrs.footerId}" class="modal-footer">
-
-                    <h:commandButton actionListener="#{cc.attrs.abortAction}" p:class="btn btn-tertiary"
-                                     p:data-dismiss="modal" value="#{cc.attrs.abort}">
-                        <f:ajax execute="#{cc.attrs.executeOnAbort}" render="#{cc.attrs.update}"/>
-                    </h:commandButton>
-
-                    <h:commandButton actionListener="#{cc.attrs.confirmAction}"
-                                     p:class="btn btn-primary"
-                                     p:data-dismiss="#{cc.attrs.closeOnConfirm ? 'modal' : ''}"
-                                     value="#{cc.attrs.confirm}"
-                                     disabled="#{cc.attrs.disableConfirm}">
-                        <f:ajax execute="@form" render="#{cc.attrs.update}"/>
-                    </h:commandButton>
-
+                    <ui:fragment rendered="#{cc.attrs.showAbort}">
+                        <h:commandButton actionListener="#{cc.attrs.abortAction}" p:class="btn btn-tertiary"
+                                         p:data-dismiss="modal" value="#{cc.attrs.abort}">
+                            <f:ajax execute="#{cc.attrs.executeOnAbort}" render="#{cc.attrs.update}"/>
+                        </h:commandButton>
+                    </ui:fragment>
+                    <ui:fragment rendered="#{cc.attrs.showConfirm}">
+                        <h:commandButton actionListener="#{cc.attrs.confirmAction}"
+                                         p:class="btn btn-primary"
+                                         p:data-dismiss="#{cc.attrs.closeOnConfirm ? 'modal' : ''}"
+                                         value="#{cc.attrs.confirm}"
+                                         disabled="#{cc.attrs.disableConfirm}">
+                            <f:ajax execute="@form" render="#{cc.attrs.update}"/>
+                        </h:commandButton>
+                    </ui:fragment>
                 </div>
             </div>
         </div>
