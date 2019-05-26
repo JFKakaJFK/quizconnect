@@ -14,7 +14,7 @@ import javax.persistence.OneToOne;
 import org.springframework.data.domain.Persistable;
 
 /**
- * Entity representing a Manager.
+ * Entity representing a Manager. A Manager can create, edit and delete Players, QuestionSets and Questions.
  * 
  * @author Lorenz_Smidt
  *
@@ -50,8 +50,6 @@ public class Manager implements Persistable<Integer>
 	
 	/**
 	 * Gets called automatically upon creation of the Manager. Should not be called manually!
-	 * 
-	 * @param user
 	 */
 	public void setUser(User user)
 	{
