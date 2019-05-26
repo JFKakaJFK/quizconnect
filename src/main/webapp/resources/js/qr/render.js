@@ -231,12 +231,22 @@ const renderLobby = ( {info} ) => {
   if(allReady){
     if(document.getElementById('countdown') === null){
       clearScreen();
+      /*
       ROOT.innerHTML = `
-      <div>
-        <h1>Game will start in <span id="countdown">5</span>s</h1>
-      </div>
-    `;
+        <div>
+          <h1>Game will start in <span id="countdown">5</span>s</h1>
+        </div>
+      `;
       countdown(5, 'countdown');
+      */
+      ROOT.innerHTML = `
+        <div class="countdown" id="counter"><div>
+      `;
+      let cd = new Countdown({
+        selector: '#counter',
+        values: 6,
+      });
+      cd.start();
     }
     return;
   }
@@ -590,7 +600,7 @@ const renderChatMessage = ({ message, from, playerId, id, timestamp }) => {
   let escapedMessage = escapeHTML(message);
   let escapedFrom = escapeHTML(from);
   return `<div class="chat chat-message ${state.id === playerId ? 'chat-outgoing' : from === INFO ? 'chat-info' : ''}" data-id="${id}">
-    <span class="chat chat-timestamp">[${ts.getHours()}:${ts.getMinutes()}]</span>
+    <span class="chat chat-timestamp">[${ts.getHours().toString().padStart(2, '0')}:${ts.getMinutes().toString().padStart(2, '0')}:${ts.getSeconds().toString().padStart(2, '0')}]</span>
     ${from === INFO ? '' : `<span class="chat chat-from">${escapedFrom}:</span>`}
     ${escapedMessage}
   </div>`
