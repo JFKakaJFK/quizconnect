@@ -82,22 +82,25 @@ class QR_QuestionSystem
 			Set<String> questionStrings = new HashSet<>();
 			Set<String> rightAnswers = new HashSet<>();
 			int nextID = 1;
+			int skipped = 0;
 			for (QuestionSet qSet : questionSets)
 			{
 				for (Question q : qSet.getQuestions())
 				{
 					String questionString = q.getQuestionString().toLowerCase().trim();
 					String rightAnswer = q.getRightAnswerString().toLowerCase().trim();
-					String wrongAnswer1 = q.getWrongAnswerString_1().toLowerCase().trim();
-					String wrongAnswer2 = q.getWrongAnswerString_2().toLowerCase().trim();
-					String wrongAnswer3 = q.getWrongAnswerString_3().toLowerCase().trim();
-					String wrongAnswer4 = q.getWrongAnswerString_4().toLowerCase().trim();
-					String wrongAnswer5 = q.getWrongAnswerString_5().toLowerCase().trim();
+					String wrongAnswer1 = (q.getWrongAnswerString_1() != null) ? q.getWrongAnswerString_1().toLowerCase().trim() : null;
+					String wrongAnswer2 = (q.getWrongAnswerString_2() != null) ? q.getWrongAnswerString_2().toLowerCase().trim() : null;
+					String wrongAnswer3 = (q.getWrongAnswerString_3() != null) ? q.getWrongAnswerString_3().toLowerCase().trim() : null;
+					String wrongAnswer4 = (q.getWrongAnswerString_4() != null) ? q.getWrongAnswerString_4().toLowerCase().trim() : null;
+					String wrongAnswer5 = (q.getWrongAnswerString_5() != null) ? q.getWrongAnswerString_5().toLowerCase().trim() : null;
 					
-					if (skipDuplicateQuestions && (questionStrings.contains(questionString) || rightAnswers.contains(rightAnswer) || rightAnswer.contains(wrongAnswer1) ||
-							rightAnswer.contains(wrongAnswer2) || rightAnswer.contains(wrongAnswer3) || rightAnswer.contains(wrongAnswer4) || rightAnswer.contains(wrongAnswer5)))
+					if (skipDuplicateQuestions &&
+							(questionStrings.contains(questionString) || rightAnswers.contains(rightAnswer) || (wrongAnswer1 != null && rightAnswers.contains(wrongAnswer1)) ||
+									(wrongAnswer2 != null && rightAnswers.contains(wrongAnswer2)) || (wrongAnswer3 != null && rightAnswers.contains(wrongAnswer3)) ||
+									(wrongAnswer4 != null && rightAnswers.contains(wrongAnswer4)) || (wrongAnswer5 != null && rightAnswers.contains(wrongAnswer5))))
 					{
-						LOGGER.debug("### INFO ### skipped Question (id " + q.getId() + ") on load with duplicate question / answer!");
+						skipped++;
 						continue;
 					}
 					questionStrings.add(questionString);
@@ -121,6 +124,7 @@ class QR_QuestionSystem
 						questionsPoolHard.add(nQ);
 				}
 			}
+			LOGGER.debug("### INFO ### QuizRoom skipped " + skipped + " Question on load due to duplicate questions / answers.");
 		}
 		else if (gameMode == GameMode.mathgod)
 		{
