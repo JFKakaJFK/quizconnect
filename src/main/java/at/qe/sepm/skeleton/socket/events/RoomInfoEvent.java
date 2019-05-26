@@ -2,7 +2,7 @@ package at.qe.sepm.skeleton.socket.events;
 
 import java.util.List;
 
-public class RoomInfoEvent extends ServerEvent {
+public class RoomInfoEvent extends SocketEvent {
 
     private int pin;
     private String difficulty;

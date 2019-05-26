@@ -29,12 +29,13 @@ const joinGame = (pin) => {
       console.error(data.error);
       console.log('TODO: error animation / progress') // TODO
       document.getElementById('errors').innerHTML = data.error;
-    } else if(data.playerId){
+    } else if(data.playerId && data.highScore){
       console.debug('JOIN: connected as player', data.playerId);
       console.log('TODO: fancy animation'); // TODO
       state.state = LOBBY;
       state.pin = pin;
-      state.id = data.playerId;
+      state.id = parseInt(data.playerId);
+      state.highScore = parseInt(data.highScore);
       updateLocalStorage();
       connect();
     }

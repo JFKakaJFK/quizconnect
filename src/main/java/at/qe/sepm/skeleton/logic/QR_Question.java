@@ -1,63 +1,52 @@
-package at.qe.sepm.skeleton.model;
+package at.qe.sepm.skeleton.logic;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-
-import org.springframework.data.domain.Persistable;
+import at.qe.sepm.skeleton.model.QuestionType;
 
 /**
- * Entity representing a Question. All question / rightAnswer / wrongAnswer Strings have different usage depending on QuestionType (e.g. type picture: all Strings are file paths).
+ * Class representing a runtime only version of a {@link Question}, decoupling it from the database. Allows for question generation and modification at runtime.
  * 
  * @author Lorenz_Smidt
  *
  */
-@Entity
-public class Question implements Persistable<Integer>
+public class QR_Question
 {
-	private static final long serialVersionUID = 1L;
+	/**
+	 * Runtime only id, does not have to coincide with a {@link Question} database id! Only unique within a {@link QuizRoom}!
+	 */
+	private int id;
 	
-	@Id
-	@GeneratedValue
-	private Integer id;
-	
-	@ManyToOne(optional = false, fetch = FetchType.LAZY)
-	private QuestionSet questionSet;
-	
-	@Enumerated(EnumType.STRING)
 	private QuestionType type;
 	
-	@Column(nullable = false, length = 200)
 	private String questionString;
-	
-	@Column(nullable = false, length = 200)
 	private String rightAnswerString;
-	
-	@Column(nullable = false, length = 200)
 	private String wrongAnswerString_1;
-	@Column(length = 200)
 	private String wrongAnswerString_2;
-	@Column(length = 200)
 	private String wrongAnswerString_3;
-	@Column(length = 200)
 	private String wrongAnswerString_4;
-	@Column(length = 200)
 	private String wrongAnswerString_5;
-
-	@Deprecated // TODO remove deprecated
-	public QuestionSet getQuestionSet()
+	
+	public QR_Question(int id, QuestionType type, String questionString, String rightAnswerString, String wrongAnswerString_1, String wrongAnswerString_2,
+			String wrongAnswerString_3, String wrongAnswerString_4, String wrongAnswerString_5)
 	{
-		return questionSet;
+		this.id = id;
+		this.type = type;
+		this.questionString = questionString;
+		this.rightAnswerString = rightAnswerString;
+		this.wrongAnswerString_1 = wrongAnswerString_1;
+		this.wrongAnswerString_2 = wrongAnswerString_2;
+		this.wrongAnswerString_3 = wrongAnswerString_3;
+		this.wrongAnswerString_4 = wrongAnswerString_4;
+		this.wrongAnswerString_5 = wrongAnswerString_5;
 	}
 	
-	public void setQuestionSet(QuestionSet questionSet)
+	public int getId()
 	{
-		this.questionSet = questionSet;
+		return id;
+	}
+	
+	public void setId(int id)
+	{
+		this.id = id;
 	}
 	
 	public QuestionType getType()
@@ -109,7 +98,7 @@ public class Question implements Persistable<Integer>
 	{
 		this.wrongAnswerString_2 = wrongAnswerString_2;
 	}
-
+	
 	public String getWrongAnswerString_3()
 	{
 		return wrongAnswerString_3;
@@ -140,29 +129,12 @@ public class Question implements Persistable<Integer>
 		this.wrongAnswerString_5 = wrongAnswerString_5;
 	}
 	
-	public void setId(Integer id)
-	{
-		this.id = id;
-	}
-	
-	@Override
-	public Integer getId()
-	{
-		return id;
-	}
-	
-	@Override
-	public boolean isNew()
-	{
-		return id == null;
-	}
-	
 	@Override
 	public int hashCode()
 	{
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + id;
 		return result;
 	}
 	
@@ -175,13 +147,8 @@ public class Question implements Persistable<Integer>
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Question other = (Question) obj;
-		if (id == null)
-		{
-			if (other.id != null)
-				return false;
-		}
-		else if (!id.equals(other.id))
+		QR_Question other = (QR_Question) obj;
+		if (id != other.id)
 			return false;
 		return true;
 	}
