@@ -28,8 +28,6 @@ const ANSWERTYPE_MATH = 'math';
 
 const PREFIX_ANSWER_PICTURE = (path) => `/answers/${path}`;
 
-const SHARE_PIN_WHATSAPP = (pin) =>  `Your QuizConnect pin is ${pin.toString().padStart(6, '0')}:
-
 const SHARE_WHATSAPP = (text) => {
   return `https://wa.me/?text=${encodeURIComponent(text)}`;
 };
