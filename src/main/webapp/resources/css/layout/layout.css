@@ -6,7 +6,7 @@
     width: 100%;
     display: grid;
     grid-auto-columns: 1fr;
-    grid-gap: 1rem;
+    grid-gap: var(--default-padding);
 }
 
 @media only screen and (min-width: 768px) {
