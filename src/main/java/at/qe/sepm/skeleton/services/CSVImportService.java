@@ -58,38 +58,114 @@ public class CSVImportService {
         if (directoryListing == null) {
             throw new NoSuchElementException("Directory with QuestionSets CSVs cannot be null");
         }
-        Arrays.stream(directoryListing).forEach(set -> importQuestionSetFromCSV(set , manager, set.getName(), "This is a QuestionSet about " + stringModifier(set.getName())));
+        for (File set : directoryListing) {
+            importQuestionSetFromCSV(set, manager, set.getName(), "This is a QuestionSet about " + stringModifier(set.getName()));
+        }
     }
 
-    public void importQuestionSetFromCSV(File file, Manager manager, String name, String description){
-        arrayToDatabase(addQuestionsFromCSV(file), manager, name, description);
+    public QuestionSet importQuestionSetFromCSV(File file, Manager manager, String name, String description){
+        return saveQuestionSet(addQuestionsFromCSV(file), manager, name, description);
     }
 
     //private List<String> questionVariables = new ArrayList<>(Arrays.asList("getWrongAnswerString_1","getWrongAnswerString_2","getWrongAnswerString_3","getWrongAnswerString_4","getWrongAnswerString_5"));
 
 
-    private List<List<String>> addQuestionsFromCSV(File file) {
+    private List<Question> addQuestionsFromCSV(File file) {
         logger.info("addQuestionsFromCSV invoked");
-        List<List<String>> records = new ArrayList<List<String>>();
+        List<Question> questions = new ArrayList<>();
         try (CSVReader csvReader = new CSVReader(new InputStreamReader(new FileInputStream(file)))) {
             String[] values;
             while ((values = csvReader.readNext()) != null) {
-                records.add(Arrays.asList(values));
+                try{
+                    questions.add(parseAndValidateQuestion(Arrays.asList(values)));
+                } catch (IllegalArgumentException e){
+                    // TODO handle error
+                }
             }
-            return records;
+            return questions;
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
             try {
-                Files.deleteIfExists(file.toPath());
+                if(file.toPath().toString().contains("temp")) {
+                    Files.deleteIfExists(file.toPath());
+                }
             } catch (IOException e){
                 logger.error("could not delete");
             }
         }
-        return records;
+        return questions;
     }
 
     // TODO check for accurate arguments
+    private QuestionSet saveQuestionSet(List<Question> questionList, Manager manager, String name, String description) {
+        logger.info("arrayToDatabase invoked");
+
+        questionSet = new QuestionSet();
+        initQuestionSet(manager, name, description); //new QuestionSet, set difficulty, author, name, description, and connect to HashSet of individual questions
+        questionSetService.saveQuestionSet(questionSet);
+
+        Set<Question> questions = new HashSet<>(); // needed since before save, hashcode and equals don't differentiate between entities (no set usable)
+        for (Question question: questionList) {
+            question.setType(QuestionType.text); //csv import only allows questions of type text
+            question.setQuestionSet(questionSet);
+            Question q = questionService.saveQuestion(question);
+            questions.add(q);
+        }
+
+        // assign all questions (number of lines in the csv) to the QuestionSet
+        questionSet.setQuestions(questions);
+        return questionSetService.saveQuestionSet(questionSet);
+    }
+
+    private Question parseAndValidateQuestion(List<String> tokens){
+        if(tokens.size() < 3){
+            throw new IllegalArgumentException("Too few tokens in line");
+        }
+        Question q = new Question();
+        q.setQuestionString(tokens.get(0).trim());
+        if(nullOrEmpty(q.getQuestionString())){
+            throw new IllegalArgumentException("QuestionString invalid");
+        }
+        q.setRightAnswerString(tokens.get(1).trim());
+        if(nullOrEmpty(q.getQuestionString())){
+            throw new IllegalArgumentException("RightAnswerString invalid");
+        }
+        q.setWrongAnswerString_1(tokens.get(2).trim());
+        if(nullOrEmpty(q.getQuestionString())){
+            throw new IllegalArgumentException("WrongAnswerString invalid");
+        }
+        if(tokens.size() > 3){
+            q.setWrongAnswerString_2(tokens.get(3).trim());
+            if(q.getWrongAnswerString_2().equals("")){
+                q.setWrongAnswerString_2(null);
+            }
+        }
+        if(tokens.size() > 4){
+            q.setWrongAnswerString_3(tokens.get(4).trim());
+            if(q.getWrongAnswerString_3().equals("")){
+                q.setWrongAnswerString_3(null);
+            }
+        }
+        if(tokens.size() > 5){
+            q.setWrongAnswerString_4(tokens.get(5).trim());
+            if(q.getWrongAnswerString_4().equals("")){
+                q.setWrongAnswerString_4(null);
+            }
+        }
+        if(tokens.size() > 6){
+            q.setWrongAnswerString_5(tokens.get(6).trim());
+            if(q.getWrongAnswerString_5().equals("")){
+                q.setWrongAnswerString_5(null);
+            }
+        }
+        return q;
+    }
+
+    private boolean nullOrEmpty(String s){
+        return s == null || s.equals("");
+    }
+
     private void arrayToDatabase(List<List<String>> data, Manager manager, String name, String description) {
         logger.info("arrayToDatabase invoked");
 
@@ -99,50 +175,9 @@ public class CSVImportService {
 
         Set<Question> questions = new HashSet<Question>();
 
-        for (int wholeQuestion = 0; wholeQuestion < data.size(); wholeQuestion++) {
-            Question question = new Question();
-            question.setType(QuestionType.text); //csv import only allows questions of type text
+        Map<String, String> mapping = new HashMap<String, String>();
+        mapping.put("question", "Question");
 
-            question.setQuestionString(data.get(wholeQuestion).get(0)); // First element of each Question is the question (required)
-            question.setRightAnswerString(data.get(wholeQuestion).get(1)); // Second element of each Question is the correct answer (required)
-            question.setWrongAnswerString_1(data.get(wholeQuestion).get(2)); // Third element of each Question is the first wrong answer (required)
-            if(data.get(wholeQuestion).size()>3) {
-                question.setWrongAnswerString_2(data.get(wholeQuestion).get(3)); // Fourth element of each Question is the second wrong answer (optional)
-                if (data.get(wholeQuestion).size() > 4) {
-                    question.setWrongAnswerString_3(data.get(wholeQuestion).get(4)); // Fifth element of each Question is the third wrong answer (optional)
-                    if (data.get(wholeQuestion).size() > 5) {
-                        question.setWrongAnswerString_4(data.get(wholeQuestion).get(5)); // Sixth element of each Question is the fourth wrong answer (optional)
-                        if (data.get(wholeQuestion).size() > 6) {
-                            question.setWrongAnswerString_5(data.get(wholeQuestion).get(6)); // Seventh element of each Question is the fifth wrong answer (optional)
-                        }
-                    }
-                }
-            }
-            // after each iteration (= one question/line in the csv-file) assign it to the QuestionSet, add to internal list (for displaying it later) and save to DB
-            question.setQuestionSet(questionSet);
-            questions.add(question);
-            questionService.saveQuestion(question);
-        }
-
-        // assign all questions (number of lines in the csv) to the QuestionSet
-        questionSet.setQuestions(questions);
-
-        // add them to the internal list used in the ui:repeat to show it without time-consuming load from the DB
-        // QSOverviewBean.addQuestionSetForDisplay(questionSet);
-
-        // clear for new import
-        //nameCSV = null;
-        //descriptionCSV = null;
-
-        // update to show the new Set
-        /*
-        messageBean.updateComponent("formOverview-QSets:overview-QSets");
-
-        String message = String.format("Successfully imported CSV");
-        messageBean.showGlobalInformation(message);
-        messageBean.updateComponent("messages");
-
-         */
     }
 
     /**

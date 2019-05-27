@@ -33,6 +33,12 @@ public class CSVImportBean implements Serializable {
 
     private static final Logger logger = LoggerFactory.getLogger(ChangeAvatarBean.class);
 
+    @Autowired
+    private MessageBean messageBean;
+
+    @Autowired
+    private QSOverviewBean QSOverviewBean;
+
     private Path temp;
 
     private String nameCSV;
@@ -89,7 +95,16 @@ public class CSVImportBean implements Serializable {
 
     public void processCSV() {
         logger.info("processCSV called");
-        csvImportService.importQuestionSetFromCSV(filename.toFile(), manager, nameCSV, descriptionCSV);
+        QuestionSet questionSet;
+        questionSet = csvImportService.importQuestionSetFromCSV(filename.toFile(), manager, nameCSV, descriptionCSV);
+
+        QSOverviewBean.addQuestionSetForDisplay(questionSet);
+
+        messageBean.updateComponent("formOverview-QSets:overview-QSets");
+
+        String message = String.format("Successfully imported CSV");
+        messageBean.showGlobalInformation(message);
+        messageBean.updateComponent("messages");
     }
 
     public Manager getManager() {
