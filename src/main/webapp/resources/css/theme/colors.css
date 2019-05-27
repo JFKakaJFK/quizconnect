@@ -42,6 +42,9 @@
     --bg: var(--col-1-d);
     --bar: var(--col-1-d);
 
+    /* General Variables */
+    --default-padding: 1rem;
+
     /* Template colors */
     --overlay: var(--col-1-m);
     --navbar: var(--col-1-m);

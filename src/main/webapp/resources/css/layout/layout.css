@@ -1,0 +1,27 @@
+.container {
+    padding: var(--default-padding);
+}
+
+.grid {
+    width: 100%;
+    display: grid;
+    grid-auto-columns: 1fr;
+    grid-gap: 1rem;
+}
+
+@media only screen and (min-width: 768px) {
+    .grid {
+        width: 100%;
+        display: grid;
+        grid-auto-columns: 1fr 1fr;
+    }
+}
+
+@media only screen and (min-width: 1200px) {
+    .grid {
+        width: 100%;
+        display: grid;
+        grid-auto-columns: 1fr 1fr 1fr;
+    }
+}
+
