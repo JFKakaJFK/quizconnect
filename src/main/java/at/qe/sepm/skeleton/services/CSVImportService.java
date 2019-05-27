@@ -48,7 +48,6 @@ public class CSVImportService {
         this.managerService = managerService;
     }
 
-    // TODO Fix it
     public void init(String location) throws NoSuchElementException {
         Path CSVLocation = Paths.get(location);
         manager = getAuthorManagerFromDB();
@@ -66,8 +65,6 @@ public class CSVImportService {
     public QuestionSet importQuestionSetFromCSV(File file, Manager manager, String name, String description){
         return saveQuestionSet(addQuestionsFromCSV(file), manager, name, description);
     }
-
-    //private List<String> questionVariables = new ArrayList<>(Arrays.asList("getWrongAnswerString_1","getWrongAnswerString_2","getWrongAnswerString_3","getWrongAnswerString_4","getWrongAnswerString_5"));
 
 
     private List<Question> addQuestionsFromCSV(File file) {
@@ -97,7 +94,6 @@ public class CSVImportService {
         return questions;
     }
 
-    // TODO check for accurate arguments
     private QuestionSet saveQuestionSet(List<Question> questionList, Manager manager, String name, String description) {
         logger.info("arrayToDatabase invoked");
 
@@ -124,15 +120,15 @@ public class CSVImportService {
         }
         Question q = new Question();
         q.setQuestionString(tokens.get(0).trim());
-        if(nullOrEmpty(q.getQuestionString())){
+        if(nullOrEmpty(q.getQuestionString()) || lengthChecker(tokens.get(0))){
             throw new IllegalArgumentException("QuestionString invalid");
         }
         q.setRightAnswerString(tokens.get(1).trim());
-        if(nullOrEmpty(q.getQuestionString())){
+        if(nullOrEmpty(q.getQuestionString()) || lengthChecker(tokens.get(1))){
             throw new IllegalArgumentException("RightAnswerString invalid");
         }
         q.setWrongAnswerString_1(tokens.get(2).trim());
-        if(nullOrEmpty(q.getQuestionString())){
+        if(nullOrEmpty(q.getQuestionString()) || lengthChecker(tokens.get(2))){
             throw new IllegalArgumentException("WrongAnswerString invalid");
         }
         if(tokens.size() > 3){
@@ -166,18 +162,8 @@ public class CSVImportService {
         return s == null || s.equals("");
     }
 
-    private void arrayToDatabase(List<List<String>> data, Manager manager, String name, String description) {
-        logger.info("arrayToDatabase invoked");
-
-        questionSet = new QuestionSet();
-        initQuestionSet(manager, name, description); //new QuestionSet, set difficulty, author, name, description, and connect to HashSet of individual questions
-        questionSetService.saveQuestionSet(questionSet);
-
-        Set<Question> questions = new HashSet<Question>();
-
-        Map<String, String> mapping = new HashMap<String, String>();
-        mapping.put("question", "Question");
-
+    private boolean lengthChecker(String s){
+        return s.length() >= 200;
     }
 
     /**

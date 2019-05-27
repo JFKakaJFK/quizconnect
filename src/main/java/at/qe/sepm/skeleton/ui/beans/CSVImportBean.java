@@ -105,6 +105,9 @@ public class CSVImportBean implements Serializable {
         String message = String.format("Successfully imported CSV");
         messageBean.showGlobalInformation(message);
         messageBean.updateComponent("messages");
+
+        descriptionCSV = null;
+        nameCSV = null;
     }
 
     public Manager getManager() {
