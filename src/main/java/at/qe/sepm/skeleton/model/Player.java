@@ -73,9 +73,7 @@ public class Player implements Persistable<Integer>
 	private Map<Long, Integer> lastScores;
 	
 	/**
-	 * Returns the List of usernames of the Players in the last game this Player played.
-	 * 
-	 * @return
+	 * @return The List of usernames of the Players in the last game this Player played.
 	 */
 	public List<String> getPlayedWithLast()
 	{
@@ -85,17 +83,16 @@ public class Player implements Persistable<Integer>
 	/**
 	 * Stores the Players as last played with. Don't forget to save the Player after updating any stats!
 	 * 
-	 * @param players
+	 * @param players Players to be stored.
 	 */
 	public void setPlayedWithLast(List<Player> players)
 	{
-		playedWithLast = new ArrayList<String>();
+		playedWithLast = new ArrayList<>();
 		if (players == null)
 			return;
-		for (int i = 0; i < players.size(); i++)
+		for (Player player : players)
 		{
-			Player player = players.get(i);
-			if (player.getId() == this.id)
+			if (player.getId().equals(this.id))
 				continue;
 			
 			playedWithLast.add(player.getUser().getUsername());
@@ -103,17 +100,17 @@ public class Player implements Persistable<Integer>
 	}
 	
 	/**
-	 * Returns the rank of the Player. Rank is calculated from total score and accuracy.
+	 * @return The rank of the Player. Rank is calculated from total score and accuracy.
 	 */
 	public String getPlayerRank()
 	{
-		long actualScore = (long) (stat_totalScore * getPlayerAccuracy());
+		long actualScore = stat_totalScore; // (long) (stat_totalScore * getPlayerAccuracy());
 		if (actualScore < -100000)
 			return "Just stop playing (please)";
 		else if (actualScore < -80000)
 			return "Falling off the earth";
 		else if (actualScore < -60000)
-			return "Austrialian Astronaut";
+			return "Australian Astronaut";
 		else if (actualScore < -40000)
 			return "Australian";
 		else if (actualScore < -20000)
@@ -167,7 +164,7 @@ public class Player implements Persistable<Integer>
 	/**
 	 * Adds the additionalScore to the total score of the Player. Don't forget to save the Player after updating any stats!
 	 * 
-	 * @param additionalScore
+	 * @param additionalScore Score to add to total.
 	 */
 	public void addToTotalScore(long additionalScore)
 	{
@@ -175,7 +172,7 @@ public class Player implements Persistable<Integer>
 	}
 	
 	/**
-	 * Returns the highscore of the Player.
+	 * @return The highscore of the Player.
 	 */
 	public int getHighScore()
 	{
@@ -185,15 +182,16 @@ public class Player implements Persistable<Integer>
 	/**
 	 * Sets the new highscore of the Player. Don't forget to save the Player after updating any stats!
 	 * 
-	 * @param stat_highScore
+	 * @param stat_highScore The new highscore.
 	 */
 	public void setHighScore(int stat_highScore)
 	{
-		this.stat_highScore = stat_highScore;
+		if (stat_highScore > this.stat_highScore)
+			this.stat_highScore = stat_highScore;
 	}
 	
 	/**
-	 * Returns the number of correct answers of the Player.
+	 * @return The number of correct answers of the Player.
 	 */
 	public int getCorrectAnswersCount()
 	{
@@ -203,7 +201,7 @@ public class Player implements Persistable<Integer>
 	/**
 	 * Adds additionalRightAnswers to the number of correct answers of the Player. Don't forget to save the Player after updating any stats!
 	 * 
-	 * @param additionalRightAnswers
+	 * @param additionalRightAnswers Number of right answers to add.
 	 */
 	public void AddCorrectAnswers(int additionalRightAnswers)
 	{
@@ -211,7 +209,7 @@ public class Player implements Persistable<Integer>
 	}
 	
 	/**
-	 * Returns the total number of answers of the Player, right or wrong.
+	 * @return The total number of answers of the Player, right and wrong.
 	 */
 	public int getTotalAnswers()
 	{
@@ -221,7 +219,7 @@ public class Player implements Persistable<Integer>
 	/**
 	 * Adds additionalTotalAnswers to the total number of answers of the Player. Don't forget to save the Player after updating any stats!
 	 * 
-	 * @param additionalTotalAnswers
+	 * @param additionalTotalAnswers Number of answers to add.
 	 */
 	public void addTotalAnswers(int additionalTotalAnswers)
 	{
@@ -229,7 +227,7 @@ public class Player implements Persistable<Integer>
 	}
 	
 	/**
-	 * Returns the total play time of the Player in ms.
+	 * @return The total play time of the Player in ms.
 	 */
 	public long getPlayTime()
 	{
@@ -239,7 +237,7 @@ public class Player implements Persistable<Integer>
 	/**
 	 * Adds additionalPlayTime ms to the total play time of the Player. Don't forget to save the Player after updating any stats!
 	 * 
-	 * @param additionalPlayTime
+	 * @param additionalPlayTime Time to add in ms.
 	 */
 	public void addPlayTime(long additionalPlayTime)
 	{
@@ -247,7 +245,7 @@ public class Player implements Persistable<Integer>
 	}
 	
 	/**
-	 * Returns a Map from QuestionSetIds to number of times played of all QuestionSets the Player has played. If no entry for a QS exists the Player hasn't played it yet.
+	 * @return A Map from QuestionSetIds to number of times played of all QuestionSets the Player has played. If no entry for a QS exists the Player hasn't played it yet.
 	 */
 	public Map<Integer, Integer> getqSetPlayCounts()
 	{
@@ -257,7 +255,7 @@ public class Player implements Persistable<Integer>
 	/**
 	 * Adds one play count to each QuestionSet in the list. Don't forget to save the Player after updating any stats!
 	 * 
-	 * @param qSets
+	 * @param qSets QuestionSets to be marked as played one more time.
 	 */
 	public void addPlayToQSets(List<QuestionSet> qSets)
 	{
@@ -277,7 +275,7 @@ public class Player implements Persistable<Integer>
 	/**
 	 * Removes a QuestionSet id from the map of played ones. To be used if a QuestionSet no longer exists. Don't forget to save the Player after updating any stats!
 	 * 
-	 * @param qSetId
+	 * @param qSetId Id of QuestionSet to remove.
 	 */
 	public void removeQSetFromPlayed(Integer qSetId)
 	{
@@ -334,8 +332,7 @@ public class Player implements Persistable<Integer>
 		if (lastScores == null)
 			throw new IllegalStateException("lastScores of Player is null, please save the Player before use!");
 		
-		List<Long> times = new LinkedList<>();
-		times.addAll(lastScores.keySet());
+		List<Long> times = new LinkedList<>(lastScores.keySet());
 		times.sort(Comparator.naturalOrder());
 		
 		int[] values = new int[maxSavedRecentGameScores];
@@ -366,8 +363,6 @@ public class Player implements Persistable<Integer>
 	
 	/**
 	 * Gets called automatically upon creation of the Player. Should not be called manually!
-	 * 
-	 * @param user
 	 */
 	public void setUser(User user)
 	{

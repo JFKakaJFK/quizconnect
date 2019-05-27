@@ -64,7 +64,11 @@ public class QuizRoomManager implements ApplicationListener<ContextRefreshedEven
 	 *            Game mode of the QuizRoom.
 	 * @param qSets
 	 *            List of QuestionSets to be used by the QuizRoom.
+     * @param roomAction
+     *            Interface to use for room to player communication.
 	 * @return Pin of the new QuizRoom.
+     *
+     * @throws IllegalArgumentException If the specified maximum number of players less than the required minimumPlayers or if the provided interface is invalid.
 	 */
 	public int createRoom(int maxPlayers, RoomDifficulty difficulty, GameMode gameMode, List<QuestionSet> qSets, IRoomAction roomAction)
 			throws IllegalArgumentException
@@ -88,14 +92,10 @@ public class QuizRoomManager implements ApplicationListener<ContextRefreshedEven
 	 *            The pin of the QuizRoom to join.
 	 * @param player
 	 *            The Player to join the room.
-	 * @param roomAction
-	 *            Interface provided by the Player to the QuizRoom for QuizRoom to
-	 *            Player communication.
 	 * @return The IPlayerAction interface used for Player to QuizRoom
 	 *         communication.
 	 * @throws IllegalArgumentException
-	 *             Thrown if the QuizRoom doesn't exist, if the roomAction interface
-	 *             is invalid, or if the QuizRoom is already full.
+	 *             Thrown if the QuizRoom doesn't exist or if the QuizRoom is already full.
 	 */
 	public IPlayerAction joinRoom(int roomPin, Player player) throws IllegalArgumentException
 	{
@@ -104,19 +104,18 @@ public class QuizRoomManager implements ApplicationListener<ContextRefreshedEven
 		
 		QuizRoom quizRoom = rooms.get(roomPin);
 		
-		boolean full = quizRoom.addPlayer(player);
-		if (full)
-			throw new IllegalArgumentException("QuizRoom already full!");
+		//throws an IllegalArgumentException if room is full
+		quizRoom.addPlayer(player);
 
 		return quizRoom;
 	}
 	
 	/**
-	 * Removes the QuizRoom. DO NOT USE FROM FRONTEND! Gets called automatically by a QuizRoom once a game ends.
+	 * Removes the QuizRoom. Gets called automatically by a QuizRoom once a game ends.
 	 * 
-	 * @param pin
+	 * @param pin Pin of the QuizRoom to be removed.
 	 */
-	public void removeRoom(int pin) throws IllegalArgumentException
+	protected void removeRoom(int pin) throws IllegalArgumentException
 	{
 		if (rooms.containsKey(pin))
 		{
@@ -129,11 +128,9 @@ public class QuizRoomManager implements ApplicationListener<ContextRefreshedEven
 	}
 	
 	/**
-	 * Returns true if a {@link QuizRoom} with pin currently exists.
-	 * 
 	 * @param pin
 	 *            Pin of the QuizRoom.
-	 * @return
+	 * @return True if a {@link QuizRoom} with pin currently exists.
 	 */
 	public boolean doesRoomExist(int pin)
 	{
@@ -141,17 +138,15 @@ public class QuizRoomManager implements ApplicationListener<ContextRefreshedEven
 	}
 	
 	/**
-	 * Returns an Instance of the PlayerService. For use by {@link QuizRoom} only! Needed to update the stats of the Players at the end of a game.
+	 * @return An Instance of the PlayerService. For use by {@link QuizRoom} only! Needed to update the stats of the Players at the end of a game.
 	 */
-	public PlayerService getPlayerService()
+	protected PlayerService getPlayerService()
 	{
 		return playerService;
 	}
 	
 	/**
-	 * Returns a new unique pin for a QR.
-	 * 
-	 * @return
+	 * @return A new unique pin for a QR.
 	 */
 	private int generatePin()
 	{
@@ -167,6 +162,6 @@ public class QuizRoomManager implements ApplicationListener<ContextRefreshedEven
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent arg0)
 	{
-		LOGGER.debug("start");
+		LOGGER.debug("QuizRoomManager start");
 	}
 }

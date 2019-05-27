@@ -18,7 +18,7 @@ import at.qe.sepm.skeleton.services.PlayerService;
 
 /**
  * Class representing a QuizRoom containing all major logic required. For illustrations on how this class works please see the 'Documentation' folder.
- * 
+ *
  * @author Lorenz_Smidt
  *
  */
@@ -68,10 +68,11 @@ public class QuizRoom implements IPlayerAction
 	
 	private volatile List<Player> readyPlayers; // list of players who declared themselves ready
 	protected volatile boolean wfpMode; // true if the room is in 'waiting for players' mode
+	private volatile boolean gameOver; // true if the game is finished
 	
 	/**
 	 * Initializes a new QR.
-	 * 
+	 *
 	 * @param scheduler
 	 *            ThreadPoolTaskScheduler for scheduling Timers.
 	 * @param manager
@@ -117,27 +118,24 @@ public class QuizRoom implements IPlayerAction
 		
 		readyPlayers = new LinkedList<>();
 		wfpMode = true;
+		gameOver = false;
 		
 		// create and start frame timer
-		timerFrameUpdate = new Timer(scheduler, new ITimedAction()
-		{
-			@Override
-			public void onTimeUpdate(long delta)
-			{
-				onFrameUpdate(delta);
-			}
-		}, frameTimeStep);
+		timerFrameUpdate = new Timer(scheduler, this::onFrameUpdate, frameTimeStep);
 		
 		questionSystem = new QR_QuestionSystem(this, gameMode, qSets);
 	}
 	
 	/**
 	 * Gets called once every frameTimeStep ms by timerFrameUpdate.
-	 * 
-	 * @param deltaTime
+	 *
+	 * @param deltaTime Time since last call in ms.
 	 */
-	public void onFrameUpdate(long deltaTime)
+	private void onFrameUpdate(long deltaTime)
 	{
+		if (gameOver)
+			return;
+		
 		// LOGGER.debug("frame call after " + timerFrameUpdate.getElapsedTime() + " ms.");
 		if (deltaTime > 2 * frameTimeStep)
 		{
@@ -145,15 +143,15 @@ public class QuizRoom implements IPlayerAction
 		}
 		checkDelayQueue();
 		
+		aliveCheckTime += deltaTime;
+		if (aliveCheckTime >= aliveTimeStep)
+		{
+			checkPlayerAlivePings();
+			aliveCheckTime = 0;
+		}
+		
 		if (!wfpMode) // disable during wfp mode
 		{
-			aliveCheckTime += deltaTime;
-			if (aliveCheckTime >= aliveTimeStep)
-			{
-				checkPlayerAlivePings();
-				aliveCheckTime = 0;
-			}
-			
 			activityCheckTime += deltaTime;
 			if (activityCheckTime >= activityTimeStep)
 			{
@@ -175,7 +173,7 @@ public class QuizRoom implements IPlayerAction
 	
 	/**
 	 * Executes function f on the Player interface for the QuizRoom.
-	 * 
+	 *
 	 * @param f
 	 *            Function to be executed on all Players.
 	 */
@@ -189,11 +187,14 @@ public class QuizRoom implements IPlayerAction
 	
 	/**
 	 * Adds the action to the queue to be executed at execTime.
-	 * 
-	 * @param action
+	 *
+	 * @param action Action to be executed after a delay.
 	 */
 	protected synchronized void addDelayedAction(DelayedAction action) throws IllegalArgumentException
 	{
+		if (gameOver)
+			return;
+		
 		if (action == null || action.action == null)
 			throw new IllegalArgumentException("DelayAction is invalid!");
 		
@@ -213,6 +214,9 @@ public class QuizRoom implements IPlayerAction
 	 */
 	private synchronized void checkDelayQueue()
 	{
+		if (gameOver)
+			return;
+		
 		long now = new Date().getTime() + 10; // offset by 10ms to make up for 'just missed' calls
 		while (delayQueue.size() > 0 && delayQueue.get(0).execTime <= now)
 		{
@@ -228,6 +232,9 @@ public class QuizRoom implements IPlayerAction
 	 */
 	private synchronized void checkPlayerActivity()
 	{
+		if (gameOver)
+			return;
+		
 		long tooLong = (new Date().getTime()) - activityDuration;
 		for (Player player : players)
 		{
@@ -235,15 +242,15 @@ public class QuizRoom implements IPlayerAction
 			{
 				inactivePlayers.add(player);
 				playerInterface.onTimeoutStart(pin, player, timeoutDuration);
-				addDelayedAction(new DelayedAction((new Date().getTime()) + timeoutDuration, () -> {
-					kickPlayerIfNoActivity(player);
-				}));
+				addDelayedAction(new DelayedAction((new Date().getTime()) + timeoutDuration, () -> kickPlayerIfNoActivity(player)));
 			}
 		}
 	}
 	
 	/**
 	 * Called delayed if an activity check fails on a player. If still no activity / timeout cancel detected kick player
+	 *
+	 * @param player Player to be checked if still no activity registered.
 	 */
 	private synchronized void kickPlayerIfNoActivity(Player player)
 	{
@@ -262,6 +269,9 @@ public class QuizRoom implements IPlayerAction
 	 */
 	private synchronized void checkPlayerAlivePings()
 	{
+		if (gameOver)
+			return;
+		
 		long tooLong = (new Date().getTime()) - aliveDuration;
 		for (int i = players.size() - 1; i >= 0; i--)
 		{
@@ -275,12 +285,11 @@ public class QuizRoom implements IPlayerAction
 
 	/**
 	 * Called by the {@link QuizRoomManager} if a Player tries to join the QuizRoom.
-	 * 
+	 *
 	 * @param player
 	 *            Player to join the room.
-	 * @return (True if room is full) IllegalArgumentException if join failure, false if join successful.
 	 */
-	public synchronized boolean addPlayer(Player player)
+	protected synchronized void addPlayer(Player player)
 	{
 		if (players.contains(player))
 		{
@@ -289,7 +298,6 @@ public class QuizRoom implements IPlayerAction
 		if (players.size() == maxPlayers)
 		{
 			throw new IllegalArgumentException("QuizRoom already full! (" + players.size() + "/" + maxPlayers + ")");
-			// return true;
 		}
 		
 		players.add(player);
@@ -298,10 +306,9 @@ public class QuizRoom implements IPlayerAction
 		
 		correctlyAnsweredQuestions.put(player, 0);
 		totalAnsweredQuestions.put(player, 0);
+		playerAlivePingTimestamps.put(player, new Date().getTime());
 		
-		eventCall(x -> {
-			x.onPlayerJoin(pin, player);
-		});
+		eventCall(x -> x.onPlayerJoin(pin, player));
 		
 		// hot-join
 		if (!wfpMode)
@@ -313,13 +320,11 @@ public class QuizRoom implements IPlayerAction
 			// add additional question to distribute on next call
 			questionSystem.addMissingQuestions(1);
 		}
-		
-		return false;
 	}
 	
 	/**
 	 * Removes a Player from the QuizRoom. May be called due to Player leaving, or afk kick. Makes the onPlayerLeave event call.
-	 * 
+	 *
 	 * @param player
 	 *            Player to be removed.
 	 * @param reason
@@ -327,9 +332,7 @@ public class QuizRoom implements IPlayerAction
 	 */
 	private synchronized void removePlayer(Player player, String reason)
 	{
-		eventCall(x -> {
-			x.onPlayerLeave(pin, player, reason);
-		});
+		eventCall(x -> x.onPlayerLeave(pin, player, reason));
 		
 		// remove QuizRoom if no more players in room
 		if (players.size() == 1)
@@ -338,10 +341,18 @@ public class QuizRoom implements IPlayerAction
 			onRoomClose();
 			return;
 		}
+		else if (!wfpMode && players.size() == 2) // not lobby and only one player left
+		{
+			players.remove(player);
+			players.remove(0);
+			onRoomClose();
+			return;
+		}
 		
 		questionSystem.removePlayer(player);
 		players.remove(player);
 		
+		//remove player data structures
 		playerActivityTimestamps.remove(player);
 		playerAlivePingTimestamps.remove(player);
 		correctlyAnsweredQuestions.remove(player);
@@ -349,7 +360,7 @@ public class QuizRoom implements IPlayerAction
 	}
 	
 	/**
-	 * Called roomStartDelay ms after all Players have readied up.
+	 * Called roomStartDelay ms after all Players have readied up. Starts the onGameStart event call and distributes the initial questions to the players.
 	 */
 	private void onGameStart()
 	{
@@ -360,15 +371,12 @@ public class QuizRoom implements IPlayerAction
 		{
 			// initialize time stamps
 			playerActivityTimestamps.put(player, now);
-			playerAlivePingTimestamps.put(player, now);
 		}
 		
 		wfpMode = false;
 		gameStartTime = new Date().getTime();
 		
-		eventCall(x -> {
-			x.onGameStart(pin);
-		});
+		eventCall(x -> x.onGameStart(pin));
 		
 		questionSystem.setMissingQuestions(players.size() - 1);
 		questionSystem.distributeQuestion();
@@ -379,18 +387,16 @@ public class QuizRoom implements IPlayerAction
 	 */
 	protected void onRoomClose()
 	{
-		eventCall((x) -> {
-			x.onGameEnd(pin);
-		});
+		eventCall(x -> x.onGameEnd(pin));
 		
 		wfpMode = true; // prevent processing of any frameUpdate calls on any runtime structures
+		gameOver = true;
 		
-		// update player stats
-		updatePlayerStats();
-		
-		delayQueue.clear();
 		timerFrameUpdate.stop();
-		manager.removeRoom(pin);
+		delayQueue.clear();
+		
+		updatePlayerStats();
+		manager.removeRoom(pin); //de-register QuizRoom with QRManger
 		
 		LOGGER.debug("QuizRoom [" + pin + "] closed after " + timerFrameUpdate.getElapsedTime() + " ms.");
 	}
@@ -427,7 +433,47 @@ public class QuizRoom implements IPlayerAction
 			playerService.savePlayer(player);
 		}
 	}
-		
+
+    /**
+     * Changes the score of the room according to the change code.
+     *
+     * @param code
+     *            ChangeCode; Codes: 0 = wrong answer easy, 1 = wrong answer hard, 2 = right answer easy, 3 = right answer hard, 4 = timeout easy, 5 = timeout hard.
+     * @param timeRemaining
+     *            Time remaining on the Question
+     */
+    protected synchronized void changeScore(int code, long timeRemaining)
+    {
+        questionSystem.addCompletedQuestions(1);
+        switch (code)
+        {
+            case 0:
+                score -= (difficulty == RoomDifficulty.easy ? 50 : 75);
+                break;
+            case 1:
+                score -= (difficulty == RoomDifficulty.easy ? 75 : 100);
+                break;
+            case 2:
+                score += (difficulty == RoomDifficulty.easy ? 100 : 125) + (int) (timeRemaining / 1000);
+                break;
+            case 3:
+                score += (difficulty == RoomDifficulty.easy ? 125 : 150) + (int) (timeRemaining / 1000);
+                break;
+            case 4:
+                score -= (difficulty == RoomDifficulty.easy ? 50 : 75);
+                break;
+            case 5:
+                score -= (difficulty == RoomDifficulty.easy ? 75 : 100);
+                break;
+        }
+        
+        eventCall(x -> x.onScoreChange(pin, score));
+    }
+	
+	/*
+	* ### IPlayerAction interface implementations. For documentation on the individual functions please see the interface definition. ###
+	*/
+	
 	@Override
 	public int getRoomPin()
 	{
@@ -438,10 +484,7 @@ public class QuizRoom implements IPlayerAction
 	public synchronized List<Player> getRoomPlayers()
 	{
 		List<Player> ps = new ArrayList<>(players.size());
-		for (Player player : players)
-		{
-			ps.add(player);
-		}
+		ps.addAll(players);
 		return ps;
 	}
 	
@@ -466,12 +509,12 @@ public class QuizRoom implements IPlayerAction
 	@Override
 	public synchronized List<String> getRoomQuestionSets()
 	{
-		List<String> QSstrings = new ArrayList<>(questionSets.size());
+		List<String> QStrings = new ArrayList<>(questionSets.size());
 		for (QuestionSet questionSet : questionSets)
 		{
-			QSstrings.add(questionSet.getName());
+			QStrings.add(questionSet.getName());
 		}
-		return QSstrings;
+		return QStrings;
 	}
 	
 	@Override
@@ -487,10 +530,7 @@ public class QuizRoom implements IPlayerAction
 			return null;
 		
 		List<Player> ps = new ArrayList<>(readyPlayers.size());
-		for (Player player : readyPlayers)
-		{
-			ps.add(player);
-		}
+        ps.addAll(readyPlayers);
 		return ps;
 	}
 	
@@ -521,20 +561,16 @@ public class QuizRoom implements IPlayerAction
 		// are all players ready?
 		if (readyPlayers.size() == players.size())
 		{
-			addDelayedAction(new DelayedAction((new Date().getTime()) + roomStartDelay, () -> {
-				onGameStart();
-			}));
+			addDelayedAction(new DelayedAction((new Date().getTime()) + roomStartDelay, this::onGameStart));
 		}
 		
-		eventCall(x -> {
-			x.onReadyUp(pin, p, readyPlayers.size());
-		});
+		eventCall(x -> x.onReadyUp(pin, p, readyPlayers.size()));
 	}
 	
 	@Override
 	public void answerQuestion(Player p, int questionId, int index)
 	{
-		if (wfpMode)
+		if (wfpMode || gameOver)
 		{
 			return;
 		}
@@ -548,7 +584,7 @@ public class QuizRoom implements IPlayerAction
 		ActiveQuestion q = questionSystem.getActiveQuestionById(questionId);
 		try
 		{
-			questionSystem.answerQuestion(p, questionId, index);
+			questionSystem.answerQuestion(p, questionId);
 		}
 		catch (IllegalStateException e)
 		{
@@ -580,41 +616,6 @@ public class QuizRoom implements IPlayerAction
 		
 	}
 	
-	/**
-	 * Changes the score of the room according to the change code.
-	 * 
-	 * @param code
-	 *            ChangeCode; Codes: 0 = wrong answer easy, 1 = wrong answer hard, 2 = right answer easy, 3 = right answer hard, 4 = timeout easy, 5 = timeout hard.
-	 * @param timeRemaining
-	 *            Time remaining on the Question
-	 */
-	protected synchronized void changeScore(int code, long timeRemaining)
-	{
-		questionSystem.addCompletedQuestions(1);
-		switch (code)
-		{
-		case 0:
-			score -= (difficulty == RoomDifficulty.easy ? 50 : 75);
-			break;
-		case 1:
-			score -= (difficulty == RoomDifficulty.easy ? 75 : 100);
-			break;
-		case 2:
-			score += (difficulty == RoomDifficulty.easy ? 100 : 125) + (int) (timeRemaining / 1000);
-			break;
-		case 3:
-			score += (difficulty == RoomDifficulty.easy ? 125 : 150) + (int) (timeRemaining / 1000);
-			break;
-		case 4:
-			score -= (difficulty == RoomDifficulty.easy ? 50 : 75);
-			break;
-		case 5:
-			score -= (difficulty == RoomDifficulty.easy ? 75 : 100);
-			break;
-		}
-		
-		eventCall(x -> x.onScoreChange(pin, score));
-	}
 	
 	@Override
 	public synchronized void useJoker(Player p)
@@ -668,7 +669,10 @@ public class QuizRoom implements IPlayerAction
 	@Override
 	public synchronized void sendAlivePing(Player p)
 	{
-		if (!playerActivityTimestamps.containsKey(p))
+		if (gameOver)
+			return;
+		
+		if (!playerAlivePingTimestamps.containsKey(p))
 		{
 			LOGGER.error("### ERROR ### [QR " + pin + "] Illegal call to sendAlivePing! Player is not in QuizRoom! (id: " + p.getId() + ")");
 			return;

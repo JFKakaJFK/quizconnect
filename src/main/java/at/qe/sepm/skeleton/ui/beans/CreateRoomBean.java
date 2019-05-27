@@ -33,6 +33,8 @@ public class CreateRoomBean implements Serializable {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
+    private final int MAX_SETS = 10;
+
     private IRoomAction roomAction;
     private QuizRoomManager quizRoomManager;
 
@@ -109,8 +111,7 @@ public class CreateRoomBean implements Serializable {
             return false;
         }
         if(mode == GameMode.mathgod) return true; // TODO frontend hint that other selected sets not loaded...
-        // TODO set validation ? max num sets && max num questions? if yes, handle in frontend (show user)
-        return !(selectedQuestionSets == null || selectedQuestionSets.size() < 1); // check if at least one set is selected
+        return !(selectedQuestionSets == null || selectedQuestionSets.size() < 1 || selectedQuestionSets.size() > MAX_SETS); // check if at least one set is selected
     }
 
     /**
@@ -128,6 +129,15 @@ public class CreateRoomBean implements Serializable {
                 log.error("Failed to redirect to game view");
             }
         }
+    }
+
+    /**
+     * Returns wheter further {@link QuestionSet}s are selectable, prevents the user from adding to many
+     *
+     * @return true if more sets can be added
+     */
+    public boolean selectable(){
+        return selectedQuestionSets.size() < MAX_SETS;
     }
 
     /**

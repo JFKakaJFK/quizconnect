@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://java.sun.com/jsf/composite"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xml:lang="en"
+      lang="en">
+    <cc:interface>
+
+        <!--=============================================
+
+        TODO
+
+        ==============================================-->
+        <cc:attribute name="questionSet" required="true" type="at.qe.sepm.skeleton.model.QuestionSet" />
+
+    </cc:interface>
+
+    <cc:implementation>
+        <h:panelGroup layout="block" styleClass="box">
+            <header>
+                <div>
+                    <h2>#{cc.attrs.questionSet.name}</h2>
+                </div>
+                <div>
+                    <cc:insertChildren/>
+                </div>
+            </header>
+            <div>
+                <span>#{cc.attrs.questionSet.description}</span>
+                <span>#{cc.attrs.questionSet.difficulty}</span>
+                <span>#{cc.attrs.questionSet.questions.size()}</span>
+            </div>
+        </h:panelGroup>
+    </cc:implementation>
+</html>

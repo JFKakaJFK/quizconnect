@@ -3,7 +3,7 @@ package at.qe.sepm.skeleton.logic;
 import at.qe.sepm.skeleton.model.Player;
 
 /**
- * Interface for {@link QuizRoom} to {@link Player} communication. Must be implemented by the Player UI and provided to the QuizRoom when joining.
+ * Interface for {@link QuizRoom} to {@link Player} communication. Must be implemented by the Player UI and provided to the QuizRoom when joining (done through the {@link QuizRoomManager}).
  * 
  * @author Lorenz_Smidt
  *
@@ -117,7 +117,7 @@ public interface IRoomAction
 	public void onKick(int pin, Player p);
 	
 	/**
-	 * Called when the QR assigns a new Question. MIGHT NEED TO BE ADJUSTED TO ACCOMODATE REVERSE GAMEMODE!
+	 * Called when the QR assigns a new Question.
 	 * 
 	 * @param pin
 	 *            Pin of the QuizRoom making the call.
@@ -132,7 +132,7 @@ public interface IRoomAction
 	 * @param pin
 	 *            Pin of the QuizRoom making the call.
 	 * @param q
-	 *            The ActiveQuesiton unassigned from the Player.
+	 *            The ActiveQuestion removed from play.
 	 */
 	public void removeQuestion(int pin, ActiveQuestion q);
 	
