@@ -42,13 +42,13 @@
     }
 }
 
-label.btn {
+.actionbar label.btn {
     margin: 0;
     width: 100%;
     min-width: 200px;
 }
 
-input[type=text] {
+.actionbar input[type=text] {
     outline: 0;
     box-sizing: border-box;
     height: 42px;
@@ -65,7 +65,7 @@ input[type=text] {
     flex: 1;
 }
 
-input[type=text]::placeholder {
+.actionbar input[type=text]::placeholder {
     color: var(--gray-4);
     font-weight: 300;
 }

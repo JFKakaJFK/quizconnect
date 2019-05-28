@@ -1,5 +1,7 @@
 .btn {
     white-space: nowrap;
+    min-width: 120px;
+    padding: .5rem 1.5rem;
 }
 /*
 TODO
@@ -15,7 +17,6 @@ TODO
 .btn-secondary {
     border-radius: 100rem;
     font-size: 1rem;
-    padding: .5rem 3rem;
     color: var(--gray-5);
     box-shadow: 0 0 6px 0 rgba(157, 96, 212, 0.5), 2px 1000px 1px #fff inset;
     border: solid 3px transparent;
