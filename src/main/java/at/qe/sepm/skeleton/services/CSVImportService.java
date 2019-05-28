@@ -76,7 +76,7 @@ public class CSVImportService {
                 try{
                     questions.add(parseAndValidateQuestion(Arrays.asList(values)));
                 } catch (IllegalArgumentException e){
-                    // TODO handle error
+                    logger.error("CSV Reader failed");
                 }
             }
             return questions;
@@ -120,15 +120,15 @@ public class CSVImportService {
         }
         Question q = new Question();
         q.setQuestionString(tokens.get(0).trim());
-        if(nullOrEmpty(q.getQuestionString()) || lengthChecker(tokens.get(0))){
+        if(nullOrEmpty(q.getQuestionString())){
             throw new IllegalArgumentException("QuestionString invalid");
         }
         q.setRightAnswerString(tokens.get(1).trim());
-        if(nullOrEmpty(q.getQuestionString()) || lengthChecker(tokens.get(1))){
+        if(nullOrEmpty(q.getQuestionString())){
             throw new IllegalArgumentException("RightAnswerString invalid");
         }
         q.setWrongAnswerString_1(tokens.get(2).trim());
-        if(nullOrEmpty(q.getQuestionString()) || lengthChecker(tokens.get(2))){
+        if(nullOrEmpty(q.getQuestionString())){
             throw new IllegalArgumentException("WrongAnswerString invalid");
         }
         if(tokens.size() > 3){
@@ -160,10 +160,6 @@ public class CSVImportService {
 
     private boolean nullOrEmpty(String s){
         return s == null || s.equals("");
-    }
-
-    private boolean lengthChecker(String s){
-        return s.length() >= 200;
     }
 
     /**
