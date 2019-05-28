@@ -1,0 +1,11 @@
+/* TODO + selected, required, focus */
+.form-control {
+    background-color: transparent;
+}
+
+.form-control:focus {}
+
+input.error,
+input:invalid {
+    border-color: var(--error);
+}

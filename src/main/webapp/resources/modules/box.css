@@ -1,0 +1,6 @@
+.box {
+    padding: var(--default-padding);
+    border: 2px solid var(--box-border-color);
+    border-radius: 1rem;
+    box-sizing: border-box;
+}

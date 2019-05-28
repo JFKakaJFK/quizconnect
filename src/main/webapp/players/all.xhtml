@@ -6,7 +6,8 @@
                 xmlns:qc="http://java.sun.com/jsf/composite/quizconnect"
                 template="/WEB-INF/templates/main.xhtml">
     <ui:define name="site-specific-css">
-        <link rel="stylesheet" href="../resources/css/allplayers.css" />
+        <link rel="stylesheet" href="../resources/quizconnect/styles/playerbox.css" />
+        <link rel="stylesheet" href="../resources/cssOld/layout/layout.css" />
     </ui:define>
 
     <ui:define name ="content">
@@ -35,7 +36,7 @@
             </h:panelGroup>
 
             <h:panelGroup id="players" layout="block">
-                <h:panelGroup class="grid" layout="block">
+                <h:panelGroup class="collection" layout="block">
                     <ui:repeat value="#{allPlayersBean.paginator.parts}" var="part">
                         <ui:repeat value="#{part.items}" var="player">
 

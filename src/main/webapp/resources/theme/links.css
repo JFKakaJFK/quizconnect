@@ -1,0 +1,13 @@
+/* TODO */
+
+a {
+    color: var(--default-font-color);
+}
+
+a.icon,
+a.icon:link,
+a.icon:visited,
+a.icon:hover,
+a.icon:active {
+    text-decoration: none;
+}
