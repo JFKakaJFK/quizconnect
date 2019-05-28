@@ -7,6 +7,8 @@
                 xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
                 template="/WEB-INF/templates/main.xhtml">
 
+    <ui:define name="title">Edit question sets</ui:define>
+
     <ui:define name="site-specific-css">
         <link rel="stylesheet" type="text/css" href="/resources/css/editquestionset.css"/>
         <script type="text/javascript" src="../resources/quizconnect/js/QCUpload.js"></script>
@@ -25,7 +27,6 @@
         <h:form id="formQSEdit">
             <h:panelGroup id="questionsEdit" layout="block" rendered="#{QSOverviewBean.questionSets != null}"
                           styleClass="boxes px-3">
-
 
                 <ui:repeat value="#{editQuestionBean.questions}" var="question">
                     <qc:generic-box size="sm">
@@ -98,6 +99,7 @@
                             </ui:fragment>
                         </ui:fragment>
                     </qc:generic-box>
+
                 </ui:repeat>
 
             </h:panelGroup>

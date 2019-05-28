@@ -5,6 +5,9 @@
                 xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
                 xmlns:qc="http://java.sun.com/jsf/composite/quizconnect"
                 template="/WEB-INF/templates/main.xhtml">
+
+    <ui:define name="title">View players</ui:define>
+
     <ui:define name="site-specific-css">
         <link rel="stylesheet" href="../resources/quizconnect/styles/playerbox.css" />
         <link rel="stylesheet" href="../resources/cssOld/layout/layout.css" />
@@ -24,12 +27,12 @@
                         <f:ajax listener="#{allPlayersBean.setOnlyByManager(!allPlayersBean.onlyByManager)}" render="showByManager players"/>
                     </h:selectBooleanCheckbox>
 
-                    <label for="showByManager" class="btn btn-tertiary">
+                    <label for="showByManager" class="btn btn-secondary">
                         #{allPlayersBean.onlyByManager ? 'Show all players' : 'Show only your Players'}
                     </label>
                 </h:panelGroup>
 
-                <h:commandButton styleClass="btn btn-tertiary" p:data-toggle="modal" p:data-target="#addPlayer" value="Add Player" rendered="#{sessionInfoBean.hasRole('MANAGER')}">
+                <h:commandButton styleClass="btn btn-secondary" p:data-toggle="modal" p:data-target="#addPlayer" value="Add Player" rendered="#{sessionInfoBean.hasRole('MANAGER')}">
                     <f:ajax execute="@this" render=":form:addPlayer:footer :form:addPlayer:body"/>
                 </h:commandButton>
 

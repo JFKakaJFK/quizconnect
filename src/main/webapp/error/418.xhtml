@@ -2,13 +2,16 @@
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:qc="http://java.sun.com/jsf/composite/quizconnect"
                 template="/WEB-INF/templates/main.xhtml">
+
+    <ui:define name="title">Error 418</ui:define>
+
     <ui:define name="site-specific-css">
         <link type="text/css" rel="stylesheet" href="/resources/css/errors.css"/>
     </ui:define>
 
     <ui:define name ="content">
         <div id="particles-js"></div>
-        <qc:error code="418" message="i'm a teapot"/>
+        <qc:error code="418" message="I'm a teapot"/>
     </ui:define>
 
     <ui:define name="site-specific-javascript">

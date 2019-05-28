@@ -12,30 +12,24 @@
                 xmlns:jsf="http://xmlns.jcp.org/jsf"
                 template="/WEB-INF/templates/main.xhtml">
 
+    <ui:define name="title">Profile</ui:define>
+
     <ui:define name="site-specific-css">
         <link rel="stylesheet" type="text/css" href="/resources/css/QSOverview.css"/>
         <script type="text/javascript" src="../resources/quizconnect/js/QCUpload.js"></script>
     </ui:define>
 
     <ui:define name="content">
-        <div class="container pt-5 pb-5 reduced-mobile-spacing">
-            <div class="row py-3">
-                <div class="col-lg">
-                    <h1 class="display-4 text-center">Profile Settings</h1>
-                </div>
-            </div>
-        </div>
-
         <h:panelGroup layout="block">
 
             <h:form id="passwordChange">
-                <h:commandLink p:class="ml-2" p:data-toggle="modal" p:data-target="#editManager" value="Change password">
+                <h:commandButton styleClass="btn btn-primary" p:data-toggle="modal" p:data-target="#editManager" value="Change password">
                     <f:ajax execute="@this" render="@none"/>
-                </h:commandLink>
+                </h:commandButton>
 
-                <h:commandLink p:class="ml-2" p:data-toggle="modal" p:data-target="#editEmail" value="Change email">
+                <h:commandButton styleClass="btn btn-primary" p:data-toggle="modal" p:data-target="#editEmail" value="Change email">
                     <f:ajax execute="@this" render="@none"/>
-                </h:commandLink>
+                </h:commandButton>
 
                 <qc:modal id="editManager"
                           target="editManager"

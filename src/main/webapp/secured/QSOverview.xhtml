@@ -12,29 +12,23 @@
                 xmlns:jsf="http://xmlns.jcp.org/jsf"
                 template="/WEB-INF/templates/main.xhtml">
 
+    <ui:define name="title">Question sets</ui:define>
+
     <ui:define name="site-specific-css">
         <link rel="stylesheet" type="text/css" href="/resources/css/QSOverview.css"/>
         <script type="text/javascript" src="../resources/quizconnect/js/QCUpload.js"></script>
     </ui:define>
 
     <ui:define name="content">
-        <div class="container pt-5 pb-5 reduced-mobile-spacing">
-            <div class="row py-3">
-                <div class="col-lg">
-                    <h1 class="display-4 text-center">Overview Question-Sets</h1>
-                </div>
-            </div>
-        </div>
-
         <h:form>
             <div class="row justify-content-center">
                 <div class="col-3">
-                    <h:commandButton styleClass="btn btn-block btn-primary btn-lg"
+                    <h:commandButton styleClass="btn btn-primary"
                                      id="CreateNew"
                                      action="/secured/questionSet.xhtml?faces-redirect=true" value="Create new"/>
                 </div>
                 <div class="col-3">
-                    <h:commandLink styleClass="btn btn-block btn-primary btn-lg"
+                    <h:commandLink styleClass="btn btn-primary"
                                    p:data-toggle="modal" p:data-target="#uploadCSV"
                                    p:data-backdrop="static" value="Upload CSV"
                                    onclick="#{CSVImportBean.setManager(sessionInfoBean.currentUser.manager)}">
@@ -110,7 +104,6 @@
                     </qc:generic-box>
                 </ui:repeat>
             </h:panelGroup>
-
         </h:form>
 
     </ui:define>

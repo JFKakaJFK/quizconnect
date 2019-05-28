@@ -102,7 +102,7 @@
 
                 <div jsf:id="#{cc.attrs.footerId}" class="modal-footer">
                     <ui:fragment rendered="#{cc.attrs.showAbort}">
-                        <h:commandButton actionListener="#{cc.attrs.abortAction}" p:class="btn btn-tertiary"
+                        <h:commandButton actionListener="#{cc.attrs.abortAction}" p:class="btn btn-primary"
                                          p:data-dismiss="modal" value="#{cc.attrs.abort}">
                             <f:ajax execute="#{cc.attrs.executeOnAbort}" render="#{cc.attrs.update}"/>
                         </h:commandButton>
