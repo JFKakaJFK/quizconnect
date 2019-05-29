@@ -164,7 +164,6 @@ public class CSVImportService {
 
     /**
      * Initializes QuestionSet and defines Difficulty by checking nameCSV ending number
-     * Currently does not work with Upload --> TODO
      * @param nameCSV
      * @param descriptionCSV
      */
