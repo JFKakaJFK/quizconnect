@@ -413,7 +413,7 @@ public class QuizRoom implements IPlayerAction
 		{
 			player.addToTotalScore(score);
 			player.addPlayTime(gameTime);
-			player.setPlayedWithLast(players);
+			player._setPlayedWithLast(players);
 			player.addPlayToQSets(questionSets);
 			player.addGameScore(endTime, score);
 			
