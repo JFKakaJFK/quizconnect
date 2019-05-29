@@ -3,4 +3,21 @@
     border: 2px solid var(--box-border-color);
     border-radius: 1rem;
     box-sizing: border-box;
+    position: relative;
+    min-height: calc(3 * var(--default-padding));
+}
+
+.box-actions {
+    position: absolute;
+    top: var(--default-padding);
+    right: var(--default-padding);
+}
+
+.box-action {
+    margin-left: 4px;
+}
+
+.box-action:hover,
+.box-action:active {
+
 }

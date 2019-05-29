@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:cc="http://java.sun.com/jsf/composite"
       xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:qc="http://java.sun.com/jsf/composite/quizconnect"
+      xmlns:qc="http://java.sun.com/jsf/composite/quizconnect" xmlns:ui="http://java.sun.com/jsf/facelets"
       xml:lang="en"
       lang="en">
     <cc:interface>
@@ -27,23 +27,32 @@
     </cc:interface>
 
     <cc:implementation>
-        <div id="#{cc.clientId}" class="playerbox" data-ingame="#{cc.attrs.online}" data-id="#{cc.attrs.player.id}">
+        <div id="#{cc.clientId}" class="box playerbox playerbox-#{cc.attrs.detail ? 'detail' : 'small'}" data-ingame="#{cc.attrs.online}" data-id="#{cc.attrs.player.id}">
+
             <div class="playerbox-avatar">
                 <h:graphicImage value="#{avatarBean.getAvatar(cc.attrs.player)}" alt="avatar"/>
             </div>
 
-            <div class="playerbox-info">
-                <div class="playerbox-actions text-right">
-                    <cc:insertChildren/>
-                </div>
-
-                <div class="playerbox-info-row">
-                    <h4>#{cc.attrs.player.user.username}</h4>
-
-                    <p>#{cc.attrs.player.playerRank}</p>
-                </div>
-
+            <div class="box-actions">
+                <cc:insertChildren/>
             </div>
+
+            <ui:fragment rendered="#{!cc.attrs.detail}">
+            <span class="playerbox-username">#{cc.attrs.player.user.username}</span>
+
+            <span class="playerbox-rank">#{cc.attrs.player.playerRank}</span>
+            </ui:fragment>
+
+            <ui:fragment rendered="#{cc.attrs.detail}">
+                <qc:stat styleClass="playerbox-username" label="#{cc.attrs.player.playerRank}" value="#{cc.attrs.player.user.username}"/>
+
+                <div class="playerbox-stats">
+                    <qc:stat label="highscore" value="#{cc.attrs.player.highScore}"/>
+                    <qc:stat label="time played" value="#{statUtil.msToString(cc.attrs.player.playTime)}"/>
+                    <qc:stat label="accuracy" value="#{statUtil.roundPercent(cc.attrs.player.playerAccuracy)}"/>
+                </div>
+            </ui:fragment>
+
         </div>
     </cc:implementation>
 </html>
