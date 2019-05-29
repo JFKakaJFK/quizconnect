@@ -27,7 +27,7 @@
             <h:panelGroup id="player" layout="block" rendered="#{profileBean.player != null}" styleClass="profile-grid">
 
                 <h:panelGroup layout="block" id="avatar" styleClass="avatar">
-                    <qc:playerbox player="#{profileBean.player}" online="#{randomOnlineTestBean.online}" rank="Beginner">
+                    <qc:playerbox player="#{profileBean.player}" rank="Beginner">
 
                         <h:commandLink p:class="ml-2" p:data-toggle="modal" p:data-target="#deletePlayer"
                                        rendered="#{allPlayersBean.isDeletable(profileBean.player)}">
@@ -72,7 +72,7 @@
 
             <h:panelGroup layout="block" styleClass="players px-3">
                 <ui:repeat value="#{profileBean.recentlyPlayedWith}" var="player">
-                    <qc:playerbox player="#{player}" online="#{randomOnlineTestBean.online}">
+                    <qc:playerbox player="#{player}">
                         <h:commandLink action="profile?faces-redirect=true" styleClass="ml-2">
                             <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-9a1 1 0 0 1 1 1v4a1 1 0 0 1-2 0v-4a1 1 0 0 1 1-1zm0-4a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
                             <f:ajax execute="@this" render="@none"/>

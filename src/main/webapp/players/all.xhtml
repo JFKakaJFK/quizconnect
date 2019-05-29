@@ -43,7 +43,7 @@
                     <ui:repeat value="#{allPlayersBean.paginator.parts}" var="part">
                         <ui:repeat value="#{part.items}" var="player">
 
-                            <qc:playerbox player="#{player}" online="#{randomOnlineTestBean.online}">
+                            <qc:playerbox player="#{player}">
 
                                 <h:commandLink p:class="ml-2" p:data-toggle="modal" p:data-target="#deletePlayer"
                                                rendered="#{allPlayersBean.isDeletable(player)}">

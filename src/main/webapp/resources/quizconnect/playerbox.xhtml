@@ -16,36 +16,31 @@
         information about the player.
 
         - player the player of the box
+        - detail the level of detail
         - online [ true | false ]
 
         ==============================================-->
         <cc:attribute name="player" type="at.qe.sepm.skeleton.model.Player" required="true" />
-        <cc:attribute name="online" default="false" />
+        <cc:attribute name="detail" required="false" default="false" type="boolean"/>
+        <cc:attribute name="online" default="false" required="false" />
 
     </cc:interface>
 
     <cc:implementation>
-        <div id="#{cc.clientId}" class="playerbox py-3 px-3" data-ingame="#{cc.attrs.online}" data-id="#{cc.attrs.player.id}"><!-- TODO: change online source -->
-            <div class="playerbox-avatar mx-2 my-2">
+        <div id="#{cc.clientId}" class="playerbox" data-ingame="#{cc.attrs.online}" data-id="#{cc.attrs.player.id}">
+            <div class="playerbox-avatar">
                 <h:graphicImage value="#{avatarBean.getAvatar(cc.attrs.player)}" alt="avatar"/>
             </div>
 
-            <div class="playerbox-info mx-2 my-2">
+            <div class="playerbox-info">
                 <div class="playerbox-actions text-right">
                     <cc:insertChildren/>
                 </div>
 
                 <div class="playerbox-info-row">
-                    <qc:stat value="#{cc.attrs.player.user.username}"
-                             label="username"
-                             align="left"
-                             size="lg"
-                             styleClass="playerbox-info-name" />
+                    <h4>#{cc.attrs.player.user.username}</h4>
 
-                    <qc:stat value="#{cc.attrs.player.playerRank}"
-                             label="rank"
-                             size="sm"
-                             align="right" />
+                    <p>#{cc.attrs.player.playerRank}</p>
                 </div>
 
             </div>

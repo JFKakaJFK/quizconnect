@@ -23,8 +23,7 @@
             <h:panelGroup layout="block" styleClass="home-grid">
 
                 <qc:playerbox id="avatar"
-                              player="#{playerHomeViewBean.player}"
-                              online="#{randomOnlineTestBean.online}">
+                              player="#{playerHomeViewBean.player}">
 
                     <h:commandLink actionListener="#{changeAvatarBean.setPlayer(playerHomeViewBean.player)}"
                                    p:class="ml-2 icon" p:data-toggle="modal" p:data-target="#changeAvatar"
