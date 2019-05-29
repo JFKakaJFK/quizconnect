@@ -17,7 +17,7 @@ public class playerTests {
     private String loginpage = "localhost:8080/login.xhtml";
     private String playerUsername = "user3";
     private String playerPassword = "pw1";
-    private String playerTwoUsername = "user3";
+    private String playerTwoUsername = "user4";
     private String playerTwoPassword = "pw1";
     private String playerOverview = "http://localhost:8080/players/all.xhtml";
 
