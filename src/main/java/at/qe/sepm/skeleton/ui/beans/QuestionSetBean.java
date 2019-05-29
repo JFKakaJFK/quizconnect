@@ -53,6 +53,9 @@ public class QuestionSetBean implements Serializable {
     private ManagerService managerService;
     private PlayerService playerService;
 
+    private Boolean questionSetSaved;
+    private List<Question> questionsDisplay;
+
     @PostConstruct
     public void init() {
         currentUser = sessionInfoBean.getCurrentUser();
@@ -150,34 +153,42 @@ public class QuestionSetBean implements Serializable {
 
     private void initQuestions() {
         questions = new HashSet<Question>();
+        questionsDisplay = new ArrayList<Question>();
     }
 
     private void initQuestionSet() {
         questionSet = new QuestionSet();
+        questionSetSaved = false;
         questionSet.setDifficulty(QuestionSetDifficulty.easy);
     }
 
     /* Called on modal button "add another question - YES" */
     public void saveNewQuestion() {
+
+        if (!questionSetSaved) {
+            saveNewQuestionSet();
+        }
             logger.info("saveNewQuestion called");
             removeSpaces(question);
             questions.add(question);
+            questionsDisplay.add(question);
             question.setQuestionSet(questionSet);
             questionService.saveQuestion(question);
             logger.info("Added question to Database - ID: " + question.getId());
             initQuestion();
     }
 
-    /* Called on button "Step 2: Add new questions"
+    /* Called on first click on "Save new question"
     * Currently a questionSet is saved even if the manager decides to navigate to another page before adding a question (-> Empty questionSet is allowed)
     * */
 
-    public void saveNewQuestionSet() {
+    private void saveNewQuestionSet() {
         logger.info("saveNewQuestionSet invoked");
         if (currentUser.getRole() == UserRole.MANAGER) {
             questionSet.setAuthor(currentUser.getManager());
             questionSet.setQuestions(questions);
             questionSetService.saveQuestionSet(questionSet);
+            questionSetSaved = true;
             logger.info("Created a new QuestionSet with ID: " + questionSet.getId() + " by manager:" + questionSet.getAuthor());
         }
     }
@@ -192,6 +203,24 @@ public class QuestionSetBean implements Serializable {
                     getExternalContext().redirect("/secured/QSOverview.xhtml");
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public boolean validQuestionSet() {
+        if(questionSet.getName()!= null && questionSet.getName().trim().length()>0) {
+            logger.info("True: " + "'" + questionSet.getName() + "'");
+            return true;
+        } else {
+            logger.info("False");
+            return false;
+        }
+    }
+
+    public void toggleDifficulty() {
+        if (questionSet.getDifficulty() == QuestionSetDifficulty.easy) {
+            questionSet.setDifficulty(QuestionSetDifficulty.hard);
+        } else {
+            questionSet.setDifficulty(QuestionSetDifficulty.easy);
         }
     }
 
@@ -223,6 +252,10 @@ public class QuestionSetBean implements Serializable {
         }
     }
 
+    public Boolean getQuestionSetSaved() {
+        return questionSetSaved;
+    }
+
     public Question getQuestion() {
         return question;
     }
@@ -237,6 +270,14 @@ public class QuestionSetBean implements Serializable {
 
     public void setQuestionSet(QuestionSet questionSet) {
         this.questionSet = questionSet;
+    }
+
+    public Set<Question> getQuestions() {
+        return questions;
+    }
+
+    public List<Question> getQuestionsDisplay() {
+        return questionsDisplay;
     }
 
     public List<String> getTypes() {

@@ -51,6 +51,7 @@
     <cc:attribute name="update" default="@none"/>
     <cc:attribute name="modaltype" default=""/>
     <cc:attribute name="closable" default="true"/>
+    <cc:attribute name="ajax" default="true" type="boolean"/>
 
 
     <cc:attribute name="footerId" default="modal-footer"/>
@@ -107,7 +108,7 @@
                             <f:ajax execute="#{cc.attrs.executeOnAbort}" render="#{cc.attrs.update}"/>
                         </h:commandButton>
                     </ui:fragment>
-                    <ui:fragment rendered="#{cc.attrs.showConfirm}">
+                    <ui:fragment rendered="#{cc.attrs.showConfirm and cc.attrs.ajax}">
                         <h:commandButton actionListener="#{cc.attrs.confirmAction}"
                                          p:class="btn btn-primary"
                                          p:data-dismiss="#{cc.attrs.closeOnConfirm ? 'modal' : ''}"
@@ -116,10 +117,22 @@
                             <f:ajax execute="@form" render="#{cc.attrs.update}"/>
                         </h:commandButton>
                     </ui:fragment>
+
+                    <ui:fragment rendered="#{cc.attrs.showConfirm and not cc.attrs.ajax}">
+                        <h:commandButton actionListener="#{cc.attrs.confirmAction}"
+                                         id="submitButton" type="submit"
+                                         p:class="btn btn-primary"
+                                         value="#{cc.attrs.confirm}"
+                                         disabled="#{cc.attrs.disableConfirm}">
+                        </h:commandButton>
+
+
+                    </ui:fragment>
                 </div>
             </div>
         </div>
     </div>
+
 </cc:implementation>
 
 </html>
