@@ -134,7 +134,7 @@ public class PlayerServiceTest
 		Player player2 = playerService.getPlayerById(201);
 		List<Player> ps = new ArrayList<>();
 		ps.add(player2);
-		player.setPlayedWithLast(ps);
+		//player.setPlayedWithLast(ps);
 		
 		playerService.savePlayer(player);
 		

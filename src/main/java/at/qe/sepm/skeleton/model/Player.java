@@ -1,10 +1,6 @@
 package at.qe.sepm.skeleton.model;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -64,7 +60,7 @@ public class Player implements Persistable<Integer>
 	 * List of Players that were in the same game that this Player last played. May be null or empty.
 	 */
 	@ElementCollection(fetch = FetchType.EAGER)
-	private List<String> playedWithLast;
+	private Set<String> playedWithLast;
 	
 	/**
 	 * Map storing the final scores of the last 10 games played by this Player. Mapping from time stamp of game end to the score.
@@ -77,7 +73,7 @@ public class Player implements Persistable<Integer>
 	 */
 	public List<String> getPlayedWithLast()
 	{
-		return playedWithLast;
+		return new ArrayList<>(playedWithLast);
 	}
 	
 	/**
@@ -87,7 +83,7 @@ public class Player implements Persistable<Integer>
 	 */
 	public void _setPlayedWithLast(List<Player> players)
 	{
-		playedWithLast = new ArrayList<>();
+		playedWithLast = new HashSet<>();
 		if (players == null)
 			return;
 		for (Player player : players)
@@ -99,7 +95,7 @@ public class Player implements Persistable<Integer>
 		}
 	}
 	
-	public void setPlayedWithLast(List<String> players)
+	public void setPlayedWithLast(Set<String> players)
 	{
 		this.playedWithLast = players;
 	}
