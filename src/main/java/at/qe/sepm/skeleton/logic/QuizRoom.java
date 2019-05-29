@@ -68,6 +68,7 @@ public class QuizRoom implements IPlayerAction
 	
 	private volatile List<Player> readyPlayers; // list of players who declared themselves ready
 	protected volatile boolean wfpMode; // true if the room is in 'waiting for players' mode
+	private volatile boolean gameOver; // true if the game is finished
 	
 	/**
 	 * Initializes a new QR.
@@ -117,6 +118,7 @@ public class QuizRoom implements IPlayerAction
 		
 		readyPlayers = new LinkedList<>();
 		wfpMode = true;
+		gameOver = false;
 		
 		// create and start frame timer
 		timerFrameUpdate = new Timer(scheduler, this::onFrameUpdate, frameTimeStep);
@@ -131,6 +133,9 @@ public class QuizRoom implements IPlayerAction
 	 */
 	private void onFrameUpdate(long deltaTime)
 	{
+		if (gameOver)
+			return;
+		
 		// LOGGER.debug("frame call after " + timerFrameUpdate.getElapsedTime() + " ms.");
 		if (deltaTime > 2 * frameTimeStep)
 		{
@@ -187,6 +192,9 @@ public class QuizRoom implements IPlayerAction
 	 */
 	protected synchronized void addDelayedAction(DelayedAction action) throws IllegalArgumentException
 	{
+		if (gameOver)
+			return;
+		
 		if (action == null || action.action == null)
 			throw new IllegalArgumentException("DelayAction is invalid!");
 		
@@ -206,6 +214,9 @@ public class QuizRoom implements IPlayerAction
 	 */
 	private synchronized void checkDelayQueue()
 	{
+		if (gameOver)
+			return;
+		
 		long now = new Date().getTime() + 10; // offset by 10ms to make up for 'just missed' calls
 		while (delayQueue.size() > 0 && delayQueue.get(0).execTime <= now)
 		{
@@ -221,6 +232,9 @@ public class QuizRoom implements IPlayerAction
 	 */
 	private synchronized void checkPlayerActivity()
 	{
+		if (gameOver)
+			return;
+		
 		long tooLong = (new Date().getTime()) - activityDuration;
 		for (Player player : players)
 		{
@@ -255,6 +269,9 @@ public class QuizRoom implements IPlayerAction
 	 */
 	private synchronized void checkPlayerAlivePings()
 	{
+		if (gameOver)
+			return;
+		
 		long tooLong = (new Date().getTime()) - aliveDuration;
 		for (int i = players.size() - 1; i >= 0; i--)
 		{
@@ -373,11 +390,12 @@ public class QuizRoom implements IPlayerAction
 		eventCall(x -> x.onGameEnd(pin));
 		
 		wfpMode = true; // prevent processing of any frameUpdate calls on any runtime structures
+		gameOver = true;
+		
+		timerFrameUpdate.stop();
+		delayQueue.clear();
 		
 		updatePlayerStats();
-		
-		delayQueue.clear();
-		timerFrameUpdate.stop();
 		manager.removeRoom(pin); //de-register QuizRoom with QRManger
 		
 		LOGGER.debug("QuizRoom [" + pin + "] closed after " + timerFrameUpdate.getElapsedTime() + " ms.");
@@ -552,7 +570,7 @@ public class QuizRoom implements IPlayerAction
 	@Override
 	public void answerQuestion(Player p, int questionId, int index)
 	{
-		if (wfpMode)
+		if (wfpMode || gameOver)
 		{
 			return;
 		}
@@ -651,6 +669,9 @@ public class QuizRoom implements IPlayerAction
 	@Override
 	public synchronized void sendAlivePing(Player p)
 	{
+		if (gameOver)
+			return;
+		
 		if (!playerAlivePingTimestamps.containsKey(p))
 		{
 			LOGGER.error("### ERROR ### [QR " + pin + "] Illegal call to sendAlivePing! Player is not in QuizRoom! (id: " + p.getId() + ")");

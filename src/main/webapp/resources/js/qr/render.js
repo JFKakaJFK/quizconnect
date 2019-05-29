@@ -282,7 +282,7 @@ const renderQuestion = (parent, { questionId, type, question, remaining }) => {
   let qt = parent.querySelector('#questionTime span');
   if(q !== null){
     // console.log(q.innerText)
-    if(q.innerText === question){
+    if(q.innerText === question || qt.getAttribute('data-content') === question){
       let total = parseInt(qt.getAttribute('data-total'));
       qt.style.width = `${(remaining / total) * 100}%`;
     } else {
@@ -295,6 +295,7 @@ const renderQuestion = (parent, { questionId, type, question, remaining }) => {
       } else {
         q.innerHTML = question;
       }
+      qt.setAttribute('data-content', question);
       qt.setAttribute('data-total', remaining);
       qt.style.width = '100%';
     }
@@ -339,7 +340,7 @@ const renderTextAnswer = (answer) => {
 
 const renderPictureAnswer = (answer) => {
   return {
-    content: `<img src="${answer}" alt="answer image" />`,
+    content: `<img src="${PREFIX_ANSWER_PICTURE(answer)}" alt="answer image" />`,
     classes: 'answer-img',
   };
 };

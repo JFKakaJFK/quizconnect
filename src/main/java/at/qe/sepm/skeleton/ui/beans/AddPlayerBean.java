@@ -9,9 +9,11 @@ import at.qe.sepm.skeleton.model.Player;
 import at.qe.sepm.skeleton.services.PlayerService;
 import at.qe.sepm.skeleton.services.UserService;
 
+import java.io.Serializable;
+
 @Controller
 @Scope("view")
-public class AddPlayerBean {
+public class AddPlayerBean implements Serializable {
 
     private PlayerService playerService;
     private UserService userService;
