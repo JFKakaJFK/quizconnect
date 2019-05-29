@@ -17,7 +17,7 @@
 
             <h:panelGroup layout="block" styleClass="searchbar">
 
-                <h:inputText p:autocomplete="nein-danke-bitte-nicht" p:placeholder="Search" value="#{allPlayersBean.searchPhrase}" styleClass="form-control searchbar-search" p:name="honeypot">
+                <h:inputText id="searchPrase" p:autocomplete="nein-danke-bitte-nicht" p:placeholder="Search" value="#{allPlayersBean.searchPhrase}" styleClass="form-control searchbar-search">
                     <f:ajax listener="#{allPlayersBean.handleSearch}" event="keyup" execute="@this" render="players"/>
                 </h:inputText>
 
@@ -69,6 +69,7 @@
                     </ui:repeat>
 
                 </h:panelGroup>
+                <qc:collectionEmpty collection="#{allPlayersBean.paginator.parts}" text="No players found"/>
 
                 <qc:paginator paginator="#{allPlayersBean.paginator}" update=":form:players"/>
 

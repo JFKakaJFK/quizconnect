@@ -55,8 +55,8 @@ public class AllPlayersBean implements Serializable {
      * Any mutation of {@link this#allPlayers} or {@link this#allByManager} must call this method to update the {@link ScrollPaginator}.
      */
     private void filterAndUpdatePlayers(){
-        paginator.updateList((onlyByManager && isManager() ? getAllByManager() : getAllPlayers()).stream() // TODO .parallel()
-                .filter(player -> player.getUser().getUsername().toLowerCase().contains(searchPhrase.toLowerCase())) // || player.getId().toString().toLowerCase().contains(searchPhrase.toLowerCase()))
+        paginator.updateList((onlyByManager && isManager() ? getAllByManager() : getAllPlayers()).stream().parallel()
+                .filter(player -> player.getUser().getUsername().toLowerCase().contains(searchPhrase.toLowerCase()))
                 .collect(Collectors.toList()));
     }
 

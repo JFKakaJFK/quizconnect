@@ -59,6 +59,13 @@
     --playerbox-avatar-size-detail: 8rem;
     --playerbox-avatar-background: transparent;
 
+    --input-background: var(--col-1-m);
+    --input-focus-background: var(--col-1-d);
+    --input-color: var(--col-1-l);
+    --input-focus-color: var(--col-1-l);
+    --input-border-color: var(--col-1-m);
+    --input-focus-border-color: var(--col-1-m);
+
     /* DEFAULT LAYOUT VARIABLES */
     --default-padding: 1rem;
 

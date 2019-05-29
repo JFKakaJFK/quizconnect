@@ -19,3 +19,11 @@
         grid-auto-columns: 1fr 1fr 1fr;
     }
 }
+
+.collection-empty-message {
+    display: block;
+    width: 100%;
+    text-align: center;
+    font-weight: var(--default-font-weight);
+    font-size: 2rem;
+}
