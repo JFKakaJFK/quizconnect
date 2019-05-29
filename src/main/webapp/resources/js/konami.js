@@ -10,7 +10,7 @@ document.addEventListener('keydown', function(e) {
         console.log(konamiCounter);
         konamiCounter++;
         if (konamiCounter >= konami.length) {
-            document.getElementById('title').innerHTML = 'SAVAGE';
+            //TODO make it do something
         }
     } else {
         konamiCounter = 0;
