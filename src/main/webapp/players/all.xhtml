@@ -6,33 +6,32 @@
                 xmlns:qc="http://java.sun.com/jsf/composite/quizconnect"
                 template="/WEB-INF/templates/main.xhtml">
 
-    <ui:define name="title">View players</ui:define>
+    <ui:define name="title">All players</ui:define>
 
     <ui:define name="site-specific-css">
-        <link rel="stylesheet" href="../resources/quizconnect/styles/playerbox.css" />
-        <link rel="stylesheet" href="../resources/cssOld/layout/layout.css" />
+        <link rel="stylesheet" href="../resources/main.css" />
     </ui:define>
 
     <ui:define name ="content">
         <h:form p:autocomplete="off" id="form" enctype="multipart/form-data">
 
-            <h:panelGroup layout="block" styleClass="actions">
+            <h:panelGroup layout="block" styleClass="searchbar">
 
-                <h:inputText p:autocomplete="new-password" p:placeholder="Search" value="#{allPlayersBean.searchPhrase}" styleClass="form-control">
+                <h:inputText p:autocomplete="nein-danke-bitte-nicht" p:placeholder="Search" value="#{allPlayersBean.searchPhrase}" styleClass="form-control searchbar-search" p:name="honeypot">
                     <f:ajax listener="#{allPlayersBean.handleSearch}" event="keyup" execute="@this" render="players"/>
                 </h:inputText>
 
-                <h:panelGroup id="showByManager" rendered="#{sessionInfoBean.hasRole('MANAGER')}">
+                <h:panelGroup id="showByManager" rendered="#{sessionInfoBean.hasRole('MANAGER')}" styleClass="searchbar-action">
                     <h:selectBooleanCheckbox p:id="showByManager" value="#{allPlayersBean.onlyByManager}" styleClass="jsf-hide">
                         <f:ajax listener="#{allPlayersBean.setOnlyByManager(!allPlayersBean.onlyByManager)}" render="showByManager players"/>
                     </h:selectBooleanCheckbox>
 
-                    <label for="showByManager" class="btn btn-secondary">
+                    <label for="showByManager">
                         #{allPlayersBean.onlyByManager ? 'Show all players' : 'Show only your Players'}
                     </label>
                 </h:panelGroup>
 
-                <h:commandButton styleClass="btn btn-secondary" p:data-toggle="modal" p:data-target="#addPlayer" value="Add Player" rendered="#{sessionInfoBean.hasRole('MANAGER')}">
+                <h:commandButton styleClass="btn btn-secondary searchbar-action" p:data-toggle="modal" p:data-target="#addPlayer" value="Add Player" rendered="#{sessionInfoBean.hasRole('MANAGER')}">
                     <f:ajax execute="@this" render=":form:addPlayer:footer :form:addPlayer:body"/>
                 </h:commandButton>
 
@@ -86,7 +85,7 @@
                       confirmAction="#{addPlayerBean.addUser}"
                       confirm="Save Player" abort="Cancel"
                       rendered="#{sessionInfoBean.hasRole('MANAGER')}">
-                <h:inputText p:placeholder="Username" styleClass="form-control" p:autocomplete="new-password"
+                <h:inputText p:placeholder="Username" styleClass="form-control" p:autocomplete="new-username"
                              value="#{addPlayerBean.username}">
                     <f:ajax event="keyup" execute="@this" render=":form:addPlayer:footer"/>
                 </h:inputText>
@@ -130,7 +129,7 @@
     </ui:define>
 
     <ui:define name="site-specific-javascript">
-        <script type="text/javascript" src="/resources/js/util/scroll.js"></script>
+        <script type="text/javascript" src="/resources/quizconnect/js/scroll.js"></script>
         <script type="text/javascript">
             const sl = new ScrollLoader('.load');
             sl.init();

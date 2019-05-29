@@ -11,7 +11,7 @@
 @import "modules/pushbar.css";
 @import "modules/box.css";
 @import "modules/alerts.css";
-@import "modules/actionbar.css";
+@import "modules/searchbar.css";
 
 /* COMPONENTS */
 @import "quizconnect/styles/modal.css";

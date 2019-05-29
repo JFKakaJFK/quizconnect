@@ -37,7 +37,7 @@ public class AllPlayersBean implements Serializable {
     public AllPlayersBean(PlayerService playerService, SessionInfoBean sessionInfoBean){
         this.playerService = playerService;
         this.user = sessionInfoBean.getCurrentUser();
-        this.paginator = new ScrollPaginator<>(getAllPlayers(), 12); // 12 is about the number fitting into one viewport
+        this.paginator = new ScrollPaginator<>(getAllPlayers(), 20); // about the number of players fitting into one viewport
     }
 
     /**

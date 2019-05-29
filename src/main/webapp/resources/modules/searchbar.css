@@ -1,0 +1,12 @@
+.searchbar { /* TODO */
+    display: flex;
+    padding-bottom: var(--default-padding);
+}
+
+.searchbar .searchbar-search {
+    flex: 1;
+}
+
+.searchbar .searchbar-action {
+    margin: 0 0 0 1rem;
+}
