@@ -85,7 +85,7 @@ public class Player implements Persistable<Integer>
 	 * 
 	 * @param players Players to be stored.
 	 */
-	public void setPlayedWithLast(List<Player> players)
+	public void _setPlayedWithLast(List<Player> players)
 	{
 		playedWithLast = new ArrayList<>();
 		if (players == null)
@@ -97,6 +97,11 @@ public class Player implements Persistable<Integer>
 			
 			playedWithLast.add(player.getUser().getUsername());
 		}
+	}
+	
+	public void setPlayedWithLast(List<String> players)
+	{
+		this.playedWithLast = players;
 	}
 	
 	/**
