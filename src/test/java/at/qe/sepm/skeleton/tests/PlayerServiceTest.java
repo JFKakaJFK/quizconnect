@@ -4,10 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -132,9 +129,9 @@ public class PlayerServiceTest
 	{
 		Player player = playerService.getPlayerById(205);
 		Player player2 = playerService.getPlayerById(201);
-		List<Player> ps = new ArrayList<>();
-		ps.add(player2);
-		//player.setPlayedWithLast(ps);
+		Set<String> ps = new HashSet<>();
+		ps.add(player2.getUser().getUsername());
+		player.setPlayedWithLast(ps);
 		
 		playerService.savePlayer(player);
 		
