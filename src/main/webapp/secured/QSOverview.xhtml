@@ -83,27 +83,60 @@
 
 
         <h:form id="formOverview-QSets">
-            <h:panelGroup id="overview-QSets" layout="block" rendered="#{QSOverviewBean.questionSets != null}"
-                          styleClass="boxes px-3">
 
+            <h:panelGroup layout="block" styleClass="searchbar">
 
-                <ui:repeat value="#{QSOverviewBean.questionSets}" var="set">
-                    <qc:generic-box size="sm"
-                                    showEdit="#{QSOverviewBean.isByManager(set)}"
-                                    editIcon="fas fa-edit"
-                                    editAction="#{editQuestionBean.setAndRedirect(set.id)}"
-                                    showDelete="#{QSOverviewBean.isByManager(set)}"
-                                    deleteIcon="fas fa-trash"
-                                    deleteAction="#{QSOverviewBean.deleteQuestionSet(set)}">
-                        <h3>#{set.name}</h3>
-                        <h3>#{set.description}</h3>
-                        <div class="row">
-                            <h3 class="col-md-6">#{set.difficulty}</h3>
-                            <h3 class="col-md-6">#{set.questions.size()}</h3>
-                        </div>
-                    </qc:generic-box>
-                </ui:repeat>
+                <h:inputText id="searchPrase" p:autocomplete="nein-danke-bitte-nicht" p:placeholder="Search" value="#{QSOverviewBean.searchPhrase}" styleClass="form-control searchbar-search">
+                    <f:ajax listener="#{QSOverviewBean.handleSearch}" event="keyup" execute="@this" render="questionset-collection"/>
+                </h:inputText>
+
+                <h:panelGroup id="showByManager" styleClass="searchbar-action">
+                    <h:selectBooleanCheckbox p:id="showByManager" value="#{QSOverviewBean.onlyByManager}" styleClass="jsf-hide">
+                        <f:ajax listener="#{QSOverviewBean.setOnlyByManager(!QSOverviewBean.onlyByManager)}" render="showByManager questionset-collection"/>
+                    </h:selectBooleanCheckbox>
+
+                    <label for="showByManager">
+                        #{QSOverviewBean.onlyByManager ? 'Show all players' : 'Show only your Players'}
+                    </label>
+                </h:panelGroup>
+
+                <h:commandButton styleClass="btn btn-secondary searchbar-action" p:data-toggle="modal" p:data-target="#addPlayer" value="Add Player" rendered="#{sessionInfoBean.hasRole('MANAGER')}">
+                    <f:ajax execute="@this" render=":form:addPlayer:footer :form:addPlayer:body"/>
+                </h:commandButton>
+
             </h:panelGroup>
+
+
+            <h:panelGroup styleClass="collection" id="questionset-collection" layout="block" rendered="#{QSOverviewBean.questionSets != null}">
+
+                    <ui:repeat value="#{QSOverviewBean.paginator.parts}" var="part">
+                        <ui:repeat value="#{part.items}" var="set">
+                            <qc:questionsetbox questionset="#{set}">
+                                <h:commandLink styleClass="box-action" p:data-toggle="modal" p:data-target="#deleteQuestionset" rendered="#{QSOverviewBean.isByManager(set)}">
+                                    <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M8 6V4c0-1.1.9-2 2-2h4a2 2 0 0 1 2 2v2h5a1 1 0 0 1 0 2h-1v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8H3a1 1 0 1 1 0-2h5zM6 8v12h12V8H6zm8-2V4h-4v2h4zm-4 4a1 1 0 0 1 1 1v6a1 1 0 0 1-2 0v-6a1 1 0 0 1 1-1zm4 0a1 1 0 0 1 1 1v6a1 1 0 0 1-2 0v-6a1 1 0 0 1 1-1z"/></svg>                                    <f:ajax execute="@form" render="@none" />
+                                    <f:ajax execute="@this" render="@none"/>
+                                    <f:setPropertyActionListener value="#{set}" target="#{QSOverviewBean.questionsetToDelete}"/>
+                                </h:commandLink>
+
+                                <h:commandLink styleClass="box-action" action="#{editQuestionBean.setAndRedirect(set.id)}" rendered="#{QSOverviewBean.isByManager(set)}">
+                                    <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M9 4.58V4c0-1.1.9-2 2-2h2a2 2 0 0 1 2 2v.58a8 8 0 0 1 1.92 1.11l.5-.29a2 2 0 0 1 2.74.73l1 1.74a2 2 0 0 1-.73 2.73l-.5.29a8.06 8.06 0 0 1 0 2.22l.5.3a2 2 0 0 1 .73 2.72l-1 1.74a2 2 0 0 1-2.73.73l-.5-.3A8 8 0 0 1 15 19.43V20a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-.58a8 8 0 0 1-1.92-1.11l-.5.29a2 2 0 0 1-2.74-.73l-1-1.74a2 2 0 0 1 .73-2.73l.5-.29a8.06 8.06 0 0 1 0-2.22l-.5-.3a2 2 0 0 1-.73-2.72l1-1.74a2 2 0 0 1 2.73-.73l.5.3A8 8 0 0 1 9 4.57zM7.88 7.64l-.54.51-1.77-1.02-1 1.74 1.76 1.01-.17.73a6.02 6.02 0 0 0 0 2.78l.17.73-1.76 1.01 1 1.74 1.77-1.02.54.51a6 6 0 0 0 2.4 1.4l.72.2V20h2v-2.04l.71-.2a6 6 0 0 0 2.41-1.4l.54-.51 1.77 1.02 1-1.74-1.76-1.01.17-.73a6.02 6.02 0 0 0 0-2.78l-.17-.73 1.76-1.01-1-1.74-1.77 1.02-.54-.51a6 6 0 0 0-2.4-1.4l-.72-.2V4h-2v2.04l-.71.2a6 6 0 0 0-2.41 1.4zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0-2a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/></svg>                                    <f:ajax execute="@form" render="@none" />
+                                </h:commandLink>
+
+                            </qc:questionsetbox>
+                        </ui:repeat>
+                    </ui:repeat>
+
+            </h:panelGroup>
+
+            <qc:modal id="deleteQuestionset"
+                      target="deleteQuestionset"
+                      title="Delete Questionset"
+                      confirm="Delete Questionset"
+                      abort="Cancel"
+                      confirmAction="#{QSOverviewBean.deleteQuestionSet}"
+                      update=":formOverview-QSets:questionset-collection">
+                Are you sure? This cannot be undone.
+            </qc:modal>
         </h:form>
 
     </ui:define>

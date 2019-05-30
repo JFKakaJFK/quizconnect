@@ -59,6 +59,10 @@
     --playerbox-avatar-size-detail: 8rem;
     --playerbox-avatar-background: transparent;
 
+    --questionsetbox-icon-size-small: 1.5rem;
+    --questionsetbox-icon-size-detail: 2rem;
+    --questionsetbox-icon-background: transparent;
+
     --input-background: var(--col-1-m);
     --input-focus-background: var(--col-1-d);
     --input-color: var(--col-1-l);

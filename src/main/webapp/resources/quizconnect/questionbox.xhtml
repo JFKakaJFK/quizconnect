@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://java.sun.com/jsf/composite"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+      xml:lang="en"
+      lang="en">
+    <cc:interface>
+
+        <!--=============================================
+
+        The questionbox component displays a box wit a little
+        information about the question.
+
+        - question the question of the box
+        - detail the level of detail
+
+        ==============================================-->
+        <cc:attribute name="question" type="at.qe.sepm.skeleton.model.Question" required="true" />
+        <cc:attribute name="detail" required="false" default="false" type="boolean"/>
+
+    </cc:interface>
+
+    <cc:implementation>
+        <div id="#{cc.clientId}" class="box questionbox questionbox-#{cc.attrs.detail ? 'detail' : 'small'}">
+
+            <div class="questionbox-icon">
+                <h:graphicImage value="/resources/quizconnect/styles/text.svg" alt="type" rendered="#{cc.attrs.question.type eq 'text'}"/>
+                <h:graphicImage value="/resources/quizconnect/styles/picture.svg" alt="type" rendered="#{cc.attrs.question.type eq 'picture'}"/>
+            </div>
+
+            <div class="box-actions">
+                <cc:insertChildren/>
+            </div>
+
+            <ui:fragment rendered="#{!cc.attrs.detail}">
+            <span class="questionbox-question">#{cc.attrs.question.questionString}</span>
+
+            <span class="questionbox-answer">#{cc.attrs.question.rightAnswerString}</span>
+            </ui:fragment>
+
+        </div>
+    </cc:implementation>
+</html>

@@ -48,6 +48,7 @@ public class QuestionSetBean implements Serializable {
     private QuestionSet questionSet;
     private Set<Question> questions;
     private Question question;
+    private Question questionToDelete;
 
     private StorageService storageService;
     private ManagerService managerService;
@@ -59,6 +60,7 @@ public class QuestionSetBean implements Serializable {
     @PostConstruct
     public void init() {
         currentUser = sessionInfoBean.getCurrentUser();
+        questionToDelete = null;
         // creates internal set ("questions") of questions created in this process which is later assigned to the questionSet
         initQuestions();
         // create an empty question on startup
@@ -162,6 +164,13 @@ public class QuestionSetBean implements Serializable {
         questionSet.setDifficulty(QuestionSetDifficulty.easy);
     }
 
+    public void deleteQuestion() {
+        questions.remove(questionToDelete);
+        questionsDisplay.remove(questionToDelete);
+        questionService.deleteQuestion(questionToDelete);
+        logger.info("Question deleted");
+    }
+
     /* Called on modal button "add another question - YES" */
     public void saveNewQuestion() {
 
@@ -258,6 +267,14 @@ public class QuestionSetBean implements Serializable {
 
     public Question getQuestion() {
         return question;
+    }
+
+    public Question getQuestionToDelete() {
+        return questionToDelete;
+    }
+
+    public void setQuestionToDelete(Question questionToDelete) {
+        this.questionToDelete = questionToDelete;
     }
 
     public void setQuestion(Question question) {

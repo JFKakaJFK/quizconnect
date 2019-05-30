@@ -16,9 +16,7 @@
     </ui:define>
 
     <ui:define name="content">
-
         <h:form id="questionSetForm">
-
             <div class="row">
                 <div class="col-6">
                     <div class="form-group">
@@ -60,6 +58,7 @@
 
 
         </h:form>
+
 
         <h:form id="questionForForm">
             <qc:modal target="questionModal" id="questionModal" closable="false" modaltype="info"
@@ -244,14 +243,31 @@
         </h:form>
 
 
+        <h:form id="deleteQuestionForm">
+            <h:panelGroup styleClass="collection" layout="block" id="questionCollection" rendered="#{not empty questionSetBean.questionsDisplay}">
+                <ui:repeat value="#{questionSetBean.questionsDisplay}" var="question">
+                    <qc:questionbox question="#{question}" detail="false">
+                        <h:commandLink styleClass="box-action" pt:data-toggle="modal" pt:data-target="#deleteQuestion"
+                                       rendered="#{true}">
+                            <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M8 6V4c0-1.1.9-2 2-2h4a2 2 0 0 1 2 2v2h5a1 1 0 0 1 0 2h-1v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8H3a1 1 0 1 1 0-2h5zM6 8v12h12V8H6zm8-2V4h-4v2h4zm-4 4a1 1 0 0 1 1 1v6a1 1 0 0 1-2 0v-6a1 1 0 0 1 1-1zm4 0a1 1 0 0 1 1 1v6a1 1 0 0 1-2 0v-6a1 1 0 0 1 1-1z"/></svg>                                    <f:ajax execute="@form" render="@none" />
+                            <f:ajax execute="@this" render="@none"/>
+                            <f:setPropertyActionListener value="#{question}" target="#{questionSetBean.questionToDelete}"/>
+                        </h:commandLink>
+                    </qc:questionbox>
+                </ui:repeat>
+            </h:panelGroup>
 
-        <h:panelGroup styleClass="collection" id="questionCollection">
-            <ui:repeat value="#{questionSetBean.questionsDisplay}" var="question">
-                <p>#{question.questionString}</p>
-            </ui:repeat>
 
-        </h:panelGroup>
-
+            <qc:modal id="deleteQuestion"
+                      target="deleteQuestion"
+                      title="Delete Question"
+                      confirm="Delete Question"
+                      abort="Cancel"
+                      confirmAction="#{questionSetBean.deleteQuestion()}"
+                      update=":deleteQuestionForm:questionCollection">
+                Are you sure? This cannot be undone.
+            </qc:modal>
+        </h:form>
 
     </ui:define>
 </ui:composition>

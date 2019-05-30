@@ -16,9 +16,10 @@
 /* COMPONENTS */
 @import "quizconnect/styles/modal.css";
 @import "quizconnect/styles/playerbox.css";
+@import "quizconnect/styles/questionbox.css";
+@import "quizconnect/styles/questionsetbox.css";
 @import "quizconnect/styles/scrollpaginator.css";
 @import "quizconnect/styles/stat.css";
-/* TODO questionsetbox */
 
 /* THEME */
 

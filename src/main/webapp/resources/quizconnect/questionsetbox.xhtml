@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://java.sun.com/jsf/composite"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+      xml:lang="en"
+      lang="en">
+    <cc:interface>
+
+        <!--=============================================
+
+        The questionsetbox component displays a box wit a little
+        information about the questionset.
+
+        - questionset the questionset of the box
+        - detail the level of detail
+
+        ==============================================-->
+        <cc:attribute name="questionset" type="at.qe.sepm.skeleton.model.QuestionSet" required="true" />
+        <cc:attribute name="detail" required="false" default="false" type="boolean"/>
+
+    </cc:interface>
+
+    <cc:implementation>
+        <div id="#{cc.clientId}" class="box questionsetbox questionsetbox-#{cc.attrs.detail ? 'detail' : 'small'}">
+
+            <div class="questionsetbox-icon">
+                    <h:graphicImage value="/resources/quizconnect/styles/easy.svg" alt="easy" rendered="#{cc.attrs.questionset.difficulty eq 'easy'}"/>
+                    <h:graphicImage value="/resources/quizconnect/styles/hard.svg" alt="hard" rendered="#{cc.attrs.questionset.difficulty eq 'hard'}"/>
+            </div>
+
+            <div class="box-actions">
+                <cc:insertChildren/>
+            </div>
+
+            <ui:fragment rendered="#{!cc.attrs.detail}">
+            <span class="questionsetbox-question">#{cc.attrs.questionset.name}</span>
+
+            <span class="questionsetbox-answer">#{cc.attrs.questionset.description}</span>
+            </ui:fragment>
+
+        </div>
+    </cc:implementation>
+</html>
