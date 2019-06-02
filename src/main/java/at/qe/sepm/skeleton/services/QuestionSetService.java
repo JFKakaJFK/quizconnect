@@ -32,17 +32,17 @@ public class QuestionSetService
 	private Logger log = LoggerFactory.getLogger(QuestionSetService.class);
 	
 	@Autowired
-	QuestionSetRepository questionSetRepositoryRepository;
+	QuestionSetRepository questionSetRepository;
 	
 	@Autowired
 	QuestionService questionService;
-	
+
 	/**
 	 * @return All {@link QuestionSet}s in the database.
 	 */
 	public List<QuestionSet> getAllQuestionSets()
 	{
-		return questionSetRepositoryRepository.findAll();
+		return questionSetRepository.findAll();
 	}
 	
 	/**
@@ -52,9 +52,8 @@ public class QuestionSetService
 	 */
 	public QuestionSet getQuestionSetById(int id)
 	{
-		return questionSetRepositoryRepository.findQuestionSetById(id);
+		return questionSetRepository.findOne(id);
 	}
-	
 	
 	/**
 	 * @param question
@@ -63,7 +62,7 @@ public class QuestionSetService
 	 */
 	public QuestionSet getQuestionSetOfQuestion(Question question)
 	{
-		return questionSetRepositoryRepository.findByQuestions(question);
+		return questionSetRepository.findByQuestions(question);
 	}
 	
 	/**
@@ -73,7 +72,7 @@ public class QuestionSetService
 	 */
 	public List<QuestionSet> getQuestionSetsOfManager(Manager manager)
 	{
-		return questionSetRepositoryRepository.findByAuthor(manager);
+		return questionSetRepository.findByAuthor(manager);
 	}
 	
 	/**
@@ -83,7 +82,7 @@ public class QuestionSetService
 	 */
 	public Collection<QuestionSet> getAllByDifficulty(QuestionSetDifficulty difficulty)
 	{
-		return questionSetRepositoryRepository.findByDifficulty(difficulty);
+		return questionSetRepository.findByDifficulty(difficulty);
 	}
 	
 	/**
@@ -93,14 +92,14 @@ public class QuestionSetService
 	 */
 	public Collection<QuestionSet> getAllContaining(String name)
 	{
-		return questionSetRepositoryRepository.findByNameContaining(name);
+		return questionSetRepository.findByNameContaining(name);
 	}
 	
 	/**
 	 * Saves the {@link QuestionSet} to the database.
 	 *
 	 * @param questionSet
-	 * 		QuestinSet to be saved.
+	 * 		QuestionSet to be saved.
 	 * @return the new instance. Use for all further operations.
 	 * @throws IllegalArgumentException
 	 * 		If any sanity checks fail.
@@ -147,7 +146,7 @@ public class QuestionSetService
 			Set<Question> questions = new HashSet<>(questionSet.getQuestions());
 			Set<Question> savedQuestions = new HashSet<>();
 			questionSet.setQuestions(null); // reset questions to avoid db inconsistency
-			QuestionSet savedQuestionSet = questionSetRepositoryRepository.save(questionSet);
+			QuestionSet savedQuestionSet = questionSetRepository.save(questionSet);
 			
 			for (Question q : questions)
 			{
@@ -156,11 +155,11 @@ public class QuestionSetService
 			}
 			
 			savedQuestionSet.setQuestions(savedQuestions);
-			return questionSetRepositoryRepository.save(savedQuestionSet);
+			return questionSetRepository.save(savedQuestionSet);
 		}
 		else
 		{
-			return questionSetRepositoryRepository.save(questionSet);
+			return questionSetRepository.save(questionSet);
 		}
 	}
 	
@@ -181,7 +180,7 @@ public class QuestionSetService
 				//...
 			}
 		}
-		questionSetRepositoryRepository.delete(questionSet);
+		questionSetRepository.delete(questionSet);
 		log.info("Deleted QuestionSet " + questionSet.getId());
 	}
 	

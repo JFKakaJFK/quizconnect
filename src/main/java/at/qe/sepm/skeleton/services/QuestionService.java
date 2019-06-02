@@ -28,6 +28,16 @@ public class QuestionService
 	QuestionRepository questionRepository;
 	
 	/**
+	 * @param id
+	 * 		Id of the Question to find.
+	 * @return The Question with id or null if none was found.
+	 */
+	public Question getById(Integer id)
+	{
+		return questionRepository.findOne(id);
+	}
+	
+	/**
 	 * @param type
 	 * 		Type of Questions to be returned.
 	 * @return All {@link Question} of a {@link QuestionType}.
@@ -76,10 +86,6 @@ public class QuestionService
 		if (question.getQuestionSet() == null)
 		{
 			throw new IllegalArgumentException("Question must be associated to a QuestionSet");
-		}
-		if (question.getQuestionSet().isNew())
-		{
-			throw new IllegalArgumentException("Save QuestionSet first");
 		}
 		
 		// is the question itself valid?

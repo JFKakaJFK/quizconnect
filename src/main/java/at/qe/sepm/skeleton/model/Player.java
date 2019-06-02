@@ -33,7 +33,7 @@ public class Player implements Persistable<Integer>
 	@OneToOne(optional = false, fetch = FetchType.EAGER)
 	private User user;
 	
-	@Column(nullable = true, length = 200)
+	@Column(length = 200)
 	private String avatarPath;
 
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)
