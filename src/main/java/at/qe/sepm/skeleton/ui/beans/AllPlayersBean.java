@@ -119,7 +119,7 @@ public class AllPlayersBean implements Serializable {
     }
 
     public void setSearchPhrase(String searchPhrase) {
-        this.searchPhrase = searchPhrase;
+        this.searchPhrase = searchPhrase.trim();
     }
 
     public boolean isOnlyByManager() {

@@ -29,7 +29,7 @@
                           styleClass="boxes px-3">
 
                 <ui:repeat value="#{editQuestionBean.questions}" var="question">
-                    <qc:generic-box size="sm">
+                    <h:panelGroup layout="block" styleClass="box">
                         <h:commandLink action="#{editQuestionBean.setSelectedQuestion(question)}" pt:class="ml-2"
                                        pt:data-toggle="modal" pt:data-target="#questionEditModal"
                                        pt:data-backdrop="static">
@@ -98,7 +98,7 @@
                                 </h:panelGroup>
                             </ui:fragment>
                         </ui:fragment>
-                    </qc:generic-box>
+                    </h:panelGroup>
 
                 </ui:repeat>
 

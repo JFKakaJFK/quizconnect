@@ -73,12 +73,12 @@
                     <p>Selected Sets</p>
                     <h:panelGroup layout="block" id="selectedSets">
                         <ui:repeat value="#{createRoomBean.selectedQuestionSets}" var="set">
-                            <qc:questionset questionSet="#{set}">
+                            <qc:questionsetbox questionset="#{set}">
                                 <h:commandLink action="#{createRoomBean.unselectSet(set)}">
                                     <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M17 11a1 1 0 0 1 0 2H7a1 1 0 0 1 0-2h10z"/></svg>
                                     <f:ajax execute="@this" render=":form:selectSets:selectedSets :form:selectSets:selectableSets :form:submit" />
                                 </h:commandLink>
-                            </qc:questionset>
+                            </qc:questionsetbox>
                         </ui:repeat>
                         <h:panelGroup layout="block" rendered="#{empty createRoomBean.selectedQuestionSets}">
                             <p>No Sets selected</p>
@@ -94,12 +94,12 @@
                         <ui:repeat value="#{createRoomBean.selectableSetPaginator.parts}" var="part">
                             <ui:repeat value="#{part.items}" var="set">
 
-                                <qc:questionset questionSet="#{set}">
+                                <qc:questionsetbox questionset="#{set}">
                                         <h:commandLink action="#{createRoomBean.selectSet(set)}" rendered="#{createRoomBean.selectable()}">
                                             <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M17 11a1 1 0 0 1 0 2h-4v4a1 1 0 0 1-2 0v-4H7a1 1 0 0 1 0-2h4V7a1 1 0 0 1 2 0v4h4z"/></svg>
                                             <f:ajax execute="@this" render=":form:selectSets:selectedSets :form:selectSets:selectableSets :form:submit" />
                                         </h:commandLink>
-                                </qc:questionset>
+                                </qc:questionsetbox>
 
                             </ui:repeat>
                         </ui:repeat>

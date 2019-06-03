@@ -5,6 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:cc="http://java.sun.com/jsf/composite"
       xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:qc="http://java.sun.com/jsf/composite/quizconnect"
       xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:ui="http://java.sun.com/jsf/facelets"
       xml:lang="en"
       lang="en">
@@ -25,23 +26,14 @@
     </cc:interface>
 
     <cc:implementation>
-        <div id="#{cc.clientId}" class="box questionsetbox questionsetbox-#{cc.attrs.detail ? 'detail' : 'small'}">
+        <c:if test="#{cc.attrs.detail}">
 
-            <div class="questionsetbox-icon">
-                    <h:graphicImage value="/resources/quizconnect/styles/easy.svg" alt="easy" rendered="#{cc.attrs.questionset.difficulty eq 'easy'}"/>
-                    <h:graphicImage value="/resources/quizconnect/styles/hard.svg" alt="hard" rendered="#{cc.attrs.questionset.difficulty eq 'hard'}"/>
-            </div>
-
-            <div class="box-actions">
+        </c:if>
+        <c:if test="#{!cc.attrs.detail}">
+            <qc:collectionbox name="#{cc.attrs.questionset.name}" sub="#{cc.attrs.questionset.description}" styleClass="questionset-box" smallIcon="true"
+                              icon="#{cc.attrs.questionset.difficulty == 'hard' ? '/resources/quizconnect/styles/hard.svg' : '/resources/quizconnect/styles/easy.svg'}" >
                 <cc:insertChildren/>
-            </div>
-
-            <ui:fragment rendered="#{!cc.attrs.detail}">
-            <span class="questionsetbox-question">#{cc.attrs.questionset.name}</span>
-
-            <span class="questionsetbox-answer">#{cc.attrs.questionset.description}</span>
-            </ui:fragment>
-
-        </div>
+            </qc:collectionbox>
+        </c:if>
     </cc:implementation>
 </html>

@@ -2,7 +2,7 @@
 
     /* DEFAULT COLORS */
     --col-1-d: #303e4f;
-    --col-1-m: #4a607a;
+    --col-1-m: #081627; /* #4a607a; */
     --col-1-l: #919EAD;
 
     --col-2-d: #247291;
@@ -55,7 +55,9 @@
 
     --box-border-color: var(--col-2-d);
 
-    --playerbox-avatar-size-small: 3rem;
+    --collection-box-icon-size-small: 1.6rem;
+    --collection-box-icon-size: 3rem;
+
     --playerbox-avatar-size-detail: 8rem;
     --playerbox-avatar-background: transparent;
 

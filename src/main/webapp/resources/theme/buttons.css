@@ -2,6 +2,8 @@
     white-space: nowrap;
     min-width: 120px;
     padding: .5rem 1.5rem;
+    border-radius: 10rem;
+    box-sizing: border-box;
 }
 /*
 TODO
@@ -10,25 +12,16 @@ TODO
 */
 .btn-primary {
     background: var(--grad-m);
-    border: none;
-    border-radius: 50px;
+    border: 0;
 }
 
 .btn-secondary {
-    border-radius: 100rem;
-    font-size: 1rem;
     color: var(--gray-5);
-    box-shadow: 0 0 6px 0 rgba(157, 96, 212, 0.5), 2px 1000px 1px #fff inset;
-    border: solid 3px transparent;
-    background-image: var(--grad-m);
-    background-origin: border-box;
-    background-clip: content-box, border-box;
+    background: transparent;
+    border: solid 2px var(--col-1-l);
 }
 
 .btn-danger {
-    background: none;
+    background: var(--danger);
     color: var(--gray-5);
-    border:3px solid var(--gray-5);
-    border-radius: 50px;
-    box-sizing: border-box;
 }

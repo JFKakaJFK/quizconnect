@@ -19,5 +19,5 @@
 
 .box-action:hover,
 .box-action:active {
-
+    text-decoration: none;
 }

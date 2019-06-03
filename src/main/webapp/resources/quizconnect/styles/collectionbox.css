@@ -1,0 +1,61 @@
+.collection-box {
+    display: grid;
+}
+
+.collection-box {
+    grid-template-columns: auto 1fr;
+    grid-template-rows: 1fr 1fr;
+    grid-column-gap: 8px;
+    grid-template-areas:
+            "icon name"
+            "icon sub";
+}
+
+.collection-box-icon {
+    background: var(--playerbox-avatar-background);
+    border-radius: 50%;
+    grid-area: icon;
+    margin: 0 auto;
+    align-self: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.collection-box .collection-box-icon {
+    width: var(--collection-box-icon-size);
+    height: var(--collection-box-icon-size);
+}
+
+.collection-box .collection-box-icon.collection-box-icon-small {
+    width: var(--collection-box-icon-size-small);
+    height: var(--collection-box-icon-size-small);
+}
+
+.collection-box-avatar img {
+    width: 100%;
+    height: auto;
+}
+
+@media only screen and (max-width: 300px){
+    .collection-box .collection-box-icon {
+        display: none;
+    }
+}
+
+
+.collection-box-name,
+.collection-box-name h3 {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    grid-area: name;
+    font-weight: 400;
+}
+
+.collection-box-sub {
+    grid-area: sub;
+    font-weight: 300;
+    text-transform: uppercase;
+    font-size: 75%;
+}

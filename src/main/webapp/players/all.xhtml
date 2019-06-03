@@ -9,27 +9,26 @@
     <ui:define name="title">All players</ui:define>
 
     <ui:define name="site-specific-css">
-        <link rel="stylesheet" href="../resources/main.css" />
+       <!-- <link rel="stylesheet" href="../resources/main.css" /> TODO -->
     </ui:define>
 
     <ui:define name ="content">
         <h:form p:autocomplete="off" id="form" enctype="multipart/form-data">
 
-            <h:panelGroup layout="block" styleClass="searchbar">
+            <h:panelGroup layout="block" styleClass="searchbar" id="searchbar">
 
                 <h:inputText id="searchPrase" p:autocomplete="nein-danke-bitte-nicht" p:placeholder="Search" value="#{allPlayersBean.searchPhrase}" styleClass="form-control searchbar-search">
                     <f:ajax listener="#{allPlayersBean.handleSearch}" event="keyup" execute="@this" render="players"/>
                 </h:inputText>
 
-                <h:panelGroup id="showByManager" rendered="#{sessionInfoBean.hasRole('MANAGER')}" styleClass="searchbar-action">
-                    <h:selectBooleanCheckbox p:id="showByManager" value="#{allPlayersBean.onlyByManager}" styleClass="jsf-hide">
-                        <f:ajax listener="#{allPlayersBean.setOnlyByManager(!allPlayersBean.onlyByManager)}" render="showByManager players"/>
-                    </h:selectBooleanCheckbox>
-
-                    <label for="showByManager">
-                        #{allPlayersBean.onlyByManager ? 'Show all players' : 'Show only your Players'}
-                    </label>
-                </h:panelGroup>
+                <ui:fragment rendered="#{sessionInfoBean.hasRole('MANAGER')}">
+                    <h:commandButton rendered="#{allPlayersBean.onlyByManager}" value="All Players" styleClass="btn btn-secondary searchbar-action">
+                        <f:ajax listener="#{allPlayersBean.setOnlyByManager(false)}" render="searchbar players"/>
+                    </h:commandButton>
+                    <h:commandButton rendered="#{!allPlayersBean.onlyByManager}" value="My Players" styleClass="btn btn-secondary searchbar-action">
+                        <f:ajax listener="#{allPlayersBean.setOnlyByManager(true)}" render="searchbar players"/>
+                    </h:commandButton>
+                </ui:fragment>
 
                 <h:commandButton styleClass="btn btn-secondary searchbar-action" p:data-toggle="modal" p:data-target="#addPlayer" value="Add Player" rendered="#{sessionInfoBean.hasRole('MANAGER')}">
                     <f:ajax execute="@this" render=":form:addPlayer:footer :form:addPlayer:body"/>
