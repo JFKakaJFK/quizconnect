@@ -12,6 +12,7 @@ package at.qe.sepm.skeleton.tests;
         import org.springframework.beans.factory.annotation.Autowired;
         import org.springframework.boot.test.context.SpringBootTest;
         import org.springframework.security.test.context.support.WithMockUser;
+        import org.springframework.test.annotation.DirtiesContext;
         import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
         import org.springframework.test.context.web.WebAppConfiguration;
 
@@ -36,9 +37,6 @@ public class QuestionServiceTest {
 
     @Autowired
     QuestionSetService questionSetService;
-
-    @Autowired
-    QuestionRepository questionRepository;
 
     @Autowired
     private ManagerService managerService;
@@ -110,6 +108,44 @@ public class QuestionServiceTest {
         return name.toString();
     }
 
+    @Test
+    @DirtiesContext
+    @WithMockUser(username = "user1", authorities = { "MANAGER" })
+    public void testSaveNewQuestion()
+    {
+        Question newQuestion = validQuestion();
+        Assert.assertTrue("Question is not new.", newQuestion.isNew());
+        Assert.assertNotNull("Question QestionSet is null.", newQuestion.getQuestionSet());
+        Question updatedQuestion = questionService.saveQuestion(newQuestion);
+        Assert.assertNotNull(updatedQuestion);
+        Assert.assertFalse("Question is not marked as saved.", updatedQuestion.isNew());
+    
+        Question savedQuestion = questionService.getById(updatedQuestion.getId());
+        Assert.assertNotNull(savedQuestion);
+        Assert.assertEquals("Questions do not match.", updatedQuestion.hashCode(), savedQuestion.hashCode());
+        Assert.assertEquals("Saved Question question does not match.", "Is this a test?", savedQuestion.getQuestionString());
+        Assert.assertEquals("Saved Question right answer does not match.", "Correct", savedQuestion.getRightAnswerString());
+        Assert.assertEquals("Saved Question wrong answer 1 does not match.", "Yes!", savedQuestion.getWrongAnswerString_1());
+    }
+    
+    @Test
+    @DirtiesContext
+    @WithMockUser(username = "user1", authorities = { "MANAGER" })
+    public void testUpdateQuestion()
+    {
+        Question question = questionService.getById(401);
+        Assert.assertNotNull(question);
+        
+        question.setQuestionString("new question string");
+        Question updatedQuestion = questionService.saveQuestion(question);
+        Assert.assertNotNull(updatedQuestion);
+        Assert.assertEquals("Updated Question question does not match.", "new question string", updatedQuestion.getQuestionString());
+    
+        Question savedQuestion = questionService.getById(401);
+        Assert.assertNotNull(savedQuestion);
+        Assert.assertEquals("Saved Question question does not match.", "new question string", savedQuestion.getQuestionString());
+    }
+    
     @Test (expected = IllegalArgumentException.class)
     @WithMockUser(username = "user1", authorities = { "MANAGER" })
     public void testSaveQuestionQuestionNull() {
@@ -123,17 +159,6 @@ public class QuestionServiceTest {
     public void testSaveQuestionQuestionSetNull() {
         Question testQuestion = validQuestion();
         QuestionSet testSet = null;
-        testQuestion.setQuestionSet(testSet);
-
-        questionService.saveQuestion(testQuestion);
-    }
-
-    @Test (expected = IllegalArgumentException.class)
-    @WithMockUser(username = "user1", authorities = { "MANAGER" })
-    public void testSaveQuestionQuestionSetNew() {
-        Question testQuestion = validQuestion();
-
-        QuestionSet testSet = validQuestionSet();
         testQuestion.setQuestionSet(testSet);
 
         questionService.saveQuestion(testQuestion);
@@ -202,18 +227,6 @@ public class QuestionServiceTest {
         questionService.saveQuestion(testQuestion);
     }
 
-    /*
-    @Test (expected = IllegalArgumentException.class)
-    @WithMockUser(username = "user1", authorities = { "MANAGER" })
-    public void testSaveQuestionWrongAnswerString_2Null() {
-        Question testQuestion = validQuestion();
-        testQuestion.setWrongAnswerString_2(null);
-
-        questionService.saveQuestion(testQuestion);
-    }
-
-     */
-
     @Test (expected = IllegalArgumentException.class)
     @WithMockUser(username = "user1", authorities = { "MANAGER" })
     public void testSaveQuestionWrongAnswerString_2TooLong() {
@@ -222,18 +235,6 @@ public class QuestionServiceTest {
 
         questionService.saveQuestion(testQuestion);
     }
-
-    /*
-    @Test (expected = IllegalArgumentException.class)
-    @WithMockUser(username = "user1", authorities = { "MANAGER" })
-    public void testSaveQuestionWrongAnswerString_3Null() {
-        Question testQuestion = validQuestion();
-        testQuestion.setWrongAnswerString_3(null);
-
-        questionService.saveQuestion(testQuestion);
-    }
-
-     */
 
     @Test (expected = IllegalArgumentException.class)
     @WithMockUser(username = "user1", authorities = { "MANAGER" })
@@ -244,18 +245,6 @@ public class QuestionServiceTest {
         questionService.saveQuestion(testQuestion);
     }
 
-    /*
-    @Test (expected = IllegalArgumentException.class)
-    @WithMockUser(username = "user1", authorities = { "MANAGER" })
-    public void testSaveQuestionWrongAnswerString_4Null() {
-        Question testQuestion = validQuestion();
-        testQuestion.setWrongAnswerString_4(null);
-
-        questionService.saveQuestion(testQuestion);
-    }
-
-     */
-
     @Test (expected = IllegalArgumentException.class)
     @WithMockUser(username = "user1", authorities = { "MANAGER" })
     public void testSaveQuestionWrongAnswerString_4TooLong() {
@@ -264,17 +253,6 @@ public class QuestionServiceTest {
 
         questionService.saveQuestion(testQuestion);
     }
-
-    /*
-    @Test (expected = IllegalArgumentException.class)
-    @WithMockUser(username = "user1", authorities = { "MANAGER" })
-    public void testSaveQuestionWrongAnswerString_5Null() {
-        Question testQuestion = validQuestion();
-        testQuestion.setWrongAnswerString_5(null);
-
-        questionService.saveQuestion(testQuestion);
-    }
-     */
 
     @Test (expected = IllegalArgumentException.class)
     @WithMockUser(username = "user1", authorities = { "MANAGER" })
@@ -350,7 +328,7 @@ public class QuestionServiceTest {
         Question saved = questionService.saveQuestion(testQuestion);
         questionService.deleteQuestion(testQuestion);
 
-        Assert.assertNull("Question was deleted", questionRepository.findOne(saved.getId()));
+        Assert.assertNull("Question was deleted", questionService.getById(saved.getId()));
     }
 }
 

@@ -1,5 +1,8 @@
 package at.qe.sepm.skeleton.socket.events;
 
+/**
+ * JSON representation of a chat message event.
+ */
 public class ChatMessageEvent extends SocketEvent {
 
     private ChatMessageJSON message;

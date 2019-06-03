@@ -140,11 +140,6 @@ public class Question implements Persistable<Integer>
 		this.wrongAnswerString_5 = wrongAnswerString_5;
 	}
 	
-	public void setId(Integer id)
-	{
-		this.id = id;
-	}
-	
 	@Override
 	public Integer getId()
 	{

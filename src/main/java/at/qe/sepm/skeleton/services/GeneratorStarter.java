@@ -1,22 +1,20 @@
 package at.qe.sepm.skeleton.services;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
+/**
+ * Starts the data generator on server startup if not running as a JUnit test.
+ */
 @Component
 @Scope("application")
-public class BGThreadManager implements ApplicationListener<ContextRefreshedEvent>
+public class GeneratorStarter implements ApplicationListener<ContextRefreshedEvent>
 {
-
-	
 	@Autowired
-    DataGeneratorService dataGenService;
+	DataGeneratorService dataGenService;
 	
 	private boolean threadStarted = false;
 	
@@ -25,7 +23,7 @@ public class BGThreadManager implements ApplicationListener<ContextRefreshedEven
 	{
 		if (!threadStarted)
 		{
-			// don't start BGThread if application is being executed as JUnit test
+			// don't start generator if application is being executed as JUnit test
 			if (!isJUnitTest())
 			{
 				dataGenService.generateData(); // call data gen
@@ -38,14 +36,13 @@ public class BGThreadManager implements ApplicationListener<ContextRefreshedEven
 	/**
 	 * Scans its own stack trace and returns true if its currently running as a
 	 * jUnit test.
-	 * 
-	 * @return
+	 *
+	 * @return True if currently running in a JUnit test environment.
 	 */
-	public static boolean isJUnitTest()
+	private static boolean isJUnitTest()
 	{
 		StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-		List<StackTraceElement> list = Arrays.asList(stackTrace);
-		for (StackTraceElement element : list)
+		for (StackTraceElement element : stackTrace)
 		{
 			if (element.getClassName().startsWith("org.junit."))
 			{

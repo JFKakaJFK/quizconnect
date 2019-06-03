@@ -1,9 +1,5 @@
 package at.qe.sepm.skeleton.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
 import java.util.*;
 
 import org.junit.Test;
@@ -23,6 +19,8 @@ import at.qe.sepm.skeleton.model.UserRole;
 import at.qe.sepm.skeleton.services.PlayerService;
 import at.qe.sepm.skeleton.services.QuestionSetService;
 import at.qe.sepm.skeleton.services.UserService;
+
+import static org.junit.Assert.*;
 
 /**
  * Tests for the PlayerService.
@@ -132,6 +130,25 @@ public class PlayerServiceTest
 		Set<String> ps = new HashSet<>();
 		ps.add(player2.getUser().getUsername());
 		player.setPlayedWithLast(ps);
+		
+		playerService.savePlayer(player);
+		
+		Player player3 = playerService.getPlayerById(205);
+		assertNotNull("List is null!", player3.getPlayedWithLast());
+		assertEquals("Wrong number of last players saved!", 1, player3.getPlayedWithLast().size());
+		assertEquals("Wrong player name saved!", "user3", player3.getPlayedWithLast().get(0));
+	}
+	
+	@DirtiesContext
+	@Test
+	@WithMockUser(username = "user1", authorities = { "MANAGER" })
+	public void testAddPlayedWith2()
+	{
+		Player player = playerService.getPlayerById(205);
+		Player player2 = playerService.getPlayerById(201);
+		List<Player> ps = new LinkedList<>();
+		ps.add(player2);
+		player._setPlayedWithLast(ps);
 		
 		playerService.savePlayer(player);
 		
@@ -400,6 +417,46 @@ public class PlayerServiceTest
 		
 		assertEquals("Map has wrong number for QSet 300", new Integer(1), map.get(300));
 		assertEquals("Map has wrong number for QSet 301", new Integer(1), map.get(301));
+	}
+	
+	@Test
+	@WithMockUser(username = "user1", authorities = { "MANAGER" })
+	public void testRemoveQSetPlays()
+	{
+		Player player = playerService.getPlayerById(202);
+		assertNotNull("Player not loaded!", player);
+		assertEquals("Map already contains wrong number of entries!", 2, player.getqSetPlayCounts().size());
+		
+		Map plays = player.getqSetPlayCounts();
+		assertTrue("QSet missing from played map.", plays.containsKey(301));
+		assertEquals("Wrong number of plays for QSet.", 2, plays.get(301));
+		assertTrue("QSet missing from played map.", plays.containsKey(302));
+		assertEquals("Wrong number of plays for QSet.", 1, plays.get(302));
+		
+		player.removeQSetFromPlayed(302);
+		plays = player.getqSetPlayCounts();
+		
+		assertFalse("QSet still in map.", plays.containsKey(302));
+	}
+	
+	@Test
+	@WithMockUser(username = "user1", authorities = {"MANAGER"})
+	public void testGetAccuracy()
+	{
+		Player player = playerService.getPlayerById(203);
+		assertNotNull("Player not loaded!", player);
+		
+		assertEquals(18f / 24f, player.getPlayerAccuracy(), 0.05f);
+	}
+	
+	@Test
+	@WithMockUser(username = "user1", authorities = {"MANAGER"})
+	public void testGetRank()
+	{
+		Player player = playerService.getPlayerById(203);
+		assertNotNull("Player not loaded!", player);
+		
+		assertEquals("Player rank is wrong.", "Noob", player.getPlayerRank());
 	}
 	
 	@Test

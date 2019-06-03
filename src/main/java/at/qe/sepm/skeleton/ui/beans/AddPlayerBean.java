@@ -19,6 +19,7 @@ public class AddPlayerBean implements Serializable {
     private UserService userService;
     private AllPlayersBean allPlayersBean;
     private PasswordBean passwordBean;
+    private ValidationBean validationBean;
     private Manager manager;
 
     private String username = "";
@@ -29,7 +30,9 @@ public class AddPlayerBean implements Serializable {
     public AddPlayerBean(PlayerService playerService,
                          SessionInfoBean sessionInfoBean,
                          UserService userService,
-                         AllPlayersBean allPlayersBean, PasswordBean passwordBean){
+                         AllPlayersBean allPlayersBean,
+                         PasswordBean passwordBean,
+                         ValidationBean validationBean){
         assert sessionInfoBean.getCurrentUser().getManager() != null;
         assert userService != null;
         assert playerService != null;
@@ -55,13 +58,14 @@ public class AddPlayerBean implements Serializable {
     }
 
     public boolean validateInput(){
-        if(username == null || userService.loadUser(username) != null || username.length() < 3 || username.length() > 100){
+        if(username == null || userService.loadUser(username) != null || username.length() < 3 || username.length() > 100 || !validationBean.isValidText(username)){
             // TODO message username already taken
             return false;
         }
 
-        if(password == null || password.length() < 3 || password.length() > 100){
+        if(password == null || password.length() < 3 || password.length() > 100 || !validationBean.isValidPassword(password)){
             // TODO same pw validation as w/ manager creation || or just make one long boolean exp
+            // TODO repeatPassword
             return false;
         }
         return true;

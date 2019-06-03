@@ -2,6 +2,9 @@ package at.qe.sepm.skeleton.socket.events;
 
 import at.qe.sepm.skeleton.model.Player;
 
+/**
+ * Class for JSON representation of the 'onPlayerKick' QuizRoom event.
+ */
 public class PlayerKickEvent extends SocketEvent {
 
     private int playerId;

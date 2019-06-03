@@ -26,7 +26,7 @@ import java.util.List;
  * This {@link Controller} handles all file uploads
  */
 @Controller
-@Scope("request") // TODO move @UploadService.clearUploads here & adjust unit tests, then revert scope
+@Scope("request")
 public class UploadAPIController {
 
     private UserService userService;
@@ -54,7 +54,9 @@ public class UploadAPIController {
      * Handles all uploads and saves them in a way such that {@link at.qe.sepm.skeleton.services.UploadService} can retrieve them.
      *
      * @param files
+     *          The uploaded files.
      * @return
+     *          Returns a HTTP response indicating if the upload was successful.
      */
     @RequestMapping(value = "/uploads", method = RequestMethod.POST)
     public ResponseEntity handleUpload(@RequestParam("files[]") List<MultipartFile> files, Principal principal){
@@ -63,6 +65,7 @@ public class UploadAPIController {
         }
         String username = principal.getName();
         MultipartFile file = null;
+        // get the first valid file
         for(int i = 0; i < files.size(); i++){
             MultipartFile f = files.get(i);
             if(f != null && !f.getOriginalFilename().equals("")){

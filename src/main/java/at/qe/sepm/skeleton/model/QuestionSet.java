@@ -96,11 +96,6 @@ public class QuestionSet implements Persistable<Integer>
 		this.questions = questions;
 	}
 	
-	public void setId(Integer id)
-	{
-		this.id = id;
-	}
-	
 	@Override
 	public Integer getId()
 	{

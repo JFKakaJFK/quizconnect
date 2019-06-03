@@ -2,6 +2,9 @@ package at.qe.sepm.skeleton.socket.events;
 
 import at.qe.sepm.skeleton.logic.ActiveQuestion;
 
+/**
+ * Class for JSON representation of the 'removeQuestion' QuizRoom event.
+ */
 public class RemoveQuestionEvent extends SocketEvent {
 
     private int questionId;

@@ -76,28 +76,6 @@ public class Manager implements Persistable<Integer>
 		this.institution = institution;
 	}
 
-	@Deprecated // TODO remove deprecated
-	public Set<Player> getCreatedPlayers()
-	{
-		return createdPlayers;
-	}
-	
-	public void setCreatedPlayers(Set<Player> createdPlayers)
-	{
-		this.createdPlayers = createdPlayers;
-	}
-
-	@Deprecated // TODO remove deprecated
-	public Set<QuestionSet> getCreatedQuestionSets()
-	{
-		return createdQuestionSets;
-	}
-	
-	public void setCreatedQuestionSets(Set<QuestionSet> createdQuestionSets)
-	{
-		this.createdQuestionSets = createdQuestionSets;
-	}
-	
 	public void setId(Integer id)
 	{
 		this.id = id;

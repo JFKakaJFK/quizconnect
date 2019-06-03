@@ -1,5 +1,8 @@
 package at.qe.sepm.skeleton.socket.events;
 
+/**
+ * A generic outgoing event.
+ */
 public class GenericSocketEvent extends SocketEvent {
     public GenericSocketEvent(){}
 

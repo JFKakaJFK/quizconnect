@@ -15,8 +15,6 @@ import at.qe.sepm.skeleton.model.QuestionSetDifficulty;
  */
 public interface QuestionSetRepository extends AbstractRepository<QuestionSet, Integer>
 {
-	QuestionSet findQuestionSetById(int id);
-
 	List<QuestionSet> findByDifficulty(QuestionSetDifficulty difficulty);
 	
 	List<QuestionSet> findByNameContaining(String name);
