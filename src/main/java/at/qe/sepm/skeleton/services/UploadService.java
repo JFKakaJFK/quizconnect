@@ -16,6 +16,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/**
+ * A service for retrieving and deleting the uploaded files of a {@link User}.
+ */
 @Controller
 @Scope("request")
 public class UploadService {
@@ -67,7 +70,7 @@ public class UploadService {
     }
 
     /**
-     * Clears all uploads by a {@link User}
+     * Clears(deletes) all uploads by a {@link User}
      *
      * @throws IllegalArgumentException
      * @param user
@@ -93,10 +96,18 @@ public class UploadService {
         }
     }
 
+    /**
+     * {@link FileFilter} for finding files uploaded by a specific {@link User}.
+     */
     private class UserFilter implements FileFilter {
 
         private String username;
 
+        /**
+         * Initializes a new UserFilter.
+         *
+         * @param user User to search for.
+         */
         private UserFilter(User user){
             if(user == null){
                 throw new IllegalArgumentException("User cannot be null");

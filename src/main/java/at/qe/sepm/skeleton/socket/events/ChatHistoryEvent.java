@@ -3,6 +3,9 @@ package at.qe.sepm.skeleton.socket.events;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * JSON representation of the chat history.
+ */
 public class ChatHistoryEvent extends SocketEvent {
     private List<ChatMessageJSON> messages;
 

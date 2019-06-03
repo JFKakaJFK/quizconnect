@@ -7,6 +7,9 @@ import at.qe.sepm.skeleton.logic.ActiveQuestion;
 import at.qe.sepm.skeleton.logic.QR_Question;
 import at.qe.sepm.skeleton.model.QuestionType;
 
+/**
+ * Class for JSON representation of the 'assignQuestion' QuizRoom event.
+ */
 public class AssignQuestionEvent extends SocketEvent {
 
     private int questionId;

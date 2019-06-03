@@ -85,6 +85,7 @@ public class QRWebSocketConnection implements IRoomAction {
      * @param p
      *            The Player who declared themselves ready.
      * @param totalReady
+     *            The total number of ready Players.
      */
     @Override
     public void onReadyUp(int pin, Player p, int totalReady) {
@@ -99,7 +100,7 @@ public class QRWebSocketConnection implements IRoomAction {
      *
      * @param pin
      *            Pin of the QuizRoom making the call.
-     * @param p
+     * @param p Player joining the QuizRoom.
      */
     @Override
     public void onPlayerJoin(int pin, Player p) {
@@ -112,7 +113,7 @@ public class QRWebSocketConnection implements IRoomAction {
     /**
      * Implementation of the {@link IRoomAction} method, broadcasts game start to all players in room.
      *
-     * @param pin
+     * @param pin Pin of the QuizRoom.
      */
     @Override
     public void onGameStart(int pin) {
@@ -124,7 +125,7 @@ public class QRWebSocketConnection implements IRoomAction {
     /**
      * Implementation of the {@link IRoomAction} method, broadcasts game end to all players in room.
      *
-     * @param pin
+     * @param pin Pin of the QuizRoom.
      */
     @Override
     public void onGameEnd(int pin) {
@@ -140,6 +141,7 @@ public class QRWebSocketConnection implements IRoomAction {
      * @param pin
      *            Pin of the QuizRoom making the call.
      * @param remaining
+     *            The remaining time in ms.
      */
     @Override
     public void onJokerUse(int pin, int remaining) {
@@ -157,6 +159,7 @@ public class QRWebSocketConnection implements IRoomAction {
      * @param p
      *            The Player who left.
      * @param reason
+     *            The reason why the player was kicked.
      */
     @Override
     public void onPlayerLeave(int pin, Player p, String reason) {
@@ -172,6 +175,7 @@ public class QRWebSocketConnection implements IRoomAction {
      * @param pin
      *            Pin of the QuizRoom making the call.
      * @param newScore
+     *            The new current score.
      */
     @Override
     public void onScoreChange(int pin, int newScore) {
@@ -187,7 +191,9 @@ public class QRWebSocketConnection implements IRoomAction {
      * @param pin
      *            Pin of the QuizRoom making the call.
      * @param player
+     *            The Player whose timeout starts.
      * @param timeoutTime
+     *            The time left until kick.
      */
     @Override
     public void onTimeoutStart(int pin, Player player, long timeoutTime) {
@@ -207,6 +213,7 @@ public class QRWebSocketConnection implements IRoomAction {
      * @param q
      *            Question of the Player to be synchronized.
      * @param remaining
+     *            The time remaining until the Question will be removed.
      */
     @Override
     public void onTimerSync(int pin, Player p, ActiveQuestion q, long remaining) {
@@ -222,6 +229,7 @@ public class QRWebSocketConnection implements IRoomAction {
      * @param pin
      *            Pin of the QuizRoom making the call.
      * @param p
+     *            The player who is being kicked.
      */
     @Override
     public void onKick(int pin, Player p) {
@@ -238,6 +246,7 @@ public class QRWebSocketConnection implements IRoomAction {
      * @param pin
      *            Pin of the QuizRoom making the call.
      * @param q
+     *            The ActiveQuestion which is being assigned.
      */
     @Override
     public void assignQuestion(int pin, ActiveQuestion q) {
@@ -254,6 +263,7 @@ public class QRWebSocketConnection implements IRoomAction {
      * @param pin
      *            Pin of the QuizRoom making the call.
      * @param q
+     *            The ActiveQuestion which is being removed.
      */
     @Override
     public void removeQuestion(int pin, ActiveQuestion q) {
@@ -285,7 +295,9 @@ public class QRWebSocketConnection implements IRoomAction {
      * Depending on the Game state the players in the lobby are omitted from the response.
      *
      * @param pin
+     *            Pin of the QuizRoom.
      * @return
+     *            RoomInfoEvent containing the Settings and Players of the Room.
      */
     private SocketEvent handleGetRoomInfo(int pin){
         IPlayerAction qr = rooms.get(pin);
@@ -323,8 +335,9 @@ public class QRWebSocketConnection implements IRoomAction {
      * Wrapper for the {@link IPlayerAction} event fulfilled by the corresponding {@link IRoomAction} object.
      *
      * @param pin
-     * @param event
-     * @return
+     *            Pin of the QuizRoom.
+     * @param event Event to handle.
+     * @return Event stating if the method was successful.
      */
     private SocketEvent handleReadyUp(int pin, ClientEvent event){
         IPlayerAction qr = rooms.get(pin);
@@ -340,8 +353,9 @@ public class QRWebSocketConnection implements IRoomAction {
      * Wrapper for the {@link IPlayerAction} event fulfilled by the corresponding {@link IRoomAction} object.
      *
      * @param pin
-     * @param event
-     * @return
+     *            Pin of the QuizRoom.
+     * @param event Event to handle.
+     * @return Event stating if the method was successful.
      */
     private SocketEvent handleAnswerQuestion(int pin, ClientEvent event){
         IPlayerAction qr = rooms.get(pin);
@@ -358,8 +372,9 @@ public class QRWebSocketConnection implements IRoomAction {
      * Wrapper for the {@link IPlayerAction} event fulfilled by the corresponding {@link IRoomAction} object.
      *
      * @param pin
-     * @param event
-     * @return
+     *            Pin of the QuizRoom.
+     * @param event Event to handle.
+     * @return Event stating if the method was successful.
      */
     private SocketEvent handleUseJoker(int pin, ClientEvent event){
         IPlayerAction qr = rooms.get(pin);
@@ -375,8 +390,9 @@ public class QRWebSocketConnection implements IRoomAction {
      * Wrapper for the {@link IPlayerAction} event fulfilled by the corresponding {@link IRoomAction} object.
      *
      * @param pin
-     * @param event
-     * @return
+     *            Pin of the QuizRoom.
+     * @param event Event to handle.
+     * @return Event stating if the method was successful.
      */
     private SocketEvent handleLeaveRoom(int pin, ClientEvent event){
         IPlayerAction qr = rooms.get(pin);
@@ -393,8 +409,9 @@ public class QRWebSocketConnection implements IRoomAction {
      * Wrapper for the {@link IPlayerAction} event fulfilled by the corresponding {@link IRoomAction} object.
      *
      * @param pin
-     * @param event
-     * @return
+     *            Pin of the QuizRoom.
+     * @param event Event to handle.
+     * @return Event stating if the method was successful.
      */
     private SocketEvent handleCancelTimeout(int pin, ClientEvent event){
         IPlayerAction qr = rooms.get(pin);
@@ -410,8 +427,9 @@ public class QRWebSocketConnection implements IRoomAction {
      * Wrapper for the {@link IPlayerAction} event fulfilled by the corresponding {@link IRoomAction} object.
      *
      * @param pin
-     * @param event
-     * @return
+     *            Pin of the QuizRoom.
+     * @param event Event to handle.
+     * @return Event stating if the method was successful.
      */
     private SocketEvent handleSendAlivePing(int pin, ClientEvent event){
         IPlayerAction qr = rooms.get(pin);
@@ -428,8 +446,9 @@ public class QRWebSocketConnection implements IRoomAction {
      * message to all {@link Player}s in the room.
      *
      * @param pin
-     * @param event
-     * @return
+     *            Pin of the QuizRoom.
+     * @param event Event to handle.
+     * @return The new chat message.
      */
     private SocketEvent handleChatMessage(int pin, ClientEvent event){
         if(event.getMessage() == null){
@@ -452,8 +471,9 @@ public class QRWebSocketConnection implements IRoomAction {
      * Handles requests for the chat history, responds with all sent messages in {@link QuizRoom}
      *
      * @param pin
-     * @param event
-     * @return
+     *            Pin of the QuizRoom.
+     * @param event Event to handle.
+     * @return A ChatHistoryEvent containing the chat history.
      */
     private SocketEvent handleGetChatMessages(int pin, ClientEvent event){
         return new ChatHistoryEvent(chatMessages.get(pin));
@@ -462,8 +482,9 @@ public class QRWebSocketConnection implements IRoomAction {
     /**
      * Broadcast event to all {@link Player}s in a {@link QuizRoom}
      *
-     * @param event
+     * @param event Event to broadcast.
      * @param pin
+     *            Pin of the QuizRoom.
      */
     private void broadcast(SocketEvent event, int pin){
         this.messagingTemplate.convertAndSend(serverEndpoint + "/" + pin, event);
@@ -473,8 +494,11 @@ public class QRWebSocketConnection implements IRoomAction {
      * Responds to user request, only sends to specific user
      *
      * @param request
+     *            The event to handle.
      * @param user
+     *            User which is the event source.
      * @param pin
+     *            Pin of the QuizRoom.
      */
     @MessageMapping("/events/{pin}")
     @SendTo("/server/events/{pin}")
@@ -522,8 +546,11 @@ public class QRWebSocketConnection implements IRoomAction {
      * Adds a {@link QuizRoom} to the active games.
      *
      * @param pin
+     *            Pin of the QuizRoom.
      * @param qr
+     *            The QuizRoom.
      * @param p
+     *            Player joining the game.
      */
     public void addGame(int pin, IPlayerAction qr, Player p){
         if(!rooms.containsKey(pin)){
@@ -539,8 +566,11 @@ public class QRWebSocketConnection implements IRoomAction {
      * Returns true if the {@link Player} is in the {@link QuizRoom} with the specified pin.
      *
      * @param pin
+     *            Pin of the QuizRoom.
      * @param p
+     *            Player in question.
      * @return
+     *            True if the Player is in the QuizRoom, else false.
      */
     public boolean isPlayerInGame(int pin, Player p){
         return players.get(pin) != null && players.get(pin).containsKey(p.getId());
@@ -550,6 +580,7 @@ public class QRWebSocketConnection implements IRoomAction {
      * Removes a game, its players and chat history from the active connections.
      *
      * @param pin
+     *            Pin of the QuizRoom.
      */
     private void gameEnd(int pin){
         rooms.remove(pin);

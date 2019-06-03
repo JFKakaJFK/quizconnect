@@ -7,6 +7,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+/**
+ * The routes for HTTP Error codes are set here.
+ */
 @Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {
 
