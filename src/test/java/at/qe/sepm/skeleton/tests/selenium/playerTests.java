@@ -15,15 +15,24 @@ public class playerTests {
     private String loginpage = "localhost:8080/login.xhtml";
     private String playerUsername = "user3";
     private String playerPassword = "pw1";
+    private String playerOverview = "http://localhost:8080/players/all.xhtml";
+    private String driverPath = "src\\test\\java\\at\\qe\\sepm\\skeleton\\tests\\selenium\\chromedriver.exe";//chromedriver for 64-bit Version of Chrome 74
 
     @Before
     public void setUp() {
-        System.setProperty("webdriver.chrome.driver", "C:\\Test\\chromedriver.exe"); //
+        System.setProperty("webdriver.chrome.driver", driverPath);
         driver = new ChromeDriver();
         driver.get(loginpage);
         driver.findElement(By.id("username")).sendKeys(playerUsername);
         driver.findElement(By.id("password")).sendKeys(playerPassword);
         driver.findElement(By.id("submit")).click();
+    }
+
+    @Test
+    public void playerOverviewTest() {
+        driver.get(playerOverview); //player overview button not clickable with selenium
+        String currentURL = driver.getCurrentUrl();
+        Assert.assertEquals(currentURL, "http://localhost:8080/players/all.xhtml" );
     }
 
     @Test

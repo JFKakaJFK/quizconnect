@@ -18,10 +18,11 @@ public class managerTests {
     private String managerPassword = "pw1";
     private String questionSetOverview ="http://localhost:8080/secured/questionSet.xhtml";
     private String playerOverview = "http://localhost:8080/players/all.xhtml";
+    private String driverPath = "src\\test\\java\\at\\qe\\sepm\\skeleton\\tests\\selenium\\chromedriver.exe";//chromedriver for 64-bit Version of Chrome 74
 
     @Before
     public void setUp() {
-        System.setProperty("webdriver.chrome.driver", "C:\\Test\\chromedriver.exe"); //
+        System.setProperty("webdriver.chrome.driver", driverPath);
         driver = new ChromeDriver();
         driver.get(loginpage);
         driver.findElement(By.id("username")).sendKeys(managerUsername);
