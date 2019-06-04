@@ -15,7 +15,6 @@
     <ui:define name="title">Question sets</ui:define>
 
     <ui:define name="site-specific-css">
-        <link rel="stylesheet" type="text/css" href="/resources/css/QSOverview.css"/>
         <script type="text/javascript" src="../resources/quizconnect/js/QCUpload.js"></script>
     </ui:define>
 
@@ -23,9 +22,7 @@
         <h:form>
             <div class="row justify-content-center">
                 <div class="col-3">
-                    <h:commandButton styleClass="btn btn-primary"
-                                     id="CreateNew"
-                                     action="/secured/questionSet.xhtml?faces-redirect=true" value="Create new"/>
+                    <h:commandButton styleClass="btn btn-primary" id="CreateNew" action="/secured/questionset.xhtml?faces-redirect=true" actionListener="#{questionSetBean.setbEditSet(false)}" value="Create new"/>
                 </div>
                 <div class="col-3">
                     <h:commandLink styleClass="btn btn-primary"
@@ -108,20 +105,26 @@
 
 
             <h:panelGroup styleClass="collection" id="questionset-collection" layout="block" rendered="#{QSOverviewBean.questionSets != null}">
-
                     <ui:repeat value="#{QSOverviewBean.paginator.parts}" var="part">
                         <ui:repeat value="#{part.items}" var="set">
                             <qc:questionsetbox questionset="#{set}">
+
+                                <h:commandLink styleClass="box-action" p:data-toggle="modal" p:data-target="#infoQuestionset">
+                                    <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-9a1 1 0 0 1 1 1v4a1 1 0 0 1-2 0v-4a1 1 0 0 1 1-1zm0-4a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+                                    <f:ajax execute="@this" render=":formOverview-QSets:infoQuestionset:modal-body"/>
+                                    <f:setPropertyActionListener value="#{set}" target="#{QSOverviewBean.questionsetForDetails}"/>
+                                </h:commandLink>
+
+                                <h:commandLink styleClass="box-action" action="/secured/questionset.xhtml?faces-redirect=true" actionListener="#{questionSetBean.setEditQuestionset(set.id)}" rendered="#{QSOverviewBean.isByManager(set)}">
+                                    <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M6.3 12.3l10-10a1 1 0 0 1 1.4 0l4 4a1 1 0 0 1 0 1.4l-10 10a1 1 0 0 1-.7.3H7a1 1 0 0 1-1-1v-4a1 1 0 0 1 .3-.7zM8 16h2.59l9-9L17 4.41l-9 9V16zm10-2a1 1 0 0 1 2 0v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6c0-1.1.9-2 2-2h6a1 1 0 0 1 0 2H4v14h14v-6z"/></svg>
+                                    <f:ajax execute="@this" render="@none"/>
+                                </h:commandLink>
+
                                 <h:commandLink styleClass="box-action" p:data-toggle="modal" p:data-target="#deleteQuestionset" rendered="#{QSOverviewBean.isByManager(set)}">
-                                    <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M8 6V4c0-1.1.9-2 2-2h4a2 2 0 0 1 2 2v2h5a1 1 0 0 1 0 2h-1v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8H3a1 1 0 1 1 0-2h5zM6 8v12h12V8H6zm8-2V4h-4v2h4zm-4 4a1 1 0 0 1 1 1v6a1 1 0 0 1-2 0v-6a1 1 0 0 1 1-1zm4 0a1 1 0 0 1 1 1v6a1 1 0 0 1-2 0v-6a1 1 0 0 1 1-1z"/></svg>                                    <f:ajax execute="@form" render="@none" />
+                                    <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M8 6V4c0-1.1.9-2 2-2h4a2 2 0 0 1 2 2v2h5a1 1 0 0 1 0 2h-1v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8H3a1 1 0 1 1 0-2h5zM6 8v12h12V8H6zm8-2V4h-4v2h4zm-4 4a1 1 0 0 1 1 1v6a1 1 0 0 1-2 0v-6a1 1 0 0 1 1-1zm4 0a1 1 0 0 1 1 1v6a1 1 0 0 1-2 0v-6a1 1 0 0 1 1-1z"/></svg>
                                     <f:ajax execute="@this" render="@none"/>
                                     <f:setPropertyActionListener value="#{set}" target="#{QSOverviewBean.questionsetToDelete}"/>
                                 </h:commandLink>
-
-                                <h:commandLink styleClass="box-action" action="#{editQuestionBean.setAndRedirect(set.id)}" rendered="#{QSOverviewBean.isByManager(set)}">
-                                    <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M9 4.58V4c0-1.1.9-2 2-2h2a2 2 0 0 1 2 2v.58a8 8 0 0 1 1.92 1.11l.5-.29a2 2 0 0 1 2.74.73l1 1.74a2 2 0 0 1-.73 2.73l-.5.29a8.06 8.06 0 0 1 0 2.22l.5.3a2 2 0 0 1 .73 2.72l-1 1.74a2 2 0 0 1-2.73.73l-.5-.3A8 8 0 0 1 15 19.43V20a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-.58a8 8 0 0 1-1.92-1.11l-.5.29a2 2 0 0 1-2.74-.73l-1-1.74a2 2 0 0 1 .73-2.73l.5-.29a8.06 8.06 0 0 1 0-2.22l-.5-.3a2 2 0 0 1-.73-2.72l1-1.74a2 2 0 0 1 2.73-.73l.5.3A8 8 0 0 1 9 4.57zM7.88 7.64l-.54.51-1.77-1.02-1 1.74 1.76 1.01-.17.73a6.02 6.02 0 0 0 0 2.78l.17.73-1.76 1.01 1 1.74 1.77-1.02.54.51a6 6 0 0 0 2.4 1.4l.72.2V20h2v-2.04l.71-.2a6 6 0 0 0 2.41-1.4l.54-.51 1.77 1.02 1-1.74-1.76-1.01.17-.73a6.02 6.02 0 0 0 0-2.78l-.17-.73 1.76-1.01-1-1.74-1.77 1.02-.54-.51a6 6 0 0 0-2.4-1.4l-.72-.2V4h-2v2.04l-.71.2a6 6 0 0 0-2.41 1.4zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0-2a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/></svg>                                    <f:ajax execute="@form" render="@none" />
-                                </h:commandLink>
-
                             </qc:questionsetbox>
                         </ui:repeat>
                     </ui:repeat>
@@ -137,6 +140,23 @@
                       update=":formOverview-QSets:questionset-collection">
                 Are you sure? This cannot be undone.
             </qc:modal>
+
+            <qc:modal id="infoQuestionset" target="infoQuestionset" title="Details" abort="Close" showConfirm="false">
+                <h:panelGroup layout="block" id="informations" rendered="#{not empty QSOverviewBean.questionsetForDetails}">
+                    <h:outputLabel for="infoName" value="Name:" rendered="#{not empty QSOverviewBean.questionsetForDetails.name}"/>
+                    <h:outputText id="infoName" rendered="#{not empty QSOverviewBean.questionsetForDetails.name}" value="#{QSOverviewBean.questionsetForDetails.name}"/><br></br>
+
+                    <h:outputLabel for="infoDescription" value="Description:" rendered="#{not empty QSOverviewBean.questionsetForDetails.name}"/>
+                    <h:outputText id="infoDescription" rendered="#{not empty QSOverviewBean.questionsetForDetails.name}" value="#{QSOverviewBean.questionsetForDetails.name}"/><br></br>
+
+                    <h:outputLabel for="infoQuestions" value="Number of questions in set:" rendered="#{not empty QSOverviewBean.questionsetForDetails.questions}"/>
+                    <h:outputText id="infoQuestions" rendered="#{not empty QSOverviewBean.questionsetForDetails.questions}" value="#{QSOverviewBean.questionsetForDetails.questions.size()} questions"/>
+
+                </h:panelGroup>
+
+
+            </qc:modal>
+
         </h:form>
 
     </ui:define>

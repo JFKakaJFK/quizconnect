@@ -45,6 +45,7 @@ public class QSOverviewBean implements Serializable {
     private Manager manager;
 
     private QuestionSet questionsetToDelete;
+    private QuestionSet questionsetForDetails;
     private String searchPhrase = "";
     private ScrollPaginator<QuestionSet> paginator;
 
@@ -89,11 +90,9 @@ public class QSOverviewBean implements Serializable {
         // removes the set from the list of sets by manager too, so isByManager doesn't need to check against already deleted sets (contains = O(n))
         questionSetsByManager.remove(questionsetToDelete);
 
-        //messageBean.updateComponent("formOverview-QSets:overview-QSets");
-        //String message = String.format("Successfully deleted %s", questionsetToDelete.getName());
-        //messageBean.showGlobalInformation(message);
-
         questionsetToDelete = null;
+
+        filterAndUpdatePlayers();
     }
 
     public void handleSearch(AjaxBehaviorEvent event){
@@ -154,6 +153,14 @@ public class QSOverviewBean implements Serializable {
     public void setOnlyByManager(boolean onlyByManager) {
         this.onlyByManager = onlyByManager;
         filterAndUpdatePlayers();
+    }
+
+    public QuestionSet getQuestionsetForDetails() {
+        return questionsetForDetails;
+    }
+
+    public void setQuestionsetForDetails(QuestionSet questionsetForDetails) {
+        this.questionsetForDetails = questionsetForDetails;
     }
 }
 
