@@ -2,10 +2,13 @@ package at.qe.sepm.skeleton;
 
 import at.qe.sepm.skeleton.configs.CustomServletContextInitializer;
 import at.qe.sepm.skeleton.configs.WebSecurityConfig;
+import at.qe.sepm.skeleton.services.CSVImportService;
 import at.qe.sepm.skeleton.services.StorageService;
 import at.qe.sepm.skeleton.utils.ViewScope;
 import java.util.HashMap;
 import javax.faces.webapp.FacesServlet;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.CustomScopeConfigurer;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -54,10 +57,14 @@ public class Main extends SpringBootServletInitializer {
     }
 
     @Bean
-    CommandLineRunner init(StorageService storageService) {
+    CommandLineRunner init(StorageService storageService,
+                           CSVImportService csvImportService,
+                           @Value("${storage.questionsets.csv.location}") String location) {
         return (args) -> {
             storageService.init();
+            // csvImportService.init(location); // TODO enable
         };
     }
+
 
 }

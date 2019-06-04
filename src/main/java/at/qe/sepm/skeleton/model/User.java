@@ -139,10 +139,10 @@ public class User implements Persistable<String> {
         return true;
     }
 
-    @Override
-    public String toString() {
-        return "at.qe.sepm.skeleton.model.User[ id=" + username + " ]";
-    }
+    //@Override
+    //public String toString() {
+    //    return "at.qe.sepm.skeleton.model.User[ id=" + username + " ]";
+    //}
 
     @Override
     public String getId() {

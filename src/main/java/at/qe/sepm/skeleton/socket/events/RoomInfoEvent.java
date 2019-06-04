@@ -2,6 +2,9 @@ package at.qe.sepm.skeleton.socket.events;
 
 import java.util.List;
 
+/**
+ * Class for JSON representation of the 'getRoomInfo' event.
+ */
 public class RoomInfoEvent extends SocketEvent {
 
     private int pin;

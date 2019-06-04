@@ -60,9 +60,9 @@ public class QuizRoom implements IPlayerAction
 	protected IRoomAction playerInterface; // interface for all players
 	private volatile List<DelayedAction> delayQueue; // queue of delayed actions
 	
-	private volatile HashMap<Player, Long> playerActivityTimestamps; // map for storing activity time stamps of players
 	private volatile int score; // current room score
 	private volatile int numReshuffleJokers; // number of jokers available
+	private volatile HashMap<Player, Long> playerActivityTimestamps; // map for storing activity time stamps of players
 	private volatile HashMap<Player, Long> playerAlivePingTimestamps; // map for storing alive ping time stamps of players
 	private volatile List<Player> inactivePlayers; // list of players marked as inactive and to be kicked soon
 	
@@ -123,24 +123,26 @@ public class QuizRoom implements IPlayerAction
 		// create and start frame timer
 		timerFrameUpdate = new Timer(scheduler, this::onFrameUpdate, frameTimeStep);
 		
+		//create Question system
 		questionSystem = new QR_QuestionSystem(this, gameMode, qSets);
 	}
 	
 	/**
 	 * Gets called once every frameTimeStep ms by timerFrameUpdate.
 	 *
-	 * @param deltaTime Time since last call in ms.
+	 * @param deltaTime
+	 * 		Time since last call in ms.
 	 */
-	private void onFrameUpdate(long deltaTime)
+	private synchronized void onFrameUpdate(long deltaTime)
 	{
 		if (gameOver)
 			return;
 		
-		// LOGGER.debug("frame call after " + timerFrameUpdate.getElapsedTime() + " ms.");
 		if (deltaTime > 2 * frameTimeStep)
 		{
 			LOGGER.debug("large delay in frameUpdate call of QR [" + pin + "] (" + deltaTime + "ms)");
 		}
+		
 		checkDelayQueue();
 		
 		aliveCheckTime += deltaTime;
@@ -413,7 +415,7 @@ public class QuizRoom implements IPlayerAction
 		{
 			player.addToTotalScore(score);
 			player.addPlayTime(gameTime);
-			player.setPlayedWithLast(players);
+			player._setPlayedWithLast(players);
 			player.addPlayToQSets(questionSets);
 			player.addGameScore(endTime, score);
 			

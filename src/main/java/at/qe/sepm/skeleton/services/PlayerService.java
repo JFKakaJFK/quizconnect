@@ -16,9 +16,8 @@ import at.qe.sepm.skeleton.repositories.PlayerRepository;
 
 /**
  * Service for accessing and manipulating {@link Player} entities.
- * 
- * @author Lorenz_Smidt
  *
+ * @author Lorenz_Smidt
  */
 @Component
 @Scope("application")
@@ -29,46 +28,40 @@ public class PlayerService
 	
 	@Autowired
 	UserService userService;
-
+	
 	/**
-	 * Returns a Collection of all {@link Player}s.
-	 * 
-	 * @return
+	 * @return A Collection of all {@link Player}s in the database.
 	 */
-	//@PreAuthorize("hasAuthority('MANAGER')")
 	public Collection<Player> getAllPlayers()
 	{
 		return playerRepository.findAll();
 	}
-
+	
 	/**
-	 * Returns all {@link Player}s of the {@link Manager}
-	 *
 	 * @param manager
-	 * @return
+	 * 		Manager to get the created Players of.
+	 * @return A list of all {@link Player}s created by a {@link Manager}.
 	 */
 	@PreAuthorize("hasAuthority('MANAGER')")
-	public List<Player> getPlayersOfManager(Manager manager){
+	public List<Player> getPlayersOfManager(Manager manager)
+	{
 		return playerRepository.findByCreator(manager);
 	}
 	
 	/**
-	 * Returns a {@link Player} based on its id.
-	 * 
 	 * @param id
-	 * @return
+	 * 		Id of the Player to be found.
+	 * @return The Player with id or null if none was found.
 	 */
-	//@PreAuthorize("hasAuthority('MANAGER')")
 	public Player getPlayerById(int id)
 	{
 		return playerRepository.findOne(id);
 	}
 	
 	/**
-	 * Returns a {@link Player} by its username.
-	 * 
 	 * @param username
-	 * @return
+	 * 		Username of the Player ot be found.
+	 * @return The Player with username or null if none was found.
 	 */
 	@PreAuthorize("hasAuthority('MANAGER') or hasAuthority('PLAYER')")
 	public Player getPlayerByUsername(String username)
@@ -78,10 +71,12 @@ public class PlayerService
 	
 	/**
 	 * Saves the {@link Player} to the database. Throws an IllegalArgumentException if any consistency checks fail.
-	 * 
+	 *
 	 * @param player
-	 * @throws IllegalArgumentException
+	 * 		Player to be saved.
 	 * @return new Player reference. Use for all further operations.
+	 * @throws IllegalArgumentException
+	 * 		If the player is new, the associated user is null, or if any sanity checks fail.
 	 */
 	public Player savePlayer(Player player) throws IllegalArgumentException
 	{
@@ -96,14 +91,19 @@ public class PlayerService
 	}
 	
 	/**
-	 * Saves a new {@link Player} to the database. Automatically creates a new {@link User} for the player using username and password. Password is expected to be already encrypted. Performs consistency
+	 * Saves a new {@link Player} to the database. Automatically creates a new {@link User} for the player using username and password. Password is expected to be already
+	 * encrypted. Performs consistency
 	 * checks which may throw IllegalArgumentExceptions. For re-saving / updating {@link Player}s use the 'savePlayer' function.
-	 * 
+	 *
 	 * @param player
+	 * 		New Player to be saved.
 	 * @param username
+	 * 		Username of the player to be saved.
 	 * @param password
-	 * @throws IllegalArgumentException
+	 * 		Encoded password of the player to be saved.
 	 * @return new Player reference. Use for all further operations.
+	 * @throws IllegalArgumentException
+	 * 		If the player is not new, the username is null, the password is null, or if any sanity checks fail.
 	 */
 	@PreAuthorize("hasAuthority('MANAGER')")
 	public Player saveNewPlayer(Player player, String username, String password) throws IllegalArgumentException
@@ -125,8 +125,8 @@ public class PlayerService
 		
 		player.setUser(savedUser); // set player user
 		player.setPlayedWithLast(null);
-		player.setqSetPlayCounts(new HashMap<Integer, Integer>());
-		player.setLastScores(new HashMap<Long, Integer>());
+		player.setqSetPlayCounts(new HashMap<>());
+		player.setLastScores(new HashMap<>());
 		player.setHighScore(0);
 		Player savedPlayer = playerRepository.save(player); // save player to DB
 		
@@ -138,9 +138,11 @@ public class PlayerService
 	
 	/**
 	 * Performs sanity checks on the player. Throws an IllegalArgumentException if any checks fail, terminates otherwise.
-	 * 
+	 *
 	 * @param player
+	 * 		Player to be checked.
 	 * @throws IllegalArgumentException
+	 * 		If the creator is null.
 	 */
 	private void playerSanityChecks(Player player) throws IllegalArgumentException
 	{
@@ -150,13 +152,14 @@ public class PlayerService
 	
 	/**
 	 * Deletes the {@link Player} from the database.
-	 * 
+	 *
 	 * @param player
+	 * 		Player to be deleted.
 	 */
 	@PreAuthorize("hasAuthority('MANAGER')")
 	public void deletePlayer(Player player)
 	{
 		playerRepository.delete(player);
 	}
-
+	
 }

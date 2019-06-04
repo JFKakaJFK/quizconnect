@@ -2,6 +2,9 @@ package at.qe.sepm.skeleton.socket.events;
 
 import java.util.Date;
 
+/**
+ * JSON representation of a single chat message.
+ */
 public class ChatMessageJSON {
 
     private int id;

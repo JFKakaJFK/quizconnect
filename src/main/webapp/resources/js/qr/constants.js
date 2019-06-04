@@ -26,6 +26,7 @@ const ANSWERTYPE_TEXT = 'text';
 const ANSWERTYPE_PICTURE = 'picture';
 const ANSWERTYPE_MATH = 'math';
 
+const PREFIX_ANSWER_PICTURE = (path) => `/answers/${path}`;
 
 const SHARE_WHATSAPP = (text) => {
   return `https://wa.me/?text=${encodeURIComponent(text)}`;
