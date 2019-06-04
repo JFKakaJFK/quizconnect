@@ -32,7 +32,7 @@
     height: var(--collection-box-icon-size-small);
 }
 
-.collection-box-avatar img {
+.collection-box-icon img {
     width: 100%;
     height: auto;
 }

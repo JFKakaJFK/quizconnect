@@ -21,18 +21,12 @@
 
         ==============================================-->
         <cc:attribute name="player" type="at.qe.sepm.skeleton.model.Player" required="true" />
-        <cc:attribute name="detail" required="false" default="false" type="boolean"/>
 
     </cc:interface>
 
     <cc:implementation>
-        <c:if test="#{cc.attrs.detail}">
-
-        </c:if>
-        <c:if test="#{!cc.attrs.detail}">
-            <qc:collectionbox name="#{cc.attrs.player.user.username}" icon="#{avatarBean.getAvatar(cc.attrs.player)}" sub="#{cc.attrs.player.playerRank}">
-                <cc:insertChildren />
-            </qc:collectionbox>
-        </c:if>
+        <qc:collectionbox name="#{cc.attrs.player.user.username}" icon="#{avatarBean.getAvatar(cc.attrs.player)}" sub="#{cc.attrs.player.playerRank}">
+            <cc:insertChildren />
+        </qc:collectionbox>
     </cc:implementation>
 </html>
