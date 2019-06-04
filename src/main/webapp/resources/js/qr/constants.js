@@ -2,8 +2,10 @@
 
 /* ======================== CONSTANTS ========================= */
 
-const DOMAIN = 'localhost:8080'; // TODO
+const DOMAIN = 'quizconnect.rocks'; // TODO
 // TODO change url destinations if routes change
+
+const INFO = "INFO";
 
 // States
 const LOBBY = 0;
@@ -22,9 +24,26 @@ const MAX_ANSWERS = 6;
 
 const ANSWERTYPE_TEXT = 'text';
 const ANSWERTYPE_PICTURE = 'picture';
+const ANSWERTYPE_MATH = 'math';
 
-const SHARE_PIN_WHATSAPP = (pin) =>  `Your QuizConnect pin is ${pin.toString().padStart(6, '0')}:
+const PREFIX_ANSWER_PICTURE = (path) => `/answers/${path}`;
 
-http://www.${DOMAIN}/quizroom/join.html?pin=${pin.toString().padStart(6, '0')}`; // TODO www subdomain doesnt work for localhost (of couse) but WA needs it to detect it as link
+const SHARE_WHATSAPP = (text) => {
+  return `https://wa.me/?text=${encodeURIComponent(text)}`;
+};
 
-// TODO share links for twitter, tinder, hooli, piedpiper, email, ...
+const SHARE_TWITTER = (text) => {
+  return `https://twitter.com/intent/tweet?hashtags=quiz,quizconnect&related=bitconnect&text=${encodeURIComponent(text)}`;
+};
+
+const SHARE_FACEBOOK = (url) => {
+  return `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&t=QuizConnect`;
+};
+
+const SHARE_JOIN_URL = (pin) => {
+  return `http://www.${DOMAIN}/quizroom/join.html?pin=${pin.toString().padStart(6, '0')}`; // TODO www subdomain // pls https
+};
+
+const SHARE_PIN_MESSAGE = (pin) =>  `Your QuizConnect pin is ${pin.toString().padStart(6, '0')}:
+
+${SHARE_JOIN_URL(pin)}`;

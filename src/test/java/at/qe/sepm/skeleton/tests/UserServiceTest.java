@@ -150,6 +150,12 @@ public class UserServiceTest {
             }
         }
     }
+    
+    @Test
+    public void testExistsUser() {
+	    Assert.assertTrue("User not recognized as existing.", userService.existsUser("user1"));
+	    Assert.assertFalse("Missing user recognized as existing.", userService.existsUser("asdf"));
+    }
 
     @DirtiesContext
     @Test
@@ -178,6 +184,7 @@ public class UserServiceTest {
     public void testUpdateUser() {
 		User adminUser = userService.loadUser("user1");
 		Assert.assertNotNull("Manager user could not be loaded from test data source", adminUser);
+		Assert.assertEquals("Id does not match username.", adminUser.getUsername(), adminUser.getId());
 		User toBeSavedUser = userService.loadUser("user2");
 		Assert.assertNotNull("User2 could not be loaded from test data source", toBeSavedUser);
 
@@ -221,7 +228,7 @@ public class UserServiceTest {
     }
 
     @Test(expected = org.springframework.security.authentication.AuthenticationCredentialsNotFoundException.class)
-    public void testUnauthenticateddLoadUsers() {
+    public void testUnauthenticatedLoadUsers() {
         for (User user : userService.getAllUsers()) {
             Assert.fail("Call to userService.getAllUsers should not work without proper authorization");
         }

@@ -2,6 +2,9 @@ package at.qe.sepm.skeleton.socket.events;
 
 import at.qe.sepm.skeleton.model.Player;
 
+/**
+ * JSON representation for a single {@link Player}.
+ */
 public class PlayerJSON {
 
     private int id;

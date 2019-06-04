@@ -1,6 +1,9 @@
 package at.qe.sepm.skeleton.socket.events;
 
-public class JokerUseEvent extends ServerEvent {
+/**
+ * Class for JSON representation of the 'onJokerUse' QuizRoom event.
+ */
+public class JokerUseEvent extends SocketEvent {
 
     private int remaining;
 

@@ -12,6 +12,7 @@ let state = {
   gameSessionTimer: null,
   pin: null,
   id: null, // TODO: refactor as playerId | change docs
+  highScore: null,
   state: JOIN,
   timeoutIsActive: false,
   timeoutRemainingTime: 0,
@@ -20,6 +21,11 @@ let state = {
   info: {
     settings: {
       questionSets: [],
+      difficulty: '',
+      mode: '',
+      numJokers: 0,
+      score: 0,
+      pin: 0,
     },
     players: [],
   },
@@ -28,14 +34,8 @@ let state = {
     question: null,
     answers: [],
   },
+  messages: [],
 };
-
-// if pin & playerId not set, redirect to join page
-/*
-if(!state.pin || !state.id){
-  window.location.href = URL_JOIN;
-}
-*/
 
 const setState = (newState) => {
   // console.log("new", newState);

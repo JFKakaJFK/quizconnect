@@ -16,7 +16,7 @@ import javax.persistence.OneToMany;
 import org.springframework.data.domain.Persistable;
 
 /**
- * Entity representing a QuestionSet.
+ * Entity representing a QuestionSet. Each one contains multiple Questions, a name, description, and difficulty.
  * 
  * @author Lorenz_Smidt
  *
@@ -94,11 +94,6 @@ public class QuestionSet implements Persistable<Integer>
 	public void setQuestions(Set<Question> questions)
 	{
 		this.questions = questions;
-	}
-	
-	public void setId(Integer id)
-	{
-		this.id = id;
 	}
 	
 	@Override

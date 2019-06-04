@@ -20,8 +20,16 @@ import org.springframework.stereotype.Controller;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Class implementing the interface between the frontend and the {@link QuizRoom}.
+ *
+ * In order to be the interface for {@link IRoomAction} objects, the socket connection
+ * needs to support all server events and for the frontend all client events ({@link IPlayerAction}) need to be supported.
+ * In addition chat messages for the {@link QuizRoom}s are supported as well.
+ */
 @Controller
 public class QRWebSocketConnection implements IRoomAction {
 
@@ -29,20 +37,28 @@ public class QRWebSocketConnection implements IRoomAction {
 
     private SimpMessagingTemplate messagingTemplate;
 
-    private HashMap<Integer, IPlayerAction> rooms;
-    private HashMap<Integer, HashMap<Integer, Player>> players;
+    private HashMap<Integer, IPlayerAction> rooms; // all active QuizRooms
+    private HashMap<Integer, HashMap<Integer, Player>> players; // all active Players, by QuizRoom
+
+    private HashMap<Integer, List<ChatMessageJSON>> chatMessages; // the chat history of each QuizRoom
 
     @Value("${qr.ws.server}")
     private String serverEndpoint;
     @Value("${storage.api.avatars}")
     private String avatars;
 
+    /**
+     * Initializes the WebSocket connection for all {@link QuizRoom}s.
+     *
+     * @param messagingTemplate Socket Message Boilerplate (is autowired).
+     */
     @Autowired
     public QRWebSocketConnection(SimpMessagingTemplate messagingTemplate){
         assert messagingTemplate != null;
         this.messagingTemplate = messagingTemplate;
         this.rooms = new HashMap<>();
         this.players = new HashMap<>();
+        this.chatMessages = new HashMap<>();
         log.debug("QRWSController started");
     }
 
@@ -61,96 +77,197 @@ public class QRWebSocketConnection implements IRoomAction {
     private final String ASSIGN_QUESTION = "assignQuestion";
     private final String REMOVE_QUESTION = "removeQuestion";
 
+    /**
+     * Implementation of the {@link IRoomAction} method, broadcasts new ready player to all players in room.
+     *
+     * @param pin
+     *            Pin of the QuizRoom making the call.
+     * @param p
+     *            The Player who declared themselves ready.
+     * @param totalReady
+     *            The total number of ready Players.
+     */
     @Override
     public void onReadyUp(int pin, Player p, int totalReady) {
-        ServerEvent event = new ReadyUpEvent(p, totalReady);
+        SocketEvent event = new ReadyUpEvent(p, totalReady);
         event.setEvent(READY_UP);
         broadcast(event, pin);
         log.debug("Game " + pin + ": player " + p.getId() + " is ready");
     }
 
+    /**
+     * Implementation of the {@link IRoomAction} method, broadcasts new player to all players in room.
+     *
+     * @param pin
+     *            Pin of the QuizRoom making the call.
+     * @param p Player joining the QuizRoom.
+     */
     @Override
     public void onPlayerJoin(int pin, Player p) {
-        ServerEvent event = new PlayerJoinEvent(p, avatars);
+        SocketEvent event = new PlayerJoinEvent(p, avatars);
         event.setEvent(PLAYER_JOIN);
         broadcast(event, pin);
         log.debug("Game " + pin + ": player " + p.getId() + " joined");
     }
 
+    /**
+     * Implementation of the {@link IRoomAction} method, broadcasts game start to all players in room.
+     *
+     * @param pin Pin of the QuizRoom.
+     */
     @Override
     public void onGameStart(int pin) {
-        ServerEvent event = new GenericServerEvent(GAME_START);
+        SocketEvent event = new GenericSocketEvent(GAME_START);
         broadcast(event, pin);
         log.debug("Game " + pin + ": game started");
     }
 
-    @Override // TODO: move all server logic out of here, call remove method of this controller on gameend
+    /**
+     * Implementation of the {@link IRoomAction} method, broadcasts game end to all players in room.
+     *
+     * @param pin Pin of the QuizRoom.
+     */
+    @Override
     public void onGameEnd(int pin) {
         gameEnd(pin);
-        ServerEvent event = new GenericServerEvent(GAME_END);
+        SocketEvent event = new GenericSocketEvent(GAME_END);
         broadcast(event, pin);
         log.debug("Game " + pin + ": game ended");
     }
 
+    /**
+     * Implementation of the {@link IRoomAction} method, broadcasts the remaining jokers to all players in room.
+     *
+     * @param pin
+     *            Pin of the QuizRoom making the call.
+     * @param remaining
+     *            The remaining time in ms.
+     */
     @Override
     public void onJokerUse(int pin, int remaining) {
-        ServerEvent event = new JokerUseEvent(remaining);
+        SocketEvent event = new JokerUseEvent(remaining);
         event.setEvent(JOKER_USE);
         broadcast(event, pin);
         log.debug("Game " + pin + ": joker was used");
     }
 
+    /**
+     * Implementation of the {@link IRoomAction} method, broadcasts which player left to all players in room.
+     *
+     * @param pin
+     *            Pin of the QuizRoom making the call.
+     * @param p
+     *            The Player who left.
+     * @param reason
+     *            The reason why the player was kicked.
+     */
     @Override
     public void onPlayerLeave(int pin, Player p, String reason) {
-        ServerEvent event = new PlayerLeaveEvent(p, reason);
+        SocketEvent event = new PlayerLeaveEvent(p, reason);
         event.setEvent(PLAYER_LEAVE);
         broadcast(event, pin);
         log.debug("Game " + pin + ": player " + p.getId() + " left");
     }
 
+    /**
+     * Implementation of the {@link IRoomAction} method, broadcasts new score to all players in room.
+     *
+     * @param pin
+     *            Pin of the QuizRoom making the call.
+     * @param newScore
+     *            The new current score.
+     */
     @Override
     public void onScoreChange(int pin, int newScore) {
-        ServerEvent event = new ScoreChangeEvent(newScore);
+        SocketEvent event = new ScoreChangeEvent(newScore);
         event.setEvent(SCORE_CHANGE);
         broadcast(event, pin);
         log.debug("Game " + pin + ": score changed to " + newScore);
     }
 
+    /**
+     * Implementation of the {@link IRoomAction} method, informs player of imminent kick.
+     *
+     * @param pin
+     *            Pin of the QuizRoom making the call.
+     * @param player
+     *            The Player whose timeout starts.
+     * @param timeoutTime
+     *            The time left until kick.
+     */
     @Override
     public void onTimeoutStart(int pin, Player player, long timeoutTime) {
-        ServerEvent event = new PlayerTimeoutEvent(player, timeoutTime);
+        SocketEvent event = new PlayerTimeoutEvent(player, timeoutTime);
         event.setEvent(TIMEOUT_START);
         broadcast(event, pin);
         log.debug("Game " + pin + ": time remaining until player " + player.getId() + " is kicked: " + timeoutTime + "ms");
     }
 
+    /**
+     * Implementation of the {@link IRoomAction} method, timer synchronization event.
+     *
+     * @param pin
+     *            Pin of the QuizRoom making the call.
+     * @param p
+     *            Player the timer synchronized.
+     * @param q
+     *            Question of the Player to be synchronized.
+     * @param remaining
+     *            The time remaining until the Question will be removed.
+     */
     @Override
     public void onTimerSync(int pin, Player p, ActiveQuestion q, long remaining) {
-        ServerEvent event = new TimerSyncEvent(q, remaining);
+        SocketEvent event = new TimerSyncEvent(q, remaining);
         event.setEvent(TIMER_SYNC);
         broadcast(event, pin);
         log.debug("Game " + pin + ": time remaining of question " + q.question.getId() + " is " + remaining + "ms");
     }
 
+    /**
+     * Implementation of the {@link IRoomAction} method, kicks a specific player.
+     *
+     * @param pin
+     *            Pin of the QuizRoom making the call.
+     * @param p
+     *            The player who is being kicked.
+     */
     @Override
     public void onKick(int pin, Player p) {
-        ServerEvent event = new PlayerKickEvent(p);
+        SocketEvent event = new PlayerKickEvent(p);
         event.setEvent(KICK);
         broadcast(event, pin);
         log.debug("Game " + pin + ": player " + p.getId() + " was kicked");
     }
 
+    /**
+     * Implementation of the {@link IRoomAction} method, assigns new
+     * {@link at.qe.sepm.skeleton.model.Question} and answers.
+     *
+     * @param pin
+     *            Pin of the QuizRoom making the call.
+     * @param q
+     *            The ActiveQuestion which is being assigned.
+     */
     @Override
     public void assignQuestion(int pin, ActiveQuestion q) {
-        ServerEvent event = new AssignQuestionEvent(q);
+        SocketEvent event = new AssignQuestionEvent(q);
         event.setEvent(ASSIGN_QUESTION);
         broadcast(event, pin);
         log.debug("Game " + pin + ": Question " + q.question.getId() + " assigned");
     }
 
+    /**
+     * Implementation of the {@link IRoomAction} method, removes a specific
+     * {@link at.qe.sepm.skeleton.model.Question} from the game.
+     *
+     * @param pin
+     *            Pin of the QuizRoom making the call.
+     * @param q
+     *            The ActiveQuestion which is being removed.
+     */
     @Override
     public void removeQuestion(int pin, ActiveQuestion q) {
-        ServerEvent event = new RemoveQuestionEvent(q);
+        SocketEvent event = new RemoveQuestionEvent(q);
         event.setEvent(REMOVE_QUESTION);
         broadcast(event, pin);
         log.debug("Game " + pin + ": Question " + q.question.getId() + " removed");
@@ -166,13 +283,26 @@ public class QRWebSocketConnection implements IRoomAction {
     private final String CANCEL_TIMEOUT = "cancelTimeout";
     private final String ALIVE_PING = "sendAlivePing";
 
+    private final String CHAT_MESSAGE = "chatMessage";
+    private final String CHAT_MESSAGES = "getChatMessages";
+
     private final String SUCCESS = "success";
     private final String ERROR = "error";
 
-    private ServerEvent handleGetRoomInfo(int pin){
+    /**
+     * Wrapper for the {@link IPlayerAction} event fulfilled by the corresponding {@link IRoomAction} object.
+     *
+     * Depending on the Game state the players in the lobby are omitted from the response.
+     *
+     * @param pin
+     *            Pin of the QuizRoom.
+     * @return
+     *            RoomInfoEvent containing the Settings and Players of the Room.
+     */
+    private SocketEvent handleGetRoomInfo(int pin){
         IPlayerAction qr = rooms.get(pin);
         if(qr == null){
-            return new GenericServerEvent(ERROR);
+            return new GenericSocketEvent(ERROR);
         }
         boolean inLobby = qr.isRoomInWaitingMode();
         List<PlayerJSON> players = new ArrayList<>();
@@ -188,7 +318,7 @@ public class QRWebSocketConnection implements IRoomAction {
             }
         }
 
-        ServerEvent event = new RoomInfoEvent(pin,
+        SocketEvent event = new RoomInfoEvent(pin,
                 qr.getRoomDifficulty().name(),
                 qr.getRoomMode().name(),
                 qr.getRoomQuestionSets(),
@@ -201,75 +331,162 @@ public class QRWebSocketConnection implements IRoomAction {
         return event;
     }
 
-    private ServerEvent handleReadyUp(int pin, ClientEvent event){
+    /**
+     * Wrapper for the {@link IPlayerAction} event fulfilled by the corresponding {@link IRoomAction} object.
+     *
+     * @param pin
+     *            Pin of the QuizRoom.
+     * @param event Event to handle.
+     * @return Event stating if the method was successful.
+     */
+    private SocketEvent handleReadyUp(int pin, ClientEvent event){
         IPlayerAction qr = rooms.get(pin);
         Player p = players.get(pin).get(event.getPlayerId());
         if(p == null){
-            return new GenericServerEvent(ERROR);
+            return new GenericSocketEvent(ERROR);
         }
         qr.readyUp(p);
-        return new GenericServerEvent(SUCCESS);
+        return new GenericSocketEvent(SUCCESS);
     }
 
-    private ServerEvent handleAnswerQuestion(int pin, ClientEvent event){
+    /**
+     * Wrapper for the {@link IPlayerAction} event fulfilled by the corresponding {@link IRoomAction} object.
+     *
+     * @param pin
+     *            Pin of the QuizRoom.
+     * @param event Event to handle.
+     * @return Event stating if the method was successful.
+     */
+    private SocketEvent handleAnswerQuestion(int pin, ClientEvent event){
         IPlayerAction qr = rooms.get(pin);
         Player p = players.get(pin).get(event.getPlayerId());
         if(p == null){
-            return new GenericServerEvent(ERROR);
+            return new GenericSocketEvent(ERROR);
         }
         // Cant check validity of ints, since 0 per default
         qr.answerQuestion(p, event.getQuestionId(), event.getAnswerId());
-        return new GenericServerEvent(SUCCESS);
+        return new GenericSocketEvent(SUCCESS);
     }
 
-    private ServerEvent handleUseJoker(int pin, ClientEvent event){
+    /**
+     * Wrapper for the {@link IPlayerAction} event fulfilled by the corresponding {@link IRoomAction} object.
+     *
+     * @param pin
+     *            Pin of the QuizRoom.
+     * @param event Event to handle.
+     * @return Event stating if the method was successful.
+     */
+    private SocketEvent handleUseJoker(int pin, ClientEvent event){
         IPlayerAction qr = rooms.get(pin);
         Player p = players.get(pin).get(event.getPlayerId());
         if(p == null){
-            return new GenericServerEvent(ERROR);
+            return new GenericSocketEvent(ERROR);
         }
         qr.useJoker(p);
-        return new GenericServerEvent(SUCCESS);
+        return new GenericSocketEvent(SUCCESS);
     }
 
-    private ServerEvent handleLeaveRoom(int pin, ClientEvent event){
+    /**
+     * Wrapper for the {@link IPlayerAction} event fulfilled by the corresponding {@link IRoomAction} object.
+     *
+     * @param pin
+     *            Pin of the QuizRoom.
+     * @param event Event to handle.
+     * @return Event stating if the method was successful.
+     */
+    private SocketEvent handleLeaveRoom(int pin, ClientEvent event){
         IPlayerAction qr = rooms.get(pin);
         Player p = players.get(pin).get(event.getPlayerId());
         if(p == null){
-            return new GenericServerEvent(ERROR);
+            return new GenericSocketEvent(ERROR);
         }
         qr.leaveRoom(p);
         players.get(pin).remove(event.getPlayerId());
-        return new GenericServerEvent(SUCCESS);
+        return new GenericSocketEvent(SUCCESS);
     }
 
-    private ServerEvent handleCancelTimeout(int pin, ClientEvent event){
+    /**
+     * Wrapper for the {@link IPlayerAction} event fulfilled by the corresponding {@link IRoomAction} object.
+     *
+     * @param pin
+     *            Pin of the QuizRoom.
+     * @param event Event to handle.
+     * @return Event stating if the method was successful.
+     */
+    private SocketEvent handleCancelTimeout(int pin, ClientEvent event){
         IPlayerAction qr = rooms.get(pin);
         Player p = players.get(pin).get(event.getPlayerId());
         if(p == null){
-            return new GenericServerEvent(ERROR);
+            return new GenericSocketEvent(ERROR);
         }
         qr.cancelTimeout(p);
-        return new GenericServerEvent(SUCCESS);
+        return new GenericSocketEvent(SUCCESS);
     }
 
-    private ServerEvent handleSendAlivePing(int pin, ClientEvent event){
+    /**
+     * Wrapper for the {@link IPlayerAction} event fulfilled by the corresponding {@link IRoomAction} object.
+     *
+     * @param pin
+     *            Pin of the QuizRoom.
+     * @param event Event to handle.
+     * @return Event stating if the method was successful.
+     */
+    private SocketEvent handleSendAlivePing(int pin, ClientEvent event){
         IPlayerAction qr = rooms.get(pin);
         Player p = players.get(pin).get(event.getPlayerId());
         if(p == null){
-            return new GenericServerEvent(ERROR);
+            return new GenericSocketEvent(ERROR);
         }
         qr.sendAlivePing(p);
-        return new GenericServerEvent(SUCCESS);
+        return new GenericSocketEvent(SUCCESS);
+    }
+
+    /**
+     * Handles new {@link ChatMessageEvent}s, stores the event in the chat history and broadcasts the
+     * message to all {@link Player}s in the room.
+     *
+     * @param pin
+     *            Pin of the QuizRoom.
+     * @param event Event to handle.
+     * @return The new chat message.
+     */
+    private SocketEvent handleChatMessage(int pin, ClientEvent event){
+        if(event.getMessage() == null){
+            return new GenericSocketEvent(ERROR);
+        }
+        ChatMessageEvent message;
+        if(players.get(pin) == null){
+            return new GenericSocketEvent(ERROR);
+        }
+        Player p = players.get(pin).get(event.getPlayerId());
+        if(p == null){
+            return new GenericSocketEvent(ERROR);
+        }
+        message = new ChatMessageEvent(event.getMessage(), p.getUser().getUsername(), p.getId(), chatMessages.get(pin).size());
+        chatMessages.get(pin).add(message.getMessage());
+        return message;
+    }
+
+    /**
+     * Handles requests for the chat history, responds with all sent messages in {@link QuizRoom}
+     *
+     * @param pin
+     *            Pin of the QuizRoom.
+     * @param event Event to handle.
+     * @return A ChatHistoryEvent containing the chat history.
+     */
+    private SocketEvent handleGetChatMessages(int pin, ClientEvent event){
+        return new ChatHistoryEvent(chatMessages.get(pin));
     }
 
     /**
      * Broadcast event to all {@link Player}s in a {@link QuizRoom}
      *
-     * @param event
+     * @param event Event to broadcast.
      * @param pin
+     *            Pin of the QuizRoom.
      */
-    private void broadcast(ServerEvent event, int pin){
+    private void broadcast(SocketEvent event, int pin){
         this.messagingTemplate.convertAndSend(serverEndpoint + "/" + pin, event);
     }
 
@@ -277,19 +494,22 @@ public class QRWebSocketConnection implements IRoomAction {
      * Responds to user request, only sends to specific user
      *
      * @param request
+     *            The event to handle.
      * @param user
+     *            User which is the event source.
      * @param pin
+     *            Pin of the QuizRoom.
      */
     @MessageMapping("/events/{pin}")
-    @SendTo("/server/events/{pin}") // works but broadcast
-    private ServerEvent handleEvent(@Payload ClientEvent request, Principal user, @DestinationVariable int pin){
+    @SendTo("/server/events/{pin}")
+    private SocketEvent handleEvent(@Payload ClientEvent request, Principal user, @DestinationVariable int pin){
 
         if(!rooms.containsKey(pin) || rooms.get(pin) == null){
             log.warn("Game " + pin + ": QuizRoom " + pin + " does not exist");
-            return new GenericServerEvent(ERROR);
+            return new GenericSocketEvent(ERROR);
         }
 
-        if(!request.getEvent().equals(ALIVE_PING)){ // TODO remove
+        if(!request.getEvent().equals(ALIVE_PING)){
             log.debug("Game " + pin + ": received event of type " + request.getEvent() + " from " + user.getName());
         }
 
@@ -309,36 +529,62 @@ public class QRWebSocketConnection implements IRoomAction {
                     return handleGetRoomInfo(pin);
                 case READY:
                     return handleReadyUp(pin, request);
+                case CHAT_MESSAGE:
+                    return handleChatMessage(pin, request);
+                case CHAT_MESSAGES:
+                    return handleGetChatMessages(pin, request);
                 default:
-                    return new GenericServerEvent("error");
+                    return new GenericSocketEvent("error");
             }
         } catch (NullPointerException e){
             log.warn("Game " + pin + " failed to close correctly");
-            return new GenericServerEvent(ERROR);
+            return new GenericSocketEvent(ERROR);
         }
     }
 
+    /**
+     * Adds a {@link QuizRoom} to the active games.
+     *
+     * @param pin
+     *            Pin of the QuizRoom.
+     * @param qr
+     *            The QuizRoom.
+     * @param p
+     *            Player joining the game.
+     */
     public void addGame(int pin, IPlayerAction qr, Player p){
         if(!rooms.containsKey(pin)){
             rooms.put(pin, qr);
             players.put(pin, new HashMap<>());
         }
-        if(players.get(pin) == null){
-           players.put(pin, new HashMap<>());
-        }
+        players.computeIfAbsent(pin, k -> new HashMap<>());
+        chatMessages.computeIfAbsent(pin, k -> new LinkedList<>());
         players.get(pin).put(p.getId(), p);
     }
 
+    /**
+     * Returns true if the {@link Player} is in the {@link QuizRoom} with the specified pin.
+     *
+     * @param pin
+     *            Pin of the QuizRoom.
+     * @param p
+     *            Player in question.
+     * @return
+     *            True if the Player is in the QuizRoom, else false.
+     */
     public boolean isPlayerInGame(int pin, Player p){
         return players.get(pin) != null && players.get(pin).containsKey(p.getId());
     }
 
+    /**
+     * Removes a game, its players and chat history from the active connections.
+     *
+     * @param pin
+     *            Pin of the QuizRoom.
+     */
     private void gameEnd(int pin){
-        if(rooms.containsKey(pin)){
-            rooms.remove(pin);
-        }
-        if(players.containsKey(pin)){
-            players.remove(pin);
-        }
+        rooms.remove(pin);
+        players.remove(pin);
+        chatMessages.remove(pin);
     }
 }

@@ -36,10 +36,10 @@ public class User implements Persistable<String> {
 	
 	private boolean enabled;
 	
-	@OneToOne(optional = true, mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+	@OneToOne(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
 	private Player player;
 	
-	@OneToOne(optional = true, mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+	@OneToOne(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
 	private Manager manager;
 
 	@Enumerated(EnumType.STRING)
@@ -87,8 +87,6 @@ public class User implements Persistable<String> {
 	
 	/**
 	 * Called automatically upon creation of a new {@link Player}. Should not be called manually!
-	 * 
-	 * @param player
 	 */
 	public void setPlayer(Player player)
 	{
@@ -105,8 +103,6 @@ public class User implements Persistable<String> {
 	
 	/**
 	 * Called automatically upon creation of a new {@link Manager}. Should not be called manually!
-	 * 
-	 * @param manager
 	 */
 	public void setManager(Manager manager)
 	{
@@ -143,10 +139,10 @@ public class User implements Persistable<String> {
         return true;
     }
 
-    @Override
-    public String toString() {
-        return "at.qe.sepm.skeleton.model.User[ id=" + username + " ]";
-    }
+    //@Override
+    //public String toString() {
+    //    return "at.qe.sepm.skeleton.model.User[ id=" + username + " ]";
+    //}
 
     @Override
     public String getId() {

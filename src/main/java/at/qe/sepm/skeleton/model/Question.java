@@ -40,13 +40,13 @@ public class Question implements Persistable<Integer>
 	
 	@Column(nullable = false, length = 200)
 	private String wrongAnswerString_1;
-	@Column(nullable = true, length = 200)
+	@Column(length = 200)
 	private String wrongAnswerString_2;
-	@Column(nullable = true, length = 200)
+	@Column(length = 200)
 	private String wrongAnswerString_3;
-	@Column(nullable = true, length = 200)
+	@Column(length = 200)
 	private String wrongAnswerString_4;
-	@Column(nullable = true, length = 200)
+	@Column(length = 200)
 	private String wrongAnswerString_5;
 
 	@Deprecated // TODO remove deprecated
@@ -138,11 +138,6 @@ public class Question implements Persistable<Integer>
 	public void setWrongAnswerString_5(String wrongAnswerString_5)
 	{
 		this.wrongAnswerString_5 = wrongAnswerString_5;
-	}
-	
-	public void setId(Integer id)
-	{
-		this.id = id;
 	}
 	
 	@Override

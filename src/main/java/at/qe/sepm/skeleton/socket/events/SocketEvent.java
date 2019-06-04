@@ -1,6 +1,9 @@
 package at.qe.sepm.skeleton.socket.events;
 
-public abstract class ServerEvent {
+/**
+ * The basic template for all socket events.
+ */
+public abstract class SocketEvent {
 
     private String event;
 

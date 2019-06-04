@@ -2,7 +2,10 @@ package at.qe.sepm.skeleton.socket.events;
 
 import at.qe.sepm.skeleton.model.Player;
 
-public class PlayerTimeoutEvent extends ServerEvent {
+/**
+ * Class for JSON representation of the 'onTimeoutStart' QuizRoom event.
+ */
+public class PlayerTimeoutEvent extends SocketEvent {
 
     private long remaining;
     private int playerId;

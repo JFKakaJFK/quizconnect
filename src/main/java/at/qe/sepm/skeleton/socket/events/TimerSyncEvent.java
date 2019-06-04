@@ -2,7 +2,10 @@ package at.qe.sepm.skeleton.socket.events;
 
 import at.qe.sepm.skeleton.logic.ActiveQuestion;
 
-public class TimerSyncEvent extends ServerEvent {
+/**
+ * Class for JSON representation of the 'onTimerSync' QuizRoom event.
+ */
+public class TimerSyncEvent extends SocketEvent {
 
     private long remaining;
     private int questionId;

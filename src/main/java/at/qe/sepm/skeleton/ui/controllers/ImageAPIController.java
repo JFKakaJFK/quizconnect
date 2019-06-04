@@ -42,9 +42,13 @@ public class ImageAPIController {
      * Catches GET requests for the player avatars and returns corresponding file or default
      *
      * @param response
+     *          The response responding to the incoming request.
      * @param manager
+     *          ManagerId, part of the request path.
      * @param file
+     *          Filename, part of the request path.
      * @param ext
+     *          File extension, part of the request path.
      */
     @RequestMapping(value = "/avatars/{manager}/{file}.{ext}", method = RequestMethod.GET)
     public void getAvatar(HttpServletResponse response, @PathVariable String manager, @PathVariable String file, @PathVariable String ext){
@@ -68,22 +72,28 @@ public class ImageAPIController {
      * Catches GET requests for the answer images and returns corresponding file or default
      *
      * @param response
+     *          The response responding to the incoming request.
      * @param manager
+     *          ManagerId, part of the request path.
+     * @param questionSet
+     *          QuestionSetId, part of the request path.
      * @param file
+     *          Filename, part of the request path.
      * @param ext
+     *          File extension, part of the request path.
      */
-    @RequestMapping(value = "/answers/{manager}/{file}.{ext}", method = RequestMethod.GET)
-    public void getAnswer(HttpServletResponse response, @PathVariable String manager, @PathVariable String file, @PathVariable String ext){
+    @RequestMapping(value = "/answers/{manager}/{questionSet}/{file}.{ext}", method = RequestMethod.GET)
+    public void getAnswer(HttpServletResponse response, @PathVariable String manager, @PathVariable String questionSet, @PathVariable String file, @PathVariable String ext){
         if(!(ext.toLowerCase().equals("png") || ext.toLowerCase().equals("jpg"))){
             log.error("Request for thumbnail is not well-formed: no image extension");
             sendError(response,400, "Invalid extension. Allowed: (png|jpg|jpeg)");
             return;
         }
 
-        File img = storageService.loadAnswer(manager + "/" + file + "." + ext).toFile();
+        File img = storageService.loadAnswer(manager + "/" + questionSet + "/" + file + "." + ext).toFile();
 
         if(!img.exists()){
-            log.warn("Could not serve answers/" + manager + "/" + file + "." + ext + ", serving default");
+            log.warn("Could not serve answers/" + manager + "/" + questionSet + "/" + file + "." + ext + ", serving default");
             img = storageService.loadAnswer(defaultAnswer).toFile();
         }
 
@@ -94,8 +104,11 @@ public class ImageAPIController {
      * Sets some http response headers and then sends the file to the requesting user
      *
      * @param response
+     *          The response responding to the incoming request.
      * @param file
+     *          File to send.
      * @param type
+     *          The type of the file.
      */
     private void sendResponse(HttpServletResponse response, File file, String type){
         response.setHeader("cache-control", "max-age=31104000");
@@ -118,8 +131,11 @@ public class ImageAPIController {
      * Sends an error
      *
      * @param response
+     *          The response responding to the incoming request.
      * @param status
+     *          The HTTP status code of the error.
      * @param message
+     *          A descriptive error message.
      */
     private void sendError(HttpServletResponse response, int status, String message){
         try {
