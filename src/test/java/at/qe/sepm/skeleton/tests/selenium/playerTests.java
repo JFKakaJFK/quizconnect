@@ -12,14 +12,9 @@ import org.openqa.selenium.chrome.ChromeDriver;
 public class playerTests {
 
     private WebDriver driver;
-    private WebDriver secondDriver;
-    private String homepage = "localhost:8080";
     private String loginpage = "localhost:8080/login.xhtml";
     private String playerUsername = "user3";
     private String playerPassword = "pw1";
-    private String playerTwoUsername = "user4";
-    private String playerTwoPassword = "pw1";
-    private String playerOverview = "http://localhost:8080/players/all.xhtml";
 
     @Before
     public void setUp() {
@@ -29,11 +24,6 @@ public class playerTests {
         driver.findElement(By.id("username")).sendKeys(playerUsername);
         driver.findElement(By.id("password")).sendKeys(playerPassword);
         driver.findElement(By.id("submit")).click();
-        secondDriver = new ChromeDriver();
-        secondDriver.get(loginpage);
-        secondDriver.findElement(By.id("username")).sendKeys(playerTwoUsername);
-        secondDriver.findElement(By.id("password")).sendKeys(playerTwoPassword);
-        secondDriver.findElement(By.id("submit")).click();
     }
 
     @Test
@@ -43,41 +33,10 @@ public class playerTests {
         Assert.assertEquals(currentURL, "http://localhost:8080/quizroom/createRoom.xhtml" );
     }
 
-    @Test
-    public void joinGameTest(){
-        secondDriver.get("http://localhost:8080/quizroom/createRoom.xhtml");
-        //TODO Create Game to join
-        driver.findElement(By.xpath("//a[@class='btn btn-primary btn-lg']"));
-        String currentURL = driver.getCurrentUrl();
-        Assert.assertEquals(currentURL, "http://localhost:8080/quizroom/join.html" );
-    }
-
-    @Test
-    public void openPlayerStats(){
-        //TODO
-        //driver.findElement()
-        String currentURL = driver.getCurrentUrl();
-        Assert.assertEquals(currentURL, "http://localhost:8080/players/profile.xhtml" );
-    }
-
-    @Test
-    public void openPlayerOverview(){
-        //TODO
-        //driver.findElement()
-        String currentURL = driver.getCurrentUrl();
-        Assert.assertEquals(currentURL, "http://localhost:8080/players/all.xhtml" );
-    }
-
-    @Test
-    public void logoutTest(){
-        //TODO
-        String currentURL = driver.getCurrentUrl();
-        Assert.assertEquals(currentURL, "http://localhost:8080/" );
-    }
+    //Game Logic not testable by selenium
 
     @After
     public void shutDown() {
         driver.close();
-        secondDriver.close();
     }
 }

@@ -11,16 +11,19 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
 
+import java.io.File;
+
 public class homePageTests {
 
     private WebDriver driver;
     private String homepage = "localhost:8080";
     private String testUsername = "user1";
     private String testPassword = "pw1";
+    private String driverPath = "src\\test\\java\\at\\qe\\sepm\\skeleton\\tests\\selenium\\chromedriver.exe";
 
     @Before
     public void setUp() {
-        System.setProperty("webdriver.chrome.driver", "C:\\Test\\chromedriver.exe"); //
+        System.setProperty("webdriver.chrome.driver", driverPath); //
         driver = new ChromeDriver();
     }
 
