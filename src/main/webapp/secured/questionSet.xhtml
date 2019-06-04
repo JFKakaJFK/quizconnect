@@ -16,6 +16,7 @@
     <ui:define name="title">Create set</ui:define>
 
     <ui:define name="site-specific-css">
+
         <script type="text/javascript" src="../resources/quizconnect/js/QCUpload.js"></script>
     </ui:define>
 
@@ -36,7 +37,7 @@
                 <div class="col-6 justify-content-center">
                     <label class="row px-0 mx-0 justify-content-center" for="difficulty">Select difficulty</label>
                     <div class="row px-0 mx-0 justify-content-center">
-                        <h:commandButton id="difficulty" styleClass="btn btn-primary" value="#{capitalizeConverter.capitalize(questionSetBean.questionSet.difficulty)}" action="#{questionSetBean.toggleDifficulty()}">
+                        <h:commandButton id="difficulty" styleClass="btn btn-secondary" value="#{capitalizeConverter.capitalize(questionSetBean.questionSet.difficulty)}" action="#{questionSetBean.toggleDifficulty()}">
                             <f:ajax execute="@this" render="@this"></f:ajax>
                         </h:commandButton>
 
@@ -54,22 +55,25 @@
                                  pt:autocomplete="off"/>
             </div>
 
-            <h:commandButton type="button" styleClass="btn btn-primary" id="addQuestionSet"
-                             disabled="#{!questionSetBean.validQuestionSet()}" rendered="#{not questionSetBean.bEditSet and not questionSetBean.questionSetSaved}" action="#{questionSetBean.saveNewQuestionSet}" value="Save and add question"
-                             pt:data-toggle="modal" pt:data-target="#questionModal">
-                <f:ajax execute="@form" render="@form"></f:ajax>
-            </h:commandButton>
+            <h:panelGroup id="button-actions" layout="block" styleClass="mb-5">
+                <h:commandButton type="button" styleClass="btn btn-primary" id="addQuestionSet"
+                                 disabled="#{!questionSetBean.validQuestionSet()}" rendered="#{not questionSetBean.bEditSet and not questionSetBean.questionSetSaved}" action="#{questionSetBean.saveNewQuestionSet}" value="Save and add question"
+                                 pt:data-toggle="modal" pt:data-target="#questionModal">
+                    <f:ajax execute="@form" render="@form"></f:ajax>
+                </h:commandButton>
 
-            <h:commandButton type="button" styleClass="btn btn-primary" id="editQuestionSet"
-                             disabled="#{!questionSetBean.validQuestionSet()}" rendered="#{questionSetBean.bEditSet and not questionSetBean.questionSetSaved}" action="#{questionSetBean.saveEditedQuestionset()}" value="Save changes">
-                <f:ajax execute="@form" render="@form"></f:ajax>
-            </h:commandButton>
+                <h:commandButton type="button" styleClass="btn btn-primary" id="editQuestionSet"
+                                 disabled="#{!questionSetBean.validQuestionSet()}" rendered="#{questionSetBean.bEditSet and not questionSetBean.questionSetSaved}" action="#{questionSetBean.saveEditedQuestionset()}" value="Save changes">
+                    <f:ajax execute="@form" render="@form"></f:ajax>
+                </h:commandButton>
 
-            <h:commandButton type="button" styleClass="btn btn-primary" id="addQuestion"
-                             rendered="#{(questionSetBean.bEditSet) or (not questionSetBean.bEditSet and questionSetBean.questionSetSaved)}" value="Add question"
-                             pt:data-toggle="modal" pt:data-target="#questionModal">
-                <f:ajax execute="@this"></f:ajax>
-            </h:commandButton>
+                <h:commandButton type="button" styleClass="btn btn-primary" id="addQuestion"
+                                 rendered="#{(questionSetBean.bEditSet) or (not questionSetBean.bEditSet and questionSetBean.questionSetSaved)}" value="Add question"
+                                 pt:data-toggle="modal" pt:data-target="#questionModal">
+                    <f:ajax execute="@this"></f:ajax>
+                </h:commandButton>
+            </h:panelGroup>
+
 
 
 

@@ -19,23 +19,8 @@
     </ui:define>
 
     <ui:define name="content">
-        <h:form>
-            <div class="row justify-content-center">
-                <div class="col-3">
-                    <h:commandButton styleClass="btn btn-primary" id="CreateNew" action="/secured/questionset.xhtml?faces-redirect=true" actionListener="#{questionSetBean.setbEditSet(false)}" value="Create new"/>
-                </div>
-                <div class="col-3">
-                    <h:commandLink styleClass="btn btn-primary"
-                                   p:data-toggle="modal" p:data-target="#uploadCSV"
-                                   p:data-backdrop="static" value="Upload CSV"
-                                   onclick="#{CSVImportBean.setManager(sessionInfoBean.currentUser.manager)}">
-                        <f:ajax execute="@form" render="@none"/>
-                    </h:commandLink>
-                </div>
-            </div>
-        </h:form>
 
-        <form jsf:id="formId">
+        <h:form id="formId" enctype="multipart/formdata">
             <h:panelGroup layout="block" styleClass="container" rendered="#{QSOverviewBean.questionSets == null}">
                 <h1 class="display-4">No QuestionSets found</h1>
                 <h:commandButton styleClass="btn btn-primary" action="all?faces-redirect=true" value="All Players"/>
@@ -76,31 +61,34 @@
                                  p:required="true" p:pattern="[\s\S]*\S[\s\S]*"></h:inputText>
                 </div>
             </qc:modal>
-        </form>
+        </h:form>
 
 
         <h:form id="formOverview-QSets">
 
-            <h:panelGroup layout="block" styleClass="searchbar">
+            <h:panelGroup layout="block" styleClass="searchbar" id="searchbar">
 
                 <h:inputText id="searchPrase" p:autocomplete="nein-danke-bitte-nicht" p:placeholder="Search" value="#{QSOverviewBean.searchPhrase}" styleClass="form-control searchbar-search">
                     <f:ajax listener="#{QSOverviewBean.handleSearch}" event="keyup" execute="@this" render="questionset-collection"/>
                 </h:inputText>
 
-                <h:panelGroup id="showByManager" styleClass="searchbar-action">
-                    <h:selectBooleanCheckbox p:id="showByManager" value="#{QSOverviewBean.onlyByManager}" styleClass="jsf-hide">
-                        <f:ajax listener="#{QSOverviewBean.setOnlyByManager(!QSOverviewBean.onlyByManager)}" render="showByManager questionset-collection"/>
-                    </h:selectBooleanCheckbox>
 
-                    <label for="showByManager">
-                        #{QSOverviewBean.onlyByManager ? 'Show all players' : 'Show only your Players'}
-                    </label>
-                </h:panelGroup>
 
-                <h:commandButton styleClass="btn btn-secondary searchbar-action" p:data-toggle="modal" p:data-target="#addPlayer" value="Add Player" rendered="#{sessionInfoBean.hasRole('MANAGER')}">
-                    <f:ajax execute="@this" render=":form:addPlayer:footer :form:addPlayer:body"/>
+                <ui:fragment>
+                    <h:commandButton rendered="#{QSOverviewBean.onlyByManager}" value="All sets" styleClass="btn btn-secondary searchbar-action">
+                        <f:ajax listener="#{QSOverviewBean.setOnlyByManager(false)}" render="searchbar questionset-collection"/>
+                    </h:commandButton>
+                    <h:commandButton rendered="#{!QSOverviewBean.onlyByManager}" value="My sets" styleClass="btn btn-secondary searchbar-action">
+                        <f:ajax listener="#{QSOverviewBean.setOnlyByManager(true)}" render="searchbar questionset-collection"/>
+                    </h:commandButton>
+                </ui:fragment>
+
+                <h:commandButton styleClass="btn btn-secondary searchbar-action" id="CreateNew" action="/secured/questionset.xhtml?faces-redirect=true" actionListener="#{questionSetBean.setbEditSet(false)}" value="Create new"/>
+
+                <h:commandButton styleClass="btn btn-secondary searchbar-action" p:data-toggle="modal" p:data-target="#uploadCSV" p:data-backdrop="static" value="Upload CSV"
+                               onclick="#{CSVImportBean.setManager(sessionInfoBean.currentUser.manager)}">
+                    <f:ajax execute="@form" render="@none"/>
                 </h:commandButton>
-
             </h:panelGroup>
 
 

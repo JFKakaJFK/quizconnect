@@ -92,11 +92,11 @@ public class QSOverviewBean implements Serializable {
 
         questionsetToDelete = null;
 
-        filterAndUpdatePlayers();
+        filterAndUpdateSets();
     }
 
     public void handleSearch(AjaxBehaviorEvent event){
-        filterAndUpdatePlayers();
+        filterAndUpdateSets();
     }
 
     /**
@@ -104,7 +104,7 @@ public class QSOverviewBean implements Serializable {
      *
      * Any mutation of {@link this#allPlayers} or {@link this#allByManager} must call this method to update the {@link ScrollPaginator}.
      */
-    private void filterAndUpdatePlayers(){
+    private void filterAndUpdateSets(){
         paginator.updateList((onlyByManager && true ? questionSetsByManager : questionSets).stream().parallel()
                 .filter(questionSet -> questionSet.getName().toLowerCase().contains(searchPhrase.toLowerCase()))
                 .collect(Collectors.toList()));
@@ -152,7 +152,7 @@ public class QSOverviewBean implements Serializable {
 
     public void setOnlyByManager(boolean onlyByManager) {
         this.onlyByManager = onlyByManager;
-        filterAndUpdatePlayers();
+        filterAndUpdateSets();
     }
 
     public QuestionSet getQuestionsetForDetails() {
