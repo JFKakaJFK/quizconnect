@@ -599,6 +599,11 @@ const renderGameEnd = ({ game, highScore}) => {
 const renderChatMessage = ({ message, from, playerId, id, timestamp }) => {
   let ts = new Date(timestamp);
   let escapedMessage = escapeHTML(message);
+  // markdown style formatting
+  escapedMessage = escapedMessage.replace(/[\*\_]{2}([^\*\_]+)[\*\_]{2}/g, '<b>$1</b>');
+  escapedMessage = escapedMessage.replace(/[\*\_]{1}([^\*\_]+)[\*\_]{1}/g, '<i>$1</i>');
+  escapedMessage = escapedMessage.replace(/[\~]{2}([^\~]+)[\~]{2}/g, '<del>$1</del>');
+  escapedMessage = escapedMessage.replace(/[\[]{1}([^\]]+)[\]]{1}[\(]{1}([^\)\"]+)(\"(.+)\")?[\)]{1}/g, '<a href="$2" title="$4">$1</a>');
   let escapedFrom = escapeHTML(from);
   return `<div class="chat chat-message ${state.id === playerId ? 'chat-outgoing' : from === INFO ? 'chat-info' : ''}" data-id="${id}">
     <span class="chat chat-timestamp">[${ts.getHours().toString().padStart(2, '0')}:${ts.getMinutes().toString().padStart(2, '0')}:${ts.getSeconds().toString().padStart(2, '0')}]</span>
