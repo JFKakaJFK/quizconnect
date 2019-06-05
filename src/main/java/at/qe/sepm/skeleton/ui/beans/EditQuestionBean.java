@@ -108,4 +108,13 @@ public class EditQuestionBean implements Serializable {
     public boolean isEdit() {
         return edit;
     }
+
+    // for test purposes only
+    public void setQuestions(List<Question> questions) {
+        this.questions = questions;
+    }
+
+    public void setEdit(boolean edit) {
+        this.edit = edit;
+    }
 }

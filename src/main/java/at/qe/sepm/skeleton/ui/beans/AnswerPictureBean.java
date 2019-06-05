@@ -11,7 +11,7 @@ public class AnswerPictureBean {
     @Value("${storage.api.answers}")
     private String answers;
 
-    //TODO: JavaDoc for getAvatar
+    //TODO: JavaDoc for getAnswer
     public String getAnswers(String path) {
         if(path == null || !path.matches(".*/.*\\.(png|jpg)")){
             return "/" + answers + "default/default/default.png";

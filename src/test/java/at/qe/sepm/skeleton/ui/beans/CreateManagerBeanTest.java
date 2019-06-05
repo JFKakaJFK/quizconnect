@@ -16,6 +16,8 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import javax.annotation.Resource;
 
+import java.io.IOException;
+
 import static org.junit.Assert.*;
 
 
@@ -43,8 +45,9 @@ public class CreateManagerBeanTest {
     public void createNewManager() {
     }
 
-    @Test
+    @Test (expected = NullPointerException.class)
     public void redirectRegistration() {
+        createManagerBean.redirectRegistration();
     }
 
     @Test
