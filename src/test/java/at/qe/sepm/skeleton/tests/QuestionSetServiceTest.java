@@ -249,4 +249,9 @@ public class QuestionSetServiceTest {
         Assert.assertTrue("Right QuestionSet was loaded from DB", checkSet.equals(questionSetService.getQuestionSetOfQuestion(testQuestion)));
     }
 
+    @Test
+    @WithMockUser(username = "user1", authorities = { "MANAGER" })
+    public void testGetAllQuestionSets(){
+        Assert.assertEquals(questionSetService.getAllQuestionSets().size(), 3);
+    }
 }
