@@ -136,7 +136,7 @@ public class AllPlayersBean implements Serializable {
      *
      * @param p {@link Player} to add
      */
-    public void addPlayer(Player p){
+    public void addPlayer(Player p){ // TODO prevent duplicates if runtime can be O(1), not needed otherwise
         if(allPlayers == null){
             this.allPlayers = new ArrayList<>(playerService.getAllPlayers());
         } else {

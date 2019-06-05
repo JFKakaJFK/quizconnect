@@ -1,9 +1,10 @@
 .btn {
     white-space: nowrap;
     min-width: 120px;
-    padding: .5rem 1.5rem;
+    padding: 0 1.5rem;
     border-radius: 10rem;
     box-sizing: border-box;
+    height: 42px;
 }
 /*
 TODO
