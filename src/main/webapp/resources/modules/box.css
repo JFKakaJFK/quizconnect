@@ -25,4 +25,5 @@
 fieldset.box legend {
     width: auto;
     padding: 0 var(--default-padding);
+    font-size: 1rem;
 }
