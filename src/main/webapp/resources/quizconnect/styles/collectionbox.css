@@ -3,12 +3,12 @@
 }
 
 .collection-box {
-    grid-template-columns: auto 1fr;
+    grid-template-columns: auto 1fr auto;
     grid-template-rows: auto 1fr;
     grid-column-gap: 8px;
     grid-template-areas:
-            "icon name"
-            "icon sub";
+            "icon name actions"
+            "icon sub sub";
 }
 
 .collection-box-icon {
@@ -43,6 +43,10 @@
     }
 }
 
+.collection-box .box-actions {
+    grid-area: actions;
+    position: initial;
+}
 
 .collection-box-name,
 .collection-box-name h3 {

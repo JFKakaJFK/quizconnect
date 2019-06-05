@@ -57,7 +57,13 @@ public class ProfileBean implements Serializable {
         List<String> userNames = this.player.getPlayedWithLast();
         this.recentlyPlayedWith = userNames != null && userNames.size() > 0 ? userNames.stream()
                 .map(u -> playerService.getPlayerByUsername(u))
+                .filter(p -> p != null)
                 .collect(Collectors.toList()) : new ArrayList<>();
+        // update the recently played with size, if one of the players was deleted
+        if(userNames != null && userNames.size() != recentlyPlayedWith.size()){
+            this.player._setPlayedWithLast(recentlyPlayedWith);
+            this.player = playerService.savePlayer(this.player);
+        }
     }
 
     public List<Player> getRecentlyPlayedWith() {

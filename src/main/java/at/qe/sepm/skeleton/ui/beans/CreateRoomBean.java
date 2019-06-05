@@ -97,7 +97,7 @@ public class CreateRoomBean implements Serializable {
     public void createRoomAndRedirect(){
         if(inputIsValid()){
             try {
-                int pin = quizRoomManager.createRoom(playerLimit, difficulty, mode, selectedQuestionSets, roomAction);
+                int pin = quizRoomManager.createRoom(playerLimit, difficulty, mode, mode.equals(GameMode.mathgod) ? null : selectedQuestionSets, roomAction);
                 FacesContext.getCurrentInstance().getExternalContext().redirect("/quizroom/index.html?pin=" + pin);
             } catch (IllegalArgumentException e){
                 log.error("Failed to create QuizRoom: " + e.getMessage());

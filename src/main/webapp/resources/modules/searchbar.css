@@ -14,3 +14,16 @@
 .searchbar .searchbar-action {
     margin: 0 0 0 1rem;
 }
+
+@media only screen and (max-width: 560px) {
+
+    .searchbar .searchbar-action,
+    .searchbar .searchbar-search {
+        width: 100%;
+        margin: 0;
+    }
+
+    .searchbar :not(:first-child) {
+        margin-top: 1rem;
+    }
+}
