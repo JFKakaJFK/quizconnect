@@ -249,9 +249,8 @@ public class QuestionSetBean implements Serializable {
      */
     public void saveEditedQuestionset() {
         questionSetSaved = true;
-        logger.info("questionSetSaved: " + questionSetSaved);
-        logger.info("saveEditedQuestionset called");
         questionSetService.saveQuestionSet(questionSet);
+        logger.info("Edited QuestionSet with ID: " + questionSet.getId());
         initQuestion();
     }
 
@@ -308,9 +307,6 @@ public class QuestionSetBean implements Serializable {
     public void setEditQuestionset(int id) {
         bEditSet = true;
         questionSetSaved = false;
-
-        logger.info("bEditSet: " + bEditSet);
-        logger.info("questionSetSaved: " + questionSetSaved);
         this.questionSet = questionSetService.getQuestionSetById(id);
         this.questions = questionSet.getQuestions();
         this.questionsDisplay = new ArrayList<>(questions);
@@ -396,5 +392,13 @@ public class QuestionSetBean implements Serializable {
 
     public boolean isbEditSet() {
         return bEditSet;
+    }
+
+    public boolean isbEditQuestion() {
+        return bEditQuestion;
+    }
+
+    public void setbEditQuestion(boolean bEditQuestion) {
+        this.bEditQuestion = bEditQuestion;
     }
 }

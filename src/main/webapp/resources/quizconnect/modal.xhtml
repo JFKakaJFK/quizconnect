@@ -56,6 +56,7 @@
 
     <cc:attribute name="footerId" default="modal-footer"/>
     <cc:attribute name="bodyId" default="modal-body"/>
+    <cc:attribute name="headerId" default="modal-header"/>
 
     <cc:attribute name="abort" default="Close"/>
     <cc:attribute name="showAbort" default="true" type="boolean"/>
@@ -73,7 +74,7 @@
          aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-#{cc.attrs.modaltype}" role="document">
             <div class="modal-content">
-                <div class="modal-header">
+                <div jsf:id="#{cc.attrs.headerId}" class="modal-header">
                     <h5 class="modal-title">#{cc.attrs.title}</h5>
 
                     <c:if test="#{cc.attrs.closable}">

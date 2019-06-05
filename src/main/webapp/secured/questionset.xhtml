@@ -70,7 +70,9 @@
                 <h:commandButton type="button" styleClass="btn btn-primary" id="addQuestion"
                                  rendered="#{(questionSetBean.bEditSet) or (not questionSetBean.bEditSet and questionSetBean.questionSetSaved)}" value="Add question"
                                  pt:data-toggle="modal" pt:data-target="#questionModal">
-                    <f:ajax execute="@this"></f:ajax>
+                    <f:actionListener binding="#{questionSetBean.initQuestion()}"></f:actionListener>
+                    <f:actionListener binding="#{questionSetBean.setbEditQuestion(false)}"/>
+                    <f:ajax execute="@this" render=":questionForForm:questionModal:modal-header :questionForForm:questionModal:modal-body" ></f:ajax>
                 </h:commandButton>
             </h:panelGroup>
 
@@ -83,7 +85,7 @@
 
         <h:form id="questionForForm">
             <qc:modal target="questionModal" id="questionModal" closable="false" modaltype="info"
-                      title="New question" abort="Abort" confirm="Add"
+                      title="#{questionSetBean.bEditQuestion?'Edit question':'New question'}" abort="Abort" confirm="Add"
                       confirmAction="#{questionSetBean.saveNewQuestion}"
                       showAbort="false"
                       update=":deleteQuestionForm:questionCollection :questionSetForm:addQuestionSet" ajax="false">
@@ -279,7 +281,7 @@
                         <h:commandLink styleClass="box-action" action="#{questionSetBean.setEditQuestion(question)}" pt:data-toggle="modal" pt:data-target="#questionModal"
                                        rendered="#{true}">
                             <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M6.3 12.3l10-10a1 1 0 0 1 1.4 0l4 4a1 1 0 0 1 0 1.4l-10 10a1 1 0 0 1-.7.3H7a1 1 0 0 1-1-1v-4a1 1 0 0 1 .3-.7zM8 16h2.59l9-9L17 4.41l-9 9V16zm10-2a1 1 0 0 1 2 0v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6c0-1.1.9-2 2-2h6a1 1 0 0 1 0 2H4v14h14v-6z"/></svg>
-                            <f:ajax execute="@this" render=":questionForForm:questionModal:modal-body"/>
+                            <f:ajax execute="@this" render=":questionForForm:questionModal:modal-header :questionForForm:questionModal:modal-body"/>
                         </h:commandLink>
 
                         <h:commandLink styleClass="box-action" pt:data-toggle="modal" pt:data-target="#deleteQuestion"
