@@ -418,7 +418,7 @@ public class QuizRoom implements IPlayerAction
 			player._setPlayedWithLast(players);
 			player.addGameScore(endTime, score);
 			
-			if (gameMode == GameMode.mathgod)
+			if (gameMode != GameMode.mathgod)
 				player.addPlayToQSets(questionSets);
 			
 			if (!correctlyAnsweredQuestions.containsKey(player))

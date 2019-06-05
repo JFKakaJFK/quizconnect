@@ -97,8 +97,14 @@
                             <qc:stat value="#{profileBean.player.totalAnswers - profileBean.player.correctAnswersCount}" label="wrong answers" />
                         </div>
 
-                        <div id="line" class="box"></div>
-                        <div id="pie" class="box"></div>
+                        <fieldset class="box">
+                            <legend>Last Scores</legend>
+                            <div id="line" ></div>
+                        </fieldset>
+                        <fieldset class="box">
+                            <legend>Played QuestionSets</legend>
+                            <div id="pie"></div>
+                        </fieldset>
                     </ui:fragment>
 
                 </h:panelGroup>

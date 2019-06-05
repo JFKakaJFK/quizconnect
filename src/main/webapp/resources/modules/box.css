@@ -21,3 +21,8 @@
 .box-action:active {
     text-decoration: none;
 }
+
+fieldset.box legend {
+    width: auto;
+    padding: 0 var(--default-padding);
+}
