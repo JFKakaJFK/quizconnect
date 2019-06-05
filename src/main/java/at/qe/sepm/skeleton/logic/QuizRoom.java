@@ -416,8 +416,10 @@ public class QuizRoom implements IPlayerAction
 			player.addToTotalScore(score);
 			player.addPlayTime(gameTime);
 			player._setPlayedWithLast(players);
-			player.addPlayToQSets(questionSets);
 			player.addGameScore(endTime, score);
+			
+			if (gameMode == GameMode.mathgod)
+				player.addPlayToQSets(questionSets);
 			
 			if (!correctlyAnsweredQuestions.containsKey(player))
 				LOGGER.error("### ERROR ### Missing correct answers entry for Player (id " + player.getId() + ")!");
@@ -511,6 +513,9 @@ public class QuizRoom implements IPlayerAction
 	@Override
 	public synchronized List<String> getRoomQuestionSets()
 	{
+		if (gameMode == GameMode.mathgod)
+			return null;
+		
 		List<String> QStrings = new ArrayList<>(questionSets.size());
 		for (QuestionSet questionSet : questionSets)
 		{
