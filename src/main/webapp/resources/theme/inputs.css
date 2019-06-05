@@ -1,0 +1,59 @@
+/* TODO + selected, required, focus */
+.form-control {
+    background-color:  var(--input-background);
+    color: var(--input-color);
+}
+
+.form-control:focus {}
+
+input.error,
+input:invalid {
+    border-color: var(--error);
+}
+
+input.form-control,
+input.form-control,
+input:-webkit-autofill,
+input:-webkit-autofill,
+input:-internal-autofill-selected,
+input:-webkit-autofill {
+    border-radius: 5rem;
+    background: var(--input-background);
+    box-shadow: 0 0 0 1000px var(--input-background) inset;
+    transition: all .25s ease-in-out, background-color 5000s ease-in-out 0s;
+    border: 2px solid var(--input-border-color);
+    -webkit-text-fill-color: var(--input-color);
+    color: var(--input-color);
+}
+
+input:focus.form-control,
+input:focus.form-control,
+input:focus:-webkit-autofill,
+input:focus:-webkit-autofill,
+input:focus:-internal-autofill-selected,
+input:focus:-webkit-autofill {
+    background: var(--input-focus-background);
+    box-shadow: 0 0 0 1000px var(--input-focus-background) inset;
+    -webkit-text-fill-color: var(--input-focus-color);
+    color: var(--input-focus-color);
+    border: 2px solid var(--input-focus-border-color);
+    transition: all .25s ease-in-out;
+}
+
+select.form-control,
+select.form-control:focus {
+    background: var(--input-background);
+    color: var(--input-color);
+    border: 0;
+}
+
+select option {
+    background: var(--input-background);
+    color: var(--input-color);
+    border: 0;
+    outline: 0;
+}
+
+select option:checked {
+    var(--input-focus-background)
+}

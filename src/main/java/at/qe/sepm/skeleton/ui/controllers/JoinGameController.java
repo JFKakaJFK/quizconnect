@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.annotation.RequestScope;
 
+/**
+ * A controller for joining a QuizRoom
+ */
 @Controller
 @RequestScope
 @RequestMapping
@@ -39,11 +42,18 @@ public class JoinGameController {
         this.qrWebSocketConnection = qrWebSocketConnection;
     }
 
-
+    /**
+     * Handles requests to the join endpoint and tries to join the QuizRoom if it exists.
+     *
+     * @param pin
+     *          The pin of the QuizRoom.
+     * @return
+     *          Error message or Player id of the Player who joined the QuizRoom.
+     */
     @RequestMapping(value = "/qr/join/{pin}", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity joinRoom(@PathVariable String pin){
-        if(!sessionInfoBean.isLoggedIn() /* || !sessionInfoBean.hasRole("PLAYER") */ ){
+        if(!sessionInfoBean.isLoggedIn()){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
         if(!sessionInfoBean.hasRole("PLAYER")){
@@ -54,9 +64,9 @@ public class JoinGameController {
         if(quizRoomManager.doesRoomExist(PIN)){ // TODO since the pin is checked for each keystroke if two pins are nearly identical
             // (e.g. 10 & 100, then a player wanting to join room 100 inevitably tries to join room 10)
             if(qrWebSocketConnection.isPlayerInGame(PIN, p)){
-                return ResponseEntity.ok("{\"playerId\":" + p.getId() + "}");
+                return ResponseEntity.ok("{\"playerId\":" + p.getId() + ",\"highScore\":" + p.getHighScore() + "}");
             }
-            IPlayerAction qr = null;
+            IPlayerAction qr;
             try{
                 qr = quizRoomManager.joinRoom(PIN, p);
             } catch (IllegalArgumentException e){
@@ -64,7 +74,7 @@ public class JoinGameController {
             }
             qrWebSocketConnection.addGame(PIN, qr, p);
             logger.debug("Player " + p.getUser().getUsername() + " joined room " + pin);
-            return ResponseEntity.ok("{\"playerId\":" + p.getId() + "}");
+            return ResponseEntity.ok("{\"playerId\":" + p.getId() + ",\"highScore\":" + p.getHighScore() + "}");
         }
         return ResponseEntity.ok("{\"error\":\"room does not exist\"}");
     }

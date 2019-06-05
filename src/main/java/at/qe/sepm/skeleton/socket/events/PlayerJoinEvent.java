@@ -1,9 +1,11 @@
 package at.qe.sepm.skeleton.socket.events;
 
 import at.qe.sepm.skeleton.model.Player;
-import com.fasterxml.jackson.annotation.JsonRootName;
 
-public class PlayerJoinEvent extends ServerEvent {
+/**
+ * Class for JSON representation of the 'onPlayerJoin' QuizRoom event.
+ */
+public class PlayerJoinEvent extends SocketEvent {
 
     private PlayerJSON player;
 

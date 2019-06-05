@@ -1,0 +1,28 @@
+.btn {
+    white-space: nowrap;
+    min-width: 120px;
+    padding: .5rem 1.5rem;
+    border-radius: 10rem;
+    box-sizing: border-box;
+    height: 42px;
+}
+/*
+TODO
+- button styles
+- hover + active states
+*/
+.btn-primary {
+    background: var(--grad-m);
+    border: 0;
+}
+
+.btn-secondary {
+    color: var(--gray-5);
+    background: transparent;
+    border: solid 2px var(--col-1-l);
+}
+
+.btn-danger {
+    background: var(--danger);
+    color: var(--gray-5);
+}

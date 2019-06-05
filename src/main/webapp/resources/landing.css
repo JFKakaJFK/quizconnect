@@ -1,0 +1,10 @@
+@import "./main.css";
+
+@import "pages/landing/particles.css";
+@import "pages/landing/hero.css";
+
+@import "pages/landing/section-lg.css";
+@import "pages/landing/section-sm.css";
+@import "pages/landing/section-last.css";
+@import "pages/landing/testimonials.css";
+@import "pages/landing/landing-footer.css";

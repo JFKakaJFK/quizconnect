@@ -15,62 +15,62 @@ public interface IPlayerAction
 {
 	
 	/**
-	 * Returns the pin of the QuizRoom.
+	 * @return The pin of the QuizRoom.
 	 */
 	public int getRoomPin();
 	
 	/**
-	 * Returns a list of all {@link Player}s in the QuizRoom. Creates a copy each time. Use getRoomPlayerCount if you only need the number of players! Synchronized across Players.
+	 * @return A list of all {@link Player}s in the QuizRoom. Creates a copy each time. Use getRoomPlayerCount if you only need the number of players! Synchronized across Players.
 	 */
 	public List<Player> getRoomPlayers();
 	
 	/**
-	 * Returns the number of {@link Player}s in the QuizRoom.
+	 * @return The number of {@link Player}s in the QuizRoom.
 	 */
 	public int getRoomPlayerCount();
 	
 	/**
-	 * Returns the Difficulty of the QuizRoom.
+	 * @return The Difficulty of the QuizRoom.
 	 */
 	public RoomDifficulty getRoomDifficulty();
 
 	/**
-	 * Returns the GameMode of the QuizRoom.
+	 * @return The GameMode of the QuizRoom.
 	 */
 	public GameMode getRoomMode();
 
 	/**
-	 * Returns a list of names of all {@link QuestionSet}s used in the QuizRoom. Creates a copy each time. Synchronized across Players.
+	 * @return A list of names of all {@link QuestionSet}s used in the QuizRoom. Creates a copy each time. Synchronized across Players.
 	 */
 	public List<String> getRoomQuestionSets();
 	
 	/**
-	 * Returns the current score of the QuizRoom. Avoid using, use the IRoomAction.onScoreChange() events instead to update score!
+	 * @return The current score of the QuizRoom. Avoid using, use the IRoomAction.onScoreChange() events instead to update score!
 	 */
 	public int getRoomScore();
 	
 	/**
-	 * Returns a list of all ready {@link Players} in the QuizRoom. Only works during 'waiting for players' stage. Creates a copy each time. Synchronized across Players.
+	 * @return A list of all ready {@link Players} in the QuizRoom. Only works during 'waiting for players' stage. Creates a copy each time. Synchronized across Players.
 	 */
 	public List<Player> getRoomReadyPlayers();
 	
 	/**
-	 * Returns the expected time between alive pings in ms.
+	 * @return The expected time between alive pings in ms.
 	 */
 	public long getAlivePingTimeStep();
 	
 	/**
-	 * Returns the number of Jokers remaining in the QR.
+	 * @return The number of Jokers remaining in the QR.
 	 */
 	public int getNumberOfJokers();
 	
 	/**
-	 * Returns true if the {@link QuizRoom} is in 'waiting for players' mode, false if game is currently ongoing.
+	 * @return True if the {@link QuizRoom} is in 'waiting for players' mode, false if game is currently ongoing.
 	 */
 	public boolean isRoomInWaitingMode();
 
 	/*
-	 * ### ALL FUNCTIONS BENEATH THIS POINT MUST PROVIDE A REFERENCE TO THE PLAYER WHO MAKES THE CALL! NECCESSARY TO DIFFERENTIATE PLAYERS IN THE QUIZROOM. ###
+	 * ### ALL FUNCTIONS BENEATH THIS POINT MUST PROVIDE A REFERENCE TO THE PLAYER WHO MAKES THE CALL! NECESSARY TO DIFFERENTIATE PLAYERS IN THE QUIZROOM. ###
 	 */
 	
 	/**

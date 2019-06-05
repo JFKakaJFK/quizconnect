@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://java.sun.com/jsf/composite"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xml:lang="en"
+      lang="en">
+    <cc:interface>
+
+        <!--=============================================
+
+        The collection box is a simple component displaying
+        one icon, some text and some options
+        ==============================================-->
+        <cc:attribute name="name" required="true" />
+        <cc:attribute name="sub" required="false" default=""/>
+        <cc:attribute name="icon" required="true" />
+        <cc:attribute name="smallIcon" default="false" required="false" />
+        <cc:attribute name="styleClass" required="false" default="" />
+
+    </cc:interface>
+
+    <cc:implementation>
+        <div id="#{cc.clientId}" class="box collection-box #{cc.attrs.styleClass}">
+
+            <div class="collection-box-icon #{cc.attrs.smallIcon ? 'collection-box-icon-small' : ''}">
+                <h:graphicImage value="#{cc.attrs.icon}" alt="icon" />
+            </div>
+
+            <div class="box-actions">
+                <cc:insertChildren/>
+            </div>
+
+            <span class="collection-box-name">#{cc.attrs.name}</span>
+
+            <span class="collection-box-sub">#{cc.attrs.sub}</span>
+
+        </div>
+    </cc:implementation>
+</html>

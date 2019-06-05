@@ -1,11 +1,15 @@
 package at.qe.sepm.skeleton.socket.events;
 
+/**
+ * The Class responsible for unmarshalling incoming JSON to a java class.
+ */
 public class ClientEvent {
 
     private String event;
     private int playerId;
     private int questionId;
     private int answerId;
+    private String message;
 
 
     public ClientEvent(){}
@@ -40,5 +44,13 @@ public class ClientEvent {
 
     public void setAnswerId(int answerId) {
         this.answerId = answerId;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

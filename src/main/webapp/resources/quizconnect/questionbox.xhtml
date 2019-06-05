@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://java.sun.com/jsf/composite"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:qc="http://java.sun.com/jsf/composite/quizconnect"
+      xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+      xml:lang="en"
+      lang="en">
+    <cc:interface>
+
+        <!--=============================================
+
+        The questionbox component displays a box wit a little
+        information about the question.
+
+        - question the question of the box
+        - detail the level of detail
+
+        ==============================================-->
+        <cc:attribute name="question" type="at.qe.sepm.skeleton.model.Question" required="true" />
+        <cc:attribute name="detail" required="false" default="false" type="boolean"/>
+
+    </cc:interface>
+
+    <cc:implementation>
+        <c:if test="#{cc.attrs.detail}">
+
+        </c:if>
+        <c:if test="#{!cc.attrs.detail}">
+            <qc:collectionbox name="#{cc.attrs.question.questionString}" sub="#{cc.attrs.question.type == 'picture' ? '' : cc.attrs.question.rightAnswerString}" styleClass="question-box" smallIcon="true"
+                              icon="#{cc.attrs.question.type == 'picture' ? '/resources/quizconnect/styles/picture.svg' : '/resources/quizconnect/styles/text.svg'}" >
+                <cc:insertChildren/>
+            </qc:collectionbox>
+        </c:if>
+    </cc:implementation>
+</html>

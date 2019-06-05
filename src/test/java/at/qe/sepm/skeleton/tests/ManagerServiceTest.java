@@ -1,9 +1,5 @@
 package at.qe.sepm.skeleton.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
 import java.util.Collection;
 import java.util.List;
 
@@ -21,6 +17,8 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import at.qe.sepm.skeleton.services.ManagerService;
 import at.qe.sepm.skeleton.services.PlayerService;
 import at.qe.sepm.skeleton.services.UserService;
+
+import static org.junit.Assert.*;
 
 /**
  * Tests for the ManagerService.
@@ -137,6 +135,7 @@ public class ManagerServiceTest
 	public void testCreateManager()
 	{
 		Manager manager = new Manager();
+		assertTrue("New Manager is not marked as new.", manager.isNew());
 		manager.setEmail("newEmail");
 		manager.setInstitution("newInstitution");
 		

@@ -7,8 +7,9 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Component;
 
-@Component
-@Scope("prototype")
+/**
+ * Class for calling a function periodically while keeping track of the delta time.
+ */
 public class Timer
 {
 	private long startTime;
@@ -17,31 +18,30 @@ public class Timer
 	
 	/**
 	 * Creates a new Timer to call action every timeStep ms. Uses scheduler to start the thread.
-	 * 
+	 *
 	 * @param scheduler
+	 *         Scheduling service to use for the thread.
 	 * @param action
+	 *         Action to be executed.
 	 * @param timeStep
+	 *         Time between executions.
 	 */
 	public Timer(ThreadPoolTaskScheduler scheduler, ITimedAction action, long timeStep)
 	{
 		startTime = new Date().getTime();
 		lastTime = startTime;
 		
-		// LOGGER.debug("Timer thread start");
-		sFuture = scheduler.scheduleAtFixedRate(
-				() -> {
-					long now = new Date().getTime();
-					long delta = now - lastTime;
-					lastTime = now;
-					
-					action.onTimeUpdate(delta);
-				}, timeStep);
+		sFuture = scheduler.scheduleAtFixedRate(() -> {
+				long now = new Date().getTime();
+				long delta = now - lastTime;
+				lastTime = now;
+				
+				action.onTimeUpdate(delta);
+			}, timeStep);
 	}
 	
 	/**
-	 * Returns the total elapsed time.
-	 * 
-	 * @return
+	 * @return The total elapsed time.
 	 */
 	public long getElapsedTime()
 	{

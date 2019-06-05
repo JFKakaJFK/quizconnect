@@ -14,11 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This Controller handles
+ * This Controller handles requests to a {@link at.qe.sepm.skeleton.model.Player}'s stats.
  */
 @Controller
 @Scope("session")
@@ -40,6 +39,13 @@ public class PlayerStatsController {
         this.playerService = playerService;
     }
 
+    /**
+     * This endpoint returns the {@link QuestionSet} play counts and the scores of a
+     * {@link at.qe.sepm.skeleton.model.Player}'s last games.
+     *
+     * @return
+     *      Player statistics.
+     */
     @RequestMapping(value = "/players/stats", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity getStats(){
@@ -47,14 +53,13 @@ public class PlayerStatsController {
             return ResponseEntity.badRequest().body(null);
         }
 
-        // transform the map of ids into name and value arrays (luckily JSON preserves order)
         Map<Integer, Integer> qSetPlayCounts = profileBean.getPlayer().getqSetPlayCounts();
         String[] playedSets = new String[qSetPlayCounts.size()];
         int[] setPlayCounts = new int[qSetPlayCounts.size()];
         int i = 0; // keeping a second counter probably is better than rewriting the keySet to an Array
         for(int key: qSetPlayCounts.keySet()){
             QuestionSet qs = questionSetService.getQuestionSetById(key);
-            if(qs == null){
+            if(qs == null){ // remove a set from the played ones if it was deleted
                 profileBean.getPlayer().removeQSetFromPlayed(key);
                 playerService.savePlayer(profileBean.getPlayer());
             } else {

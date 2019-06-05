@@ -1,0 +1,151 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:qc="http://java.sun.com/jsf/composite/quizconnect"
+                xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:cc="http://java.sun.com/jsf/composite"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="/WEB-INF/templates/main.xhtml">
+
+    <ui:define name="title">Question sets</ui:define>
+
+    <ui:define name="site-specific-css">
+        <script type="text/javascript" src="../resources/quizconnect/js/QCUpload.js"></script>
+    </ui:define>
+
+    <ui:define name="content">
+
+        <h:form id="formId" enctype="multipart/formdata">
+            <h:panelGroup layout="block" styleClass="container" rendered="#{QSOverviewBean.questionSets == null}">
+                <h1 class="display-4">No QuestionSets found</h1>
+                <h:commandButton styleClass="btn btn-primary" action="all?faces-redirect=true" value="All Players"/>
+            </h:panelGroup>
+
+            <qc:modal id="modal"
+                      target="uploadCSV"
+                      title="Upload .csv file"
+                      closeAction="#{CSVImportBean.abort}"
+                      abortAction="#{CSVImportBean.abort}"
+                      confirmAction="#{CSVImportBean.processCSV}"
+                      update="@form"
+                      bodyId="body"
+                      footerId="footer">
+
+                <qc:upload target="#{CSVImportBean.file}"
+                           listener="#{CSVImportBean.handleFileUpload}"
+                           accept=".csv"
+                           update=":form:modal:body :form:modal:footer"
+                           text="Upload CSV"
+                           />
+
+                <div jsf:id="preview" class="preview">
+                    <h:outputText p:id="preview"
+                                  value="TODO"
+                                  alt="File"/>
+                </div>
+
+                <div class="form-group">
+                    <label for="nameCSV">Name</label>
+                    <h:inputText styleClass="form-control" id="nameCSV" value="#{CSVImportBean.nameCSV}"
+                                 p:required="true" p:pattern="[\s\S]*\S[\s\S]*"></h:inputText>
+                </div>
+
+                <div class="form-group">
+                    <label for="descriptionCSV">Description</label>
+                    <h:inputText styleClass="form-control" id="descriptionCSV" value="#{CSVImportBean.descriptionCSV}"
+                                 p:required="true" p:pattern="[\s\S]*\S[\s\S]*"></h:inputText>
+                </div>
+            </qc:modal>
+        </h:form>
+
+
+        <h:form id="formOverview-QSets">
+
+            <h:panelGroup layout="block" styleClass="searchbar" id="searchbar">
+
+                <h:inputText id="searchPrase" p:autocomplete="nein-danke-bitte-nicht" p:placeholder="Search" value="#{QSOverviewBean.searchPhrase}" styleClass="form-control searchbar-search">
+                    <f:ajax listener="#{QSOverviewBean.handleSearch}" event="keyup" execute="@this" render="questionset-collection"/>
+                </h:inputText>
+
+
+
+                <ui:fragment>
+                    <h:commandButton rendered="#{QSOverviewBean.onlyByManager}" value="All sets" styleClass="btn btn-secondary searchbar-action">
+                        <f:ajax listener="#{QSOverviewBean.setOnlyByManager(false)}" render="searchbar questionset-collection"/>
+                    </h:commandButton>
+                    <h:commandButton rendered="#{!QSOverviewBean.onlyByManager}" value="My sets" styleClass="btn btn-secondary searchbar-action">
+                        <f:ajax listener="#{QSOverviewBean.setOnlyByManager(true)}" render="searchbar questionset-collection"/>
+                    </h:commandButton>
+                </ui:fragment>
+
+                <h:commandButton styleClass="btn btn-secondary searchbar-action" id="CreateNew" action="/secured/questionset.xhtml?faces-redirect=true" actionListener="#{questionSetBean.setbEditSet(false)}" value="Create new"/>
+
+                <h:commandButton styleClass="btn btn-secondary searchbar-action" p:data-toggle="modal" p:data-target="#uploadCSV" p:data-backdrop="static" value="Upload CSV"
+                               onclick="#{CSVImportBean.setManager(sessionInfoBean.currentUser.manager)}">
+                    <f:ajax execute="@form" render="@none"/>
+                </h:commandButton>
+            </h:panelGroup>
+
+
+            <h:panelGroup styleClass="collection" id="questionset-collection" layout="block" rendered="#{QSOverviewBean.questionSets != null}">
+                    <ui:repeat value="#{QSOverviewBean.paginator.parts}" var="part">
+                        <ui:repeat value="#{part.items}" var="set">
+                            <qc:questionsetbox questionset="#{set}">
+
+                                <h:commandLink styleClass="box-action" p:data-toggle="modal" p:data-target="#infoQuestionset">
+                                    <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-9a1 1 0 0 1 1 1v4a1 1 0 0 1-2 0v-4a1 1 0 0 1 1-1zm0-4a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+                                    <f:ajax execute="@this" render=":formOverview-QSets:infoQuestionset:modal-body"/>
+                                    <f:setPropertyActionListener value="#{set}" target="#{QSOverviewBean.questionsetForDetails}"/>
+                                </h:commandLink>
+
+                                <h:commandLink styleClass="box-action" action="/secured/questionset.xhtml?faces-redirect=true" actionListener="#{questionSetBean.setEditQuestionset(set.id)}" rendered="#{QSOverviewBean.isByManager(set)}">
+                                    <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M6.3 12.3l10-10a1 1 0 0 1 1.4 0l4 4a1 1 0 0 1 0 1.4l-10 10a1 1 0 0 1-.7.3H7a1 1 0 0 1-1-1v-4a1 1 0 0 1 .3-.7zM8 16h2.59l9-9L17 4.41l-9 9V16zm10-2a1 1 0 0 1 2 0v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6c0-1.1.9-2 2-2h6a1 1 0 0 1 0 2H4v14h14v-6z"/></svg>
+                                    <f:ajax execute="@this" render="@none"/>
+                                </h:commandLink>
+
+                                <h:commandLink styleClass="box-action" p:data-toggle="modal" p:data-target="#deleteQuestionset" rendered="#{QSOverviewBean.isByManager(set)}">
+                                    <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M8 6V4c0-1.1.9-2 2-2h4a2 2 0 0 1 2 2v2h5a1 1 0 0 1 0 2h-1v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8H3a1 1 0 1 1 0-2h5zM6 8v12h12V8H6zm8-2V4h-4v2h4zm-4 4a1 1 0 0 1 1 1v6a1 1 0 0 1-2 0v-6a1 1 0 0 1 1-1zm4 0a1 1 0 0 1 1 1v6a1 1 0 0 1-2 0v-6a1 1 0 0 1 1-1z"/></svg>
+                                    <f:ajax execute="@this" render="@none"/>
+                                    <f:setPropertyActionListener value="#{set}" target="#{QSOverviewBean.questionsetToDelete}"/>
+                                </h:commandLink>
+                            </qc:questionsetbox>
+                        </ui:repeat>
+                    </ui:repeat>
+
+            </h:panelGroup>
+
+            <qc:modal id="deleteQuestionset"
+                      target="deleteQuestionset"
+                      title="Delete Questionset"
+                      confirm="Delete Questionset"
+                      abort="Cancel"
+                      confirmAction="#{QSOverviewBean.deleteQuestionSet}"
+                      update=":formOverview-QSets:questionset-collection">
+                Are you sure? This cannot be undone.
+            </qc:modal>
+
+            <qc:modal id="infoQuestionset" target="infoQuestionset" title="Details" abort="Close" showConfirm="false">
+                <h:panelGroup layout="block" id="informations" rendered="#{not empty QSOverviewBean.questionsetForDetails}">
+                    <h:outputLabel for="infoName" value="Name:" rendered="#{not empty QSOverviewBean.questionsetForDetails.name}"/>
+                    <h:outputText id="infoName" rendered="#{not empty QSOverviewBean.questionsetForDetails.name}" value="#{QSOverviewBean.questionsetForDetails.name}"/><br></br>
+
+                    <h:outputLabel for="infoDescription" value="Description:" rendered="#{not empty QSOverviewBean.questionsetForDetails.name}"/>
+                    <h:outputText id="infoDescription" rendered="#{not empty QSOverviewBean.questionsetForDetails.name}" value="#{QSOverviewBean.questionsetForDetails.name}"/><br></br>
+
+                    <h:outputLabel for="infoQuestions" value="Number of questions in set:" rendered="#{not empty QSOverviewBean.questionsetForDetails.questions}"/>
+                    <h:outputText id="infoQuestions" rendered="#{not empty QSOverviewBean.questionsetForDetails.questions}" value="#{QSOverviewBean.questionsetForDetails.questions.size()} questions"/>
+
+                </h:panelGroup>
+
+
+            </qc:modal>
+
+        </h:form>
+
+    </ui:define>
+</ui:composition>

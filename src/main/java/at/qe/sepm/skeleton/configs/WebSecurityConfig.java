@@ -43,8 +43,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 //Permit access only for some roles
                 .antMatchers("/secured/**")
 				.hasAnyAuthority("MANAGER")
-                .antMatchers("/player/**")
-                .hasAnyAuthority("PLAYER")
                 .antMatchers("/players/**")
                 .hasAnyAuthority("PLAYER", "MANAGER")
                 .antMatchers("/login/**")

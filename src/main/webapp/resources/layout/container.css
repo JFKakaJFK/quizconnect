@@ -1,0 +1,7 @@
+.container {
+    padding: 0 var(--default-padding);
+}
+
+.container > :first-child {
+    padding-top: var(--default-padding);
+}

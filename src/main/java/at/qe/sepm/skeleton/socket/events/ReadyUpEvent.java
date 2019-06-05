@@ -1,9 +1,11 @@
 package at.qe.sepm.skeleton.socket.events;
 
 import at.qe.sepm.skeleton.model.Player;
-import com.fasterxml.jackson.annotation.JsonRootName;
 
-public class ReadyUpEvent extends ServerEvent {
+/**
+ * Class for JSON representation of the 'onReadyUp' QuizRoom event.
+ */
+public class ReadyUpEvent extends SocketEvent {
 
     private int playerId;
     private int totalReady;
