@@ -28,7 +28,7 @@
                         <label for="setName">Set name</label>
                         <h:inputText type="text" styleClass="form-control" value="#{questionSetBean.questionSet.name}"
                                      name="setName" id="setName" pt:placeholder="Music theory" pt:pattern="[\s\S]*\S[\s\S]*" pt:autocomplete="off"
-                                     pt:required="true">
+                                     pt:required="true" pt:maxlength="100">
                         <f:ajax event="keyup" execute="@this" render="addQuestionSet addQuestion editQuestionset"/>
                         </h:inputText>
                     </div>
@@ -52,7 +52,7 @@
                 <h:inputTextarea type="text" styleClass="form-control"
                                  value="#{questionSetBean.questionSet.description}"
                                  name="setDesc" id="setDesc" pt:placeholder="Easy questions based on semester 1"
-                                 pt:autocomplete="off"/>
+                                 pt:autocomplete="off" pt:maxlength="300"/>
             </div>
 
             <h:panelGroup id="button-actions" layout="block" styleClass="mb-5">
@@ -125,7 +125,7 @@
                                  value="#{questionSetBean.question.rightAnswerString}"
                                  rendered="#{questionSetBean.question.type == 'text'}"
                                  name="corrAnswer" id="corrAnswer" pt:autocomplete="off" pt:required="true"
-                                 pt:pattern="[\s\S]*\S[\s\S]*"/>
+                                 pt:pattern="[\s\S]*\S[\s\S]*" pt:maxlength="200"/>
 
                     <qc:upload target="#{questionSetBean.file}"
                                listenerString="#{questionSetBean.handleFileUpload('rightAnswerString', questionSetBean.question, questionSetBean.questionSet.id.toString())}"
@@ -151,7 +151,7 @@
                                  value="#{questionSetBean.question.wrongAnswerString_1}" name="wrongAnswer1"
                                  rendered="#{questionSetBean.question.type == 'text'}"
                                  pt:required="true" id="wrongAnswer1" pt:autocomplete="off"
-                                 pt:pattern="[\s\S]*\S[\s\S]*"/>
+                                 pt:pattern="[\s\S]*\S[\s\S]*" pt:maxlength="200"/>
                     <qc:upload target="#{questionSetBean.file}"
                                listenerString="#{questionSetBean.handleFileUpload('wrongAnswerString_1', questionSetBean.question, questionSetBean.questionSet.id.toString())}"
                                listener="#{questionSetBean.none}"
@@ -175,7 +175,7 @@
                     <h:inputText type="text" styleClass="form-control"
                                  value="#{questionSetBean.question.wrongAnswerString_2}" name="wrongAnswer2"
                                  rendered="#{questionSetBean.question.type == 'text'}"
-                                 id="wrongAnswer2" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*"/>
+                                 id="wrongAnswer2" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*" pt:maxlength="200"/>
 
                     <qc:upload target="#{questionSetBean.file}"
                                listenerString="#{questionSetBean.handleFileUpload('wrongAnswerString_2', questionSetBean.question, questionSetBean.questionSet.id.toString())}"
@@ -198,7 +198,7 @@
                     <h:inputText type="text" styleClass="form-control"
                                  value="#{questionSetBean.question.wrongAnswerString_3}" name="wrongAnswer3"
                                  rendered="#{questionSetBean.question.type == 'text'}"
-                                 id="wrongAnswer3" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*"/>
+                                 id="wrongAnswer3" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*" pt:maxlength="200"/>
 
                     <qc:upload target="#{questionSetBean.file}"
                                listenerString="#{questionSetBean.handleFileUpload('wrongAnswerString_3', questionSetBean.question, questionSetBean.questionSet.id.toString())}"
@@ -222,7 +222,7 @@
                     <h:inputText type="text" styleClass="form-control"
                                  value="#{questionSetBean.question.wrongAnswerString_4}" name="wrongAnswer4"
                                  rendered="#{questionSetBean.question.type == 'text'}"
-                                 id="wrongAnswer4" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*"/>
+                                 id="wrongAnswer4" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*" pt:maxlength="200"/>
 
                     <qc:upload target="#{questionSetBean.file}"
                                listenerString="#{questionSetBean.handleFileUpload('wrongAnswerString_4', questionSetBean.question, questionSetBean.questionSet.id.toString())}"
@@ -246,7 +246,7 @@
                     <h:inputText type="text" styleClass="form-control"
                                  value="#{questionSetBean.question.wrongAnswerString_5}" name="wrongAnswer5"
                                  rendered="#{questionSetBean.question.type == 'text'}"
-                                 id="wrongAnswer5" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*"/>
+                                 id="wrongAnswer5" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*" pt:maxlength="200"/>
                     <qc:upload target="#{questionSetBean.file}"
                                listenerString="#{questionSetBean.handleFileUpload('wrongAnswerString_5', questionSetBean.question, questionSetBean.questionSet.id.toString())}"
                                listener="#{questionSetBean.none}"

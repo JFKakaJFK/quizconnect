@@ -16,6 +16,7 @@
 
     <ui:define name="site-specific-css">
         <script type="text/javascript" src="../resources/quizconnect/js/QCUpload.js"></script>
+        <link rel="stylesheet" type="text/css" href="overview.css" />
     </ui:define>
 
     <ui:define name="content">
@@ -130,19 +131,12 @@
             </qc:modal>
 
             <qc:modal id="infoQuestionset" target="infoQuestionset" title="Details" abort="Close" showConfirm="false">
-                <h:panelGroup layout="block" id="informations" rendered="#{not empty QSOverviewBean.questionsetForDetails}">
-                    <h:outputLabel for="infoName" value="Name:" rendered="#{not empty QSOverviewBean.questionsetForDetails.name}"/>
-                    <h:outputText id="infoName" rendered="#{not empty QSOverviewBean.questionsetForDetails.name}" value="#{QSOverviewBean.questionsetForDetails.name}"/><br></br>
-
-                    <h:outputLabel for="infoDescription" value="Description:" rendered="#{not empty QSOverviewBean.questionsetForDetails.name}"/>
-                    <h:outputText id="infoDescription" rendered="#{not empty QSOverviewBean.questionsetForDetails.name}" value="#{QSOverviewBean.questionsetForDetails.name}"/><br></br>
-
-                    <h:outputLabel for="infoQuestions" value="Number of questions in set:" rendered="#{not empty QSOverviewBean.questionsetForDetails.questions}"/>
-                    <h:outputText id="infoQuestions" rendered="#{not empty QSOverviewBean.questionsetForDetails.questions}" value="#{QSOverviewBean.questionsetForDetails.questions.size()} questions"/>
-
+                <h:panelGroup layout="block" styleClass="box questionset-info-box" rendered="#{not empty QSOverviewBean.questionsetForDetails}">
+                    <qc:stat value="#{QSOverviewBean.questionsetForDetails.name}" label="name" />
+                    <qc:stat value="#{empty QSOverviewBean.questionsetForDetails.description ? '-' : QSOverviewBean.questionsetForDetails.description}" label="description"/>
+                    <qc:stat value="#{QSOverviewBean.questionsetForDetails.questions.size() == 0 ? '-' : QSOverviewBean.questionsetForDetails.questions.size()}" label="questions"/>
+                    <qc:stat value="#{QSOverviewBean.questionsetForDetails.difficulty}" label="difficulty" />
                 </h:panelGroup>
-
-
             </qc:modal>
 
         </h:form>

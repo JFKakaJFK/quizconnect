@@ -56,7 +56,7 @@
                           confirmAction="#{editManagerBean.changeEmail}"
                           disableConfirm="#{!editManagerBean.isEmailValid()}"
                           update="@this">
-                    <h:inputText p:placeholder="New email" value="#{editManagerBean.email}" p:autocomplete="new-email" styleClass="form-control">
+                    <h:inputText p:placeholder="New email" value="#{editManagerBean.email}" p:autocomplete="new-email" p:maxlength="100" styleClass="form-control">
                         <f:ajax event="keyup" execute="@this" render=":passwordChange:editEmail:footer"/>
                     </h:inputText>
                 </qc:modal>

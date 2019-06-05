@@ -35,13 +35,13 @@
             </div>
             <div class="form-group">
                 <label for="institution">Institution</label>
-                <h:inputText type="text" styleClass="form-control" value="#{createManagerBean.manager.institution}" name="institution" id="institution" pt:id="institution" pt:placeholder="Universtität Innsbruck" pt:autocomplete="off"/>
+                <h:inputText type="text" styleClass="form-control" value="#{createManagerBean.manager.institution}" name="institution" id="institution" pt:id="institution" pt:placeholder="Universtität Innsbruck" pt:autocomplete="off" pt:maxlength="200"/>
             </div>
 
             <div class="form-group">
                 <label for="username">E-Mail</label>
-                <h:inputText type="text" styleClass="form-control" value="#{createManagerBean.manager.email}" name="username" id="username" pt:id="username" pt:placeholder="john.doe@mail.com" autocomplete="username"/>
-                <h:inputText pt:id="email" pt:name="email" styleClass="jsf-hide" type="text" value="me@example.test" autocomplete="username"/>
+                <h:inputText type="text" styleClass="form-control" value="#{createManagerBean.manager.email}" name="username" id="username" pt:id="username" pt:placeholder="john.doe@mail.com" autocomplete="username" pt:maxlength="100"/>
+                <h:inputText pt:id="email" pt:name="email" pt:maxlength="100" styleClass="jsf-hide" type="text" value="me@example.test" autocomplete="username"/>
             </div>
 
             <div class="form-group">

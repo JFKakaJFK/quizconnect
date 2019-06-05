@@ -259,7 +259,7 @@ public class QuestionSetBean implements Serializable {
      * @return <code>true</code> as soon as at least 3 characters are entered
      */
     public boolean validQuestionSet() {
-        if (questionSet.getName() != null && questionSet.getName().trim().length() > 2) {
+        if (questionSet.getName() != null && questionSet.getName().length() <= 100 && questionSet.getName().trim().length() > 2) {
             return true;
         } else {
             return false;

@@ -57,15 +57,15 @@ public class ValidationBean {
     /** Validates passwords using a regular expression
      *
      * @param password
-     * @return <code>true</code> if string has more than 6 characters and contains at least one letter and one number
+     * @return <code>true</code> if string has more than 5 characters
      */
     public boolean isValidPassword (String password) {
         if (password != null) {
-            String passwordRegex = "^(?=.*[0-9]+.*)(?=.*[a-zA-Z]+.*)[0-9a-zA-Z]{6,}$";
+            //String passwordRegex = "^(?=.*[0-9]+.*)(?=.*[a-zA-Z]+.*)[\\p{L}\\p{N}\\p{P}]{6,}$";
+            String passwordRegex = "^.{5,}$"; //if someone wants to set a password consisting of 5 spaces, that's fine
             Pattern pat = Pattern.compile(passwordRegex);
             return pat.matcher(password).matches();
         }
         return false;
     }
-
 }
