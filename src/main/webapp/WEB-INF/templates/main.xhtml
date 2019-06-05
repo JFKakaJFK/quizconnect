@@ -11,7 +11,7 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
 
-    <script type="text/javascript" src="../../resources/js/themes.js" />
+    <script type="text/javascript" src="../../resources/theme/themes.js" />
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"/>
@@ -27,15 +27,15 @@
 </h:head>
 
 <h:body>
-    <div data-pushbar-id="bar" class="pushbar from_left">
+    <div data-pushbar-id="bar" class="pushbar from_left sidebar-nav">
         <div class="pushbar-close">
-            <span data-pushbar-close="" class="py-2 px-2 my-2 mx-3">
+            <span data-pushbar-close="">
                 <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M16.24 14.83a1 1 0 0 1-1.41 1.41L12 13.41l-2.83 2.83a1 1 0 0 1-1.41-1.41L10.59 12 7.76 9.17a1 1 0 0 1 1.41-1.41L12 10.59l2.83-2.83a1 1 0 0 1 1.41 1.41L13.41 12l2.83 2.83z"/></svg>
             </span>
         </div>
 
         <h:form rendered="#{sessionInfoBean.hasRole('PLAYER')}">
-            <nav class="pushbar-nav pl-4 pr-3 py-4">
+            <nav class="pushbar-nav pl-4 pr-3">
                 <ul class="list-unstyled">
                     <li class="my-3">
                         <h:commandLink action="/players/profile?faces-redirect=true" value="Home">
@@ -75,11 +75,15 @@
             </nav>
         </h:form>
 
-        <!-- TODO -->
-        <div onclick="changeTheme('default')">default</div>
-        <div onclick="changeTheme('outrun')">outrun</div>
+        <footer class="pushbar-footer">
+            <div class="pushbar-themes">
+                <div class="theme" onclick="changeTheme('default')">default</div>
+                <div class="theme" onclick="changeTheme('outrun')">outrun</div>
+            </div>
 
-        <a class="pushbar-logout" href="/logout">Logout</a>
+            <a class="pushbar-logout" href="/logout">Logout</a>
+        </footer>
+
     </div>
 
 

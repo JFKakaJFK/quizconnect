@@ -55,9 +55,12 @@ const themes = {
   },
 };
 
+/**
+ * Load the theme from localStorage, if no theme is stored, use the default theme.
+ */
 const loadTheme = () => {
   let themeName = localStorage.getItem('theme');
-  if(themeName === null){
+  if(themeName === null || !themes.hasOwnProperty(themeName)){
     localStorage.setItem('theme', 'default');
     themeName = 'default';
   }
@@ -68,6 +71,12 @@ const loadTheme = () => {
   }
 };
 
+/**
+ * Change the currently stored theme.
+ *
+ * @param name
+ *    The name of the new theme.
+ */
 const changeTheme = (name) => {
   if(themes.hasOwnProperty(name)){
     localStorage.setItem('theme', name);
@@ -75,36 +84,5 @@ const changeTheme = (name) => {
   loadTheme();
 };
 
+// load the theme on page load
 loadTheme();
-
-/*
-document.addEventListener('DOMContentLoaded', () => {
-  loadTheme();
-});
-*/
-
-/* TODO maybe
-class ThemeManager {
-  constructor(){
-    this.themes = {
-      defaultTheme,
-      outrun,
-    }
-  }
-
-  _setTheme(name){
-
-  }
-
-  _loadTheme(){
-
-  }
-
-  run(){
-    this._setTheme()
-  }
-}
-
-const tm = new ThemeManager();
-tm.run();
-*/
