@@ -66,7 +66,7 @@ public class AllPlayersBean implements Serializable {
      *
      * @return
      */
-    private List<Player> getAllByManager(){
+    public List<Player> getAllByManager(){
         if(isManager() && allByManager == null){
             allByManager = playerService.getPlayersOfManager(user.getManager());
         }
@@ -107,7 +107,7 @@ public class AllPlayersBean implements Serializable {
      *
      * @return
      */
-    private List<Player> getAllPlayers(){
+    public List<Player> getAllPlayers(){
         if(allPlayers == null){
             allPlayers = new ArrayList<>(playerService.getAllPlayers());
         }
@@ -176,4 +176,9 @@ public class AllPlayersBean implements Serializable {
     public void setPaginator(ScrollPaginator<Player> paginator) {
         this.paginator = paginator;
     }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
 }

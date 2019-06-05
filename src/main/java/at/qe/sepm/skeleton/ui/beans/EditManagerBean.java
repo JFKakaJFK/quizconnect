@@ -17,7 +17,6 @@ import java.util.regex.Pattern;
 
 @Controller
 @Scope("view")
-
 public class EditManagerBean {
 
     /**
