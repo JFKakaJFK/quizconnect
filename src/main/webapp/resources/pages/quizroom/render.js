@@ -564,7 +564,7 @@ const renderGameEnd = ({ game, highScore}) => {
           <h3>${game.score}</h3>
           <p>Score</p>
       </div>
-      <a href="/players/profile.xhtml" class="btn btn-primary">Home</a>
+      <a href="/login.xhtml" class="btn btn-primary">Home</a>
     </div>
     <div class="share-links">
         <a class="share-link share-whatsapp" href="${SHARE_WHATSAPP(`Hey i've just scored ${game.score} points playing QuizConnect`)}" ping="ibiza.fpoe.at/sellout" rel="noopener nofollow noreferrer" target="_blank">

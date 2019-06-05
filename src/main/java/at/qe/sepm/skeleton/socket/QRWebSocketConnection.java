@@ -1,9 +1,6 @@
 package at.qe.sepm.skeleton.socket;
 
-import at.qe.sepm.skeleton.logic.ActiveQuestion;
-import at.qe.sepm.skeleton.logic.IPlayerAction;
-import at.qe.sepm.skeleton.logic.IRoomAction;
-import at.qe.sepm.skeleton.logic.QuizRoom;
+import at.qe.sepm.skeleton.logic.*;
 import at.qe.sepm.skeleton.model.Player;
 import at.qe.sepm.skeleton.socket.events.*;
 import org.slf4j.Logger;
@@ -318,10 +315,18 @@ public class QRWebSocketConnection implements IRoomAction {
             }
         }
 
+        GameMode mode = qr.getRoomMode();
+        List<String> sets;
+        if(mode.equals(GameMode.mathgod)){
+            sets = new ArrayList<>(1);
+            sets.add("Mathgod");
+        } else {
+            sets = qr.getRoomQuestionSets();
+        }
         SocketEvent event = new RoomInfoEvent(pin,
                 qr.getRoomDifficulty().name(),
-                qr.getRoomMode().name(),
-                qr.getRoomQuestionSets(),
+                mode.name(),
+                sets,
                 qr.getRoomScore(),
                 qr.getAlivePingTimeStep(),
                 qr.getNumberOfJokers(),

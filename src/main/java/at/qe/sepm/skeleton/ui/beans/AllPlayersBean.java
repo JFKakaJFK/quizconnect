@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  * are locally updated if the {@link User} adds/removes a {@link Player}.
  */
 @Controller
-@Scope("session")
+@Scope("view")
 public class AllPlayersBean implements Serializable {
 
     private PlayerService playerService;
@@ -37,7 +37,7 @@ public class AllPlayersBean implements Serializable {
     public AllPlayersBean(PlayerService playerService, SessionInfoBean sessionInfoBean){
         this.playerService = playerService;
         this.user = sessionInfoBean.getCurrentUser();
-        this.paginator = new ScrollPaginator<>(getAllPlayers(), 20); // about the number of players fitting into one viewport
+        this.paginator = null;
     }
 
     /**
@@ -55,7 +55,7 @@ public class AllPlayersBean implements Serializable {
      * Any mutation of {@link this#allPlayers} or {@link this#allByManager} must call this method to update the {@link ScrollPaginator}.
      */
     private void filterAndUpdatePlayers(){
-        paginator.updateList((onlyByManager && isManager() ? getAllByManager() : getAllPlayers()).stream().parallel()
+        getPaginator().updateList((onlyByManager && isManager() ? getAllByManager() : getAllPlayers()).stream().parallel()
                 .filter(player -> player.getUser().getUsername().toLowerCase().contains(searchPhrase.toLowerCase()))
                 .collect(Collectors.toList()));
     }
@@ -71,6 +71,15 @@ public class AllPlayersBean implements Serializable {
             allByManager = playerService.getPlayersOfManager(user.getManager());
         }
         return allByManager;
+    }
+
+    /**
+     * Since lazy loading getters are used internally
+     */
+    public void refresh(){
+        this.allByManager = null;
+        this.allPlayers = null;
+        filterAndUpdatePlayers();
     }
 
     /**
@@ -132,11 +141,14 @@ public class AllPlayersBean implements Serializable {
     }
 
     /**
-     * Adds a {@link Player} to the list of {@link Player}s
+     * Adds a {@link Player} to the list of {@link Player}.
+     *
+     * There is no check for duplicates since the method is only called when a new player is added, and the
+     * additional O(number of all players) runtime is simply not necessary.
      *
      * @param p {@link Player} to add
      */
-    public void addPlayer(Player p){ // TODO prevent duplicates if runtime can be O(1), not needed otherwise
+    public void addPlayer(Player p){
         if(allPlayers == null){
             this.allPlayers = new ArrayList<>(playerService.getAllPlayers());
         } else {
@@ -169,7 +181,16 @@ public class AllPlayersBean implements Serializable {
         filterAndUpdatePlayers();
     }
 
+    /**
+     * Lazily initializes the paginator or returns the existing paginator;
+     *
+     * @return
+     *      A {@link ScrollPaginator} of all filtered Players.
+     */
     public ScrollPaginator<Player> getPaginator() {
+        if(paginator == null){
+            this.paginator = new ScrollPaginator<>(getAllPlayers(), 20); // about the number of players fitting into one viewport
+        }
         return paginator;
     }
 

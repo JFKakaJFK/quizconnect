@@ -34,7 +34,6 @@ public class PlayerDetailController implements Serializable {
     private PlayerService playerService;
     private StorageService storageService;
     private ManagerService managerService;
-    private AllPlayersBean allPlayersBean;
     private ValidationBean validationBean;
 
     private User currentUser;
@@ -50,7 +49,6 @@ public class PlayerDetailController implements Serializable {
             PlayerService playerService,
             SessionInfoBean sessionInfoBean,
             ManagerService managerService,
-            AllPlayersBean allPlayersBean,
             ValidationBean validationBean){
         assert passwordBean != null;
         assert userService != null;
@@ -58,7 +56,6 @@ public class PlayerDetailController implements Serializable {
         assert playerService != null;
         assert storageService != null;
         assert sessionInfoBean != null;
-        assert allPlayersBean != null;
         assert validationBean != null;
 
         this.passwordBean = passwordBean;
@@ -67,7 +64,6 @@ public class PlayerDetailController implements Serializable {
         this.playerService = playerService;
         this.currentUser = sessionInfoBean.getCurrentUser();
         this.managerService = managerService;
-        this.allPlayersBean = allPlayersBean;
         this.validationBean = validationBean;
     }
 
@@ -75,6 +71,16 @@ public class PlayerDetailController implements Serializable {
      * Deletes a Player if the current user is the creator of the Player.
      */
     public void deletePlayer(){
+        deletePlayer(null);
+    }
+
+    /**
+     * Deletes a Player if the current user is the creator of the Player.
+     *
+     * @param allPlayersBean
+     *         The bean to refresh.
+     */
+    public void deletePlayer(AllPlayersBean allPlayersBean){
         if(player == null || player.isNew() || !currentUser.getUsername().equals(managerService.getManagerOfPlayer(player).getUser().getUsername())){
             return;
         }
@@ -88,10 +94,13 @@ public class PlayerDetailController implements Serializable {
         playerService.deletePlayer(player);
         userService.deleteUser(user);
 
-        allPlayersBean.removePlayer(player);
         log.info("Player " + player.getUser().getUsername() + " was successfully deleted");
+        // wheter to simply remove the player or whether to refresh from the db is still subject of discussion // TODO
+        if(allPlayersBean != null){
+            allPlayersBean.removePlayer(player);
+            // allPlayersBean.refresh();
+        }
         player = null;
-
 
         FacesContext fc = FacesContext.getCurrentInstance();
         String viewId = fc.getViewRoot().getViewId();

@@ -55,5 +55,5 @@ select option {
 }
 
 select option:checked {
-    display: none;
+    var(--input-focus-background)
 }

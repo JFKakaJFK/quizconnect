@@ -119,7 +119,7 @@
                       title="Delete Player"
                       confirm="Delete Player"
                       abort="Cancel"
-                      confirmAction="#{playerDetailController.deletePlayer}"
+                      confirmAction="#{playerDetailController.deletePlayer(allPlayersBean)}"
                       update="@this :form:players">
                 Are you sure? This cannot be undone.
             </qc:modal>

@@ -5,6 +5,7 @@
 
 .searchbar .searchbar-search {
     flex: 1;
+    min-width: 120px;
     height: initial;
     padding: .5rem 1rem;
 }
