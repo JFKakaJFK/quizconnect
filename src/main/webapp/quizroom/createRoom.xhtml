@@ -128,6 +128,10 @@
                     </h:commandButton>
                 </h:panelGroup>
 
+                <h:commandLink styleClass="btn btn-primary" action="/players/profile?faces-redirect=true" value="Home">
+                    <f:ajax execute="@this" render="@none" />
+                </h:commandLink>
+
             </h:form>
         </div>
 
