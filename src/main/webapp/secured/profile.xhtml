@@ -15,7 +15,15 @@
     <ui:define name="title">Profile</ui:define>
 
     <ui:define name="site-specific-css">
-        <script type="text/javascript" src="../resources/quizconnect/js/QCUpload.js"></script>
+        <link rel="stylesheet" type="text/css" href="/resources/profile.css"/>
+    </ui:define>
+
+    <ui:define name="site-specific-javascript">
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"/>
+        <script type="text/javascript" src="/resources/util/validatePassword.js"/>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.4.2/zxcvbn.js"/>
+        <script type="text/javascript" src="/resources/util/passwordhelp.js"/>
+
     </ui:define>
 
     <ui:define name="content">
@@ -39,12 +47,21 @@
                           confirmAction="#{editManagerBean.changePassword}"
                           disableConfirm="#{!editManagerBean.isPasswordValid()}"
                           update="@this">
-                    <h:inputSecret p:placeholder="New password" value="#{editManagerBean.password}" p:autocomplete="new-password" styleClass="form-control">
-                        <f:ajax event="keyup" execute="@this" render=":passwordChange:editManager:footer"/>
-                    </h:inputSecret>
-                    <h:inputSecret p:placeholder="Repeat new password" value="#{editManagerBean.repeatPassword}" p:autocomplete="new-password" styleClass="form-control">
-                        <f:ajax event="keyup" execute="@this" render=":passwordChange:editManager:footer"/>
-                    </h:inputSecret>
+                    <h:panelGroup layout="block" styleClass="form-group">
+                        <h:inputSecret p:placeholder="New password" p:name="password" p:id="password" value="#{editManagerBean.password}" p:autocomplete="new-password" styleClass="form-control">
+                            <f:ajax event="keyup" execute="@this" render=":passwordChange:editManager:footer"/>
+                        </h:inputSecret>
+                        <h:inputSecret p:placeholder="Repeat new password" p:name="repeat_password" p:id="repeat_password" value="#{editManagerBean.repeatPassword}" p:autocomplete="new-password" styleClass="form-control">
+                            <f:ajax event="keyup" execute="@this" render=":passwordChange:editManager:footer"/>
+                        </h:inputSecret>
+                    </h:panelGroup>
+
+                    <meter max="4" class="meter" id="password-strength-meter"></meter>
+
+                    <h:panelGroup layout="block" styleClass="box" p:id="password-strength-text" id="password-strength-text"/>
+
+                    <h:panelGroup layout="block" styleClass="box" p:name="errorcontainer" p:id="errorcontainer" id="errorcontainer"/>
+
                 </qc:modal>
 
                 <qc:modal id="editEmail"

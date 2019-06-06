@@ -101,6 +101,7 @@ html.pushbar_locked .pushbar_overlay{
 	height: auto;
 	box-sizing: border-box;
 	padding: var(--default-padding);
+	cursor: pointer;
 }
 
 .pushbar-close span[data-pushbar-close]{
