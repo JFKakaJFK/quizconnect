@@ -272,10 +272,10 @@
                 <ui:repeat value="#{questionSetBean.questionsDisplay}" var="question">
                     <qc:questionbox question="#{question}">
 
-                        <h:commandLink styleClass="box-action" pt:data-toggle="modal" pt:data-target="#infoQuestionset">
+                        <h:commandLink styleClass="box-action" pt:data-toggle="modal" pt:data-target="#infoQuestion">
                             <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-9a1 1 0 0 1 1 1v4a1 1 0 0 1-2 0v-4a1 1 0 0 1 1-1zm0-4a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
                             <f:ajax execute="@this" render=":formOverview-QSets:infoQuestionset:modal-body"/>
-                            <f:setPropertyActionListener value="#{set}" target="#{QSOverviewBean.questionsetForDetails}"/>
+                            <f:setPropertyActionListener value="#{question}" target="#{questionSetBean.questionForInfo}"/>
                         </h:commandLink>
 
                         <h:commandLink styleClass="box-action" action="#{questionSetBean.setEditQuestion(question)}" pt:data-toggle="modal" pt:data-target="#questionModal"
@@ -300,10 +300,21 @@
                       target="deleteQuestion"
                       title="Delete Question"
                       confirm="Delete Question"
+                      confirmButton="btn btn-danger"
                       abort="Cancel"
                       confirmAction="#{questionSetBean.deleteQuestion()}"
+                      abortButton="btn btn-secondary"
                       update=":deleteQuestionForm:questionCollection">
                 Are you sure? This cannot be undone.
+            </qc:modal>
+
+            <qc:modal id="infoQuestion" target="infoQuestion" title="Details" abort="Close" showConfirm="false">
+                <h:panelGroup layout="block" styleClass="box question-info-box" rendered="#{not empty QSOverviewBean.questionsetForDetails}">
+                    <qc:stat value="#{questionSetBean.questionForDetails.}" label="name" />
+                    <qc:stat value="#{empty QSOverviewBean.questionsetForDetails.description ? '-' : QSOverviewBean.questionsetForDetails.description}" label="description"/>
+                    <qc:stat value="#{QSOverviewBean.questionsetForDetails.questions.size() == 0 ? '-' : QSOverviewBean.questionsetForDetails.questions.size()}" label="questions"/>
+                    <qc:stat value="#{QSOverviewBean.questionsetForDetails.difficulty}" label="difficulty" />
+                </h:panelGroup>
             </qc:modal>
         </h:form>
 

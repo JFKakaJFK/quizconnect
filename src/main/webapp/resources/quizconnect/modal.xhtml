@@ -60,8 +60,10 @@
 
     <cc:attribute name="abort" default="Close"/>
     <cc:attribute name="showAbort" default="true" type="boolean"/>
+    <cc:attribute name="abortButton" default="btn btn-primary" type="java.lang.String"/>
     <cc:attribute name="confirm" default="Save changes"/>
     <cc:attribute name="showConfirm" default="true" type="boolean"/>
+    <cc:attribute name="confirmButton" default="btn btn-primary" type="java.lang.String"/>
     <cc:attribute name="closeAction" method-signature="void action()" default="#{QCModalController.defaultAction}"/>
     <cc:attribute name="abortAction" method-signature="void action()" default="#{QCModalController.defaultAction}"/>
     <cc:attribute name="executeOnAbort" default="@form"/>
@@ -104,14 +106,14 @@
 
                 <div jsf:id="#{cc.attrs.footerId}" class="modal-footer">
                     <ui:fragment rendered="#{cc.attrs.showAbort}">
-                        <h:commandButton actionListener="#{cc.attrs.abortAction}" p:class="btn btn-primary"
+                        <h:commandButton actionListener="#{cc.attrs.abortAction}" p:class="#{cc.attrs.abortButton}"
                                          p:data-dismiss="modal" value="#{cc.attrs.abort}">
                             <f:ajax execute="#{cc.attrs.executeOnAbort}" render="#{cc.attrs.update}"/>
                         </h:commandButton>
                     </ui:fragment>
                     <ui:fragment rendered="#{cc.attrs.showConfirm and cc.attrs.ajax}">
                         <h:commandButton actionListener="#{cc.attrs.confirmAction}"
-                                         p:class="btn btn-primary"
+                                         p:class="#{cc.attrs.confirmButton}"
                                          p:data-dismiss="#{cc.attrs.closeOnConfirm ? 'modal' : ''}"
                                          value="#{cc.attrs.confirm}"
                                          disabled="#{cc.attrs.disableConfirm}">
@@ -122,7 +124,7 @@
                     <ui:fragment rendered="#{cc.attrs.showConfirm and not cc.attrs.ajax}">
                         <h:commandButton actionListener="#{cc.attrs.confirmAction}"
                                          id="submitButton" type="submit"
-                                         p:class="btn btn-primary"
+                                         p:class="#{cc.attrs.confirmButton}"
                                          value="#{cc.attrs.confirm}"
                                          disabled="#{cc.attrs.disableConfirm}">
                         </h:commandButton>

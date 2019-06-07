@@ -6,13 +6,25 @@
     box-sizing: border-box;
     height: 42px;
 }
+
+.btn:hover {
+    /*TODO: add styling */
+}
+
 /*
 TODO
 - button styles
 - hover + active states
 */
+
+
 .btn-primary {
     background: var(--grad-m);
+    border: 0;
+}
+
+.btn-primary:hover {
+    background: var(--grad-d);
     border: 0;
 }
 
@@ -22,7 +34,29 @@ TODO
     border: solid 2px var(--col-1-l);
 }
 
-.btn-danger {
-    background: var(--danger);
+.btn-secondary:hover {
     color: var(--gray-5);
+    background: transparent;
+    border: solid 2px var(--gray-5);
+}
+
+.btn-danger {
+    /*background: var(--danger);
+    background: var(--error);
+    border: none;
+    color: var(--gray-5);
+    */
+
+    color: var(--error);
+    background: transparent;
+    border: solid 2px var(--error);
+
+}
+
+.btn-danger:hover {
+    background-color: #dc3545;
+    color: var(--gray-5);
+    border: solid 2px #dc3545;
+    transition: all 0.3s ease 0s;
+
 }

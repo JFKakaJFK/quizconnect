@@ -45,6 +45,7 @@ public class QuestionSetBean implements Serializable {
     private QuestionSet questionSet;
     private Set<Question> questions;
     private Question question;
+    private Question questionForDetails;
     private Question questionToDelete;
 
     private StorageService storageService;
@@ -329,12 +330,20 @@ public class QuestionSetBean implements Serializable {
         return questionToDelete;
     }
 
-    public void setQuestionToDelete(Question questionToDelete) {
-        this.questionToDelete = questionToDelete;
+    public Question getQuestionForDetails() {
+        return questionForDetails;
     }
 
     public void setQuestion(Question question) {
         this.question = question;
+    }
+
+    public void setQuestionToDelete(Question questionToDelete) {
+        this.questionToDelete = questionToDelete;
+    }
+
+    public void setQuestionForDetails(Question questionForDetails) {
+        this.questionForDetails = questionForDetails;
     }
 
     public QuestionSet getQuestionSet() {
@@ -376,7 +385,6 @@ public class QuestionSetBean implements Serializable {
     public void setFilename(String filename) {
         this.filename = filename;
     }
-
 
     public void setQuestions(Set<Question> questions) {
         this.questions = questions;

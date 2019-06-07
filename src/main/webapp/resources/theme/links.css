@@ -4,6 +4,11 @@ a {
     color: var(--default-font-color);
 }
 
+a:hover {
+    /* TODO: change to something better */
+    color: var(--col-3-m);
+}
+
 a.icon,
 a.icon:link,
 a.icon:visited,
