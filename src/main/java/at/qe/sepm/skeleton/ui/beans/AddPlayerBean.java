@@ -24,6 +24,7 @@ public class AddPlayerBean implements Serializable {
 
     private String username = "";
     private String password = "";
+    private String repeatPassword = "";
 
 
     @Autowired
@@ -38,15 +39,18 @@ public class AddPlayerBean implements Serializable {
         assert playerService != null;
         assert allPlayersBean != null;
         assert passwordBean != null;
+        assert validationBean != null;
         this.manager = sessionInfoBean.getCurrentUser().getManager();
         this.userService = userService;
         this.playerService = playerService;
         this.allPlayersBean = allPlayersBean;
         this.passwordBean = passwordBean;
+        this.validationBean = validationBean;
     }
 
     public void addUser(){
         if(!validateInput()){
+            System.out.println("HAHAHA INVALID INPUT");
             return;
         }
         Player p = new Player();
@@ -58,14 +62,12 @@ public class AddPlayerBean implements Serializable {
     }
 
     public boolean validateInput(){
-        if(username == null || userService.loadUser(username) != null || username.length() < 3 || username.length() > 100 || !validationBean.isValidText(username)){
+        if(username == null || userService.loadUser(username) != null || username.length() < 3 || !validationBean.isValidText(username, 100)){
             // TODO message username already taken
             return false;
         }
 
-        if(password == null || password.length() < 3 || password.length() > 100 || !validationBean.isValidPassword(password)){
-            // TODO same pw validation as w/ manager creation || or just make one long boolean exp
-            // TODO repeatPassword
+        if(password == null || !validationBean.isValidPassword(password, repeatPassword)){
             return false;
         }
         return true;
@@ -74,6 +76,7 @@ public class AddPlayerBean implements Serializable {
     public void clear(){
         this.username = "";
         this.password = "";
+        this.repeatPassword = "";
     }
 
     public String getUsername() {
@@ -90,5 +93,13 @@ public class AddPlayerBean implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getRepeatPassword() {
+        return repeatPassword;
+    }
+
+    public void setRepeatPassword(String repeatPassword) {
+        this.repeatPassword = repeatPassword;
     }
 }

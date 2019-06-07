@@ -34,7 +34,11 @@ public class CreateManagerBean implements Serializable {
     @Autowired
     private PasswordBean passwordBean;
 
+    @Autowired
+    private ValidationBean validationBean;
+
     private String password;
+    private String repeatPassword;
     private Manager manager;
 
 
@@ -47,15 +51,12 @@ public class CreateManagerBean implements Serializable {
      * Creates a new {@link Manager} (and sends an email to the entered address)
      */
     public void createNewManager() {
-        if (password != null && manager.getEmail() != null) {
+        if (password != null && validationBean.isValidPassword(password, repeatPassword) && validationBean.isValidEmail(manager.getEmail())) {
             managerService.saveNewManager(manager, passwordBean.encodePassword(password));
             logger.info("Created and saved a new manager: " + manager.toString());
             //sendRegistrationEmail();
             redirectRegistration();
-
         }
-
-
     }
 
     /**
@@ -98,6 +99,14 @@ public class CreateManagerBean implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getRepeatPassword() {
+        return repeatPassword;
+    }
+
+    public void setRepeatPassword(String repeatPassword) {
+        this.repeatPassword = repeatPassword;
     }
 
     public Manager getManager() {

@@ -38,6 +38,9 @@ public class EditManagerBean {
     @Autowired
     private SessionInfoBean sessionInfoBean;
 
+    @Autowired
+    private ValidationBean validationBean;
+
 
     private User user;
     private String email;
@@ -51,46 +54,21 @@ public class EditManagerBean {
     }
 
     public void changePassword() {
-        if (user != null && isPasswordValid()) {
+        if (user != null && validationBean.isValidPassword(password, repeatPassword)) {
             user.setPassword(passwordBean.encodePassword(password));
             userService.saveUser(user);
         }
-
         user = null;
         password = null;
         repeatPassword = null;
     }
 
     public void changeEmail() {
-        if (user != null && isEmailValid()) {
+        if (user != null && validationBean.isValidEmail(email)) {
             user.getManager().setEmail(email);
             managerService.saveManager(user.getManager());
             logger.info("Manager with ID " + user.getManager().getId() + " changed e-mail to " + user.getManager().getEmail());
         }
-    }
-
-
-    public boolean isEmailValid() {
-        if (email != null) {
-
-            //OWASP Validation Regex Repository
-            String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\." +
-                    "[a-zA-Z0-9_+&*-]+)*@" +
-                    "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
-                    "A-Z]{2,7}$";
-            Pattern pat = Pattern.compile(emailRegex);
-            return pat.matcher(email).matches();
-        }
-        return false;
-    }
-
-    /**
-     * Returns true if the new password is valid
-     *
-     * @return
-     */
-    public boolean isPasswordValid() {
-        return password != null && password.length() >= 3 && repeatPassword != null && repeatPassword.equals(password);
     }
 
     public String getEmail() {

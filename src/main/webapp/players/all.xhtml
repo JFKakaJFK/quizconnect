@@ -91,10 +91,14 @@
                 </h:inputText>
 
                 <!-- TODO password field + pw repeat + pw strength indicator (like manager signup) -->
-                <h:inputText p:autocomplete="new-password" p:placeholder="Password" styleClass="form-control"
+                <h:inputSecret p:autocomplete="new-password" p:placeholder="Password" styleClass="form-control"
                              value="#{addPlayerBean.password}">
                     <f:ajax event="keyup" execute="@this" render=":form:addPlayer:footer"/>
-                </h:inputText>
+                </h:inputSecret>
+                <h:inputSecret p:autocomplete="off" p:placeholder="Repeat password" styleClass="form-control"
+                               value="#{addPlayerBean.repeatPassword}">
+                    <f:ajax event="keyup" execute="@this" render=":form:addPlayer:footer"/>
+                </h:inputSecret>
             </qc:modal>
 
             <qc:modal id="editPlayer"

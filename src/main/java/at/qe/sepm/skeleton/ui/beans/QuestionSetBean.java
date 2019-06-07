@@ -38,6 +38,9 @@ public class QuestionSetBean implements Serializable {
     @Autowired
     private SessionInfoBean sessionInfoBean;
 
+    @Autowired
+    private ValidationBean validationBean;
+
     private List<String> types = Arrays.asList("text", "picture");
     private List<String> difficulty = Arrays.asList("easy", "hard");
 
@@ -215,26 +218,29 @@ public class QuestionSetBean implements Serializable {
      * Saves the {@link Question} to the database
      */
     public void saveNewQuestion() {
-        logger.info("saveNewQuestion called");
-        removeSpaces(question);
+        if (isValidQuestion(question)) {
+            logger.info("saveNewQuestion called");
+            removeSpacesAndSet(question);
 
-        if (bEditQuestion == false) {
-            questions.add(question);
-            questionsDisplay.add(question);
-            logger.info("Added question to DisplayList");
-            question.setQuestionSet(questionSet);
-            logger.info("Added question to Database");
+            if (bEditQuestion == false) {
+                questions.add(question);
+                questionsDisplay.add(question);
+                logger.info("Added question to DisplayList");
+                question.setQuestionSet(questionSet);
+                logger.info("Added question to Database");
+            }
+            questionService.saveQuestion(question);
+            bEditQuestion = false;
+            initQuestion();
+        } else {
+            //TODO: return info to the user
         }
-        questionService.saveQuestion(question);
-        bEditQuestion = false;
-        initQuestion();
     }
 
     /**
      * Saves a newly created {@link QuestionSet}
      * Sets the author to the currently logged in manager and assigns a Collection of {@link Question} to it for to-be-added items
      * Saves the {@link QuestionSet} to the database
-     *
      */
     public void saveNewQuestionSet() {
         questionSet.setAuthor(currentUser.getManager());
@@ -256,11 +262,12 @@ public class QuestionSetBean implements Serializable {
     }
 
     /**
-     * Shows, if a {@link QuestionSet} contains valid information (to disable/enable the save button)
+     * Shows if a {@link QuestionSet} contains valid information (to disable/enable the save button)
+     *
      * @return <code>true</code> as soon as at least 3 characters are entered
      */
     public boolean validQuestionSet() {
-        if (questionSet.getName() != null && questionSet.getName().length() <= 100 && questionSet.getName().trim().length() > 2) {
+        if (questionSet.getName() != null && validationBean.isValidText(questionSet.getName(), 100) && questionSet.getName().trim().length() > 2) {
             return true;
         } else {
             return false;
@@ -280,28 +287,50 @@ public class QuestionSetBean implements Serializable {
 
     /**
      * Removes trailing and leading spaces of all attributes of a {@link Question}
+     * As QuestionString, RightAnswerString and WrongAnswerStrings are required and checked by {@link #isValidQuestion(Question)} they can get saved instantly
+     * WrongAnswerStrings 2-5 are optional
      * @param question
      */
-    private void removeSpaces(Question question) {
+    private void removeSpacesAndSet(Question question) {
         question.setQuestionString(question.getQuestionString().trim());
         question.setRightAnswerString(question.getRightAnswerString().trim());
         question.setWrongAnswerString_1(question.getWrongAnswerString_1().trim());
 
-        if (question.getWrongAnswerString_2() != null) {
+        if (question.getWrongAnswerString_2() != null && validationBean.isValidText(question.getWrongAnswerString_2().trim())) {
             question.setWrongAnswerString_2(question.getWrongAnswerString_2().trim());
         }
 
-        if (question.getWrongAnswerString_3() != null) {
+        if (question.getWrongAnswerString_3() != null && validationBean.isValidText(question.getWrongAnswerString_3().trim())) {
             question.setWrongAnswerString_3(question.getWrongAnswerString_3().trim());
         }
 
-        if (question.getWrongAnswerString_4() != null) {
+        if (question.getWrongAnswerString_4() != null && validationBean.isValidText(question.getWrongAnswerString_4().trim())) {
             question.setWrongAnswerString_4(question.getWrongAnswerString_4().trim());
         }
 
-        if (question.getWrongAnswerString_5() != null) {
+        if (question.getWrongAnswerString_5() != null && validationBean.isValidText(question.getWrongAnswerString_5().trim())) {
             question.setWrongAnswerString_5(question.getWrongAnswerString_5().trim());
         }
+    }
+
+    /**
+     * Validating the required attributes of a {@link Question}
+     * @param question
+     * @return <code>true</code> if neither the String is null, contains invalid characters, nor is longer than 200 chars
+     */
+    private boolean isValidQuestion(Question question) {
+        if (question.getQuestionString() == null || !validationBean.isValidText(question.getQuestionString().trim(), 200)) {
+            return false;
+        }
+
+        if (question.getRightAnswerString() == null || !validationBean.isValidText(question.getRightAnswerString().trim(), 200)) {
+            return false;
+        }
+
+        if (question.getWrongAnswerString_1() == null || !validationBean.isValidText(question.getWrongAnswerString_1().trim(), 200)) {
+            return false;
+        }
+       return true;
     }
 
 

@@ -1,13 +1,16 @@
 package at.qe.sepm.skeleton.ui.beans;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.regex.Pattern;
 
 @Component
-@Scope("request")
+@Scope("view")
 public class ValidationBean {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      *
@@ -47,11 +50,15 @@ public class ValidationBean {
      */
     public boolean isValidText (String safetext) {
         if (safetext != null) {
-            String safetextRegex = "^[a-zA-Z0-9 .-]+$";
+            String safetextRegex = "^[a-zA-Z0-9 .,;-_€@$äÄöÖüÜ!?#&=]+$";
             Pattern pat = Pattern.compile(safetextRegex);
             return pat.matcher(safetext).matches();
         }
         return false;
+    }
+
+    public boolean isValidText (String safetext, int maxlength) {
+        return isValidText(safetext) && safetext.length() <= maxlength;
     }
 
     /** Validates passwords using a regular expression
@@ -65,6 +72,23 @@ public class ValidationBean {
             String passwordRegex = "^.{5,}$"; //if someone wants to set a password consisting of 5 spaces, that's fine
             Pattern pat = Pattern.compile(passwordRegex);
             return pat.matcher(password).matches();
+        }
+        return false;
+    }
+
+
+    /** Checks if two passwords are equal
+     *
+     * @param password
+     * @return <code>true</code> if string has more than 5 characters
+     */
+    public boolean isValidPassword (String password, String repeatPassword) {
+        if (password != null) {
+            String passwordRegex = "^.{5,}$"; //if someone wants to set a password consisting of 5 spaces, that's fine
+            Pattern pat = Pattern.compile(passwordRegex);
+            if (repeatPassword != null && pat.matcher(password).matches()) {
+                return password.equals(repeatPassword);
+            }
         }
         return false;
     }

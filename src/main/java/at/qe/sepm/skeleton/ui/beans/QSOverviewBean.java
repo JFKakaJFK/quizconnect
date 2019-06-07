@@ -26,9 +26,6 @@ import java.util.stream.Collectors;
 public class QSOverviewBean implements Serializable {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    //@Autowired
-    //private MessageBean messageBean;
-
     @Autowired
     private SessionInfoBean sessionInfoBean;
 
@@ -51,7 +48,7 @@ public class QSOverviewBean implements Serializable {
 
     /**
      * Init is invoked once after the bean is initialized
-     * Loads all {@link QuestionSet} into an internal list to reduce calls to the database
+     * Loads all {@link QuestionSet}s into an internal list to reduce calls to the database
      * Also loads all sets created by this user to an internal list to check if a set was made by this manager (ui:repeat) without accessing the DB each time
      */
 
