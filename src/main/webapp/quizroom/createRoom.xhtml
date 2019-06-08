@@ -8,9 +8,31 @@
 
     <ui:define name="title">Create game</ui:define>
 
+    <ui:define name="site-specific-css">
+        <link rel="stylesheet" href="../resources/createroom.css" />
+    </ui:define>
+
     <ui:define name="content">
-        <div class="center-page-content">
+        <div>
             <h:form id="form">
+
+                <h:panelGroup layout="block" id="stepNav" styleClass="form-steps-nav">
+                    <h:commandButton styleClass="btn-secondary btn" disabled="#{createRoomBean.disablePrevStep()}"
+                                     actionListener="#{createRoomBean.prevStep}" value="Back">
+                        <f:ajax execute="@this" render="@form"/>
+                    </h:commandButton>
+                    <h:commandLink styleClass="btn btn-secondary" action="/players/profile?faces-redirect=true" value="Home">
+                        <f:ajax execute="@this" render="@none" />
+                    </h:commandLink>
+                    <h:commandButton styleClass="btn-primary btn" disabled="#{createRoomBean.disableNextStep()}"
+                                     actionListener="#{createRoomBean.nextStep}" value="Next" rendered="#{createRoomBean.step lt 2}">
+                        <f:ajax execute="@this" render="@form"/>
+                    </h:commandButton>
+                    <h:commandButton styleClass="btn-primary btn" disabled="#{createRoomBean.disableNextStep()}"
+                                     actionListener="#{createRoomBean.nextStep}" value="Create Game" rendered="#{createRoomBean.step eq 2}">
+                        <f:ajax execute="@this" render="@none"/>
+                    </h:commandButton>
+                </h:panelGroup>
 
                 <h:panelGroup layout="block" id="steps" styleClass="form-steps">
                     <h:panelGroup id="step0" layout="block" styleClass="form-step #{createRoomBean.step eq 0 ? 'active' : ''}">
@@ -55,21 +77,6 @@
                         <!-- STEP 2: question sets -->
                         <ui:fragment rendered="#{createRoomBean.step eq 1}"><!-- TODO overflow handling -> nav fixed, qsets with scroll overflow -->
 
-                            <p>Selected Sets</p>
-                            <h:panelGroup layout="block" id="selectedSets" styleClass="collection">
-                                <ui:repeat value="#{createRoomBean.selectedQuestionSets}" var="set">
-                                    <qc:questionsetbox questionset="#{set}">
-                                        <h:commandLink action="#{createRoomBean.unselectSet(set)}">
-                                            <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M17 11a1 1 0 0 1 0 2H7a1 1 0 0 1 0-2h10z"/></svg>
-                                            <f:ajax execute="@this" render="@form" />
-                                        </h:commandLink>
-                                    </qc:questionsetbox>
-                                </ui:repeat>
-                                <h:panelGroup layout="block" rendered="#{empty createRoomBean.selectedQuestionSets}">
-                                    <p>No Sets selected</p>
-                                </h:panelGroup>
-                            </h:panelGroup>
-
                             <h:inputText p:autocomplete="some random search input dont autocomplete pls@googlebot" p:placeholder="Search" value="#{createRoomBean.searchPhrase}" styleClass="form-control">
                                 <f:ajax listener="#{createRoomBean.handleSearch}" event="keyup" execute="@this" render="selectableSets"/>
                             </h:inputText>
@@ -90,6 +97,21 @@
                                 </ui:repeat>
                                 <h:panelGroup layout="block" rendered="#{empty createRoomBean.selectableSetPaginator.parts}">
                                     <p>No Sets available</p>
+                                </h:panelGroup>g
+                            </h:panelGroup>
+
+                            <p>Selected Sets</p>
+                            <h:panelGroup layout="block" id="selectedSets" styleClass="collection">
+                                <ui:repeat value="#{createRoomBean.selectedQuestionSets}" var="set">
+                                    <qc:questionsetbox questionset="#{set}">
+                                        <h:commandLink action="#{createRoomBean.unselectSet(set)}">
+                                            <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M17 11a1 1 0 0 1 0 2H7a1 1 0 0 1 0-2h10z"/></svg>
+                                            <f:ajax execute="@this" render="@form" />
+                                        </h:commandLink>
+                                    </qc:questionsetbox>
+                                </ui:repeat>
+                                <h:panelGroup layout="block" rendered="#{empty createRoomBean.selectedQuestionSets}">
+                                    <p>No Sets selected</p>
                                 </h:panelGroup>
                             </h:panelGroup>
 
@@ -112,25 +134,6 @@
                         </ui:fragment>
                     </h:panelGroup>
                 </h:panelGroup>
-
-                <h:panelGroup layout="block" id="stepNav" styleClass="form-steps-nav">
-                    <h:commandButton styleClass="btn-secondary btn" disabled="#{createRoomBean.disablePrevStep()}"
-                                     actionListener="#{createRoomBean.prevStep}" value="Back">
-                        <f:ajax execute="@this" render="@form"/>
-                    </h:commandButton>
-                    <h:commandButton styleClass="btn-primary btn" disabled="#{createRoomBean.disableNextStep()}"
-                                     actionListener="#{createRoomBean.nextStep}" value="Next" rendered="#{createRoomBean.step lt 2}">
-                        <f:ajax execute="@this" render="@form"/>
-                    </h:commandButton>
-                    <h:commandButton styleClass="btn-primary btn" disabled="#{createRoomBean.disableNextStep()}"
-                                     actionListener="#{createRoomBean.nextStep}" value="Create Game" rendered="#{createRoomBean.step eq 2}">
-                        <f:ajax execute="@this" render="@none"/>
-                    </h:commandButton>
-                </h:panelGroup>
-
-                <h:commandLink styleClass="btn btn-primary" action="/players/profile?faces-redirect=true" value="Home">
-                    <f:ajax execute="@this" render="@none" />
-                </h:commandLink>
 
             </h:form>
         </div>
