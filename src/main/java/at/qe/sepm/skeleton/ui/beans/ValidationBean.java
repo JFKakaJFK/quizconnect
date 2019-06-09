@@ -5,13 +5,16 @@ import org.springframework.stereotype.Component;
 
 import java.util.regex.Pattern;
 
+/**
+ * Bean for validating different kinds of inputs.
+ */
 @Component
 @Scope("request")
 public class ValidationBean {
-
+    
     /**
-     *
      * @param email
+     * 		String to check.
      * @return <code>true</code> if string contains a valid e-mail address
      */
     public boolean isValidEmail(String email) {
@@ -25,10 +28,10 @@ public class ValidationBean {
         }
         return false;
     }
-
+    
     /**
-     *
      * @param numerics
+     * 		String to check.
      * @return <code>true</code> if string only contains digits 0-9
      */
     public boolean isValidPositiveNumber(String numerics) {
@@ -39,10 +42,12 @@ public class ValidationBean {
         }
         return false;
     }
-
-    /** Validates text using a regular expression
+    
+    /**
+     * Validates text using a regular expression
      *
      * @param safetext
+     * 		String to check.
      * @return <code>true</code> if string only contains lowercase letters, uppercase letters or digits.
      */
     public boolean isValidText (String safetext) {
@@ -53,10 +58,12 @@ public class ValidationBean {
         }
         return false;
     }
-
-    /** Validates passwords using a regular expression
+    
+    /**
+     * Validates passwords using a regular expression
      *
      * @param password
+     * 		String to check.
      * @return <code>true</code> if string has more than 6 characters and contains at least one letter and one number
      */
     public boolean isValidPassword (String password) {

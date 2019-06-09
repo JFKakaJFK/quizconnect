@@ -52,13 +52,25 @@ public class QSOverviewBean implements Serializable {
         this.questionSets = new ArrayList<>(questionSetService.getAllQuestionSets());
         this.questionSetsByManager = questionSetService.getQuestionSetsOfManager(manager);
     }
-
+    
+    /**
+     * Adds a QuestionSet to the display.
+     *
+     * @param toAdd
+     * 		QuestionSet to add.
+     */
     public void addQuestionSetForDisplay(QuestionSet toAdd) {
         questionSets.add(toAdd);
         questionSetsByManager.add(toAdd); //add to questionSetsByManager to correctly show edit/delete button right after the import (without having to reload the page)
         logger.info("Added QuestionSet to DisplayList");
     }
-
+    
+    /**
+     * Deletes a QuestionSet form the database.
+     *
+     * @param questionSet
+     * 		QuestionSet to be deleted.
+     */
     public void deleteQuestionSet(QuestionSet questionSet) {
         logger.info("deleting QuestionSet with name: " + questionSet.getName());
         questionSetService.deleteQuestionSet(questionSetService.getQuestionSetById(questionSet.getId()));

@@ -11,6 +11,9 @@ import at.qe.sepm.skeleton.services.UserService;
 
 import java.io.Serializable;
 
+/**
+ * Bean for the create user interface.
+ */
 @Controller
 @Scope("view")
 public class AddPlayerBean implements Serializable {
@@ -44,7 +47,10 @@ public class AddPlayerBean implements Serializable {
         this.allPlayersBean = allPlayersBean;
         this.passwordBean = passwordBean;
     }
-
+    
+    /**
+     * Adds a user with the specified username and password to the database if both are valid.
+     */
     public void addUser(){
         if(!validateInput()){
             return;
@@ -56,7 +62,10 @@ public class AddPlayerBean implements Serializable {
         clear();
         allPlayersBean.addPlayer(p);
     }
-
+    
+    /**
+     * @return True if the current username and password are valid, false otherwise.
+     */
     public boolean validateInput(){
         if(username == null || userService.loadUser(username) != null || username.length() < 3 || username.length() > 100 || !validationBean.isValidText(username)){
             // TODO message username already taken
@@ -70,7 +79,10 @@ public class AddPlayerBean implements Serializable {
         }
         return true;
     }
-
+    
+    /**
+     * Clears the current username and password.
+     */
     public void clear(){
         this.username = "";
         this.password = "";
