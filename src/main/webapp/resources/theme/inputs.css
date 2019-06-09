@@ -57,3 +57,8 @@ select option {
 select option:checked {
     var(--input-focus-background)
 }
+
+.form-group.required label:after {
+    content:" *";
+    color: var(--error);
+}

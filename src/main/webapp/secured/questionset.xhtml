@@ -24,7 +24,7 @@
         <h:form id="questionSetForm">
             <div class="row">
                 <div class="col-6">
-                    <div class="form-group">
+                    <div class="form-group required">
                         <label for="setName">Set name</label>
                         <h:inputText type="text" styleClass="form-control" value="#{questionSetBean.questionSet.name}"
                                      name="setName" id="setName" pt:placeholder="Music theory" pt:pattern="[\s\S]*\S[\s\S]*" pt:autocomplete="off"
@@ -133,10 +133,11 @@
                                listenerString="#{questionSetBean.handleFileUpload('rightAnswerString', questionSetBean.question, questionSetBean.questionSet.id.toString())}"
                                listener="#{questionSetBean.none}"
                                accept="image/*"
-                               text="Upload Picture"
+                               text="Upload"
                                rendered="#{questionSetBean.question.type == 'picture'}"
                                required="true"
                                update="questionForForm:questionModal:rightAnswerString"
+                               buttonStyle="btn-secondary"
                     />
 
                     <h:panelGroup layout="block" id="rightAnswerString" styleClass="preview-overview"
@@ -158,9 +159,10 @@
                                listenerString="#{questionSetBean.handleFileUpload('wrongAnswerString_1', questionSetBean.question, questionSetBean.questionSet.id.toString())}"
                                listener="#{questionSetBean.none}"
                                accept="image/*"
-                               text="Upload Picture"
+                               text="Upload"
                                rendered="#{questionSetBean.question.type == 'picture'}"
                                required="true"
+                               buttonStyle="btn-secondary"
                                update="questionForForm:questionModal:wrongAnswer1Pic"
                     />
 
@@ -183,7 +185,8 @@
                                listenerString="#{questionSetBean.handleFileUpload('wrongAnswerString_2', questionSetBean.question, questionSetBean.questionSet.id.toString())}"
                                listener="#{questionSetBean.none}"
                                accept="image/*"
-                               text="Upload Picture"
+                               text="Upload"
+                               buttonStyle="btn-secondary"
                                rendered="#{questionSetBean.question.type == 'picture'}"
                                update="questionForForm:questionModal:wrongAnswer2Pic"
                     />
@@ -206,7 +209,8 @@
                                listenerString="#{questionSetBean.handleFileUpload('wrongAnswerString_3', questionSetBean.question, questionSetBean.questionSet.id.toString())}"
                                listener="#{questionSetBean.none}"
                                accept="image/*"
-                               text="Upload Picture"
+                               buttonStyle="btn-secondary"
+                               text="Upload"
                                rendered="#{questionSetBean.question.type == 'picture'}"
                                update="questionForForm:questionModal:wrongAnswer3Pic"
                     />
@@ -230,7 +234,8 @@
                                listenerString="#{questionSetBean.handleFileUpload('wrongAnswerString_4', questionSetBean.question, questionSetBean.questionSet.id.toString())}"
                                listener="#{questionSetBean.none}"
                                accept="image/*"
-                               text="Upload Picture"
+                               buttonStyle="btn-secondary"
+                               text="Upload"
                                rendered="#{questionSetBean.question.type == 'picture'}"
                                update="questionForForm:questionModal:wrongAnswer4Pic"
                     />
@@ -253,7 +258,8 @@
                                listenerString="#{questionSetBean.handleFileUpload('wrongAnswerString_5', questionSetBean.question, questionSetBean.questionSet.id.toString())}"
                                listener="#{questionSetBean.none}"
                                accept="image/*"
-                               text="Upload Picture"
+                               buttonStyle="btn-secondary"
+                               text="Upload"
                                rendered="#{questionSetBean.question.type == 'picture'}"
                                update="questionForForm:questionModal:wrongAnswer5Pic"
                     />
