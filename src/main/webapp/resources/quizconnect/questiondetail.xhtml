@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://java.sun.com/jsf/composite"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+      xml:lang="en"
+      lang="en">
+    <cc:interface>
+
+        <!--=============================================
+
+        The questiondetail component displays either a question with text or pictures
+
+        Params:
+
+        - value the value of the stat
+        - label the description of the value
+        - size [ sm | md(default) | lg ]
+        - align [ left | center(default) | right ]
+
+        ==============================================-->
+        <cc:attribute name="type" type="at.qe.sepm.skeleton.model.QuestionType" required="true"/>
+        <cc:attribute name="isQuestion" type="java.lang.Boolean" default="false"/>
+        <cc:attribute name="pictureId" default="preview"/>
+        <cc:attribute name="styleClass" default=""/>
+        <cc:attribute name="value" required="true" />
+        <cc:attribute name="label" required="true" />
+        <cc:attribute name="size" default="md" />
+        <cc:attribute name="align" default="center" />
+
+    </cc:interface>
+
+    <cc:implementation>
+        <h:panelGroup layout="block" styleClass="stat stat-#{cc.attrs.size} stat-#{cc.attrs.align} #{cc.attrs.styleClass}">
+            <c:if test="#{cc.attrs.type eq 'text' or cc.attrs.isQuestion}"><h3>#{cc.attrs.value}</h3></c:if>
+            <c:if test="#{cc.attrs.type eq 'picture' and not cc.attrs.isQuestion}"><h:graphicImage pt:id="#{cc.attrs.pictureStyleClass}" value="#{answerPictureBean.getAnswers(cc.attrs.value)}"></h:graphicImage></c:if>
+            <p>#{cc.attrs.label}</p>
+        </h:panelGroup>
+    </cc:implementation>
+</html>
