@@ -70,4 +70,11 @@ public interface StorageService {
      * @throws IOException
      */
     void deleteAnswer(String answer);
+
+    /**
+     * Deletes all answers of a specific {@link at.qe.sepm.skeleton.model.QuestionSet}.
+     * @param managerId
+     * @param questionSetId
+     */
+    void deleteAllAnswersOfQuestionSet(String managerId, String questionSetId);
 }

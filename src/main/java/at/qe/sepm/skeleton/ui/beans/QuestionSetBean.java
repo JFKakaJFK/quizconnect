@@ -233,6 +233,7 @@ public class QuestionSetBean implements Serializable {
             bEditQuestion = false;
             initQuestion();
         } else {
+            logger.error("Invalid question!");
             //TODO: return info to the user
         }
     }
@@ -319,6 +320,11 @@ public class QuestionSetBean implements Serializable {
      * @return <code>true</code> if neither the String is null, contains invalid characters, nor is longer than 200 chars
      */
     private boolean isValidQuestion(Question question) {
+
+        if (question.getType() == QuestionType.picture) {
+            return true;
+            //TODO: Validate picture-string too
+        }
         if (question.getQuestionString() == null || !validationBean.isValidText(question.getQuestionString().trim(), 200)) {
             return false;
         }

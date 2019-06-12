@@ -114,6 +114,35 @@ public class FileSystemStorageTest {
         Files.deleteIfExists(answers.resolve(stored));
     }
 
+    @Test
+    public void testDeleteAllAnswersOfSet() throws IOException {
+        String rightPath = answers.toString();
+
+        String stored = fileSystemStorageService.storeAnswer(testFile, manager, qSetId);
+
+        Assert.assertTrue("Stored answer exists", Files.exists(answers.resolve(stored)));
+        Assert.assertTrue("Stored answer has right path", answers.resolve(stored).toString().contains(rightPath));
+        Assert.assertTrue("Stored file is non empty", answers.resolve(stored).toFile().length() > 0);
+        Assert.assertEquals("Stored file is of right type", answerType, FilenameUtils.getExtension(stored));
+
+        String rightPath1 = answers.toString();
+
+        String stored1 = fileSystemStorageService.storeAnswer(testFile, manager, qSetId);
+
+        Assert.assertTrue("Stored answer exists", Files.exists(answers.resolve(stored1)));
+        Assert.assertTrue("Stored answer has right path", answers.resolve(stored1).toString().contains(rightPath1));
+        Assert.assertTrue("Stored file is non empty", answers.resolve(stored1).toFile().length() > 0);
+        Assert.assertEquals("Stored file is of right type", answerType, FilenameUtils.getExtension(stored1));
+
+        fileSystemStorageService.deleteAllAnswersOfQuestionSet(manager, qSetId);
+
+        Assert.assertFalse("Stored answer still exists", Files.exists(answers.resolve(stored)));
+        Assert.assertFalse("Stored answer still exists", Files.exists(answers.resolve(stored)));
+
+        Files.deleteIfExists(answers.resolve(stored));
+        Files.deleteIfExists(answers.resolve(stored1));
+    }
+
     @Test(expected = NullPointerException.class)
     public void testEmptyAvatar() throws IOException {
         File testFile = folder.newFile("testPic.jpg");

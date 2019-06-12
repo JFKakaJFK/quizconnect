@@ -1,7 +1,11 @@
 .question-info-box {
     display: grid;
     grid-gap: var(--default-padding);
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
     align-items: center;
+}
+
+.question-info-box.picture img {
+    width: 50%;
 }
