@@ -77,12 +77,26 @@
                     </ui:repeat>
 
             </h:panelGroup>
+
         </h:form>
 
     </ui:define>
 
-    <ui:define name="modals" enctype="multipart/formdata">
-        <h:form id="modals">
+    <ui:define name="modals">
+        <h:form>
+            <qc:modal id="deleteQuestionset"
+                      target="deleteQuestionset"
+                      title="Delete Questionset"
+                      confirm="Delete Questionset"
+                      abort="Cancel"
+                      abortButton="btn btn-secondary"
+                      confirmAction="#{QSOverviewBean.deleteQuestionSet}"
+                      confirmButton="btn btn-danger"
+                      update=":form:questionset-collection">
+                Are you sure? This cannot be undone.
+            </qc:modal>
+        </h:form>
+        <h:form id="modals" enctype="multipart/formdata">
             <qc:modal id="modal"
                       target="uploadCSV"
                       title="Upload .csv file"
@@ -117,18 +131,6 @@
                     <h:inputText styleClass="form-control" id="descriptionCSV" value="#{CSVImportBean.descriptionCSV}"
                                  p:required="true" p:pattern="[\s\S]*\S[\s\S]*"></h:inputText>
                 </div>
-            </qc:modal>
-
-            <qc:modal id="deleteQuestionset"
-                      target="deleteQuestionset"
-                      title="Delete Questionset"
-                      confirm="Delete Questionset"
-                      abort="Cancel"
-                      abortButton="btn btn-secondary"
-                      confirmAction="#{QSOverviewBean.deleteQuestionSet}"
-                      confirmButton="btn btn-danger"
-                      update=":form:questionset-collection">
-                Are you sure? This cannot be undone.
             </qc:modal>
 
             <qc:modal id="infoQuestionset" target="infoQuestionset" title="Details" abort="Close" showConfirm="false">

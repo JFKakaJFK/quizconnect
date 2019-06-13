@@ -111,7 +111,7 @@
     </ui:define>
 
     <ui:define name="modals">
-        <h:form id="questionForForm">
+        <h:form id="questionForForm" enctype="multipart/formdata">
             <qc:modal target="questionModal" id="questionModal" closable="false" modaltype="info"
                       title="#{questionSetBean.bEditQuestion?'Edit question':'New question'}"
                       abort="Abort"
@@ -309,7 +309,7 @@
                       abort="Cancel"
                       confirmAction="#{questionSetBean.deleteQuestion}"
                       abortButton="btn btn-secondary"
-                      update=":deleteQuestionForm:questionCollection"><!-- TODO update doesnt work -->
+                      update=":deleteQuestionForm:questionCollection">
                 Are you sure? This cannot be undone.
             </qc:modal>
 
