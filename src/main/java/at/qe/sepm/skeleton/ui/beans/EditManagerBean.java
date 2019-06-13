@@ -41,6 +41,9 @@ public class EditManagerBean {
     @Autowired
     private ValidationBean validationBean;
 
+    @Autowired
+    private MessageBean messageBean;
+
 
     private User user;
     private String email;
@@ -57,6 +60,11 @@ public class EditManagerBean {
         if (user != null && validationBean.isValidPassword(password, repeatPassword)) {
             user.setPassword(passwordBean.encodePassword(password));
             userService.saveUser(user);
+            messageBean.alertInformation("Success", "Saved new password");
+            messageBean.updateComponent("messages");
+        } else {
+            messageBean.alertError("Error", "Couldn't save new password - please try again");
+            messageBean.updateComponent("messages");
         }
         user = null;
         password = null;
@@ -68,6 +76,11 @@ public class EditManagerBean {
             user.getManager().setEmail(email);
             managerService.saveManager(user.getManager());
             logger.info("Manager with ID " + user.getManager().getId() + " changed e-mail to " + user.getManager().getEmail());
+            messageBean.alertInformation("Success", "Saved new email address");
+            messageBean.updateComponent("messages");
+        } else {
+            messageBean.alertError("Error", "Couldn't save new email address - please try again");
+            messageBean.updateComponent("messages");
         }
     }
 

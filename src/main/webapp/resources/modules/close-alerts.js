@@ -1,7 +1,7 @@
 function hideAlert(){
-    $(".alert-info").addClass("fade")
+    $(".alert").addClass("fade")
 }
 
 window.setTimeout(function () {
     hideAlert();
-}, 3000);
+}, 5000);

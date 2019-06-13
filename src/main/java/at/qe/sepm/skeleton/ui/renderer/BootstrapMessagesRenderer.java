@@ -114,7 +114,7 @@ public class BootstrapMessagesRenderer extends MessagesRenderer {
         } else if (FacesMessage.SEVERITY_WARN.equals(severity)) {
             alertSeverityClass = "alert-warning";
         } else if (FacesMessage.SEVERITY_ERROR.equals(severity)) {
-            alertSeverityClass = "alert-danger";
+            alertSeverityClass = "alert-error";
         } else if (FacesMessage.SEVERITY_FATAL.equals(severity)) {
             alertSeverityClass = "alert-fatal";
         }
@@ -145,8 +145,8 @@ public class BootstrapMessagesRenderer extends MessagesRenderer {
                 case ("alert-warning"):
                     System.out.println("warning");
                     break;
-                case ("alert-danger"):
-                    System.out.println("danger");
+                case ("alert-error"):
+                    System.out.println("error");
                     break;
                 case ("alert-fatal"):
                     System.out.println("fatal");

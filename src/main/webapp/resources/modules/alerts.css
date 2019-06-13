@@ -13,6 +13,9 @@
     z-index: 999;
 }
 
+
+
+
 @keyframes stretch {
     0% {
         transform: scale(.9);
@@ -38,10 +41,21 @@
     position:relative;
     box-shadow: 1px 7px 14px -5px rgba(0,0,0,0.2);*/
 
+
+
+    opacity: 1;
+    -webkit-transition: opacity 2.5s ease-in-out;
+    -moz-transition: opacity 2.5s ease-in-out;
+    -o-transition: opacity 2.5s ease-in-out;
+    transition: opacity 2.5s ease-in-out;
     box-shadow: 1px 7px 14px -5px rgba(0,0,0,0.2);
     padding: 21px 0;
     background-color:#fff;
     border-radius:4px;
+}
+
+.alert.fade {
+    opacity: 0;
 }
 
 .alert-cell{
