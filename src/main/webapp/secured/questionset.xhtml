@@ -76,13 +76,41 @@
                 </h:commandButton>
             </h:panelGroup>
 
+        </h:form>
 
+        <h:form id="deleteQuestionForm">
+            <h:panelGroup styleClass="collection" layout="block" id="questionCollection" rendered="#{true}">
+                <ui:repeat value="#{questionSetBean.questionsDisplay}" var="question">
+                    <qc:questionbox question="#{question}">
 
+                        <h:commandLink styleClass="box-action" pt:data-toggle="modal" pt:data-target="#infoQuestion">
+                            <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-9a1 1 0 0 1 1 1v4a1 1 0 0 1-2 0v-4a1 1 0 0 1 1-1zm0-4a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+                            <f:ajax execute="@this" render=":questionForForm:infoQuestion:modal-body"/>
+                            <f:setPropertyActionListener value="#{question}" target="#{questionSetBean.questionForDetails}"/>
+                        </h:commandLink>
 
+                        <h:commandLink styleClass="box-action" action="#{questionSetBean.setEditQuestion(question)}" pt:data-toggle="modal" pt:data-target="#questionModal"
+                                       rendered="#{true}">
+                            <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M6.3 12.3l10-10a1 1 0 0 1 1.4 0l4 4a1 1 0 0 1 0 1.4l-10 10a1 1 0 0 1-.7.3H7a1 1 0 0 1-1-1v-4a1 1 0 0 1 .3-.7zM8 16h2.59l9-9L17 4.41l-9 9V16zm10-2a1 1 0 0 1 2 0v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6c0-1.1.9-2 2-2h6a1 1 0 0 1 0 2H4v14h14v-6z"/></svg>
+                            <f:ajax execute="@this" render=":questionForForm:questionModal:modal-header :questionForForm:questionModal:modal-body :questionForForm:questionModal:modal-footer"/>
+                        </h:commandLink>
+
+                        <h:commandLink styleClass="box-action" pt:data-toggle="modal" pt:data-target="#deleteQuestion"
+                                       rendered="#{true}">
+                            <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M8 6V4c0-1.1.9-2 2-2h4a2 2 0 0 1 2 2v2h5a1 1 0 0 1 0 2h-1v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8H3a1 1 0 1 1 0-2h5zM6 8v12h12V8H6zm8-2V4h-4v2h4zm-4 4a1 1 0 0 1 1 1v6a1 1 0 0 1-2 0v-6a1 1 0 0 1 1-1zm4 0a1 1 0 0 1 1 1v6a1 1 0 0 1-2 0v-6a1 1 0 0 1 1-1z"/></svg>
+                            <f:ajax execute="@this" render=":deleteQuestionForm:questionCollection"/>
+                            <f:setPropertyActionListener value="#{question}" target="#{questionSetBean.questionToDelete}"/>
+                        </h:commandLink>
+
+                    </qc:questionbox>
+                </ui:repeat>
+            </h:panelGroup>
 
         </h:form>
 
+    </ui:define>
 
+    <ui:define name="modals">
         <h:form id="questionForForm">
             <qc:modal target="questionModal" id="questionModal" closable="false" modaltype="info"
                       title="#{questionSetBean.bEditQuestion?'Edit question':'New question'}"
@@ -272,37 +300,6 @@
                     </h:panelGroup>
                 </div>
             </qc:modal>
-        </h:form>
-
-
-        <h:form id="deleteQuestionForm">
-            <h:panelGroup styleClass="collection" layout="block" id="questionCollection" rendered="#{true}">
-                <ui:repeat value="#{questionSetBean.questionsDisplay}" var="question">
-                    <qc:questionbox question="#{question}">
-
-                        <h:commandLink styleClass="box-action" pt:data-toggle="modal" pt:data-target="#infoQuestion">
-                            <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-9a1 1 0 0 1 1 1v4a1 1 0 0 1-2 0v-4a1 1 0 0 1 1-1zm0-4a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
-                            <f:ajax execute="@this" render=":deleteQuestionForm:infoQuestion:modal-body"/>
-                            <f:setPropertyActionListener value="#{question}" target="#{questionSetBean.questionForDetails}"/>
-                        </h:commandLink>
-
-                        <h:commandLink styleClass="box-action" action="#{questionSetBean.setEditQuestion(question)}" pt:data-toggle="modal" pt:data-target="#questionModal"
-                                       rendered="#{true}">
-                            <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M6.3 12.3l10-10a1 1 0 0 1 1.4 0l4 4a1 1 0 0 1 0 1.4l-10 10a1 1 0 0 1-.7.3H7a1 1 0 0 1-1-1v-4a1 1 0 0 1 .3-.7zM8 16h2.59l9-9L17 4.41l-9 9V16zm10-2a1 1 0 0 1 2 0v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6c0-1.1.9-2 2-2h6a1 1 0 0 1 0 2H4v14h14v-6z"/></svg>
-                            <f:ajax execute="@this" render=":questionForForm:questionModal:modal-header :questionForForm:questionModal:modal-body :questionForForm:questionModal:modal-footer"/>
-                        </h:commandLink>
-
-                        <h:commandLink styleClass="box-action" pt:data-toggle="modal" pt:data-target="#deleteQuestion"
-                                       rendered="#{true}">
-                            <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M8 6V4c0-1.1.9-2 2-2h4a2 2 0 0 1 2 2v2h5a1 1 0 0 1 0 2h-1v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8H3a1 1 0 1 1 0-2h5zM6 8v12h12V8H6zm8-2V4h-4v2h4zm-4 4a1 1 0 0 1 1 1v6a1 1 0 0 1-2 0v-6a1 1 0 0 1 1-1zm4 0a1 1 0 0 1 1 1v6a1 1 0 0 1-2 0v-6a1 1 0 0 1 1-1z"/></svg>
-                            <f:ajax execute="@this" render=":deleteQuestionForm:questionCollection"/>
-                            <f:setPropertyActionListener value="#{question}" target="#{questionSetBean.questionToDelete}"/>
-                        </h:commandLink>
-
-                    </qc:questionbox>
-                </ui:repeat>
-            </h:panelGroup>
-
 
             <qc:modal id="deleteQuestion"
                       target="deleteQuestion"
@@ -312,7 +309,7 @@
                       abort="Cancel"
                       confirmAction="#{questionSetBean.deleteQuestion()}"
                       abortButton="btn btn-secondary"
-                      update=":deleteQuestionForm:questionCollection">
+                      update=":deleteQuestionForm:questionCollection"><!-- TODO update doesnt work -->
                 Are you sure? This cannot be undone.
             </qc:modal>
 
@@ -328,6 +325,5 @@
                 </h:panelGroup>
             </qc:modal>
         </h:form>
-
     </ui:define>
 </ui:composition>

@@ -21,59 +21,17 @@
 
     <ui:define name="content">
 
-        <h:form id="formId" enctype="multipart/formdata">
+        <h:form id="form">
             <h:panelGroup layout="block" styleClass="container" rendered="#{QSOverviewBean.questionSets == null}">
                 <h1 class="display-4">No QuestionSets found</h1>
                 <h:commandButton styleClass="btn btn-primary" action="all?faces-redirect=true" value="All Players"/>
             </h:panelGroup>
-
-            <qc:modal id="modal"
-                      target="uploadCSV"
-                      title="Upload .csv file"
-                      closeAction="#{CSVImportBean.abort}"
-                      abortAction="#{CSVImportBean.abort}"
-                      confirmAction="#{CSVImportBean.processCSV}"
-                      update="@form"
-                      bodyId="body"
-                      footerId="footer">
-
-                <qc:upload target="#{CSVImportBean.file}"
-                           listener="#{CSVImportBean.handleFileUpload}"
-                           accept=".csv"
-                           update=":form:modal:body :form:modal:footer"
-                           text="Upload CSV"
-                           />
-
-                <div jsf:id="preview" class="preview">
-                    <h:outputText p:id="preview"
-                                  value="TODO"
-                                  alt="File"/>
-                </div>
-
-                <div class="form-group">
-                    <label for="nameCSV">Name</label>
-                    <h:inputText styleClass="form-control" id="nameCSV" value="#{CSVImportBean.nameCSV}"
-                                 p:required="true" p:pattern="[\s\S]*\S[\s\S]*"></h:inputText>
-                </div>
-
-                <div class="form-group">
-                    <label for="descriptionCSV">Description</label>
-                    <h:inputText styleClass="form-control" id="descriptionCSV" value="#{CSVImportBean.descriptionCSV}"
-                                 p:required="true" p:pattern="[\s\S]*\S[\s\S]*"></h:inputText>
-                </div>
-            </qc:modal>
-        </h:form>
-
-
-        <h:form id="formOverview-QSets">
 
             <h:panelGroup layout="block" styleClass="searchbar" id="searchbar">
 
                 <h:inputText id="searchPrase" p:autocomplete="nein-danke-bitte-nicht" p:placeholder="Search" value="#{QSOverviewBean.searchPhrase}" styleClass="form-control searchbar-search">
                     <f:ajax listener="#{QSOverviewBean.handleSearch}" event="keyup" execute="@this" render="questionset-collection"/>
                 </h:inputText>
-
-
 
                 <ui:fragment>
                     <h:commandButton rendered="#{QSOverviewBean.onlyByManager}" value="All sets" styleClass="btn btn-secondary searchbar-action">
@@ -100,7 +58,7 @@
 
                                 <h:commandLink styleClass="box-action" p:data-toggle="modal" p:data-target="#infoQuestionset">
                                     <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-9a1 1 0 0 1 1 1v4a1 1 0 0 1-2 0v-4a1 1 0 0 1 1-1zm0-4a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
-                                    <f:ajax execute="@this" render=":formOverview-QSets:infoQuestionset:modal-body"/>
+                                    <f:ajax execute="@this" render=":modals:infoQuestionset:modal-body"/>
                                     <f:setPropertyActionListener value="#{set}" target="#{QSOverviewBean.questionsetForDetails}"/>
                                 </h:commandLink>
 
@@ -119,6 +77,47 @@
                     </ui:repeat>
 
             </h:panelGroup>
+        </h:form>
+
+    </ui:define>
+
+    <ui:define name="modals" enctype="multipart/formdata">
+        <h:form id="modals">
+            <qc:modal id="modal"
+                      target="uploadCSV"
+                      title="Upload .csv file"
+                      closeAction="#{CSVImportBean.abort}"
+                      abortAction="#{CSVImportBean.abort}"
+                      confirmAction="#{CSVImportBean.processCSV}"
+                      update=":form"
+                      bodyId="body"
+                      footerId="footer">
+
+                <qc:upload target="#{CSVImportBean.file}"
+                           listener="#{CSVImportBean.handleFileUpload}"
+                           accept=".csv"
+                           update=":modals:modal:body :modals:modal:footer"
+                           text="Upload CSV"
+                />
+
+                <div jsf:id="preview" class="preview">
+                    <h:outputText p:id="preview"
+                                  value="TODO"
+                                  alt="File"/>
+                </div>
+
+                <div class="form-group">
+                    <label for="nameCSV">Name</label>
+                    <h:inputText styleClass="form-control" id="nameCSV" value="#{CSVImportBean.nameCSV}"
+                                 p:required="true" p:pattern="[\s\S]*\S[\s\S]*"></h:inputText>
+                </div>
+
+                <div class="form-group">
+                    <label for="descriptionCSV">Description</label>
+                    <h:inputText styleClass="form-control" id="descriptionCSV" value="#{CSVImportBean.descriptionCSV}"
+                                 p:required="true" p:pattern="[\s\S]*\S[\s\S]*"></h:inputText>
+                </div>
+            </qc:modal>
 
             <qc:modal id="deleteQuestionset"
                       target="deleteQuestionset"
@@ -128,7 +127,7 @@
                       abortButton="btn btn-secondary"
                       confirmAction="#{QSOverviewBean.deleteQuestionSet}"
                       confirmButton="btn btn-danger"
-                      update=":formOverview-QSets:questionset-collection">
+                      update=":form:questionset-collection">
                 Are you sure? This cannot be undone.
             </qc:modal>
 
@@ -140,8 +139,6 @@
                     <qc:stat value="#{QSOverviewBean.questionsetForDetails.difficulty}" label="difficulty" />
                 </h:panelGroup>
             </qc:modal>
-
         </h:form>
-
     </ui:define>
 </ui:composition>

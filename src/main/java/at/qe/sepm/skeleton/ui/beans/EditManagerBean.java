@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.PostConstruct;
+import javax.faces.event.AjaxBehaviorEvent;
 
 import java.io.Serializable;
 import java.util.regex.Matcher;
@@ -45,7 +46,6 @@ public class EditManagerBean implements Serializable {
     @Autowired
     private MessageBean messageBean;
 
-
     private User user;
     private String email;
     private String password;
@@ -54,20 +54,19 @@ public class EditManagerBean implements Serializable {
 
     @PostConstruct
     private void init() {
-        user = sessionInfoBean.getCurrentUser();
+        user = userService.loadUser(sessionInfoBean.getCurrentUser().getUsername());
     }
 
     public void changePassword() {
         if (user != null && validationBean.isValidPassword(password, repeatPassword)) {
             user.setPassword(passwordBean.encodePassword(password));
-            userService.saveUser(user);
+            this.user = userService.saveUser(user);
             messageBean.alertInformation("Success", "Saved new password");
             messageBean.updateComponent("messages");
         } else {
             messageBean.alertError("Error", "Couldn't save new password - please try again");
             messageBean.updateComponent("messages");
         }
-        user = null;
         password = null;
         repeatPassword = null;
     }
