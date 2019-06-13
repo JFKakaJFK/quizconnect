@@ -50,3 +50,15 @@
 .modal-edit .modal-header, .modal-edit .modal-body, .modal-edit .modal-footer {
     background-color: var(--col-2-d);
 }
+
+/* fix for centering modals */
+/*
+.modal-dialog-centered {
+    min-height: calc(100vh - 1rem);
+}
+@media (min-width: 576px){
+    .modal-dialog-centered {
+        min-height: calc(100vh - 3.5rem);
+    }
+}
+*/

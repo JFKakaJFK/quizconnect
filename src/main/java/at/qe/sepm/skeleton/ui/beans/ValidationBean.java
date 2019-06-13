@@ -5,11 +5,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
 import java.util.regex.Pattern;
 
 @Component
 @Scope("view")
-public class ValidationBean {
+public class ValidationBean implements Serializable {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
