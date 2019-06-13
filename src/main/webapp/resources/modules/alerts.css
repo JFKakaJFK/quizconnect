@@ -41,21 +41,10 @@
     position:relative;
     box-shadow: 1px 7px 14px -5px rgba(0,0,0,0.2);*/
 
-
-
-    opacity: 1;
-    -webkit-transition: opacity 2.5s ease-in-out;
-    -moz-transition: opacity 2.5s ease-in-out;
-    -o-transition: opacity 2.5s ease-in-out;
-    transition: opacity 2.5s ease-in-out;
     box-shadow: 1px 7px 14px -5px rgba(0,0,0,0.2);
     padding: 21px 0;
     background-color:#fff;
     border-radius:4px;
-}
-
-.alert.fade {
-    opacity: 0;
 }
 
 .alert-cell{
@@ -106,6 +95,17 @@
     margin-top: 0;
     margin-bottom: 0;
     color: #878787;
+}
+
+.alert-close {
+    position: absolute;
+    right: 10px;
+    top: 10%;
+    width: 14px;
+    cursor:pointer;
+    height: auto;
+    fill:#878787;
+    transform: translateY(-50%);
 }
 
 .alert-info .alert-icon{
