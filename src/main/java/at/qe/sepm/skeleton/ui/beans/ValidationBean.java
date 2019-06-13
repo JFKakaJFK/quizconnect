@@ -5,11 +5,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
 import java.util.regex.Pattern;
 
 @Component
 @Scope("view")
-public class ValidationBean {
+public class ValidationBean implements Serializable {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
@@ -83,6 +84,7 @@ public class ValidationBean {
      * @return <code>true</code> if string has more than 5 characters
      */
     public boolean isValidPassword (String password, String repeatPassword) {
+        logger.info("Called with " + password + " and " + repeatPassword);
         if (password != null) {
             String passwordRegex = "^.{5,}$"; //if someone wants to set a password consisting of 5 spaces, that's fine
             Pattern pat = Pattern.compile(passwordRegex);

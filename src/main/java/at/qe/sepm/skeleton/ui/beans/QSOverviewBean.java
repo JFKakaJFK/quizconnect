@@ -80,12 +80,8 @@ public class QSOverviewBean implements Serializable {
     public void deleteQuestionSet() {
         logger.info("deleting QuestionSet with name: " + questionsetToDelete.getName());
 
-        messageBean.alertInformation("Deleted", "Deleted QuestionSet");
-        messageBean.alertInformation("Deleted", "Deleted QuestionSet");
-
         storageService.deleteAllAnswersOfQuestionSet(sessionInfoBean.getCurrentUser().getId(), questionsetToDelete.getId().toString());
         logger.info("deleted all answers of QuestionSet");
-        messageBean.updateComponent("messages");
 
         //delete from DB
         questionSetService.deleteQuestionSet(questionSetService.getQuestionSetById(questionsetToDelete.getId()));
@@ -101,6 +97,10 @@ public class QSOverviewBean implements Serializable {
         questionsetToDelete = null;
 
         filterAndUpdateSets();
+
+        //show success message
+        messageBean.alertInformation("Success", "Deleted QuestionSet");
+        messageBean.updateComponent("messages");
     }
 
     public void handleSearch(AjaxBehaviorEvent event){

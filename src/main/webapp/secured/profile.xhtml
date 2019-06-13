@@ -15,75 +15,68 @@
     <ui:define name="title">Profile</ui:define>
 
     <ui:define name="site-specific-css">
-        <link rel="stylesheet" type="text/css" href="/resources/profile.css"/>
     </ui:define>
 
     <ui:define name="site-specific-javascript">
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"/>
-        <script type="text/javascript" src="/resources/util/validatePassword.js"/>
+        <script type="text/javascript" src="../resources/util/validatePassword.js"/>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.4.2/zxcvbn.js"/>
-        <script type="text/javascript" src="/resources/util/passwordhelp.js"/>
-
+        <script type="text/javascript" src="../resources/util/passwordhelp.js"/>
     </ui:define>
 
     <ui:define name="content">
-        <h:panelGroup layout="block">
+        <h:form id="passwordChange">
+            <h:commandButton styleClass="btn btn-primary" p:data-toggle="modal" p:data-target="#editManager" value="Change password">
+                <f:ajax execute="@this" render=":modals:editManager:footer"/>
+            </h:commandButton>
 
-            <h:form id="passwordChange">
-                <h:commandButton styleClass="btn btn-primary" p:data-toggle="modal" p:data-target="#editManager" value="Change password">
-                    <f:ajax execute="@this" render="@none"/>
-                </h:commandButton>
+            <h:commandButton styleClass="btn btn-primary" p:data-toggle="modal" p:data-target="#editEmail" value="Change email">
+                <f:ajax execute="@this" render=":modals:editEmail:footer :modals:editEmail:body"/>
+            </h:commandButton>
+        </h:form>
+    </ui:define>
 
-                <h:commandButton styleClass="btn btn-primary" p:data-toggle="modal" p:data-target="#editEmail" value="Change email">
-                    <f:ajax execute="@this" render="@none"/>
-                </h:commandButton>
+    <ui:define name="modals">
+        <h:form id="modals">
+            <qc:modal id="editManager"
+                      target="editManager"
+                      title="Edit Password"
+                      confirm="Edit Password"
+                      abort="Cancel"
+                      bodyId="body" footerId="footer"
+                      confirmAction="#{editManagerBean.changePassword}"
+                      disableConfirm="#{!validationBean.isValidPassword(editManagerBean.password, editManagerBean.repeatPassword)}"
+                      update="@this">
+                <h:panelGroup layout="block" styleClass="form-group">
+                    <h:inputSecret p:placeholder="New password" p:name="password" p:id="password" value="#{editManagerBean.password}" p:autocomplete="new-password" styleClass="form-control">
+                        <f:ajax event="keyup" execute="@this" render=":modals:editManager:footer"/><!-- TODO updating the bean value does not seem to work properly on input-->
+                    </h:inputSecret>
+                    <h:inputSecret p:placeholder="Repeat new password" p:name="repeat_password" p:id="repeat_password" value="#{editManagerBean.repeatPassword}" p:autocomplete="new-password" styleClass="form-control">
+                        <f:ajax event="keyup" execute="@this" render=":modals:editManager:footer"/>
+                    </h:inputSecret>
+                </h:panelGroup>
 
-                <qc:modal id="editManager"
-                          target="editManager"
-                          title="Edit Password"
-                          confirm="Edit Password"
-                          abort="Cancel"
-                          bodyId="body" footerId="footer"
-                          confirmAction="#{editManagerBean.changePassword}"
-                          disableConfirm="#{!validationBean.isValidPassword(editManagerBean.password, editManagerBean.repeatPassword)}"
-                          update="@this">
-                    <h:panelGroup layout="block" styleClass="form-group">
-                        <h:inputSecret p:placeholder="New password" p:name="password" p:id="password" value="#{editManagerBean.password}" p:autocomplete="new-password" styleClass="form-control">
-                            <f:ajax event="keyup" execute="@this" render=":passwordChange:editManager:footer"/>
-                        </h:inputSecret>
-                        <h:inputSecret p:placeholder="Repeat new password" p:name="repeat_password" p:id="repeat_password" value="#{editManagerBean.repeatPassword}" p:autocomplete="new-password" styleClass="form-control">
-                            <f:ajax event="keyup" execute="@this" render=":passwordChange:editManager:footer"/>
-                        </h:inputSecret>
-                    </h:panelGroup>
+                <meter max="4" class="meter" id="password-strength-meter"></meter>
 
-                    <meter max="4" class="meter" id="password-strength-meter"></meter>
+                <h:panelGroup layout="block" styleClass="box" p:id="password-strength-text" id="password-strength-text"/>
 
-                    <h:panelGroup layout="block" styleClass="box" p:id="password-strength-text" id="password-strength-text"/>
+                <h:panelGroup layout="block" styleClass="box" p:name="errorcontainer" p:id="errorcontainer" id="errorcontainer"/>
 
-                    <h:panelGroup layout="block" styleClass="box" p:name="errorcontainer" p:id="errorcontainer" id="errorcontainer"/>
+            </qc:modal>
 
-                </qc:modal>
-
-                <qc:modal id="editEmail"
-                          target="editEmail"
-                          title="Edit Email"
-                          confirm="Edit Email"
-                          abort="Cancel"
-                          bodyId="body" footerId="footer"
-                          confirmAction="#{editManagerBean.changeEmail}"
-                          disableConfirm="#{!validationBean.isValidEmail(editManagerBean.email)}"
-                          update="@this">
-                    <h:inputText p:placeholder="New email" value="#{editManagerBean.email}" p:autocomplete="new-email" p:maxlength="100" styleClass="form-control">
-                        <f:ajax event="keyup" execute="@this" render=":passwordChange:editEmail:footer"/>
-                    </h:inputText>
-                </qc:modal>
-            </h:form>
-
-
-
-
-        </h:panelGroup>
-
-
+            <qc:modal id="editEmail"
+                      target="editEmail"
+                      title="Edit Email"
+                      confirm="Edit Email"
+                      abort="Cancel"
+                      bodyId="body" footerId="footer"
+                      confirmAction="#{editManagerBean.changeEmail}"
+                      disableConfirm="#{!validationBean.isValidEmail(editManagerBean.email)}"
+                      update="@this">
+                <h:inputText p:placeholder="New email" value="#{editManagerBean.email}" p:autocomplete="new-email" p:maxlength="100" styleClass="form-control">
+                    <f:ajax event="keyup" execute="@this" render=":modals:editEmail:footer"/>
+                </h:inputText>
+            </qc:modal>
+        </h:form>
     </ui:define>
 </ui:composition>

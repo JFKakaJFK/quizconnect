@@ -36,10 +36,19 @@ public class MessageBean implements Serializable {
     }
 
     public void alertInformation(String summary, String text) {
-        logger.info("messageBean called with global and text: "+text);
+        logger.info("messageBean called with global and text: " + text);
         if(FacesContext.getCurrentInstance() != null) {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_INFO, summary, text)
+            );
+        }
+    }
+
+    public void alertError(String summary, String text) {
+        logger.info("messageBean called with global and text: " + text);
+        if(FacesContext.getCurrentInstance() != null) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, summary, text)
             );
         }
     }

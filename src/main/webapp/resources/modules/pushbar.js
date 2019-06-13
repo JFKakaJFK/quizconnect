@@ -1,4 +1,4 @@
-class Pushbar {
+class Pushbar { /* TODO DEPRECATED REMOVE */
   constructor(config = { overlay: true, blur: false }) {
     this.activeBar = null;
     this.overlay = false;

@@ -235,9 +235,7 @@ public class QuestionSetBean implements Serializable {
         questionsDisplay.remove(questionToDelete);
         questionService.deleteQuestion(questionToDelete);
         logger.info("Question deleted");
-        messageBean.alertInformation("Info", "Test");
-        messageBean.alertInformation("Haha", "xdROFLLOL");
-
+        messageBean.alertInformation("Success", "Deleted QuestionSet");
         messageBean.updateComponent("messages");
     }
 
@@ -263,9 +261,18 @@ public class QuestionSetBean implements Serializable {
             questionService.saveQuestion(question);
             bEditQuestion = false;
             initQuestion();
+            if (!bEditQuestion) {
+                messageBean.alertInformation("Success", "Saved new Question");
+                messageBean.updateComponent("messages");
+            } else {
+                messageBean.alertInformation("Success", "Saved edited Question");
+                messageBean.updateComponent("messages");
+            }
+
         } else {
             logger.error("Invalid question!");
-            //TODO: return info to the user
+            messageBean.alertError("Error", "Couldn't save Question - please try again");
+            messageBean.updateComponent("messages");
         }
     }
 
@@ -281,6 +288,9 @@ public class QuestionSetBean implements Serializable {
         questionSetSaved = true;
         logger.info("Created a new QuestionSet with ID: " + questionSet.getId() + " by manager:" + questionSet.getAuthor());
         initQuestion();
+        messageBean.alertInformation("Success", "Saved new Questionset");
+        messageBean.updateComponent("messages");
+
     }
 
     /**
@@ -291,6 +301,8 @@ public class QuestionSetBean implements Serializable {
         questionSetService.saveQuestionSet(questionSet);
         logger.info("Edited QuestionSet with ID: " + questionSet.getId());
         initQuestion();
+        messageBean.alertInformation("Success", "Saved edited Questionset");
+        messageBean.updateComponent("messages");
     }
 
     /**

@@ -11,14 +11,16 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.PostConstruct;
+import javax.faces.event.AjaxBehaviorEvent;
 
+import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Controller
 @Scope("view")
 
-public class EditManagerBean {
+public class EditManagerBean implements Serializable {
 
     /**
      * Changes a {@link Player}s password if the new password is valid
@@ -41,6 +43,8 @@ public class EditManagerBean {
     @Autowired
     private ValidationBean validationBean;
 
+    @Autowired
+    private MessageBean messageBean;
 
     private User user;
     private String email;
@@ -50,15 +54,19 @@ public class EditManagerBean {
 
     @PostConstruct
     private void init() {
-        user = sessionInfoBean.getCurrentUser();
+        user = userService.loadUser(sessionInfoBean.getCurrentUser().getUsername());
     }
 
     public void changePassword() {
         if (user != null && validationBean.isValidPassword(password, repeatPassword)) {
             user.setPassword(passwordBean.encodePassword(password));
-            userService.saveUser(user);
+            this.user = userService.saveUser(user);
+            messageBean.alertInformation("Success", "Saved new password");
+            messageBean.updateComponent("messages");
+        } else {
+            messageBean.alertError("Error", "Couldn't save new password - please try again");
+            messageBean.updateComponent("messages");
         }
-        user = null;
         password = null;
         repeatPassword = null;
     }
@@ -68,6 +76,11 @@ public class EditManagerBean {
             user.getManager().setEmail(email);
             managerService.saveManager(user.getManager());
             logger.info("Manager with ID " + user.getManager().getId() + " changed e-mail to " + user.getManager().getEmail());
+            messageBean.alertInformation("Success", "Saved new email address");
+            messageBean.updateComponent("messages");
+        } else {
+            messageBean.alertError("Error", "Couldn't save new email address - please try again");
+            messageBean.updateComponent("messages");
         }
     }
 
