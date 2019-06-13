@@ -31,7 +31,7 @@
                 </ui:fragment>
 
                 <h:commandButton styleClass="btn btn-secondary searchbar-action" p:data-toggle="modal" p:data-target="#addPlayer" value="Add Player" rendered="#{sessionInfoBean.hasRole('MANAGER')}">
-                    <f:ajax execute="@this" render=":form:addPlayer:footer :form:addPlayer:body"/>
+                    <f:ajax execute="@this" render=":modals:addPlayer:footer :modals:addPlayer:body"/>
                 </h:commandButton>
 
             </h:panelGroup>
@@ -74,10 +74,16 @@
 
             </h:panelGroup>
 
+        </h:form>
+
+    </ui:define>
+
+    <ui:define name="modals">
+        <h:form id="modals">
             <qc:modal id="addPlayer"
                       target="addPlayer"
                       title="Add Player"
-                      update=":form:players :form:addPlayer:body :form:addPlayer:footer"
+                      update=":form:players :modals:addPlayer:body :modals:addPlayer:footer"
                       bodyId="body" footerId="footer"
                       disableConfirm="#{!addPlayerBean.validateInput()}"
                       abortAction="#{addPlayerBean.clear}"
@@ -87,17 +93,17 @@
                       rendered="#{sessionInfoBean.hasRole('MANAGER')}">
                 <h:inputText p:placeholder="Username" styleClass="form-control" p:autocomplete="new-username"
                              value="#{addPlayerBean.username}">
-                    <f:ajax event="keyup" execute="@this" render=":form:addPlayer:footer"/>
+                    <f:ajax event="keyup" execute="@this" render=":modals:addPlayer:footer"/>
                 </h:inputText>
 
                 <!-- TODO password field + pw repeat + pw strength indicator (like manager signup) -->
                 <h:inputSecret p:autocomplete="new-password" p:placeholder="Password" styleClass="form-control"
-                             value="#{addPlayerBean.password}">
-                    <f:ajax event="keyup" execute="@this" render=":form:addPlayer:footer"/>
+                               value="#{addPlayerBean.password}">
+                    <f:ajax event="keyup" execute="@this" render=":modals:addPlayer:footer"/>
                 </h:inputSecret>
                 <h:inputSecret p:autocomplete="off" p:placeholder="Repeat password" styleClass="form-control"
                                value="#{addPlayerBean.repeatPassword}">
-                    <f:ajax event="keyup" execute="@this" render=":form:addPlayer:footer"/>
+                    <f:ajax event="keyup" execute="@this" render=":modals:addPlayer:footer"/>
                 </h:inputSecret>
             </qc:modal>
 
@@ -109,12 +115,12 @@
                       bodyId="body" footerId="footer"
                       confirmAction="#{playerDetailController.changePassword}"
                       disableConfirm="#{!playerDetailController.passwordValid}"
-                      update="@this">
+                      update="@this :modals:editPlayer:body :modals:editPlayer:footer">
                 <h:inputSecret p:placeholder="New password" value="#{playerDetailController.password}" p:autocomplete="new-password" styleClass="form-control">
-                    <f:ajax event="keyup" execute="@this" render=":form:editPlayer:footer"/>
+                    <f:ajax event="keyup" execute="@this" render=":modals:editPlayer:footer"/>
                 </h:inputSecret>
                 <h:inputSecret p:placeholder="Repeat new password" value="#{playerDetailController.repeatPassword}" p:autocomplete="new-password" styleClass="form-control">
-                    <f:ajax event="keyup" execute="@this" render=":form:editPlayer:footer"/>
+                    <f:ajax event="keyup" execute="@this" render=":modals:editPlayer:footer"/>
                 </h:inputSecret>
             </qc:modal>
 
@@ -129,9 +135,7 @@
                       update="@this :form:players">
                 Are you sure? This cannot be undone.
             </qc:modal>
-
         </h:form>
-
     </ui:define>
 
     <ui:define name="site-specific-javascript">

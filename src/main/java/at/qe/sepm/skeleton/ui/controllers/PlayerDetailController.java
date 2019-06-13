@@ -123,6 +123,7 @@ public class PlayerDetailController implements Serializable {
             userService.saveUser(player.getUser());
         }
         password = null;
+        repeatPassword = null;
         player = null;
     }
 

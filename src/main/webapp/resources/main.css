@@ -8,10 +8,12 @@
 
 /* MODULES */
 @import "modules/navbar.css";
-@import "modules/pushbar.css";
+@import "modules/slideout.css";
+@import "modules/sidebar.css";
 @import "modules/box.css";
 @import "modules/alerts.css";
 @import "modules/searchbar.css";
+@import "modules/feather.css";
 
 /* COMPONENTS */
 @import "quizconnect/styles/modal.css";

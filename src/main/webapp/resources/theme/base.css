@@ -6,8 +6,13 @@ body {
     font-family: var(--default-font);
     font-weight: var(--default-font-weight);
 
+    -webkit-text-size-adjust: none;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+.page-content {
+    background: inherit;
 }
 
 .site-title {
@@ -17,4 +22,8 @@ body {
 
 ::selection {
     background: var(--selection-background);
+}
+
+.pointer:hover {
+    cursor: pointer;
 }

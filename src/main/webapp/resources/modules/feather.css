@@ -1,0 +1,17 @@
+svg.feather {
+    fill: none;
+    stroke: currentColor;
+    width: 20px;
+    height: 20px;
+}
+
+svg.feather.lg {
+    width: 24px;
+    height: 24px;
+}
+
+svg.feather.xlg {
+    width: 48px;
+    height: 48px;
+    stroke-width: 1px;
+}

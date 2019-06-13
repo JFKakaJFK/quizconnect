@@ -2,6 +2,7 @@
     background: var(--navbar-background);
     height: var(--navbar-height);
     position: relative;
+    box-shadow: 0 0 8px 4px hsla(0, 0%, 0%, .1);
 }
 
 .navbar-burger svg {
@@ -18,8 +19,40 @@
 
 /* TODO */
 .navbar-logo svg {
-    transition: 0.3s;
+    transition: transform 0.25s ease-in-out;
 }
+
 .navbar-logo svg:hover {
-    transform: rotate(359deg) scale(1.3);
+    transform: scale(1.1);
+}
+
+.navbar-logo svg .cls-2 {
+    animation: circle 1s linear infinite forwards;
+}
+.navbar-logo svg .cls-3 {
+    animation: clockHand .75s linear infinite forwards;
+}
+
+.navbar-logo svg .cls-2,
+.navbar-logo svg .cls-3 {
+    transform-origin: 50% 50%;
+    will-change: transform;
+    animation-play-state:  paused; /* needs to be set after animation */
+}
+
+.navbar-logo:hover svg .cls-2,
+.navbar-logo:hover svg .cls-3 {
+    animation-play-state: running;
+}
+
+@keyframes clockHand {
+    100% {
+        transform: rotate(1turn);
+    }
+}
+
+@keyframes circle {
+    100% {
+        transform: rotate(1turn);
+    }
 }

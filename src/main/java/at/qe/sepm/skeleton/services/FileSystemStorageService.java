@@ -135,6 +135,7 @@ public class FileSystemStorageService implements StorageService {
             Files.createDirectories(root.resolve(pathPrefix));
 
             filePath = imageService.resizeImage(tempFile, root.resolve(pathPrefix), size, size, type);
+            if(filePath == null) return null;
         } catch (IOException e){
             log.error("Failed to store uploaded file in temporary directory");
             return null;

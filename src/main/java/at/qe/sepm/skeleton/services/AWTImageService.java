@@ -64,7 +64,7 @@ public class AWTImageService implements ImageService {
 
             return result;
         } catch (IOException e){
-            log.error("Image resizing failed:" + e.getMessage());
+            log.warn("Image resizing failed: " + e.getMessage());
             return null;
         }
     }

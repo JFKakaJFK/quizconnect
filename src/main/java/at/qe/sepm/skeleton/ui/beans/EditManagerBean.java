@@ -12,13 +12,14 @@ import org.springframework.stereotype.Controller;
 
 import javax.annotation.PostConstruct;
 
+import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Controller
 @Scope("view")
 
-public class EditManagerBean {
+public class EditManagerBean implements Serializable {
 
     /**
      * Changes a {@link Player}s password if the new password is valid

@@ -1,6 +1,7 @@
 package at.qe.sepm.skeleton.ui.controllers;
 
 import at.qe.sepm.skeleton.model.User;
+import at.qe.sepm.skeleton.services.PlayerService;
 import at.qe.sepm.skeleton.ui.beans.ProfileBean;
 import at.qe.sepm.skeleton.ui.beans.SessionInfoBean;
 import org.slf4j.Logger;
@@ -25,13 +26,16 @@ public class LoginRedirectController {
 
     private SessionInfoBean sessionInfoBean;
     private ProfileBean profileBean;
+    private PlayerService playerService;
 
     @Autowired
-    public LoginRedirectController(SessionInfoBean sessionInfoBean, ProfileBean profileBean){
+    public LoginRedirectController(SessionInfoBean sessionInfoBean, ProfileBean profileBean, PlayerService playerService){
         assert sessionInfoBean != null;
         assert profileBean != null;
+        assert playerService != null;
         this.sessionInfoBean = sessionInfoBean;
         this.profileBean = profileBean;
+        this.playerService = playerService;
     }
 
     /**
@@ -47,7 +51,7 @@ public class LoginRedirectController {
             String url = "/logout";
             if(user.getPlayer() != null){
                 url = "/players/profile.xhtml";
-                profileBean.setPlayer(user.getPlayer());
+                profileBean.setPlayer(playerService.getPlayerByUsername(user.getUsername()));
             } else if(user.getManager() != null){
                 url = "/secured/home.xhtml";
             }

@@ -47,11 +47,12 @@
     --background-primary: var(--col-1-d);
     --background-secondary: var(--col-1-m);
 
-    --navbar-background: var(--background-secondary);
+    --navbar-background: #16212f;
     --navbar-height: 64px;
 
-    --sidebar-overlay: var(--col-1-m);
-    --sidebar-background: var(--col-1-m);
+    --sidebar-overlay: hsl(217, 100%, 5%);
+    --sidebar-background: hsl(214, 36%, 14%);
+    --sidebar-background-gradient: linear-gradient(145deg, hsl(214, 36%, 14%) 25%, hsl(216, 22%, 22%) 100%);
 
     --box-border-color: var(--col-2-d);
 
