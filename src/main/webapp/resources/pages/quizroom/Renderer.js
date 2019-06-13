@@ -1,0 +1,1 @@
+document.addEventListener('stateChange', () => alert('hi'));

@@ -21,13 +21,10 @@
                                      actionListener="#{createRoomBean.prevStep}" value="Back">
                         <f:ajax execute="@this" render="@form"/>
                     </h:commandButton>
-                    <h:commandLink styleClass="btn btn-secondary" action="/players/profile?faces-redirect=true" value="Home">
-                        <f:ajax execute="@this" render="@none" />
-                    </h:commandLink>
                     <h:commandButton styleClass="btn-primary btn" disabled="#{createRoomBean.disableNextStep()}"
                                      actionListener="#{createRoomBean.nextStep}" value="Next" rendered="#{createRoomBean.step lt 2}">
                         <f:ajax execute="@this" render="@form"/>
-                    </h:commandButton>
+                    </h:commandButton> <!-- a bit useless to add a 2nd button to change its text, but meh -->
                     <h:commandButton styleClass="btn-primary btn" disabled="#{createRoomBean.disableNextStep()}"
                                      actionListener="#{createRoomBean.nextStep}" value="Create Game" rendered="#{createRoomBean.step eq 2}">
                         <f:ajax execute="@this" render="@none"/>
