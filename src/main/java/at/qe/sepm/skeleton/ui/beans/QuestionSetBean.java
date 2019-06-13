@@ -33,6 +33,9 @@ public class QuestionSetBean implements Serializable {
     private QuestionSetService questionSetService;
 
     @Autowired
+    private MessageBean messageBean;
+
+    @Autowired
     private QuestionService questionService;
 
     @Autowired
@@ -130,21 +133,45 @@ public class QuestionSetBean implements Serializable {
                 question.setQuestionString(filename);
                 break;
             case "rightAnswerString":
+                if (question.getRightAnswerString()!= null && !question.getRightAnswerString().isEmpty()) {
+                    storageService.deleteAnswer(question.getRightAnswerString());
+                    logger.info("Deleted picture of rightAnswerString");
+                }
                 question.setRightAnswerString(filename);
                 break;
             case "wrongAnswerString_1":
+                if (question.getWrongAnswerString_1()!= null && !question.getWrongAnswerString_1().isEmpty()) {
+                    storageService.deleteAnswer(question.getWrongAnswerString_1());
+                    logger.info("Deleted picture of WrongAnswerString_1");
+                }
                 question.setWrongAnswerString_1(filename);
                 break;
             case "wrongAnswerString_2":
+                if (question.getWrongAnswerString_2()!= null && !question.getWrongAnswerString_2().isEmpty()) {
+                    storageService.deleteAnswer(question.getWrongAnswerString_2());
+                    logger.info("Deleted picture of WrongAnswerString_2");
+                }
                 question.setWrongAnswerString_2(filename);
                 break;
             case "wrongAnswerString_3":
+                if (question.getWrongAnswerString_3()!= null && !question.getWrongAnswerString_3().isEmpty()) {
+                    storageService.deleteAnswer(question.getWrongAnswerString_3());
+                    logger.info("Deleted picture of WrongAnswerString_1");
+                }
                 question.setWrongAnswerString_3(filename);
                 break;
             case "wrongAnswerString_4":
+                if (question.getWrongAnswerString_4()!= null && !question.getWrongAnswerString_4().isEmpty()) {
+                    storageService.deleteAnswer(question.getWrongAnswerString_4());
+                    logger.info("Deleted picture of WrongAnswerString_4");
+                }
                 question.setWrongAnswerString_4(filename);
                 break;
             case "wrongAnswerString_5":
+                if (question.getWrongAnswerString_5()!= null && !question.getWrongAnswerString_5().isEmpty()) {
+                    storageService.deleteAnswer(question.getWrongAnswerString_5());
+                    logger.info("Deleted picture of WrongAnswerString_5");
+                }
                 question.setWrongAnswerString_5(filename);
                 break;
             default:
@@ -208,6 +235,10 @@ public class QuestionSetBean implements Serializable {
         questionsDisplay.remove(questionToDelete);
         questionService.deleteQuestion(questionToDelete);
         logger.info("Question deleted");
+        messageBean.alertInformation("Info", "Test");
+        messageBean.alertInformation("Haha", "xdROFLLOL");
+
+        messageBean.updateComponent("messages");
     }
 
     /**
@@ -346,6 +377,10 @@ public class QuestionSetBean implements Serializable {
         this.questionSet = questionSetService.getQuestionSetById(id);
         this.questions = questionSet.getQuestions();
         this.questionsDisplay = new ArrayList<>(questions);
+    }
+
+    public void typeChangeListener() {
+        //Maybe TODO
     }
 
     public void setEditQuestion(Question selectedQuestion) {

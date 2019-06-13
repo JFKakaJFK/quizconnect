@@ -31,7 +31,7 @@
     <!--FontAwesome -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous"/>
 
-    <title><ui:insert name="title" /> | QuizConnect</title>
+    <title><ui:insert name="title" /> | QuizConnect&trade;</title>
 
     <ui:insert name="site-specific-css"/>
 
@@ -116,10 +116,11 @@
         </header>
 
         <main class="container">
-            <ui:insert name="content" />
-        </main>
 
-        <h:messages styleClass="messages" id="messages" globalonly="true" showSummary="true" showDetail="true"/>
+            <h:messages id="messages" globalOnly="true" styleClass="alerts" showSummary="true" showDetail="true"/>
+            <ui:insert name="content" />
+
+        </main>
     </div>
 
     <!-- Optional JavaScript -->
