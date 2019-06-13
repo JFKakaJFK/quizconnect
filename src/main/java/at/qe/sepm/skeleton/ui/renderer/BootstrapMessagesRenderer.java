@@ -170,11 +170,25 @@ public class BootstrapMessagesRenderer extends MessagesRenderer {
                 writer.endElement("p");
             }
             writer.endElement("div"); //end content-div
+
+            writer.startElement("div", null);
+            writer.writeAttribute("class", "alert-close", "alert-close");
+            writer.write("<button type=\"button\" class=\"close alert-close\" id=\"close-modal-button\" data-dismiss=\"alert\" aria-label=\"Close\">\n" +
+                    "    <span aria-hidden=\"true\">&times;</span>\n" +
+                    "  </button>");
+            writer.endElement("div");
             writer.endElement("div"); //end  individual container div
             msg.rendered();
         }
 
         writer.endElement("div"); //end of cell
         writer.endElement("div"); //end of alert-container
+
+        writer.write("    <script type=\"text/javascript\">\n" +
+                "            window.setTimeout(function () {\n" +
+                "                $(\"#close-modal-button\").click();\n" +
+                "                console.log(\"hidden\");\n" +
+                "            }, 5000);\n" +
+                "    </script>");
     }
 }
