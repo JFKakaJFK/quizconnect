@@ -135,7 +135,6 @@ public class QSOverviewBean implements Serializable {
     }
 
     public void setQuestionsetToDelete(QuestionSet questionsetToDelete) {
-        logger.info("set " + questionsetToDelete.getName());
         this.questionsetToDelete = questionsetToDelete;
     }
 

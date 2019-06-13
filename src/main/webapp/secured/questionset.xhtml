@@ -111,6 +111,19 @@
     </ui:define>
 
     <ui:define name="modals">
+        <h:form>
+            <qc:modal id="deleteQuestion"
+                      target="deleteQuestion"
+                      title="Delete Question"
+                      confirm="Delete Question"
+                      confirmButton="btn btn-danger"
+                      abort="Cancel"
+                      confirmAction="#{questionSetBean.deleteQuestion}"
+                      abortButton="btn btn-secondary"
+                      update=":deleteQuestionForm:questionCollection">
+                Are you sure? This cannot be undone.
+            </qc:modal>
+        </h:form>
         <h:form id="questionForForm" enctype="multipart/formdata">
             <qc:modal target="questionModal" id="questionModal" closable="false" modaltype="info"
                       title="#{questionSetBean.bEditQuestion?'Edit question':'New question'}"
@@ -299,18 +312,6 @@
                                         alt="Question picture"/>
                     </h:panelGroup>
                 </div>
-            </qc:modal>
-
-            <qc:modal id="deleteQuestion"
-                      target="deleteQuestion"
-                      title="Delete Question"
-                      confirm="Delete Question"
-                      confirmButton="btn btn-danger"
-                      abort="Cancel"
-                      confirmAction="#{questionSetBean.deleteQuestion}"
-                      abortButton="btn btn-secondary"
-                      update=":deleteQuestionForm:questionCollection">
-                Are you sure? This cannot be undone.
             </qc:modal>
 
             <qc:modal id="infoQuestion" target="infoQuestion" title="Details" abort="Close" showConfirm="false">
