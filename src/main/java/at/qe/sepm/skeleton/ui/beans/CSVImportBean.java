@@ -92,11 +92,11 @@ public class CSVImportBean implements Serializable {
 
         QSOverviewBean.addQuestionSetForDisplay(questionSet);
 
-        messageBean.updateComponent("formOverview-QSets:overview-QSets");
+        //messageBean.updateComponent("formOverview-QSets:overview-QSets");
 
-        String message = String.format("Successfully imported CSV");
-        messageBean.showGlobalInformation(message);
-        messageBean.updateComponent("messages");
+        //String message = String.format("Successfully imported CSV");
+        //messageBean.showGlobalInformation(message);
+        //messageBean.updateComponent("messages");
 
         descriptionCSV = null;
         nameCSV = null;

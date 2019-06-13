@@ -116,46 +116,65 @@ public class BootstrapMessagesRenderer extends MessagesRenderer {
         } else if (FacesMessage.SEVERITY_ERROR.equals(severity)) {
             alertSeverityClass = "alert-danger";
         } else if (FacesMessage.SEVERITY_FATAL.equals(severity)) {
-            alertSeverityClass = "alert-danger";
+            alertSeverityClass = "alert-fatal";
         }
 
-        writer.startElement("div", null);
-        writer.writeAttribute("class", "alert " + alertSeverityClass, "alert " + alertSeverityClass);
-        writer.writeAttribute("role", "alert", "alert");
-        writer.startElement("a", uiMessages);
-        writer.writeAttribute("class", "close", "class");
-        writer.writeAttribute("data-dismiss", "alert", "data-dismiss");
-        writer.writeAttribute("href", "#", "href");
-        writer.write("&times;");
-        writer.endElement("a");
 
-        writer.startElement("ul", null);
+        writer.startElement("div", uiMessages);
+        writer.writeAttribute("class", "alert-container", "alert-container");
+        writer.startElement("div", uiMessages);
+        writer.writeAttribute("class", "alert-cell", "alert-cell");
+
 
         for (FacesMessage msg : messages){
             String summary = msg.getSummary() != null ? msg.getSummary() : "";
             String detail = msg.getDetail() != null ? msg.getDetail() : summary;
 
-            writer.startElement("li", uiMessages);
+            writer.startElement("div", null); //start individual container div
+            writer.writeAttribute("class", "alert " + alertSeverityClass + " add-margin", "alert " + alertSeverityClass + " add-margin");
+            writer.writeAttribute("role", "alert", "alert");
 
-            writer.startElement("div", null);
-            writer.writeAttribute("class",
-                    "glyphicon glyphicon-exclamation-sign", "glyphicon glyphicon-exclamation-sign");
-            writer.endElement("div");
-            writer.startElement("div", null);
+            writer.startElement("div", null); //start icon-div
+            writer.writeAttribute("class", "alert-icon", "alert-icon");
+            switch (alertSeverityClass) {
+
+                case ("alert-info"):
+                    writer.write("<svg version=\"1.1\" class=\"alert-svg\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 512 512\" style=\"enable-background:new 0 0 512 512;\" xml:space=\"preserve\">\n" +
+                            "<g><g><path d=\"M504.502,75.496c-9.997-9.998-26.205-9.998-36.204,0L161.594,382.203L43.702,264.311c-9.997-9.998-26.205-9.997-36.204,0    c-9.998,9.997-9.998,26.205,0,36.203l135.994,135.992c9.994,9.997,26.214,9.99,36.204,0L504.502,111.7    C514.5,101.703,514.499,85.494,504.502,75.496z\"></path></g></g>");
+                    break;
+                case ("alert-warning"):
+                    System.out.println("warning");
+                    break;
+                case ("alert-danger"):
+                    System.out.println("danger");
+                    break;
+                case ("alert-fatal"):
+                    System.out.println("fatal");
+                    break;
+            }
+            writer.endElement("div"); //end icon-div
+
+            writer.startElement("div", null); //start content-div
+            writer.writeAttribute("class", "alert-content", "alert-content");
             if (uiMessages.isShowSummary()) {
-                writer.startElement("strong", uiMessages);
+                writer.startElement("p", uiMessages); //start paragraph for summary
+                writer.writeAttribute("class", "alert-summary", "alert-summary");
                 writer.writeText(summary, uiMessages, null);
-                writer.endElement("strong");
+                writer.endElement("p"); //end paragraph for summary
             }
 
             if (uiMessages.isShowDetail()) {
+                writer.startElement("p", uiMessages);
+                writer.writeAttribute("class", "alert-text", "alert-text");
                 writer.writeText(" " + detail, null);
+                writer.endElement("p");
             }
-            writer.endElement("div");
-            writer.endElement("li");
+            writer.endElement("div"); //end content-div
+            writer.endElement("div"); //end  individual container div
             msg.rendered();
         }
-        writer.endElement("ul");
-        writer.endElement("div");
+
+        writer.endElement("div"); //end of cell
+        writer.endElement("div"); //end of alert-container
     }
 }

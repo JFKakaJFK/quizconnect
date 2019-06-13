@@ -45,7 +45,7 @@
                           abort="Cancel"
                           bodyId="body" footerId="footer"
                           confirmAction="#{editManagerBean.changePassword}"
-                          disableConfirm="#{!editManagerBean.isPasswordValid()}"
+                          disableConfirm="#{!validationBean.isValidPassword(editManagerBean.password, editManagerBean.repeatPassword)}"
                           update="@this">
                     <h:panelGroup layout="block" styleClass="form-group">
                         <h:inputSecret p:placeholder="New password" p:name="password" p:id="password" value="#{editManagerBean.password}" p:autocomplete="new-password" styleClass="form-control">
@@ -71,7 +71,7 @@
                           abort="Cancel"
                           bodyId="body" footerId="footer"
                           confirmAction="#{editManagerBean.changeEmail}"
-                          disableConfirm="#{!editManagerBean.isEmailValid()}"
+                          disableConfirm="#{!validationBean.isValidEmail(editManagerBean.email)}"
                           update="@this">
                     <h:inputText p:placeholder="New email" value="#{editManagerBean.email}" p:autocomplete="new-email" p:maxlength="100" styleClass="form-control">
                         <f:ajax event="keyup" execute="@this" render=":passwordChange:editEmail:footer"/>

@@ -2,6 +2,7 @@ package at.qe.sepm.skeleton.ui.beans;
 
 import at.qe.sepm.skeleton.model.*;
 import at.qe.sepm.skeleton.services.QuestionSetService;
+import at.qe.sepm.skeleton.services.StorageService;
 import at.qe.sepm.skeleton.utils.ScrollPaginator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,9 @@ public class QSOverviewBean implements Serializable {
 
     @Autowired
     private SessionInfoBean sessionInfoBean;
+
+    @Autowired
+    private StorageService storageService;
 
     @Autowired
     private QuestionSetService questionSetService;
@@ -75,6 +79,13 @@ public class QSOverviewBean implements Serializable {
 
     public void deleteQuestionSet() {
         logger.info("deleting QuestionSet with name: " + questionsetToDelete.getName());
+
+        messageBean.alertInformation("Deleted", "Deleted QuestionSet");
+        messageBean.alertInformation("Deleted", "Deleted QuestionSet");
+
+        storageService.deleteAllAnswersOfQuestionSet(sessionInfoBean.getCurrentUser().getId(), questionsetToDelete.getId().toString());
+        logger.info("deleted all answers of QuestionSet");
+        messageBean.updateComponent("messages");
 
         //delete from DB
         questionSetService.deleteQuestionSet(questionSetService.getQuestionSetById(questionsetToDelete.getId()));
