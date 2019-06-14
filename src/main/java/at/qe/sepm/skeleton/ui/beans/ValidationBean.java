@@ -84,7 +84,6 @@ public class ValidationBean implements Serializable {
      * @return <code>true</code> if string has more than 5 characters
      */
     public boolean isValidPassword (String password, String repeatPassword) {
-        logger.info("Called with " + password + " and " + repeatPassword);
         if (password != null) {
             String passwordRegex = "^.{5,}$"; //if someone wants to set a password consisting of 5 spaces, that's fine
             Pattern pat = Pattern.compile(passwordRegex);
