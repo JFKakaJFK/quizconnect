@@ -1,17 +1,26 @@
+/* Icons require same space before and afer render -> no content moves */
+i[data-feather] {
+    display: inline-block;
+    line-height: 1;
+}
+
+i[data-feather],
 svg.feather {
     fill: none;
     stroke: currentColor;
+    stroke-width: 1px;
     width: 20px;
     height: 20px;
 }
 
+i[data-feather].lg,
 svg.feather.lg {
     width: 24px;
     height: 24px;
 }
 
+i[data-feather].xlg,
 svg.feather.xlg {
     width: 48px;
     height: 48px;
-    stroke-width: 1px;
 }

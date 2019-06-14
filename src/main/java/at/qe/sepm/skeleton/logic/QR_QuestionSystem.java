@@ -19,7 +19,7 @@ class QR_QuestionSystem
 {
 	private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 	
-	private final int playerAnswerSlots = 6; // number of answers a Player can have at most
+	private final int playerAnswerSlots = 4; // number of answers a Player can have at most
 	private final int maxQuestions = 30; // maximum number of questions until game ends
 	private final boolean skipDuplicateQuestions = true; // if true skips loading all Questions with questions / answers matching other Questions.
 	

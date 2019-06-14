@@ -1,1 +1,1 @@
-document.addEventListener('stateChange', () => alert('hi'));
+document.addEventListener('stateChange', () => console.warn('render'));

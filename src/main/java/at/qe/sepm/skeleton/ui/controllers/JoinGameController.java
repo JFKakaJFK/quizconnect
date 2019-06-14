@@ -64,6 +64,7 @@ public class JoinGameController {
         if(quizRoomManager.doesRoomExist(PIN)){ // TODO since the pin is checked for each keystroke if two pins are nearly identical
             // (e.g. 10 & 100, then a player wanting to join room 100 inevitably tries to join room 10)
             if(qrWebSocketConnection.isPlayerInGame(PIN, p)){
+                logger.debug("Player " + p.getUser().getUsername() + " rejoined room " + pin);
                 return ResponseEntity.ok("{\"playerId\":" + p.getId() + ",\"highScore\":" + p.getHighScore() + "}");
             }
             IPlayerAction qr;

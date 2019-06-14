@@ -38,7 +38,7 @@
 
 <h:body>
     <h:messages id="messages" globalOnly="true" styleClass="alerts" showSummary="true" showDetail="true"/>
-    <div id="main" class="page-content panel">
+    <div id="main" class="slideout-backdrop">
         <header class="navbar d-flex py-2 px-3">
             <div class="navbar-burger js-toggle-sidebar">
                 <i data-feather="menu" class="xlg"></i><!-- TODO align-left as menu icon? -->
@@ -74,19 +74,19 @@
             <nav class="d-flex flex-column">
                 <h:commandLink action="/players/profile?faces-redirect=true" styleClass="sidebar-link">
                     <f:ajax execute="@this" render="@none"/>
-                    <f:setPropertyActionListener value="#{sessionInfoBean.currentUser.player}" target="#{profileBean.player}"/><i data-feather="home" class="lg mr-2"></i> Home</h:commandLink>
-                <a href="/quizroom/index.html" class="sidebar-link"><i data-feather="zap" class="lg mr-2"></i> Join Game</a>
-                <a href="/quizroom/createRoom.xhtml?faces-redirect=true" class="sidebar-link"><i data-feather="plus-circle" class="lg mr-2"></i> Create Game</a>
-                <h:commandLink action="/players/all?faces-redirect=true" styleClass="sidebar-link"><i data-feather="users" class="lg mr-2"></i> View Players</h:commandLink>
+                    <f:setPropertyActionListener value="#{sessionInfoBean.currentUser.player}" target="#{profileBean.player}"/><i data-feather="home" class="lg mr-3"></i> Home</h:commandLink>
+                <a href="/quizroom/index.html" class="sidebar-link"><i data-feather="zap" class="lg mr-3"></i> Join Game</a>
+                <a href="/quizroom/createRoom.xhtml?faces-redirect=true" class="sidebar-link"><i data-feather="plus-circle" class="lg mr-3"></i> Create Game</a>
+                <h:commandLink action="/players/all?faces-redirect=true" styleClass="sidebar-link"><i data-feather="users" class="lg mr-3"></i> View Players</h:commandLink>
             </nav>
         </h:form>
 
         <h:form styleClass="flex-grow-1" rendered="#{sessionInfoBean.hasRole('MANAGER')}">
             <nav class="d-flex flex-column">
-                <h:commandLink action="/secured/home?faces-redirect=true" styleClass="sidebar-link"><i data-feather="home" class="lg mr-2"></i> Home</h:commandLink>
-                <h:commandLink action="/secured/overview.xhtml?faces-redirect=true" styleClass="sidebar-link"><i data-feather="help-circle" class="lg mr-2"></i> QuestionSets</h:commandLink>
-                <h:commandLink action="/players/all?faces-redirect=true" styleClass="sidebar-link"><i data-feather="users" class="lg mr-2"></i> Players</h:commandLink>
-                <h:commandLink action="/secured/profile.xhtml?faces-redirect=true" styleClass="sidebar-link"><i data-feather="settings" class="lg mr-2"></i> Settings</h:commandLink>
+                <h:commandLink action="/secured/home?faces-redirect=true" styleClass="sidebar-link"><i data-feather="home" class="lg mr-3"></i> Home</h:commandLink>
+                <h:commandLink action="/secured/overview.xhtml?faces-redirect=true" styleClass="sidebar-link"><i data-feather="help-circle" class="lg mr-3"></i> QuestionSets</h:commandLink>
+                <h:commandLink action="/players/all?faces-redirect=true" styleClass="sidebar-link"><i data-feather="users" class="lg mr-3"></i> Players</h:commandLink>
+                <h:commandLink action="/secured/profile.xhtml?faces-redirect=true" styleClass="sidebar-link"><i data-feather="settings" class="lg mr-3"></i> Settings</h:commandLink>
             </nav>
         </h:form>
 

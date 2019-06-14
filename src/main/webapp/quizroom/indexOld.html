@@ -5,130 +5,75 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <script type="text/javascript" src="/resources/theme/themes.js"></script>
+    <script type="text/javascript" src="../../resources/js/themes.js"></script>
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.css" integrity="sha384-+MsSfd29vjUzcyqYURxcmpWGtqoSHBy+QdEJNLEslXQftxojQv0k6BGDqUNp9GtA" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css">
     <link rel="stylesheet" type="text/css" href="../resources/main.css" />
     <link rel="stylesheet" type="text/css" href="../resources/quizroom.css" />
+
 
     <title>In Game | QuizConnect&trade;</title>
 
 </head>
-<body class="join">
+<body>
 
-    <main id="main" class="slideout-backdrop">
+    <div data-pushbar-id="bar" class="pushbar from_left">
+        <div class="pushbar-close">
+            <span data-pushbar-close="" class="py-2 px-2 my-2 mx-3">
+                <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M16.24 14.83a1 1 0 0 1-1.41 1.41L12 13.41l-2.83 2.83a1 1 0 0 1-1.41-1.41L10.59 12 7.76 9.17a1 1 0 0 1 1.41-1.41L12 10.59l2.83-2.83a1 1 0 0 1 1.41 1.41L13.41 12l2.83 2.83z"/></svg>
+            </span>
+        </div>
 
-        <header class="navbar d-flex py-2 px-3">
-            <div class="navbar-burger js-toggle-sidebar">
-                <i data-feather="menu" class="xlg"></i><!-- TODO align-left as menu icon? -->
+        <nav class="pushbar-nav pl-4 pr-3 py-4">
+            <ul class="list-unstyled">
+                <li class="my-3"> <!-- TODO show normal menu in JOIN & FINISHED states? -->
+                    <a href="#" data-toggle="modal" data-target="#leave" data-backdrop="static" onclick="if(state.state === JOIN || state.state === FINISHED){ window.location.href = URL_LEAVE }">Leave Game</a>
+                </li>
+            </ul>
+
+            <!-- TODO -->
+            <div onclick="changeTheme('default')">default</div>
+            <div onclick="changeTheme('outrun')">outrun</div>
+        </nav>
+    </div>
+
+    <div class="pushbar_main_content">
+
+        <header class="navbar d-flex py-2">
+            <div class="navbar-burger py-2 px-2" data-pushbar-target="bar">
+                <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M4 5h16a1 1 0 0 1 0 2H4a1 1 0 1 1 0-2zm0 6h16a1 1 0 0 1 0 2H4a1 1 0 0 1 0-2zm0 6h16a1 1 0 0 1 0 2H4a1 1 0 0 1 0-2z"/></svg>
             </div>
-
-            <div class="d-flex flex-grow-1 justify-content-center px-2">
-                <h2 id="title" class="site-title">Join</h2><!-- TODO display pin here -->
-            </div>
-
-            <div class="d-flex justify-content-end px-2">
-                <a class="navbar-logo icon" href="/login.xhtml">
+            <div class="d-flex flex-grow-1 justify-content-sm-center justify-content-end px-2">
+                <a class="navbar-logo" href="#">
                     <svg id="icon" viewBox="0 0 2000 2000" width="30" height="30"><defs><style>.cls-1,.cls-2{fill:none;stroke-miterlimit:10;stroke-width:200px;}.cls-1{stroke:#018786;stroke-dasharray:248.33 19.87;}.cls-2{stroke:#00c4b4;stroke-linecap:round;}.cls-3{fill:#3bc5b5;}</style></defs><circle class="cls-1" cx="1000" cy="1000" r="853.59"/><path class="cls-2" d="M1000,1853.59c-471.42,0-853.59-382.16-853.59-853.59S528.58,146.41,1000,146.41"/><path class="cls-3" d="M1042.58,866.18,1949,1953,898.42,1004.82A100.25,100.25,0,0,1,1032.76,856,109.71,109.71,0,0,1,1042.58,866.18Z"/></svg>
                 </a>
             </div>
         </header>
 
-        <div id="root" class="join-active">
+        <div id="root" data-state="3">
             <!-- game will be rendered here -->
 
             <!-- JOIN VIEW (Why use JS if it can be done w/ HTML? -->
-            <div id="join" class="join-container d-flex justify-content-center align-items-center">
-                <div class="join-content">
-                    <div class="stat stat-xlg">
-                        <input id="pin" type="tel" placeholder="000000" max="999999" min="1" minlength="1" size="6" pattern="[0-9]{1,6}"/>
+            <div class="join">
+                <div>
+                    <div class="stat stat-lg">
+                        <input id="pin" type="number" placeholder="000000" max="999999" min="1" />
                         <p>enter pin</p>
                     </div>
-                    <span id="errors" class="status faster"></span>
-                    <a href="#" data-leave class="btn btn-secondary">Back Home</a>
+                    <span id="errors" style="display: block; text-align: center; color: var(--alert);"></span>
                 </div>
             </div>
 
-            <!-- TODO skeleton for other views here... will make stuff easier + cool animations -->
-
-            <div id="lobby">
-
-            </div>
-
-            <div id="ingame">
+        </div>
+        <div class="chat chat-wrapper">
+            <div id="messages" class="chat chat-messages">
 
             </div>
-
-            <div id="finished">
-
-            </div>
+            <input class="chat chat-input" type="text" placeholder="Chat with your teammates..." onkeyup="if(event.key === 'Enter'){sendChatMessage(this.value.substring(0, 100)); this.value = '';}"/>
         </div>
 
-    </main>
-
-    <div id="menu" class="sidebar flex-column">
-        <div class="d-flex py-2 px-3 justify-content-end">
-            <span class="sidebar-toggle js-toggle-sidebar pointer">
-                <i data-feather="x" class="xlg"></i>
-            </span>
-        </div>
-
-        <nav class="d-flex flex-column flex-grow-1">
-            <a href="#" class="sidebar-link" data-leave><i data-feather="log-out" class="lg mr-3"></i> Leave Game</a>
-        </nav>
-
-        <footer class="sidebar-footer text-center">
-            <div class="sidebar-sfx-volume py-4">
-                <div class="low"><i data-feather="volume" class="lg"></i></div>
-                <div class="high"><i data-feather="volume-2" class="lg"></i></div>
-            </div>
-            <div class="sidebar-sfx-mute py-4">
-                <div class="unmute"><i data-feather="volume-1" class="lg"></i></div>
-                <div class="mute"><i data-feather="volume-x" class="lg"></i></div>
-            </div>
-            <div class="sidebar-themes py-4"><!-- TODO maybe render w/ JS and add active class -->
-                <div class="theme" onclick="changeTheme('light')"><i data-feather="sun" class="lg"></i></div>
-                <div class="theme" onclick="changeTheme('outrun')"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sunset lg"><path d="M17 18a5 5 0 0 0-10 0"></path><line x1="12" y1="9" x2="12" y2="7"></line><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"></line><line x1="1" y1="18" x2="3" y2="18"></line><line x1="21" y1="18" x2="23" y2="18"></line><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"></line><line x1="23" y1="22" x2="1" y2="22"></line></svg><!--<i data-feather="sunset" class="lg"></i>--></div>
-                <div class="theme" onclick="changeTheme('default')"><i data-feather="moon" class="lg"></i></div>
-            </div>
-        </footer>
-    </div>
-    <script type="text/javascript" src="../../resources/modules/slideout.min.js"></script>
-    <script type="text/javascript">
-      let sidebar = new Slideout({
-        'panel': document.getElementById('main'),
-        'menu': document.getElementById('menu'),
-        'padding': 256,
-        'tolerance': 70
-      });
-
-      let btns = document.querySelectorAll('.js-toggle-sidebar');
-      btns.forEach(btn => btn.addEventListener('click', () => {
-        sidebar.toggle();
-      }));
-
-      const close = (e) => {
-        e.preventDefault();
-        sidebar.close();
-      };
-
-      // code for activating backdrop
-
-      sidebar.on('beforeopen', function(){ this.panel.classList.add('panel-open');})
-        .on('open', function(){this.panel.addEventListener('click', close);})
-        .on('beforeclose', function(){
-          this.panel.classList.remove('panel-open');
-          this.panel.removeEventListener('click', close);
-        })
-    </script>
-    <div id="chat" class="chat chat-wrapper">
-        <div id="messages" class="chat chat-messages">
-
-        </div>
-        <input class="chat chat-input" type="text" placeholder="Chat with your teammates..." onkeyup="if(event.key === 'Enter'){sendChatMessage(this.value.substring(0, 100)); this.value = '';}"/>
     </div>
 
     <div class="modal fade" id="leave" tabindex="-1" role="dialog" aria-labelledby="leaveModal" aria-hidden="true">
@@ -138,7 +83,7 @@
                     <h5 class="modal-title" id="leaveModal">Leave Game</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">
-                            <i data-feather="x"></i>
+                            <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M16.24 14.83a1 1 0 0 1-1.41 1.41L12 13.41l-2.83 2.83a1 1 0 0 1-1.41-1.41L10.59 12 7.76 9.17a1 1 0 0 1 1.41-1.41L12 10.59l2.83-2.83a1 1 0 0 1 1.41 1.41L13.41 12l2.83 2.83z"/></svg>
                         </span>
                     </button>
                 </div>
@@ -148,7 +93,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                     <!-- TODO test leave action -->
-                    <a href="#" data-confirm-leave class="btn btn-primary">Leave Game</a>
+                    <button type="button" class="btn btn-primary" onclick="leaveRoom()"><a href="/players/profile.xhtml?leave=true">Leave Game</a></button>
                 </div>
             </div>
         </div>
@@ -238,9 +183,6 @@
         </div>
     </div>
 
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
-    <script>feather.replace()</script>
-
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
@@ -261,7 +203,14 @@
     <script type="module" src="/resources/pages/quizroom/JoinController.js"></script>
     <script type="module" src="/resources/pages/quizroom/Renderer.js"></script>
 
-    <!-- Util -->
-    <script type="module" src="/resources/pages/quizroom/HTMLActions.js"></script>
+
+    <!-- Pushbar JS -->
+    <script type="text/javascript" src="../resources/modules/pushbar.js"></script>
+    <script type="text/javascript">
+      const pushbar = new Pushbar({
+        blur:true,
+        overlay:true,
+      });
+    </script>
 </body>
 </html>

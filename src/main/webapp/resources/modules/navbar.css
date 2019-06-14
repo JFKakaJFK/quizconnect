@@ -27,10 +27,10 @@
 }
 
 .navbar-logo svg .cls-2 {
-    animation: circle 1s linear infinite forwards;
+    animation: circle 5s linear infinite forwards;
 }
 .navbar-logo svg .cls-3 {
-    animation: clockHand .75s linear infinite forwards;
+    animation: clockHand 1s linear infinite forwards;
 }
 
 .navbar-logo svg .cls-2,

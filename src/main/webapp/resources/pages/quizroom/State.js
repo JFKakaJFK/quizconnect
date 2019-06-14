@@ -1,7 +1,12 @@
 "use strict";
 
-import {INGAME, JOIN, LOBBY} from "./Constants.js";
+import { INGAME, FINISHED, LOBBY, JOIN } from "./Constants.js";
 
+/**
+ * The game state.
+ *
+ * @type {{gameSessionTimer: null, pin: null, id: null, highScore: null, state: number, timeoutIsActive: boolean, timeoutRemainingTime: number, timeoutTimer: null, alivePing: null, info: {settings: {questionSets: Array, difficulty: string, mode: string, numJokers: number, score: number, pin: number}, players: Array}, game: {score: number, question: null, answers: Array}, messages: Array}}
+ */
 let state = {
   gameSessionTimer: null,
   pin: null,
@@ -28,9 +33,16 @@ let state = {
     question: null,
     answers: [],
   },
-  messages: [],
+  messageQueue: [],
 };
 
+/**
+ * All changes to the game state happen through this function, allowing fine grained control over rendering.
+ * Adds the name of the current state to the classList of the document body.
+ *
+ * @param newState
+ * @param render
+ */
 const setState = (newState, render = true) => {
 
   const settings = {};
@@ -39,7 +51,22 @@ const setState = (newState, render = true) => {
   const game = Object.assign(state.game, newState.game, { question });
 
   state = Object.assign(state, newState, { info, game });
-  console.debug(`STATE: merged states, new State is ${state.state === INGAME ? 'INGAME' : state.state === LOBBY ? 'LOBBY' : state.state === JOIN ? 'JOIN' : 'FINISHED'}:`, JSON.stringify(state)); // should keep state changes affecting the debug log
+  let gameState = state.state;
+  switch (gameState){
+    case INGAME:
+      gameState = 'ingame';
+      break;
+    case LOBBY:
+      gameState = 'lobby';
+      break;
+    case FINISHED:
+      gameState = 'finished';
+      break;
+    default:
+      gameState = 'join';
+  }
+  console.debug(`STATE: merged states, new State is ${gameState.toUpperCase()}:`, JSON.stringify(state)); // should keep state changes affecting the debug log
+  document.body.setAttribute('class', gameState);
 
   if(render){
     let event = new CustomEvent('stateChange', {
@@ -49,4 +76,20 @@ const setState = (newState, render = true) => {
   }
 };
 
+/**
+ * Returns the current state, as unmodifiable object.
+ *
+ * @returns {{gameSessionTimer: null, pin: null, id: null, highScore: null, state: number, timeoutIsActive: boolean, timeoutRemainingTime: number, timeoutTimer: null, alivePing: null, info: {settings: {questionSets: Array, difficulty: string, mode: string, numJokers: number, score: number, pin: number}, players: Array}, game: {score: number, question: null, answers: Array}, messages: Array}}
+ */
+const getState = () => {
+  const s = { ...state };
+  Object.freeze(s);
+  return s;
+};
+
 export default setState;
+
+export {
+  setState,
+  getState,
+}
