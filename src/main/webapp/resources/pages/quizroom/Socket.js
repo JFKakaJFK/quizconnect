@@ -628,6 +628,17 @@ const showChatMessage = (message) => {
   })
 };
 
+const handleUnload = (e) => {
+  e.preventDefault();
+  const state = getState();
+  disconnect();
+  localStorage.setItem('pin', state.pin.toString());
+  localStorage.setItem('timeStamp', (new Date().valueOf() + 5000).toString());
+  e.returnValue = '';
+};
+
+document.addEventListener('unload', handleUnload);
+
 export {
   connect,
   disconnect,

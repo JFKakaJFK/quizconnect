@@ -114,10 +114,9 @@ class JoinController{
           }, false);
           // connect to socket
           connect();
+          // init local storage update timer
+          this._storePin();
         }, this._delay); // delay the room join for animation purposes
-
-        // init local storage update timer
-        this._storePin();
       }
     }).catch(e => {
       console.error(error);

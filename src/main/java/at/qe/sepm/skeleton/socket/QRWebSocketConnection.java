@@ -36,6 +36,7 @@ public class QRWebSocketConnection implements IRoomAction {
 
     private HashMap<Integer, IPlayerAction> rooms; // all active QuizRooms
     private HashMap<Integer, HashMap<Integer, Player>> players; // all active Players, by QuizRoom
+    // TODO maybe should be volatile
 
     private HashMap<Integer, List<ChatMessageJSON>> chatMessages; // the chat history of each QuizRoom
 
@@ -163,6 +164,7 @@ public class QRWebSocketConnection implements IRoomAction {
         SocketEvent event = new PlayerLeaveEvent(p, reason);
         event.setEvent(PLAYER_LEAVE);
         broadcast(event, pin);
+        players.get(pin).remove(p.getId());
         log.debug("Game " + pin + ": player " + p.getId() + " left");
     }
 
@@ -233,6 +235,7 @@ public class QRWebSocketConnection implements IRoomAction {
         SocketEvent event = new PlayerKickEvent(p);
         event.setEvent(KICK);
         broadcast(event, pin);
+        players.get(pin).remove(p.getId());
         log.debug("Game " + pin + ": player " + p.getId() + " was kicked");
     }
 
