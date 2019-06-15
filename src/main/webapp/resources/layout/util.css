@@ -2,10 +2,6 @@ img {
     max-width: 100%;
 }
 
-.preview-overview img {
-    max-width: 25%;
-}
-
 svg {
     max-width: 100%;
     color: inherit;
