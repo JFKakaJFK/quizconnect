@@ -79,7 +79,7 @@
         </h:form>
 
         <h:form id="deleteQuestionForm">
-            <h:panelGroup styleClass="collection" layout="block" id="questionCollection" rendered="#{true}">
+            <h:panelGroup styleClass="collection" layout="block" id="questionCollection">
                 <ui:repeat value="#{questionSetBean.questionsDisplay}" var="question">
                     <qc:questionbox question="#{question}">
 
@@ -105,6 +105,8 @@
                     </qc:questionbox>
                 </ui:repeat>
             </h:panelGroup>
+
+            <qc:collectionEmpty collection="#{questionSetBean.questionsDisplay}" text="No questions found"/>
 
         </h:form>
 
