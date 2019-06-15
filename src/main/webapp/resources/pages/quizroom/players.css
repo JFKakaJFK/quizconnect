@@ -1,0 +1,32 @@
+.players {
+    padding: var(--default-padding) 0;
+    display: grid;
+    grid-gap: var(--default-padding);
+}
+
+@media only screen and (min-width: 768px) {
+    .players {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.players [data-ready] {
+
+}
+
+.players [data-ready="true"] {
+    color: green;
+}
+
+.players [data-ready="false"] {
+    color: #aaa;
+}
+
+.players [data-action="true"] {
+    color: #fff;
+}
+
+.players [data-action="true"]:hover {
+    cursor: pointer;
+    color: dodgerblue;
+}

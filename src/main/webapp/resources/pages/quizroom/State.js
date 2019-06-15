@@ -1,5 +1,6 @@
 "use strict";
 
+import Animate from './Animate.js';
 import { INGAME, FINISHED, LOBBY, JOIN } from "./Constants.js";
 
 /**
@@ -8,31 +9,31 @@ import { INGAME, FINISHED, LOBBY, JOIN } from "./Constants.js";
  * @type {{gameSessionTimer: null, pin: null, id: null, highScore: null, state: number, timeoutIsActive: boolean, timeoutRemainingTime: number, timeoutTimer: null, alivePing: null, info: {settings: {questionSets: Array, difficulty: string, mode: string, numJokers: number, score: number, pin: number}, players: Array}, game: {score: number, question: null, answers: Array}, messages: Array}}
  */
 let state = {
-  gameSessionTimer: null,
+  // general
   pin: null,
   id: null, // TODO: change docs (playerid -> id)
   highScore: null,
   state: JOIN,
-  timeoutIsActive: false, // TODO
-  timeoutRemainingTime: 0,// TODO
-  timeoutTimer: null,// TODO 
-  alivePing: null,
+
+  // lobby
   info: {
-    settings: {
-      questionSets: [],
-      difficulty: '',
-      mode: '',
-      numJokers: 0,
-      score: 0,
-      pin: 0,
-    },
+    questionSets: [],
+    difficulty: '',
+    mode: '',
+    numJokers: 0,
+    score: 0,
+    pin: 0,
     players: [],
   },
+
+  // ingame
   game: {
     score: 0,
     question: null,
     answers: [],
   },
+
+  // chat
   messageQueue: [],
 };
 
@@ -45,9 +46,8 @@ let state = {
  */
 const setState = (newState, render = true) => {
 
-  const settings = {};
-  const info = Object.assign(state.info, newState.info, { settings });
-  const question = {};
+  const info = Object.assign(state.info, newState.info);
+  const question = {}; // TODO
   const game = Object.assign(state.game, newState.game, { question });
 
   state = Object.assign(state, newState, { info, game });
@@ -74,6 +74,12 @@ const setState = (newState, render = true) => {
     });
     document.dispatchEvent(event);
   }
+  const title = document.getElementById('title');
+  if(title) Animate('#title', 'fadeOut', () => {
+    title.textContent = gameState === 'ingame' ? gameState + ' - ' + state.pin.toString().padStart(6, '0') : gameState;
+    Animate('#title', 'fadeIn');
+  });
+
 };
 
 /**

@@ -27,7 +27,7 @@
             </div>
 
             <div class="d-flex flex-grow-1 justify-content-center px-2">
-                <h2 id="title" class="site-title">Join</h2><!-- TODO display pin here -->
+                <h2 id="title" class="site-title faster">Join</h2><!-- TODO display pin here -->
             </div>
 
             <div class="d-flex justify-content-end px-2">
@@ -37,11 +37,11 @@
             </div>
         </header>
 
-        <div id="root" class="join-active">
+        <div id="root" class="states-container">
             <!-- game will be rendered here -->
 
             <!-- JOIN VIEW (Why use JS if it can be done w/ HTML? -->
-            <div id="join" class="join-container d-flex justify-content-center align-items-center">
+            <div id="join" class="fast state-container join-container d-flex justify-content-center align-items-center">
                 <div class="join-content">
                     <div class="stat stat-xlg">
                         <input id="pin" type="tel" placeholder="000000" max="999999" min="1" minlength="1" size="6" pattern="[0-9]{1,6}"/>
@@ -54,15 +54,33 @@
 
             <!-- TODO skeleton for other views here... will make stuff easier + cool animations -->
 
-            <div id="lobby">
+            <div id="lobby" class="state-container lobby-container slow">
+                <div class="info box">
+                    <div class="stat info-sets">
+                        <div data-lobby-sets></div>
+                        <p>question sets</p>
+                    </div>
+                    <div class="stat stat-upper stat-sm">
+                        <h3 data-lobby-mode>normal</h3>
+                        <p>game mode</p>
+                    </div>
+                    <div class="stat stat-upper stat-sm">
+                        <h3 data-lobby-difficulty>easy</h3>
+                        <p>difficulty</p>
+                    </div>
+                    <div class="stat stat-lg pin info-pin">
+                        <h3 data-pin>000000</h3>
+                        <p>pin <a href="#" data-toggle="modal" data-target="#sharePin"><i data-feather="share-2"></i></a></p>
+                    </div>
+                </div>
+                <div data-lobby-players class="players"></div>
+            </div>
+
+            <div id="ingame" class="state-container ingame-container">
 
             </div>
 
-            <div id="ingame">
-
-            </div>
-
-            <div id="finished">
+            <div id="finished" class="state-container finished-container">
 
             </div>
         </div>
@@ -147,7 +165,6 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <!-- TODO test leave action -->
                     <a href="#" data-confirm-leave class="btn btn-primary">Leave Game</a>
                 </div>
             </div>
@@ -161,7 +178,7 @@
                     <h5 class="modal-title" id="timeoutModal">Timeout</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">
-                            <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M16.24 14.83a1 1 0 0 1-1.41 1.41L12 13.41l-2.83 2.83a1 1 0 0 1-1.41-1.41L10.59 12 7.76 9.17a1 1 0 0 1 1.41-1.41L12 10.59l2.83-2.83a1 1 0 0 1 1.41 1.41L13.41 12l2.83 2.83z"/></svg>
+                            <i data-feather="x"></i>
                         </span>
                     </button>
                 </div>
@@ -182,7 +199,7 @@
                     <h5 class="modal-title" id="confirmReadyModal">Ready Up</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">
-                            <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M16.24 14.83a1 1 0 0 1-1.41 1.41L12 13.41l-2.83 2.83a1 1 0 0 1-1.41-1.41L10.59 12 7.76 9.17a1 1 0 0 1 1.41-1.41L12 10.59l2.83-2.83a1 1 0 0 1 1.41 1.41L13.41 12l2.83 2.83z"/></svg>
+                            <i data-feather="x"></i>
                         </span>
                     </button>
                 </div>
@@ -191,7 +208,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Abort</button>
-                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="readyUp()">Start Game</button>
+                    <button type="button" id="confirmReadyBtn" class="btn btn-primary" data-dismiss="modal">Start Game</button>
                 </div>
             </div>
         </div>
@@ -204,32 +221,31 @@
                     <h5 class="modal-title" id="sharePinModal">Invite Friends</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">
-                            <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M16.24 14.83a1 1 0 0 1-1.41 1.41L12 13.41l-2.83 2.83a1 1 0 0 1-1.41-1.41L10.59 12 7.76 9.17a1 1 0 0 1 1.41-1.41L12 10.59l2.83-2.83a1 1 0 0 1 1.41 1.41L13.41 12l2.83 2.83z"/></svg>
+                            <i data-feather="x"></i>
                         </span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div>
                         <div class="stat stat-lg pin">
-                            <h3 id="share_pin"></h3>
+                            <h3 data-pin></h3>
                             <p>pin</p>
                         </div>
                         <div class="share-links">
-                            <a id="share_whatsapp" class="share-link share-whatsapp" href="#" ping="ibiza.fpoe.at/sellout" rel="noopener nofollow noreferrer" target="_blank">
+                            <a data-share-whatsapp class="share-link share-whatsapp" href="#" ping="http://ibiza.fpoe.at/integrity?sellout" rel="noopener nofollow noreferrer" target="_blank">
                                 <?xml version="1.0" encoding="utf-8"?>
                                 <svg width="1792" height="1792" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1113 974q13 0 97.5 44t89.5 53q2 5 2 15 0 33-17 76-16 39-71 65.5t-102 26.5q-57 0-190-62-98-45-170-118t-148-185q-72-107-71-194v-8q3-91 74-158 24-22 52-22 6 0 18 1.5t19 1.5q19 0 26.5 6.5t15.5 27.5q8 20 33 88t25 75q0 21-34.5 57.5t-34.5 46.5q0 7 5 15 34 73 102 137 56 53 151 101 12 7 22 7 15 0 54-48.5t52-48.5zm-203 530q127 0 243.5-50t200.5-134 134-200.5 50-243.5-50-243.5-134-200.5-200.5-134-243.5-50-243.5 50-200.5 134-134 200.5-50 243.5q0 203 120 368l-79 233 242-77q158 104 345 104zm0-1382q153 0 292.5 60t240.5 161 161 240.5 60 292.5-60 292.5-161 240.5-240.5 161-292.5 60q-195 0-365-94l-417 134 136-405q-108-178-108-389 0-153 60-292.5t161-240.5 240.5-161 292.5-60z" /></svg>
                             </a>
-                            <a id="share_twitter" href="#" class="share-link share-twitter" ping="ibiza.fpoe.at/sellout" rel="noopener nofollow noreferrer" target="_blank">
+                            <a data-share-twitter href="#" class="share-link share-twitter" ping="http://ibiza.fpoe.at/integrity?sellout" rel="noopener nofollow noreferrer" target="_blank">
                                 <?xml version="1.0" encoding="utf-8"?>
                                 <svg width="1792" height="1792" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1684 408q-67 98-162 167 1 14 1 42 0 130-38 259.5t-115.5 248.5-184.5 210.5-258 146-323 54.5q-271 0-496-145 35 4 78 4 225 0 401-138-105-2-188-64.5t-114-159.5q33 5 61 5 43 0 85-11-112-23-185.5-111.5t-73.5-205.5v-4q68 38 146 41-66-44-105-115t-39-154q0-88 44-163 121 149 294.5 238.5t371.5 99.5q-8-38-8-74 0-134 94.5-228.5t228.5-94.5q140 0 236 102 109-21 205-78-37 115-142 178 93-10 186-50z" /></svg>
                             </a>
-                            <a id="share_fb" href="#" class="share-link share-facebook" ping="ibiza.fpoe.at/sellout" rel="noopener nofollow noreferrer" target="_blank">
+                            <a data-share-facebook href="#" class="share-link share-facebook" ping="http://ibiza.fpoe.at/integrity?sellout" rel="noopener nofollow noreferrer" target="_blank">
                                 <?xml version="1.0" encoding="utf-8"?>
                                 <svg width="1792" height="1792" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1343 12v264h-157q-86 0-116 36t-30 108v189h293l-39 296h-254v759h-306v-759h-255v-296h255v-218q0-186 104-288.5t277-102.5q147 0 228 12z" /></svg>
                             </a>
                         </div>
                     </div>
-
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -259,6 +275,10 @@
 
     <!-- QuizRoom JS -->
     <script type="module" src="/resources/pages/quizroom/JoinController.js"></script>
+    <script type="module" src="/resources/pages/quizroom/LobbyRenderer.js"></script>
+    <script type="module" src="/resources/pages/quizroom/TimeoutController.js"></script>
+
+    <!-- TODO remove -->
     <script type="module" src="/resources/pages/quizroom/Renderer.js"></script>
 
     <!-- Util -->

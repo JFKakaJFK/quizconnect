@@ -11,6 +11,10 @@
     cursor: pointer;
 }
 
+.navbar #title {
+    text-transform: capitalize;
+}
+
 /*
 .navbar-logo {
     font-size: 1.5rem;

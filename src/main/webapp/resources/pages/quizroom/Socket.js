@@ -14,7 +14,6 @@ import {
   INFO_MSG
 } from "./Constants.js";
 import setState, { getState } from "./State.js";
-import Timers from './Timers.js';
 
 let socket = null;
 let stompClient = null;
@@ -79,8 +78,8 @@ const disconnect = () => {
     timeoutInterval = null;
   }
   // ugly but does the job
-  localStorage.removeItem('pin');
-  localStorage.removeItem('timeStamp');
+  sessionStorage.removeItem('pin');
+  sessionStorage.removeItem('timeStamp');
   console.debug(`SOCKET: disconnected`)
 };
 
@@ -173,10 +172,8 @@ const leaveRoom = () => {
 const cancelTimeout = () => {
   const { id } = getState();
   sendEvent({event: CANCEL_TIMEOUT, playerId: id});
-  Timers.clear('timeoutTimer');
-  setState({
-    timeoutIsActive: false,
-  });
+  const event = new CustomEvent('cancelTimeout');
+  document.dispatchEvent(event);
   // remove event listeners
   document.removeEventListener('click', cancelTimeout);
   document.removeEventListener('touchstart', cancelTimeout);
@@ -328,14 +325,11 @@ const handleRoomInfo = ({ pin, difficulty, mode, questionSets, numJokers, num, p
   setState({
     state,
     info: {
-      settings: {
-        pin,
-        difficulty,
-        mode,
-        questionSets,
-        numJokers,
-      },
-      num,
+      pin,
+      difficulty,
+      mode,
+      questionSets,
+      numJokers,
       players,
     },
     game: {
@@ -415,11 +409,21 @@ const handleGameStart = () => {
  * Handles the end of the game.
  */
 const handleGameEnd = () => {
-  disconnect(); // TODO leave open for chat?
-  setState({
-    state: FINISHED,
-  });
-  showChatMessage(`Game ended.`);
+  const { state } = getState();
+  if(state === LOBBY || state === JOIN){
+    disconnect();
+    // TODO show error or something
+    alert('Something happened');
+    setTimeout(() => window.location.href = URL_HOME, 500);
+  } else {
+    const params = new URLSearchParams(window.location.search);
+    if(params.has('pin')) window.history.pushState({}, document.title, '/quizroom/index.html');
+    showChatMessage(`Game ended.`);
+    disconnect(); // TODO leave open for chat?
+    setState({
+      state: FINISHED,
+    });
+  }
   console.debug(`SERVER: game ended`)
 };
 
@@ -478,17 +482,18 @@ const handleTimerSync = ({ questionId, remaining }) => { // TODO how to handle?
  * @param remaining
  */
 const handleTimeoutStart = ({ playerId, remaining }) => {
-  if(state.id !== playerId){
+  const { id } = getState();
+  if(id !== playerId){
     return;
   }
   // listen for any activity
   document.addEventListener('click', cancelTimeout);
   document.addEventListener('touchstart', cancelTimeout);
   document.addEventListener('mousemove', cancelTimeout);
-  setState({
-    timeoutIsActive: true, // TODO
-    timeoutRemainingTime: remaining,
-  });
+  const event = new CustomEvent('timeoutStart', { detail: {
+    remaining,
+  }});
+  document.dispatchEvent(event);
   console.debug(`SERVER: timeout started, ${remaining / 1000}s left`)
 };
 
@@ -628,16 +633,23 @@ const showChatMessage = (message) => {
   })
 };
 
+/**
+ * Handles the socket connection if the window is closed or refreshed.
+ *
+ * @param e
+ */
 const handleUnload = (e) => {
   e.preventDefault();
   const state = getState();
   disconnect();
-  localStorage.setItem('pin', state.pin.toString());
-  localStorage.setItem('timeStamp', (new Date().valueOf() + 5000).toString());
+  sessionStorage.setItem('pin', state.pin.toString());
+  sessionStorage.setItem('timeStamp', (new Date().valueOf() + 5000).toString());
   e.returnValue = '';
 };
 
 document.addEventListener('unload', handleUnload);
+
+export default Client;
 
 export {
   connect,

@@ -1,12 +1,18 @@
-.join-container {
-    width: 100%;
-    min-height: calc(100vh - var(--navbar-height));
+#join {
+    animation-delay: 300ms;
 }
 
 .join-container .join-content {
     display: flex;
     flex-flow: column nowrap;
     align-items: center;
+    opacity: 0;
+    animation: showJoin 1.5s ease-in-out 1 forwards;
+}
+
+@keyframes showJoin {
+    0% {opacity: 0;}
+    100% {opacity: 1;}
 }
 
 .join-container .join-content input {
@@ -43,6 +49,10 @@
 
 .join-container .join-content .status.error {
     color: var(--danger);
+}
+
+.join-container .join-content .status.success {
+    color: var(--info);
 }
 
 .join-container .join-content a.btn {

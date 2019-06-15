@@ -1,0 +1,31 @@
+.share-links {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    padding: 1rem 0;
+    box-sizing: border-box;
+    flex-wrap: wrap;
+}
+
+.share-link svg {
+    width: 3rem;
+    height: auto;
+}
+
+.share-link {
+    transition: all 0.25s ease-in-out;
+    will-change: transform;
+}
+
+.share-link:hover {
+    transform: scale(1.25);
+}
+
+.countdown {
+    display: flex;
+    width: 100%;
+    min-height: calc(100vh - var(--navbar-height));
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
