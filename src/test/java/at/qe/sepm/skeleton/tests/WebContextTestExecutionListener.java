@@ -21,8 +21,6 @@ public class WebContextTestExecutionListener extends
             beanFactory.registerScope("request", requestScope);
             Scope sessionScope = new SimpleThreadScope();
             beanFactory.registerScope("session", sessionScope);
-            Scope threadScope= new SimpleThreadScope();
-            beanFactory.registerScope("thread", threadScope);
         }
     }
 }

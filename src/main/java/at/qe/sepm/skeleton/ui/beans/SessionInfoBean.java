@@ -118,4 +118,9 @@ public class SessionInfoBean implements Serializable {
         return false;
     }
 
+    //for test purposes only
+
+    public void setCurrentUser(User currentUser) {
+        this.currentUser = currentUser;
+    }
 }
