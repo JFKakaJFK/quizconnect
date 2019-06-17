@@ -7,6 +7,7 @@ import at.qe.sepm.skeleton.tests.WebContextTestExecutionListener;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,15 +20,12 @@ import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
-@AutoConfigureMockMvc
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@TestExecutionListeners( { WebContextTestExecutionListener.class})
 public class PlayerDetailControllerTest {
 
-    @Autowired
+    @Mock
     private PlayerDetailController playerDetailController;
 
-    @Autowired
+    @Mock
     private PlayerService playerService;
 
     @Test

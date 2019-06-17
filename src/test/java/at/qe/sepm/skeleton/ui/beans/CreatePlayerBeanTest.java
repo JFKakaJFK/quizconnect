@@ -30,7 +30,7 @@ public class CreatePlayerBeanTest {
     @Mock
     private ManagerService managerService;
 
-    
+
     @Test
     public void testGetUsername(){
         createPlayerBean.setUsername("UserToTest");

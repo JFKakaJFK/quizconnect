@@ -249,6 +249,11 @@ public class QuestionSetServiceTest {
         Assert.assertTrue("Right QuestionSet was loaded from DB", checkSet.equals(questionSetService.getQuestionSetOfQuestion(testQuestion)));
     }
 
+    /**
+     * This test executed in the whole testsuite usually fails since during the test random QuestionSets get added to
+     * DB therefore its impossible to assert
+     */
+
     @Test
     @WithMockUser(username = "user1", authorities = { "MANAGER" })
     public void testGetAllQuestionSets(){
