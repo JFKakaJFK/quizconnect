@@ -235,7 +235,7 @@ public class QuestionSetBean implements Serializable {
         questionsDisplay.remove(questionToDelete);
         questionService.deleteQuestion(questionToDelete);
         logger.info("Question deleted");
-        messageBean.alertInformation("Success", "Deleted QuestionSet");
+        messageBean.alertInformation("Success", "Deleted question");
         messageBean.updateComponent("messages");
     }
 

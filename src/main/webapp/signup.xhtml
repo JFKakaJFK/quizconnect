@@ -48,13 +48,13 @@
                 <h:inputText type="text" styleClass="form-control" value="#{createManagerBean.manager.institution}" name="institution" id="institution" pt:id="institution" pt:placeholder="Universtität Innsbruck" pt:autocomplete="off" pt:maxlength="200"/>
             </div>
 
-            <div class="form-group">
+            <div class="form-group required">
                 <label for="username">E-Mail</label>
                 <h:inputText type="text" styleClass="form-control" value="#{createManagerBean.manager.email}" name="username" id="username" pt:id="username" pt:placeholder="john.doe@mail.com" autocomplete="username" pt:maxlength="100" pt:required="true" pt:pattern="[^@]+@[^@]+\.[a-zA-Z]{2,}"/>
                 <h:inputText pt:id="email" pt:name="email" pt:maxlength="100" styleClass="jsf-hide" type="text" value="me@example.test" autocomplete="username"/>
             </div>
 
-            <div class="form-group">
+            <div class="form-group required">
                 <label for="reg_password">Password</label>
                 <h:inputSecret styleClass="form-control" value="#{createManagerBean.password}" name="reg_password" id="reg_password" pt:id="reg_password" pt:placeholder="******" pt:autocomplete="new-password" pt:required="true"/>
 

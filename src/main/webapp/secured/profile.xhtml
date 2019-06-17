@@ -27,17 +27,18 @@
     <ui:define name="content">
         <h:form id="passwordChange">
             <h:commandButton styleClass="btn btn-primary" p:data-toggle="modal" p:data-target="#editManager" value="Change password">
-                <f:ajax execute="@this" render=":modals:editManager:footer"/>
+                <f:ajax execute="@this" render=":passwordForm:editManager:footer :passwordForm:editManager:password :passwordForm:editManager:repeat_password"/>
             </h:commandButton>
 
             <h:commandButton styleClass="btn btn-primary" p:data-toggle="modal" p:data-target="#editEmail" value="Change email">
-                <f:ajax execute="@this" render=":modals:editEmail:footer :modals:editEmail:body"/>
+                <f:ajax execute="@this" render=":emailForm:editEmail:footer :emailForm:editEmail:email"/>
+                <f:setPropertyActionListener value="#{sessionInfoBean.currentUser.manager.email}" target="#{editManagerBean.email}"/>
             </h:commandButton>
         </h:form>
     </ui:define>
 
     <ui:define name="modals">
-        <h:form id="modals">
+        <h:form id="passwordForm">
             <qc:modal id="editManager"
                       target="editManager"
                       title="Edit Password"
@@ -45,14 +46,15 @@
                       abort="Cancel"
                       bodyId="body" footerId="footer"
                       confirmAction="#{editManagerBean.changePassword}"
+                      abortButton="btn btn-secondary"
                       disableConfirm="#{!validationBean.isValidPassword(editManagerBean.password, editManagerBean.repeatPassword)}"
                       update="@this">
-                <h:panelGroup layout="block" styleClass="form-group">
-                    <h:inputSecret p:placeholder="New password" p:name="password" p:id="password" value="#{editManagerBean.password}" p:autocomplete="new-password" styleClass="form-control">
-                        <f:ajax event="keyup" execute="@this" render=":modals:editManager:footer"/><!-- TODO updating the bean value does not seem to work properly on input-->
+                <h:panelGroup layout="block" styleClass="form-group required">
+                    <h:inputSecret p:placeholder="New password" id="password" value="#{editManagerBean.password}" p:autocomplete="new-password" styleClass="form-control">
+                        <f:ajax event="keyup" execute="@this" render="footer"/><!-- TODO updating the bean value does not seem to work properly on input-->
                     </h:inputSecret>
-                    <h:inputSecret p:placeholder="Repeat new password" p:name="repeat_password" p:id="repeat_password" value="#{editManagerBean.repeatPassword}" p:autocomplete="new-password" styleClass="form-control">
-                        <f:ajax event="keyup" execute="@this" render=":modals:editManager:footer"/>
+                    <h:inputSecret p:placeholder="Repeat new password" id="repeat_password" value="#{editManagerBean.repeatPassword}" p:autocomplete="new-password" styleClass="form-control">
+                        <f:ajax event="keyup" execute="@this" render="footer"/>
                     </h:inputSecret>
                 </h:panelGroup>
 
@@ -63,7 +65,9 @@
                 <h:panelGroup layout="block" styleClass="box" p:name="errorcontainer" p:id="errorcontainer" id="errorcontainer"/>
 
             </qc:modal>
+        </h:form>
 
+        <h:form id="emailForm">
             <qc:modal id="editEmail"
                       target="editEmail"
                       title="Edit Email"
@@ -73,7 +77,7 @@
                       confirmAction="#{editManagerBean.changeEmail}"
                       disableConfirm="#{!validationBean.isValidEmail(editManagerBean.email)}"
                       update="@this">
-                <h:inputText p:placeholder="New email" value="#{editManagerBean.email}" p:autocomplete="new-email" p:maxlength="100" styleClass="form-control">
+                <h:inputText p:placeholder="New email" value="#{editManagerBean.email}" id="email" p:autocomplete="new-email" p:maxlength="100" styleClass="form-control">
                     <f:ajax event="keyup" execute="@this" render=":modals:editEmail:footer"/>
                 </h:inputText>
             </qc:modal>

@@ -131,7 +131,7 @@ public class BootstrapMessagesRenderer extends MessagesRenderer {
             String detail = msg.getDetail() != null ? msg.getDetail() : summary;
 
             writer.startElement("div", null); //start individual container div
-            writer.writeAttribute("class", "alert " + alertSeverityClass + " add-margin", "alert " + alertSeverityClass + " add-margin");
+            writer.writeAttribute("class", "alert " + alertSeverityClass + " add-margin" + " fade show", "alert " + alertSeverityClass + " add-margin" + " fade show");
             writer.writeAttribute("role", "alert", "alert");
 
             writer.startElement("div", null); //start icon-div
@@ -187,7 +187,6 @@ public class BootstrapMessagesRenderer extends MessagesRenderer {
         writer.write("    <script type=\"text/javascript\">\n" +
                 "            window.setTimeout(function () {\n" +
                 "                $(\"#close-modal-button\").click();\n" +
-                "                console.log(\"hidden\");\n" +
                 "            }, 5000);\n" +
                 "    </script>");
     }

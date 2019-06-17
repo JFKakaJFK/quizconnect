@@ -9,3 +9,7 @@
 .question-info-box.picture img {
     width: 50%;
 }
+
+.preview-overview img {
+    max-width: 35%;
+}

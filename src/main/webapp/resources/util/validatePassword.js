@@ -1,26 +1,26 @@
 $(document).ready(function () {
-    $("#passwordChange").validate({
+    $("#passwordForm").validate({
         errorLabelContainer: "#errorcontainer",
         wrapper: "li",
         rules: {
-            "password": {
+            "passwordForm:editManager:password": {
                 required: true,
                 minlength: 5
             },
 
-            "repeat_password": {
+            "passwordForm:editManager:repeat_password": {
                 required: true,
-                equalTo: "#password"
+                equalTo: "#passwordForm:editManager:password"
             }
 
         },
         messages: {
-            "password": {
+            "passwordForm:editManager:password": {
                 required: "Provide a password",
                 minlength: "Enter at least 5 characters for your password"
             },
 
-            "repeat_password": {
+            "passwordForm:editManager:repeat_password": {
                 required: "Repeat your password",
                 equalTo: "Your passwords do not match"
             }

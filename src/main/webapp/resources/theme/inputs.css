@@ -58,7 +58,7 @@ select option:checked {
     var(--input-focus-background)
 }
 
-.form-group.required label:after {
+.form-group.required label:not(.btn):after  {
     content:" *";
     color: var(--error);
 }
