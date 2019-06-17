@@ -10,8 +10,9 @@ import {
   WS_TARGET,
   ALIVE_PING_PERIOD,
   ACTIVITY_CHECK_PERIOD,
+  PERIODIC_ACTIVITY_PINGS,
   URL_HOME,
-  INFO_MSG
+  INFO_MSG,
 } from "./Constants.js";
 import setState, { getState } from "./State.js";
 
@@ -40,13 +41,13 @@ const connect = () => {
 
     setTimeout(() => {
       alivePing = setInterval(sendAlivePing, ALIVE_PING_PERIOD)
-    }, ALIVE_PING_PERIOD);
+    }, ALIVE_PING_PERIOD); // wait for some time to ensure that the beautiful SockJS doesn't f*** up ¯\_(ツ)_/¯
 
-    /* // OPTIONAL - periodically checks for user activity and sends cancel timeouts
-    setTimeout(() => {
-      timeoutInterval = setInterval(checkActivity, ACTIVITY_CHECK_PERIOD);
-    }, ALIVE_PING_PERIOD);
-    */
+    if(PERIODIC_ACTIVITY_PINGS){
+      setTimeout(() => {
+        timeoutInterval = setInterval(checkActivity, ACTIVITY_CHECK_PERIOD);
+      }, ALIVE_PING_PERIOD);
+    }
   });
 };
 
@@ -149,7 +150,6 @@ const answerQuestion = (questionId, answerId) => {
 /**
  * Uses a reshuffle joker.
  */
-// TODO disable joker for x seconds after click & no multiple joker waste (easy sync w/ server) -> delegate this to rendergame
 const useJoker = () => {
   const { id } = getState();
   sendEvent({event: USE_JOKER, playerId: id});
@@ -412,17 +412,19 @@ const handleGameEnd = () => {
   const { state } = getState();
   if(state === LOBBY || state === JOIN){
     disconnect();
-    // TODO show error or something
+    // TODO show error or something -> game ended early
     alert('Something happened');
     setTimeout(() => window.location.href = URL_HOME, 500);
   } else {
     const params = new URLSearchParams(window.location.search);
-    if(params.has('pin')) window.history.pushState({}, document.title, '/quizroom/index.html');
+    if(params.has('pin')) window.history.replaceState({}, document.title, '/quizroom/index.html');
     showChatMessage(`Game ended.`);
     disconnect(); // TODO leave open for chat?
     setState({
       state: FINISHED,
     });
+    const event = new CustomEvent('gameEnd');
+    document.dispatchEvent(event);
   }
   console.debug(`SERVER: game ended`)
 };
@@ -439,6 +441,8 @@ const handleJokerUse = ({ remaining }) => {
     }
   });
   showChatMessage(`A joker was used`);
+  const event = new CustomEvent('jokerUse');
+  document.dispatchEvent(event);
   console.debug(`SERVER: joker was used (${remaining} jokers remaining)`)
 };
 
@@ -607,7 +611,7 @@ const handleChatMessage = ({ message }) => {
  *
  * @param messages
  */
-const handleChatMessages = ({ messages }) => {
+const handleChatMessages = ({ messages }) => { // todo remove from state & throw event w/ data
   setState({
     messageQueue: messages,
   });
@@ -621,7 +625,7 @@ const handleChatMessages = ({ messages }) => {
  *
  * @param message
  */
-const showChatMessage = (message) => {
+const showChatMessage = (message) => { // todo remove from state & throw event w/ data
   const { messageQueue } = getState();
   setState({
     messageQueue: messageQueue.concat([{

@@ -1,5 +1,5 @@
 "use strict";
-import { LOBBY, SHARE_WHATSAPP, SHARE_PIN_MESSAGE, SHARE_TWITTER, SHARE_FACEBOOK } from "./Constants.js";
+import { LOBBY, INGAME, FINISHED, SHARE_WHATSAPP, SHARE_PIN_MESSAGE, SHARE_TWITTER, SHARE_FACEBOOK } from "./Constants.js";
 import { setSimpleText, clearNode, dangerouslySetHTML } from "./Utils.js";
 import Client from "./Socket.js";
 import Animate from './Animate.js';
@@ -10,7 +10,7 @@ const unreadyIcon = readyIcon;
 /**
  * Renders lobby consisting of game info, share modal and players in the lobby
  */
-class LobbyRenderer {
+class LobbyController {
   constructor(options = {}){
     const defaults = {
       sets: '[data-lobby-sets]',
@@ -24,6 +24,7 @@ class LobbyRenderer {
     };
     this._options = Object.assign(defaults, options);
     this._shareRendered = false;
+    this._countdown = false;
   }
 
   /**
@@ -35,7 +36,8 @@ class LobbyRenderer {
   _handleStateChange(newState){
     const { state, info, id } = newState;
     this._renderPin(info.pin);
-    if(state !== LOBBY) return;
+    if(state !== LOBBY || this._countdown) return;
+    if(state === INGAME || state === FINISHED) this.destroy();
     this._renderInfo(info);
     this._renderPlayers(info, id);
     this._renderShare(info);
@@ -47,6 +49,8 @@ class LobbyRenderer {
    * @private
    */
   _showCountdown(){
+    if(this._countdown) return;
+    this._countdown = true;
     // fade out stuff
     Animate('#lobby', 'fadeOut', () => {
       const container = document.getElementById('lobby');
@@ -235,7 +239,7 @@ class LobbyRenderer {
    * @param pin
    * @private
    */
-  _renderPin(pin){ // TODO move to general renderer (not lobby specific)?
+  _renderPin(pin){ // TODO move to general renderer (not lobby specific)? -> lobby renderer could be destroyed after lobby state
     if(!pin) return;
     const pins = document.querySelectorAll(this._options.pin);
     pins.forEach(p => setSimpleText(p, pin.toString().padStart(6, '0')));
@@ -262,6 +266,13 @@ class LobbyRenderer {
   }
 
   /**
+   * Stop to listen to any state change events.
+   */
+  destroy(){
+    document.removeEventListener('stateChange', (e) => this._handleStateChange(e.detail));
+  }
+
+  /**
    * Begin to listen to state changes.
    */
   init(){
@@ -270,5 +281,5 @@ class LobbyRenderer {
   }
 }
 
-const renderer = new LobbyRenderer();
+const renderer = new LobbyController();
 renderer.init();

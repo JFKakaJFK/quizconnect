@@ -8,6 +8,7 @@
 .state-container {
     width: 0;
     height: 0;
+    overflow: hidden;
     margin: 0 auto;
     /* min-height: calc(100vh - var(--navbar-height)); */
     transition: width .5s ease-in-out, opacity .5s ease-in-out;
@@ -20,6 +21,7 @@ body.join .join-container,
 body.lobby .lobby-container,
 body.ingame .ingame-container,
 body.finished .finished-container {
+    overflow: initial;
     height: auto;
     width: 100%;
     min-height: calc(100vh - var(--navbar-height));

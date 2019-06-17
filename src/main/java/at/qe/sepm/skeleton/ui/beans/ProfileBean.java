@@ -25,12 +25,13 @@ public class ProfileBean implements Serializable {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     private PlayerService playerService;
-
+    private SessionInfoBean sessionInfoBean;
+    private boolean isHome = false;
     private Player player;
     private List<Player> recentlyPlayedWith;
 
     @Autowired
-    public ProfileBean(PlayerService playerService){
+    public ProfileBean(PlayerService playerService, SessionInfoBean sessionInfoBean){
         this.playerService = playerService;
         this.recentlyPlayedWith = new ArrayList<>();
     }
@@ -45,6 +46,10 @@ public class ProfileBean implements Serializable {
      */
     public void setPlayer(Player player) {
         this.player = playerService.getPlayerById(player.getId());
+        if(this.player == null && isHome){
+            this.player = playerService.getPlayerByUsername(sessionInfoBean.getCurrentUserName());
+            this.isHome = false;
+        }
         if(this.player == null){
             try {
                 FacesContext.getCurrentInstance().getExternalContext().redirect("/players/all.xhtml?faces-redirect=true");
@@ -72,5 +77,9 @@ public class ProfileBean implements Serializable {
 
     public void setRecentlyPlayedWith(List<Player> recentlyPlayedWith) {
         this.recentlyPlayedWith = recentlyPlayedWith;
+    }
+
+    public void setHome(boolean home) {
+        isHome = home;
     }
 }

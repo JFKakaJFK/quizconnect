@@ -1,5 +1,6 @@
 "use strict";
 
+import { URL_HOME } from "./Constants.js";
 import { Client } from "./Socket.js";
 import { setSimpleText } from "./Utils.js";
 import Animate from './Animate.js';
@@ -53,7 +54,7 @@ class TimeoutController {
   _handleTimeout(){
     if(!this._active) return;
     // display remaining in seconds
-    const seconds = (this._remaining / 1000).toFixed(0);  // 0 or 1 decimal place?
+    const seconds = (this._remaining / 1000).toFixed(1);  // TODO 0 or 1 decimal place?
     let elem = document.getElementById('timeoutRemainingTime');
     setSimpleText(elem, seconds.toString());
 
@@ -62,7 +63,7 @@ class TimeoutController {
       Client.leaveRoom();
       this._abortTimeout();
       document.body.classList.add('fast');
-      Animate('body', 'fadeOut');
+      Animate('body', 'fadeOut', () => window.location.href = URL_HOME);
     }
     console.debug(`TIMEOUT_CONTROLLER: timeout is active, ${seconds}s remaining`);
   }

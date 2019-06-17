@@ -1,0 +1,43 @@
+.ingame-container {
+    display: grid;
+    grid-gap: var(--default-padding);
+    grid-template-rows: auto auto auto;
+}
+
+[data-score] {
+    transition: color .25s ease-in-out;
+}
+[data-score].increase {
+    color: var(--success);
+}
+[data-score].decrease {
+    color: var(--danger);
+}
+
+.answer {
+    transition: all .25s ease-in-out;
+    opacity: 1;
+}
+.answer.correct {
+    background: var(--success);
+    opacity: .5;
+}
+.answer.incorrect {
+    background: var(--danger);
+    opacity: .5;
+}
+
+/* todo joker use animations */
+.joker-use { /*todo*/
+    transition: all .25s ease-in-out;
+}
+
+.joker-use[data-disabled="true"] {
+    cursor: initial;
+    pointer-events: none;
+    color: red;
+}
+
+.joker-use[data-disabled="false"] {
+    color: green;
+}

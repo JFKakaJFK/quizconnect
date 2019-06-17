@@ -52,6 +52,7 @@ public class LoginRedirectController {
             if(user.getPlayer() != null){
                 url = "/players/profile.xhtml";
                 profileBean.setPlayer(playerService.getPlayerByUsername(user.getUsername()));
+                profileBean.setHome(true);
             } else if(user.getManager() != null){
                 url = "/secured/home.xhtml";
             }

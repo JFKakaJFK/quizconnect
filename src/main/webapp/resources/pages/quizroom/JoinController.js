@@ -68,7 +68,7 @@ class JoinController{
       sessionStorage.setItem('pin', pin.toString());
       sessionStorage.setItem('timeStamp', (new Date().valueOf() + 20000).toString()); // 20sec from now
     }
-    setTimeout(this._storePin.bind(this), 15000); // repeat 15s
+    if(state !== FINISHED) setTimeout(this._storePin.bind(this), 15000); // repeat 15s
   }
 
   /**
@@ -108,7 +108,6 @@ class JoinController{
         elem.removeEventListener('input', this._handleInput.bind(this));
 
         setTimeout(() => {
-          console.warn('connecting to socket'); // TODO remove
           setState({
             state: LOBBY,
             pin,

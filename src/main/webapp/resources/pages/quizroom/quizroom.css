@@ -1,0 +1,61 @@
+.stat.pin h3 {
+    --space: .5rem;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: var(--space);
+    padding: 0 0 0 var(--space);
+}
+
+.fab-actions {
+    position: fixed;
+    bottom: 4rem;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    pointer-events: none;
+}
+
+/* TODO */
+.fab-btn {
+    width: 4rem;
+    height: 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #aaa; /* todo var */
+    border: 0;
+    border-radius: 50%;
+    box-shadow:
+            0 0 8px 16px hsla(0, 0%, 0%, .3),
+            0 0 8px 16px hsla(0, 0%, 0%, .3)
+    ;
+    transition: all .25s ease-in-out;
+    pointer-events: initial;
+}
+
+.fab-btn .feather {
+    width: 2.25rem;
+    height: 2.25rem;
+}
+
+.fab-btn:hover {
+    cursor: pointer;
+    color: var(--col-2-l); /* todo var */
+}
+
+body.finished .fab-btn,
+body.join .fab-btn {
+    display: none;
+}
+
+body.lobby .fab-btn.joker-use {
+    display: none;
+}
+
+@media only screen and (min-width: 992px) {
+    .fab-btn.chat-open {
+        display: none;
+    }
+}

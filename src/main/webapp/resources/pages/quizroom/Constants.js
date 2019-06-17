@@ -13,8 +13,9 @@ const JOIN = 3;
 const JOIN_ENDPOINT = '/qr/join/';
 const URL_HOME = '/login.xhtml';
 
-/* --------- GAME STATES -------- */
-const MAX_ANSWERS = 6;
+/* --------- GAME STUFF -------- */
+const MAX_ANSWERS = 4;
+const JOKER_REUSE_BUFFER = 1000; // time in ms until joker can be used again
 
 const ANSWERTYPE_TEXT = 'text';
 const ANSWERTYPE_PICTURE = 'picture';
@@ -38,8 +39,9 @@ const INFO_MSG = "INFO";
 const WS_FALLBACK = '/ws';
 const WS_SOURCE = '/server/events';
 const WS_TARGET = '/qc/events';
-const ALIVE_PING_PERIOD = 450;
-const ACTIVITY_CHECK_PERIOD = 10000;
+const ALIVE_PING_PERIOD = 450; // interval for alivePings in ms
+const ACTIVITY_CHECK_PERIOD = 10000; // interval for checking any activity in ms
+const PERIODIC_ACTIVITY_PINGS = false; // periodically send cancelTimeout if any activiy is detected?
 
 export {
   DOMAIN,
@@ -53,10 +55,17 @@ export {
   WS_TARGET,
   ALIVE_PING_PERIOD,
   ACTIVITY_CHECK_PERIOD,
+  PERIODIC_ACTIVITY_PINGS,
+  JOKER_REUSE_BUFFER,
   URL_HOME,
   INFO_MSG,
   SHARE_FACEBOOK,
   SHARE_TWITTER,
   SHARE_WHATSAPP,
   SHARE_PIN_MESSAGE,
+  MAX_ANSWERS,
+  ANSWERTYPE_MATH,
+  ANSWERTYPE_PICTURE,
+  ANSWERTYPE_TEXT,
+  PREFIX_ANSWER_PICTURE,
 }
