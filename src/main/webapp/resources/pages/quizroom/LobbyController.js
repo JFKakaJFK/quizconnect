@@ -24,7 +24,7 @@ class LobbyController {
     };
     this._options = Object.assign(defaults, options);
     this._shareRendered = false;
-    this._countdown = false;
+    this._allReady = false;
   }
 
   /**
@@ -36,7 +36,7 @@ class LobbyController {
   _handleStateChange(newState){
     const { state, info, id } = newState;
     this._renderPin(info.pin);
-    if(state !== LOBBY || this._countdown) return;
+    if(state !== LOBBY || this._allReady) return;
     if(state === INGAME || state === FINISHED) this.destroy();
     this._renderInfo(info);
     this._renderPlayers(info, id);
@@ -49,8 +49,7 @@ class LobbyController {
    * @private
    */
   _showCountdown(){
-    if(this._countdown) return;
-    this._countdown = true;
+    if(!this._allReady) return;
     // fade out stuff
     Animate('#lobby', 'fadeOut', () => {
       const container = document.getElementById('lobby');
@@ -68,17 +67,22 @@ class LobbyController {
   }
 
   /**
+   * Handles the all ready event.
+   * @private
+   */
+  _handleAllReady(){
+    if(this._allReady) return;
+    this._allReady = true;
+    this._showCountdown();
+  }
+
+  /**
    * Renders the game info.
    *
    * @param info
    * @private
    */
   _renderInfo(info){
-    const allReady = info.players.filter(p => !p.ready).length === 0 && info.players.length > 1;
-    if(allReady) {
-      this._showCountdown();
-      return;
-    }
     // render game mode
     const modes = document.querySelectorAll(this._options.mode);
     modes.forEach(m => setSimpleText(m, info.mode));
@@ -102,7 +106,6 @@ class LobbyController {
    * @private
    */
   _displayLastReadyUpModal(){
-    console.warn('called');
     // open modal
     let modal = $('#confirmReady');
     modal.modal({backdrop: 'static'});
@@ -220,7 +223,7 @@ class LobbyController {
         if(player){ // check if anything to do
           this._updatePlayer(node, player, canReadyUp, lastReadyUp, player.id === id);
         } else { // delete players who left
-          ps.removeChild(node);
+          Animate(`${this._options.players} [data-id="${pid}"]`, 'fadeOut', () =>  ps.removeChild(node));
         }
         // remove player from copy (make search space smaller)
         copy = copy.filter(p => p.id !== pid);
@@ -228,7 +231,10 @@ class LobbyController {
 
       // add new players
       if(copy.length > 0){
-        copy.forEach(p => ps.innerHTML += this._renderPlayer(p, canReadyUp, lastReadyUp, p.id === id));
+        copy.forEach(p => {
+          ps.innerHTML += this._renderPlayer(p, canReadyUp, lastReadyUp, p.id === id);
+          Animate(`${this._options.players} [data-id="${p.id}"]`, 'fadeIn'); // todo does this work as intended?
+        });
       }
     });
   }
@@ -270,6 +276,7 @@ class LobbyController {
    */
   destroy(){
     document.removeEventListener('stateChange', (e) => this._handleStateChange(e.detail));
+    document.removeEventListener('allReady', this._handleAllReady.bind(this));
   }
 
   /**
@@ -278,6 +285,7 @@ class LobbyController {
   init(){
     // listen for state changes
     document.addEventListener('stateChange', (e) => this._handleStateChange(e.detail));
+    document.addEventListener('allReady', this._handleAllReady.bind(this));
   }
 }
 

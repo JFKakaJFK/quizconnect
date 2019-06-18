@@ -3,6 +3,7 @@
 import { INFO_MSG } from "./Constants.js";
 import setState, { getState } from "./State.js";
 import Client from './Socket.js';
+import Animate from "./Animate.js";
 
 /**
  * Handles everything regarding the chat.
@@ -38,8 +39,8 @@ class ChatController {
     const { id: pid } = getState();
     const { message: text, from, playerId, id, timestamp } = message;
     let ts = new Date(timestamp);
-    let msg = document.createElement('p');
-    msg.classList.add('chat', 'chat-message');
+    let msg = document.createElement('div');
+    msg.classList.add('chat-message');
     msg.setAttribute('data-id', id.toString());
 
     if(playerId === pid) msg.classList.add('chat-outgoing');
@@ -52,10 +53,11 @@ class ChatController {
     escapedMessage = escapedMessage.replace(/[\~]{2}([^\~]+)[\~]{2}/g, '<del>$1</del>');
     escapedMessage = escapedMessage.replace(/[\[]{1}([^\]]+)[\]]{1}[\(]{1}([^\)\"]+)(\"(.+)\")?[\)]{1}/g, '<a href="$2" title="$4">$1</a>');
 
-    msg.innerHTML = `<span class="chat chat-timestamp">[${ts.getHours().toString().padStart(2, '0')}:${ts.getMinutes().toString().padStart(2, '0')}:${ts.getSeconds().toString().padStart(2, '0')}]</span>
-    ${from === INFO_MSG ? '' : `<span class="chat chat-from">${this._escapeHTML(from)}:</span>`}${escapedMessage}`;
+    msg.innerHTML = `<p class="chat-message-content">${escapedMessage}</p><p class="chat-meta">${from === INFO_MSG ? '' : `<span class="chat-from">${this._escapeHTML(from)}</span> `}
+    <span class="chat-timestamp">${ts.getHours().toString().padStart(2, '0')}:${ts.getMinutes().toString().padStart(2, '0')}:${ts.getSeconds().toString().padStart(2, '0')}</span></p>`;
 
     messages.appendChild(msg);
+    Animate(`${this._chatSelector} [data-id="${id.toString()}"]`, 'fadeIn');
   }
 
   /**
@@ -77,7 +79,7 @@ class ChatController {
    */
   _handleChatInput(e){
     if(e.key === 'Enter') {
-      Client.sendChatMessage(e.target.value.substring(0, 100));
+      if(e.target.value !== '') Client.sendChatMessage(e.target.value.substring(0, 100));
       e.target.value = '';
     }
   }

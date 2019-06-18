@@ -31,5 +31,3 @@ body.finished .finished-container {
     transition: width .5s ease-in-out, opacity .5s ease-in-out;
     pointer-events: initial;
 }
-
-/* TODO chat + media queries */

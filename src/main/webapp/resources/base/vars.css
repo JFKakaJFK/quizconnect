@@ -41,9 +41,11 @@
     --default-font-weight: 300;
     --default-font-color: var(--gray-5);
 
-    --selection-background: var(--col-4-l);
+
 
     /* THEME COLORS */
+    --selection-background: var(--col-4-l);
+
     --background-primary: var(--col-1-d);
     --background-secondary: var(--col-1-m);
 
@@ -65,6 +67,16 @@
     --questionsetbox-icon-size-small: 1.5rem;
     --questionsetbox-icon-size-detail: 2rem;
     --questionsetbox-icon-background: transparent;
+
+    --chat-background: var(--col-1-m);
+    --chat-message-color: var(--gray-5);
+    --chat-message-background: var(--gray-1);
+
+    --chat-message-out-color: var(--gray-5);
+    --chat-message-out-background: var(--gray-3);
+
+    --chat-message-info-color: var(--info);
+    --chat-message-info-background: var(--gray-1);
 
     --input-background: var(--col-1-m);
     --input-focus-background: var(--col-1-d);

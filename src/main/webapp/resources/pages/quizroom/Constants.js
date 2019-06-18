@@ -14,7 +14,7 @@ const JOIN_ENDPOINT = '/qr/join/';
 const URL_HOME = '/login.xhtml';
 
 /* --------- GAME STUFF -------- */
-const MAX_ANSWERS = 4;
+const MAX_ANSWERS = 6;
 const JOKER_REUSE_BUFFER = 1000; // time in ms until joker can be used again
 
 const ANSWERTYPE_TEXT = 'text';

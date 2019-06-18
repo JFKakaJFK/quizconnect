@@ -1,24 +1,38 @@
-.answers {
+.ingame-answers {
     display: grid;
-    grid-gap: 1rem;
-    font-size: 1.5rem;
+    grid-template-rows: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
+    grid-auto-flow: dense;
+    grid-gap: var(--default-padding);
+    padding-bottom: 6rem;
 }
 
-.answer:hover {
+.ingame-answers .answer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ingame-answers .answer:hover {
     cursor: pointer;
 }
 
-.answer-placeholder {
-    opacity: .5;
-    filter: blur(5px);
-    background: var(--gray-3);
+/* todo remove from here on out ? */
+.ingame-answers .answer-1x2 {
+    grid-row: span 2;
 }
 
-.answer-placeholder p {
-    height: 1.5rem;
+.ingame-answers .answer-2x1 {
+    grid-column: span 2;
 }
 
-.answer.answer-placeholder:hover {
-    cursor: initial;
-}
-
+.ingame-answers .answer-order-0 { order: 0; }
+.ingame-answers .answer-order-1 { order: 1; }
+.ingame-answers .answer-order-2 { order: 2; }
+.ingame-answers .answer-order-3 { order: 3; }
+.ingame-answers .answer-order-4 { order: 4; }
+.ingame-answers .answer-order-5 { order: 5; }
+.ingame-answers .answer-order-6 { order: 6; }
+.ingame-answers .answer-order-7 { order: 7; }
+.ingame-answers .answer-order-8 { order: 8; }
+.ingame-answers .answer-order-9 { order: 9; }

@@ -231,6 +231,7 @@ const PLAYER_JOIN = "onPlayerJoin";
 const PLAYER_LEAVE = "onPlayerLeave";
 const GAME_START = "onGameStart";
 const GAME_END = "onGameEnd";
+const ALL_READY = "onAllReady";
 const JOKER_USE = "onJokerUse";
 const SCORE_CHANGE = "onScoreChange";
 const TIMER_SYNC = "onTimerSync";
@@ -274,6 +275,8 @@ const handleServerEvent = (response) => {
     }
   } else if(state === LOBBY) { // handle lobby events only if in lobby
     switch (response.event){
+      case ALL_READY:
+        return handleAllReady(response);
       case GAME_START:
         return handleGameStart(response);
       case READY_UP:
@@ -338,6 +341,26 @@ const handleRoomInfo = ({ pin, difficulty, mode, questionSets, numJokers, num, p
     }
   });
   console.debug(`SERVER: room info updated`);
+};
+
+/**
+ * Displays chat messages.
+ *
+ * @param secondsToStart
+ */
+const gameStartMessages = (secondsToStart) => {
+  showChatMessage(`Game will start in ${secondsToStart}s`);
+  if(secondsToStart > 0) setTimeout(() => gameStartMessages(secondsToStart - 1), 1000);
+};
+
+/**
+ * Handles the all ready event.
+ */
+const handleAllReady = () => {
+  const event = new CustomEvent('allReady');
+  document.dispatchEvent(event);
+  gameStartMessages(5);
+  console.debug(`SERVER: all players are ready`)
 };
 
 /**

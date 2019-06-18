@@ -232,7 +232,7 @@ class GameController {
     if(!answer) return null;
     const { questionId, type, answerId, answer: text } = answer;
     const answerNode = document.createElement('div');
-    answerNode.classList.add('box', 'answer', 'answer-' + type);
+    answerNode.classList.add('box', 'answer', 'answer-' + type, 'answer-order-' + Math.floor(Math.random() * 9));
     answerNode.setAttribute('data-id', this._getAnswerId(questionId, answerId));
     answerNode.addEventListener('click', () => this._handleAnswerQuestion(answerNode, questionId, answerId));
     let inner;
@@ -260,6 +260,21 @@ class GameController {
   }
 
   /**
+   * Shuffles the answers.
+   *
+   * @param answers
+   * @return {*}
+   * @private
+   */
+  _shuffleAnswers(answers){
+    for (let i = answers.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [answers[i], answers[j]] = [answers[j], answers[i]];
+    }
+    return answers;
+  }
+
+  /**
    * Renders all currently active answers.
    *
    * @param mode
@@ -267,11 +282,12 @@ class GameController {
    * @private
    */
   _renderAnswers({ mode, answers }){
+
     const container = document.querySelector(this._answers);
     if(!container) return;
     const answerNodes = container.querySelectorAll('.answer');
     if(answerNodes.length > MAX_ANSWERS) console.error("Too many assigned answers");
-    let copy = [...answers];
+    let copy = [...this._shuffleAnswers(answers)];
     let toRemove = [];
     answerNodes.forEach(node => {
       const nodeId = node.getAttribute('data-id');
@@ -300,6 +316,31 @@ class GameController {
         Animate(`[data-id="${this._getAnswerId(a.questionId, a.answerId)}"]`, 'fadeIn');
       }
     }); // todo animation
+
+    /*
+    const container = document.querySelector(this._answers);
+    if(!container) return;
+    const answerNodes = container.querySelectorAll('.answer');
+    if(answerNodes.length > MAX_ANSWERS) console.error("Too many assigned answers");
+    let copy = [...answers];
+    answerNodes.forEach(node => {
+      const nodeId = node.getAttribute('data-id');
+      let answer = copy.find(a => nodeId === this._getAnswerId(a.questionId, a.answerId));
+      if(answer === undefined){
+        container.removeChild(node);
+      }
+      copy = copy.filter(a => nodeId !== this._getAnswerId(a.questionId, a.answerId));
+    });
+
+    copy.forEach(a => {
+      if(Math.random() > 0.5){
+        container.appendChild(this._renderAnswer(a, mode));
+      } else {
+        container.insertBefore(this._renderAnswer(a, mode), container.firstChild);
+      }
+      Animate(`[data-id="${this._getAnswerId(a.questionId, a.answerId)}"]`, 'fadeIn');
+    });
+     */
   }
 
   /**

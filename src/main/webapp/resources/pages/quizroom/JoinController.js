@@ -51,7 +51,6 @@ class JoinController{
     const pin = parseInt(sessionStorage.getItem('pin'));
     const timeStamp = parseInt(sessionStorage.getItem('timeStamp'));
     // game data should still be valid if the timeStamp is valid
-    console.warn(timeStamp, new Date().valueOf(), timeStamp >= new Date().valueOf()); // TODO remove
     return timeStamp >= new Date().valueOf() && !isNaN(pin) ? pin : null;
   }
 
@@ -98,7 +97,6 @@ class JoinController{
         // delay + animation
         // TODO
         Animate(this._root, 'fadeOut');
-        console.warn('join successful');
         errors.classList.remove('error');
         errors.classList.add('success');
         errors.innerText = 'Successfully joined room';
