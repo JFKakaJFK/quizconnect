@@ -611,7 +611,13 @@ const handleChatMessage = ({ message }) => {
  *
  * @param messages
  */
-const handleChatMessages = ({ messages }) => { // todo remove from state & throw event w/ data
+const handleChatMessages = ({ messages }) => {
+  /* FUN FACT
+   * The LobbyControllers functions to handle the ready up process have a fundamental design flaw
+   * based on this method and the fact, that the question history is requested immediately after the room info.
+   * Since the ready up buttons attach the event listeners before the node (player box) is attached to the DOM
+   * the ready up events can only be listened for if the ready up button method is called twice, which is achieved
+   * by this method...*/
   setState({
     messageQueue: messages,
   });
@@ -625,7 +631,7 @@ const handleChatMessages = ({ messages }) => { // todo remove from state & throw
  *
  * @param message
  */
-const showChatMessage = (message) => { // todo remove from state & throw event w/ data
+const showChatMessage = (message) => {
   const { messageQueue } = getState();
   setState({
     messageQueue: messageQueue.concat([{
@@ -658,5 +664,6 @@ export default Client;
 export {
   connect,
   disconnect,
+  showChatMessage,
   Client,
 }

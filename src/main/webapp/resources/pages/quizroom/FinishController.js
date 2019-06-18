@@ -46,7 +46,7 @@ class FinishController {
    * @private
    */
   _showHighscore(highScore, score){
-    if(highScore > score){
+    if(highScore < score){
       const hs = document.querySelector(this._highScore);
       if(!hs) return;
       hs.textContent = 'New Highscore!';

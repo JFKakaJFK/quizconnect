@@ -34,7 +34,7 @@ let state = {
   },
 
   // chat
-  messageQueue: [], // todo remove
+  messageQueue: [],
 };
 
 /**

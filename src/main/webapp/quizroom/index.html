@@ -189,11 +189,40 @@
         })
     </script>
     <div id="chat" class="chat chat-wrapper">
-        <div id="messages" class="chat chat-messages">
-
-        </div>
-        <input class="chat chat-input" type="text" placeholder="Chat with your teammates..." onkeyup="if(event.key === 'Enter'){sendChatMessage(this.value.substring(0, 100)); this.value = '';}"/>
+        <header>TODO close icon and action</header>
+        <div id="messages" class="chat chat-messages"></div>
+        <input class="chat chat-input" data-chat-input type="text" placeholder="Chat with your teammates..." />
     </div>
+    <script type="text/javascript">
+      let chat = new Slideout({
+        'panel': document.getElementById('main'),
+        'menu': document.getElementById('chat'),
+        'padding': 256,
+        'tolerance': 70,
+        'side': 'right',
+      });
+
+      let chatbtns = document.querySelectorAll('.js-toggle-chat');
+      chatbtns.forEach(btn => btn.addEventListener('click', () => {
+        chat.toggle();
+      }));
+
+      /*
+      const close = (e) => {
+        e.preventDefault();
+        sidebar.close();
+      };
+
+      // code for activating backdrop
+
+      sidebar.on('beforeopen', function(){ this.panel.classList.add('panel-open');})
+        .on('open', function(){this.panel.addEventListener('click', close);})
+        .on('beforeclose', function(){
+          this.panel.classList.remove('panel-open');
+          this.panel.removeEventListener('click', close);
+        })
+        */
+    </script>
 
     <div class="modal fade" id="leave" tabindex="-1" role="dialog" aria-labelledby="leaveModal" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
@@ -326,8 +355,7 @@
     <script type="module" src="/resources/pages/quizroom/GameController.js"></script>
     <script type="module" src="/resources/pages/quizroom/FinishController.js"></script>
     <script type="module" src="/resources/pages/quizroom/TimeoutController.js"></script>
-
-    <!-- Util -->
+    <script type="module" src="/resources/pages/quizroom/ChatController.js"></script>
     <script type="module" src="/resources/pages/quizroom/HTMLActions.js"></script>
 </body>
 </html>
