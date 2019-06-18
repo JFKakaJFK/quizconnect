@@ -117,6 +117,14 @@ public interface IRoomAction
 	public void onKick(int pin, Player p);
 	
 	/**
+	 * Called when all Players in the QuizRoom are marked as ready, starting the 5 second countdown until game start.
+	 *
+	 * @param pin
+	 * 		PIn of the QuizRoom making the call.
+	 */
+	public void onAllReady(int pin);
+	
+	/**
 	 * Called when the QR assigns a new Question.
 	 * 
 	 * @param pin

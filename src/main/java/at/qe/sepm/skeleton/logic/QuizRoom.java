@@ -106,6 +106,7 @@ public class QuizRoom implements IPlayerAction
 		activityCheckTime = 0;
 		aliveCheckTime = 0;
 		timerSyncTime = 0;
+		gameStartTime = 0;
 		
 		numReshuffleJokers = defaultNumberJokers;
 		correctlyAnsweredQuestions = new HashMap<>();
@@ -140,7 +141,7 @@ public class QuizRoom implements IPlayerAction
 		
 		if (deltaTime > 2 * frameTimeStep)
 		{
-			LOGGER.debug("large delay in frameUpdate call of QR [" + pin + "] (" + deltaTime + "ms)");
+			LOGGER.debug("### WARNING ### large delay in frameUpdate call of QR [" + pin + "] (" + deltaTime + "ms)");
 		}
 		
 		checkDelayQueue();
@@ -152,7 +153,7 @@ public class QuizRoom implements IPlayerAction
 			aliveCheckTime = 0;
 		}
 		
-		if (!wfpMode) // disable during wfp mode
+		if (!wfpMode && gameStartTime != 0) // disable during wfp mode / game start countdown
 		{
 			activityCheckTime += deltaTime;
 			if (activityCheckTime >= activityTimeStep)
@@ -359,6 +360,12 @@ public class QuizRoom implements IPlayerAction
 		playerAlivePingTimestamps.remove(player);
 		correctlyAnsweredQuestions.remove(player);
 		totalAnsweredQuestions.remove(player);
+		
+		if (wfpMode)
+		{
+			readyPlayers.remove(player);
+			checkIfAllReady();
+		}
 	}
 	
 	/**
@@ -368,14 +375,6 @@ public class QuizRoom implements IPlayerAction
 	{
 		readyPlayers = null;
 		
-		long now = new Date().getTime() + roomStartDelay;
-		for (Player player : players)
-		{
-			// initialize time stamps
-			playerActivityTimestamps.put(player, now);
-		}
-		
-		wfpMode = false;
 		gameStartTime = new Date().getTime();
 		
 		eventCall(x -> x.onGameStart(pin));
@@ -565,13 +564,34 @@ public class QuizRoom implements IPlayerAction
 		
 		readyPlayers.add(p);
 		
+		eventCall(x -> x.onReadyUp(pin, p, readyPlayers.size()));
+		
 		// are all players ready?
-		if (readyPlayers.size() == players.size())
+		checkIfAllReady();
+	}
+	
+	/**
+	 * Called when QR is in WFP mode and any player readies up or leaves.
+	 */
+	private synchronized void checkIfAllReady()
+	{
+		if (!wfpMode)
+			return;
+		
+		//check if all players ready; prevent start with <2 players
+		if (players.size() >= 2 && readyPlayers.size() == players.size())
 		{
+			long now = new Date().getTime() + roomStartDelay;
+			for (Player player : players)
+			{
+				// initialize time stamps
+				playerActivityTimestamps.put(player, now);
+			}
+			
+			wfpMode = false;
+			eventCall(x -> x.onAllReady(pin));
 			addDelayedAction(new DelayedAction((new Date().getTime()) + roomStartDelay, this::onGameStart));
 		}
-		
-		eventCall(x -> x.onReadyUp(pin, p, readyPlayers.size()));
 	}
 	
 	@Override
