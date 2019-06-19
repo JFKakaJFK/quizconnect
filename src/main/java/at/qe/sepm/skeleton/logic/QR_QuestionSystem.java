@@ -369,7 +369,8 @@ class QR_QuestionSystem
 		
 		List<Player> waPlayers = new ArrayList<>();
 		Player p;
-		for (int i = 0; i < 5; i++)
+		//limit wrong answers to playerAnswerSlots-1 to always keep room for at least the right answers
+		for (int i = 0; i < 5 && i < playerAnswerSlots-1; i++)
 		{
 			String qString = null;
 			if (i == 0)

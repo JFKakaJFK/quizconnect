@@ -447,27 +447,32 @@ public class QuizRoom implements IPlayerAction
      */
     protected synchronized void changeScore(int code, long timeRemaining)
     {
-        questionSystem.addCompletedQuestions(1);
-        switch (code)
-        {
-            case 0:
-                score -= (difficulty == RoomDifficulty.easy ? 50 : 75);
-                break;
-            case 1:
-                score -= (difficulty == RoomDifficulty.easy ? 75 : 100);
-                break;
-            case 2:
-                score += (difficulty == RoomDifficulty.easy ? 100 : 125) + (int) (timeRemaining / 1000);
-                break;
-            case 3:
-                score += (difficulty == RoomDifficulty.easy ? 125 : 150) + (int) (timeRemaining / 1000);
-                break;
-            case 4:
-                score -= (difficulty == RoomDifficulty.easy ? 50 : 75);
-                break;
-            case 5:
-                score -= (difficulty == RoomDifficulty.easy ? 75 : 100);
-                break;
+	    int mathGodBonus = 10;
+	    questionSystem.addCompletedQuestions(1);
+	    switch (code)
+	    {
+		    case 0:
+			    score -= (difficulty == RoomDifficulty.easy ? 60 : 85);
+			    break;
+		    case 1:
+			    score -= (difficulty == RoomDifficulty.easy ? 85 : 110);
+			    break;
+		    case 2:
+			    score += (difficulty == RoomDifficulty.easy ? 100 : 125) + (int) (timeRemaining / 1000);
+			    if (gameMode == GameMode.mathgod)
+				    score += mathGodBonus;
+			    break;
+		    case 3:
+			    score += (difficulty == RoomDifficulty.easy ? 125 : 150) + (int) (timeRemaining / 1000);
+			    if (gameMode == GameMode.mathgod)
+				    score += 2 * mathGodBonus;
+			    break;
+		    case 4:
+			    score -= (difficulty == RoomDifficulty.easy ? 50 : 75);
+			    break;
+		    case 5:
+			    score -= (difficulty == RoomDifficulty.easy ? 75 : 100);
+			    break;
         }
         
         eventCall(x -> x.onScoreChange(pin, score));
