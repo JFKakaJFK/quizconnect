@@ -88,14 +88,6 @@ public class QuestionSetServiceTest {
         }
         return name.toString();
     }
-    
-    @Test
-    @WithMockUser(username = "user1", authorities = {"MANAGER"})
-    public void testGetAllQuestionSets()
-    {
-        List allSets = questionSetService.getAllQuestionSets();
-        assertTrue("Wrong number of Sets returned.", allSets.size() >= 3);
-    }
 
     @Test
     @WithMockUser(username = "user1", authorities = { "MANAGER" })
