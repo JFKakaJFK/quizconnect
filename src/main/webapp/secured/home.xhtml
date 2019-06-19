@@ -4,10 +4,31 @@
 
     <ui:define name="title">Home</ui:define>
 
-    <ui:define name ="content">
-        <div class="text-center py-3">
-            <a class="btn btn-primary" href="/players/all.xhtml">Players</a>
-            <a class="btn btn-primary" href="/secured/overview.xhtml">QuestionSets</a>
+    <ui:define name="site-specific-css">
+        <link rel="stylesheet" type="text/css" href="home.css"/>
+    </ui:define>
+
+    <ui:define name="content">
+        <div class="grid-container">
+                <div class="box" id="sets" onclick='location.href ="questionset.xhtml";'>
+                    <img src="questions.svg"></img>
+                    <span>Question sets</span>
+                </div>
+
+            <div class="box" id="players" onclick='location.href ="../players/all.xhtml";'>
+                <img src="players.svg"></img>
+                <span>Players</span>
+            </div>
+
+            <div class="box" id="profile" onclick='location.href ="profile.xhtml";'>
+                <img src="profile.svg"></img>
+                <span>Profile settings</span>
+            </div>
+
+            <div class="box" id="logout" onclick='location.href ="/logout";'>
+                <img src="logout.svg"></img>
+                <span>Log out</span>
+            </div>
         </div>
     </ui:define>
 </ui:composition>

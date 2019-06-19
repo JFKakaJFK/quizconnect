@@ -12,6 +12,8 @@ window.onload=function() {
   const meter = document.getElementById('password-strength-meter');
   const text = document.getElementById('password-strength-text');
 
+  text.innerHTML = "Please start entering a password to show some hints regarding the strength of it";
+
   password.addEventListener('input', function () {
     let val = password.value;
     let result = zxcvbn(val);
