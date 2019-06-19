@@ -64,7 +64,7 @@ public class AllPlayersBean implements Serializable {
      * @return All {@link Player}s by the currently logged in {@link at.qe.sepm.skeleton.model.Manager} or {@link null}
      * 		if the current {@link User} is no {@link at.qe.sepm.skeleton.model.Manager}. Fetches from the Database if necessary.
      */
-    private List<Player> getAllByManager(){
+    public List<Player> getAllByManager(){
         if(isManager() && allByManager == null){
             allByManager = playerService.getPlayersOfManager(user.getManager());
         }
@@ -99,7 +99,7 @@ public class AllPlayersBean implements Serializable {
     /**
      * @return All {@link Player}s . Fetches from the Database if necessary.
      */
-    private List<Player> getAllPlayers(){
+    public List<Player> getAllPlayers(){
         if(allPlayers == null){
             allPlayers = new ArrayList<>(playerService.getAllPlayers());
         }
@@ -168,4 +168,9 @@ public class AllPlayersBean implements Serializable {
     public void setPaginator(ScrollPaginator<Player> paginator) {
         this.paginator = paginator;
     }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
 }

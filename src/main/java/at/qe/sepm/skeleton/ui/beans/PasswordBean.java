@@ -8,7 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.io.Serializable;
 
 /**
- * Bean to help with some password functionalities.
+ * Bean to help with some password functionalism's.
  *
  * @author Johannes Spies
  */

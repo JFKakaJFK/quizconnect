@@ -54,8 +54,6 @@ public class CreateManagerBean implements Serializable {
             redirectRegistration();
 
         }
-
-
     }
 
     /**
