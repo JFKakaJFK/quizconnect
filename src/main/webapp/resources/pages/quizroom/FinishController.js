@@ -50,6 +50,10 @@ class FinishController {
       const hs = document.querySelector(this._highScore);
       if(!hs) return;
       hs.textContent = 'New Highscore!';
+    } else if(score < -100){
+      const hs = document.querySelector(this._highScore);
+      if(!hs) return;
+      hs.textContent = 'You could do worse'; // todo change text?
     }
   }
 

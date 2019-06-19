@@ -78,6 +78,8 @@
     --chat-message-info-color: var(--info);
     --chat-message-info-background: var(--gray-1);
 
+    --chart-area-stroke: var(--col-3-m);
+
     --input-background: var(--col-1-m);
     --input-focus-background: var(--col-1-d);
     --input-color: var(--col-1-l);

@@ -40,7 +40,7 @@ public class CreateRoomBean implements Serializable {
     private QuestionSetService questionSetService;
 
     private int playerLimit = 42; // initial value
-    private int step = 0; // the creation is split into 2 or 3 steps (depending on chosen options)
+    private int step = 0; // the creation is split into 2 or 3 steps (depending on chosen areaOptions)
     private boolean setSelectionIsInitialized = false;
     private String searchPhrase = "";
     private RoomDifficulty difficulty = RoomDifficulty.easy;
@@ -278,6 +278,15 @@ public class CreateRoomBean implements Serializable {
         return step == 0;
     }
 
+    /**
+     * Returns whether to show the selected sets.
+     *
+     * @return
+     *          True if the selected sets should be shown.
+     */
+    public boolean showSelectedSets(){
+        return !mode.equals(GameMode.mathgod);
+    }
 
     public int getPlayerLimit() {
         return playerLimit;

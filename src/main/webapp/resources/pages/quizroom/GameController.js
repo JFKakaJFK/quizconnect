@@ -195,14 +195,17 @@ class GameController {
   _handleAnswerQuestion(node, questionId, answerId){
     Client.answerQuestion(questionId, answerId);
     let selector = `[data-id="${node.getAttribute('data-id')}"]`;
+    node.classList.remove('fast');
     if(answerId === 0){
       node.classList.add('correct');
       Animate(selector, 'pulse', () => {
+        node.classList.add('fast');
         node.classList.remove('correct');
       })
     } else {
       node.classList.add('incorrect');
       Animate(selector, 'shake', () => {
+        node.classList.add('fast');
         node.classList.remove('incorrect');
       })
     }
@@ -232,7 +235,7 @@ class GameController {
     if(!answer) return null;
     const { questionId, type, answerId, answer: text } = answer;
     const answerNode = document.createElement('div');
-    answerNode.classList.add('box', 'answer', 'answer-' + type, 'answer-order-' + Math.floor(Math.random() * 9));
+    answerNode.classList.add('box', 'answer', 'fast', 'answer-' + type); //, 'answer-order-' + Math.floor(Math.random() * 9));
     answerNode.setAttribute('data-id', this._getAnswerId(questionId, answerId));
     answerNode.addEventListener('click', () => this._handleAnswerQuestion(answerNode, questionId, answerId));
     let inner;

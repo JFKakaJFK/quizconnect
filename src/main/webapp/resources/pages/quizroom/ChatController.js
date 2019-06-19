@@ -79,6 +79,7 @@ class ChatController {
    */
   _handleChatInput(e){
     if(e.key === 'Enter') {
+      e.target.value = e.target.value.trim();
       if(e.target.value !== '') Client.sendChatMessage(e.target.value.substring(0, 100));
       e.target.value = '';
     }

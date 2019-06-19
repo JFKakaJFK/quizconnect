@@ -5,3 +5,7 @@
 .container > :first-child {
     padding-top: var(--default-padding);
 }
+
+.container > :last-child {
+    padding-bottom: var(--default-padding);
+}

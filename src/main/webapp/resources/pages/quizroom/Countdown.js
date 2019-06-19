@@ -9,7 +9,7 @@ class Countdown {
   /**
    * Creates a new Countdown instance, needs the inital time, a selector to render inside and an optional callback
    *
-   * The options are:
+   * The areaOptions are:
    *
    * - selector ... any valid css Selector (required)
    * - values   ... either an array of values or the number of values to count down

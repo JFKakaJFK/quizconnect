@@ -17,6 +17,7 @@
     align-items: center;
     pointer-events: none;
     z-index: 1;
+    backface-visibility: hidden;
 }
 
 @media screen and (min-width: 992px) {

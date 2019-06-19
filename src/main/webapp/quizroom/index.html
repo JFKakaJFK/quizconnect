@@ -182,13 +182,27 @@
       };
 
       // code for activating backdrop
+      const fabBtns = document.querySelector('.fab-actions');
 
-      sidebar.on('beforeopen', function(){ this.panel.classList.add('panel-open');})
-        .on('open', function(){this.panel.addEventListener('click', close);})
-        .on('beforeclose', function(){
-          this.panel.classList.remove('panel-open');
-          this.panel.removeEventListener('click', close);
-        })
+      sidebar.on('translate', function(translated) {
+        fabBtns.style.transform = 'translateX(' + translated + 'px)';
+      }).on('beforeopen', function(){
+        this.panel.classList.add('panel-open');
+        fabBtns.style.transition = 'transform 300ms ease';
+        fabBtns.style.transform = `translateX(256px)`;
+      }).on('open', function(){
+        this.panel.addEventListener('click', close);
+        fabBtns.style.transition = '';
+        fabBtns.style.zIndex = 0;
+      }).on('beforeclose', function(){
+        this.panel.classList.remove('panel-open');
+        this.panel.removeEventListener('click', close);
+        fabBtns.style.transition = 'transform 300ms ease';
+        fabBtns.style.transform = 'translateX(0px)';
+        fabBtns.style.zIndex = 1;
+      }).on('close', function(){
+        fabBtns.style.transition = '';
+      })
     </script>
     <div id="chat" class="chat hide">
         <header class="navbar d-flex py-2 px-3 chat-header">
@@ -217,12 +231,21 @@
         if(window.innerWidth >= 992 && chat.isOpen()) chat.close();
       });
 
-      chat.on('beforeopen', function() {
-          chat.menu.classList.remove('hide');
-        })
-        .on('beforeclose', function() {
-          chat.menu.classList.add('hide');
-        });
+      chat.on('translate', function(translated) {
+        fabBtns.style.transform = 'translateX(' + translated + 'px)';
+      }).on('beforeopen', function() {
+        chat.menu.classList.remove('hide');
+        fabBtns.style.transition = 'transform 300ms ease';
+        fabBtns.style.transform = `translateX(-256px)`;
+      }).on('beforeclose', function() {
+        chat.menu.classList.add('hide');
+        fabBtns.style.transition = 'transform 300ms ease';
+        fabBtns.style.transform = `translateX(0px)`;
+      }).on('open', function(){
+        fabBtns.style.transition = '';
+      }).on('close', function(){
+        fabBtns.style.transition = '';
+      })
     </script>
 
     <div class="modal fade" id="leave" tabindex="-1" role="dialog" aria-labelledby="leaveModal" aria-hidden="true">

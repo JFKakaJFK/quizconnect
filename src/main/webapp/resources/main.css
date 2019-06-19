@@ -27,6 +27,7 @@
 /* THEME */
 
 @import "theme/base.css";
+@import "theme/typography.css";
 @import "theme/buttons.css";
 @import "theme/inputs.css";
 @import "theme/links.css";

@@ -7,7 +7,7 @@
 }
 
 .chat {
-    --input-height: 4rem;
+    --input-height: 4rem; /* Todo */
     display: grid;
     grid-template-rows: var(--navbar-height) 1fr var(--input-height);
     background: var(--chat-background);
@@ -94,7 +94,7 @@
 .chat .chat-message.chat-outgoing {
     color: var(--col-3-d);
     align-self: flex-end;
-    text-align: right;
+    /* text-align: right; */
 }
 
 .chat .chat-message.chat-outgoing .chat-message-content {
