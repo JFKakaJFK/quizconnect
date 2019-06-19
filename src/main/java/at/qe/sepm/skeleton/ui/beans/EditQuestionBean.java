@@ -18,6 +18,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Bean for editing a Question.
+ */
 @Controller
 @Scope("session")
 public class EditQuestionBean implements Serializable {
@@ -54,14 +57,23 @@ public class EditQuestionBean implements Serializable {
             e.printStackTrace();
         }
     }
-
+    
+    /**
+     * Sets the Question to be edited to a new Question.
+     */
     public void setNewQuestion() {
         edit = false;
         selectedQuestion = new Question();
         selectedQuestion.setQuestionSet(questionSet);
         selectedQuestion.setType(QuestionType.text);
     }
-
+    
+    /**
+     * Deletes a Question from the database.
+     *
+     * @param question
+     * 		Question to be deleted.
+     */
     public void deleteQuestion(Question question) {
         // remove from immediately-shown set
         questions.remove(question);
@@ -73,7 +85,10 @@ public class EditQuestionBean implements Serializable {
     public void discard() {
         logger.info("called discard");
     }
-
+    
+    /**
+     * Saves the currently edited Question to the database.
+     */
     public void save() {
         if (!edit) {
             questionSet.getQuestions().add(selectedQuestion);

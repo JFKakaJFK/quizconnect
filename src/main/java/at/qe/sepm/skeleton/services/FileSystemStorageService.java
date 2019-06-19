@@ -42,6 +42,16 @@ public class FileSystemStorageService implements StorageService {
     private String defaultAnswer;
     private ImageService imageService;
 
+    /**
+     * Initializes the {@link StorageService} with the properties specified in the application.properties file.
+     *
+     * @param root Root directory where files are stored.
+     * @param temp  Directory for temporary files.
+     * @param avatarSize Resolution for the {@link at.qe.sepm.skeleton.model.Player} avatars.
+     * @param answerSize Resolution for the {@link at.qe.sepm.skeleton.model.Question} answers.
+     * @param avatarEndpoint Path to storage of avatars.
+     * @param answerEndpoint Path to storage of answers.
+     */
     @Autowired
     public void initProperties(
             @Value("${storage.uploads.location}") String root,
@@ -60,7 +70,7 @@ public class FileSystemStorageService implements StorageService {
     /**
      * Autowires the {@link ImageService} on creation
      *
-     * @param imageService
+     * @param imageService {@link ImageService} is used to resize uploaded images.
      */
     @Autowired
     public FileSystemStorageService(ImageService imageService) {
@@ -80,9 +90,9 @@ public class FileSystemStorageService implements StorageService {
     }
 
     /**
-     * Stores a file in the service
+     * Stores an avatar in the service
      *
-     * @return filename of stored file, needed to retrieve file
+     * @return filepath of avatar
      * @throws IOException
      */
     @Override
@@ -91,12 +101,12 @@ public class FileSystemStorageService implements StorageService {
     }
 
     /**
-     * Stores a file in the service
+     * Stores an answer in the service
      *
      * @param file to store
      * @param managerId
      * @param qSetId
-     * @return
+     * @return filepath to answer
      */
     @Override
     public String storeAnswer(File file, String managerId, String qSetId) {
@@ -105,12 +115,13 @@ public class FileSystemStorageService implements StorageService {
 
     /**
      * First stores the stream contents in a temporary directory, resizes the image and
-     * then saves it to {root}/{managerId}/{uniqueFilename.ext}
-     * @param file
-     * @param pathPrefix
-     * @param root
-     * @param size
-     * @return
+     * then saves it to {root}/{pathPrefix}/{uniqueFilename.ext}
+     *
+     * @param file File to store.
+     * @param pathPrefix Subdirectory within the root directory, will be created.
+     * @param root  Root directory.
+     * @param size  Resolution of stored file.
+     * @return Path to File as String.
      */
     private String store(File file, String pathPrefix, Path root, int size, String type){
         String extension = FilenameUtils.getExtension(file.getName());
@@ -138,7 +149,7 @@ public class FileSystemStorageService implements StorageService {
     }
 
     /**
-     * loads a stored avatar or returns a default
+     * Loads a stored avatar or returns a default
      *
      * @param avatar
      * @return
@@ -153,7 +164,7 @@ public class FileSystemStorageService implements StorageService {
     }
 
     /**
-     * loads a stored answer or returns a default
+     * Loads a stored answer or returns a default
      *
      * @param answer
      * @return
@@ -168,7 +179,7 @@ public class FileSystemStorageService implements StorageService {
     }
 
     /**
-     * deletes a stored avatar
+     * Deletes a stored avatar
      *
      * @param avatar file to be deleted
      */
@@ -182,7 +193,7 @@ public class FileSystemStorageService implements StorageService {
     }
 
     /**
-     * deletes a stored answer
+     * Deletes a stored answer
      *
      * @param answer file to be deleted
      */

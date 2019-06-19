@@ -15,14 +15,13 @@ import javax.annotation.PostConstruct;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Bean for editing a {@link at.qe.sepm.skeleton.model.Manager}.
+ */
 @Controller
 @Scope("view")
 public class EditManagerBean {
-
-    /**
-     * Changes a {@link Player}s password if the new password is valid
-     */
-
+    
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
@@ -48,7 +47,10 @@ public class EditManagerBean {
     private void init() {
         user = sessionInfoBean.getCurrentUser();
     }
-
+    
+    /**
+     * Changes the password of the Manager if the current password is valid and clears all fields.
+     */
     public void changePassword() {
         if (user != null && isPasswordValid()) {
             user.setPassword(passwordBean.encodePassword(password));
@@ -59,7 +61,10 @@ public class EditManagerBean {
         password = null;
         repeatPassword = null;
     }
-
+    
+    /**
+     * Changes the email of the Manager if the current email is valid.
+     */
     public void changeEmail() {
         if (user != null && isEmailValid()) {
             user.getManager().setEmail(email);
@@ -67,8 +72,10 @@ public class EditManagerBean {
             logger.info("Manager with ID " + user.getManager().getId() + " changed e-mail to " + user.getManager().getEmail());
         }
     }
-
-
+    
+    /**
+     * @return True if the current email is valid.
+     */
     public boolean isEmailValid() {
         if (email != null) {
 
@@ -84,9 +91,7 @@ public class EditManagerBean {
     }
 
     /**
-     * Returns true if the new password is valid
-     *
-     * @return
+     * @return True if the new password is valid
      */
     public boolean isPasswordValid() {
         return password != null && password.length() >= 3 && repeatPassword != null && repeatPassword.equals(password);

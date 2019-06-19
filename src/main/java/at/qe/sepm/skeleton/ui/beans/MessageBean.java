@@ -19,12 +19,14 @@ import java.io.Serializable;
 public class MessageBean implements Serializable {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    
     /**
      * Show success message
      *
      * @param id
+     * 		Target id.
      * @param text
+     * 		Text to be displayed.
      */
     public void showInformation(String id, String text) {
         logger.info("messageBean called with target-id: " + id + " and text: "+text);
@@ -34,7 +36,11 @@ public class MessageBean implements Serializable {
             );
         }
     }
-
+    
+    /**
+     * @param text
+     * 		Text to be displayed.
+     */
     public void showGlobalInformation(String text) {
         logger.info("messageBean called with global and text: "+text);
         if(FacesContext.getCurrentInstance() != null) {
@@ -43,10 +49,14 @@ public class MessageBean implements Serializable {
             );
         }
     }
+    
     /**
      * Show error message
+     *
      * @param id
+     * 		Target id.
      * @param text
+     * 		Text to be displayed.
      */
     public void showError(String id, String text) {
         logger.info("showError called with global and text: "+text);

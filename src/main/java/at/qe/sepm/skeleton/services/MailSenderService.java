@@ -29,12 +29,16 @@ public class MailSenderService {
     public MailSenderService(MailSender mailSender) {
         this.mailSender = mailSender;
     }
-
+    
     /**
      * Creates a mail object an sends an email to the given address
+     *
      * @param address
+     * 		Address of the recipient of the email.
      * @param subject
+     * 		Subject of the email.
      * @param content
+     * 		Content of the email.
      */
     public void sendUserMail(String address, String subject, String content) {
         SimpleMailMessage mail = new SimpleMailMessage();

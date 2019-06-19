@@ -1,5 +1,8 @@
 package at.qe.sepm.skeleton.socket.events;
 
+/**
+ * The Class responsible for unmarshalling incoming JSON to a java class.
+ */
 public class ClientEvent {
 
     private String event;

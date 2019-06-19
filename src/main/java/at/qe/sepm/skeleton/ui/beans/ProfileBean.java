@@ -46,10 +46,12 @@ public class ProfileBean implements Serializable {
     public Player getPlayer() {
         return player;
     }
-
+    
     /**
      * Sets the {@link Player} and loads the recently played with {@link Player}s
+     *
      * @param player
+     * 		Player to be set.
      */
     public void setPlayer(Player player) {
         if(playerService.getPlayerById(player.getId()) == null){

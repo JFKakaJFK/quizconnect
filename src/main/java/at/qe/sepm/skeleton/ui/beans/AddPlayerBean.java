@@ -11,6 +11,9 @@ import at.qe.sepm.skeleton.services.UserService;
 
 import java.io.Serializable;
 
+/**
+ * Bean for the create user interface.
+ */
 @Controller
 @Scope("view")
 public class AddPlayerBean implements Serializable {
@@ -19,6 +22,7 @@ public class AddPlayerBean implements Serializable {
     private UserService userService;
     private AllPlayersBean allPlayersBean;
     private PasswordBean passwordBean;
+    private ValidationBean validationBean;
     private Manager manager;
 
     private String username = "";
@@ -29,7 +33,9 @@ public class AddPlayerBean implements Serializable {
     public AddPlayerBean(PlayerService playerService,
                          SessionInfoBean sessionInfoBean,
                          UserService userService,
-                         AllPlayersBean allPlayersBean, PasswordBean passwordBean){
+                         AllPlayersBean allPlayersBean,
+                         PasswordBean passwordBean,
+                         ValidationBean validationBean){
         assert sessionInfoBean.getCurrentUser().getManager() != null;
         assert userService != null;
         assert playerService != null;
@@ -41,7 +47,10 @@ public class AddPlayerBean implements Serializable {
         this.allPlayersBean = allPlayersBean;
         this.passwordBean = passwordBean;
     }
-
+    
+    /**
+     * Adds a user with the specified username and password to the database if both are valid.
+     */
     public void addUser(){
         if(!validateInput()){
             return;
@@ -53,20 +62,27 @@ public class AddPlayerBean implements Serializable {
         clear();
         allPlayersBean.addPlayer(p);
     }
-
+    
+    /**
+     * @return True if the current username and password are valid, false otherwise.
+     */
     public boolean validateInput(){
-        if(username == null || userService.loadUser(username) != null || username.length() < 3 || username.length() > 100){
+        if(username == null || userService.loadUser(username) != null || username.length() < 3 || username.length() > 100 || !validationBean.isValidText(username)){
             // TODO message username already taken
             return false;
         }
 
-        if(password == null || password.length() < 3 || password.length() > 100){
+        if(password == null || password.length() < 3 || password.length() > 100 || !validationBean.isValidPassword(password)){
             // TODO same pw validation as w/ manager creation || or just make one long boolean exp
+            // TODO repeatPassword
             return false;
         }
         return true;
     }
-
+    
+    /**
+     * Clears the current username and password.
+     */
     public void clear(){
         this.username = "";
         this.password = "";

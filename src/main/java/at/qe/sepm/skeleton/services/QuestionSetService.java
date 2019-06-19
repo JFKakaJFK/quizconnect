@@ -23,149 +23,165 @@ import at.qe.sepm.skeleton.repositories.QuestionSetRepository;
  * Service for accessing and manipulating {@link Question} entities.
  *
  * @author Johannes Koch
- * @return
  */
 @Component
 @Scope("application")
-public class QuestionSetService {
-
+public class QuestionSetService
+{
+	
 	private Logger log = LoggerFactory.getLogger(QuestionSetService.class);
-
-    @Autowired
-    QuestionSetRepository questionSetRepositoryRepository;
-
-    @Autowired
-    QuestionService questionService;
+	
+	@Autowired
+	QuestionSetRepository questionSetRepository;
+	
+	@Autowired
+	QuestionService questionService;
 
 	/**
-	 * Returns all QuestionSets in the database.
-	 * 
-	 * @return
+	 * @return All {@link QuestionSet}s in the database.
 	 */
 	public List<QuestionSet> getAllQuestionSets()
 	{
-		return questionSetRepositoryRepository.findAll();
+		return questionSetRepository.findAll();
 	}
-
-    /**
-     * Returns a {@link QuestionSet} by id
-     *
-     * @param id of QuestionSet
-     * @return
-     */
-    public QuestionSet getQuestionSetById(int id)
-    {
-        return questionSetRepositoryRepository.findQuestionSetById(id);
-    }
-
-
-    /**
-     * Returns the QuestionSet of a Question
-     * @param question
-     * @return
-     */
-    public QuestionSet getQuestionSetOfQuestion(Question question) {
-        return questionSetRepositoryRepository.findByQuestions(question);
-    }
-
-    /**
-     * Returns all {@link QuestionSet}s of a {@link Manager}
-     *
-     * @param manager
-     * @return
-     */
-    public List<QuestionSet> getQuestionSetsOfManager(Manager manager){
-        return questionSetRepositoryRepository.findByAuthor(manager);
-    }
-
-    /**
-     * Returns all {@link QuestionSet} with a certain {@link QuestionSetDifficulty}
-     *
-     * @param difficulty
-     */
-    public Collection<QuestionSet> getAllByDifficulty(QuestionSetDifficulty difficulty){
-        return questionSetRepositoryRepository.findByDifficulty(difficulty);
-    }
-
-    /**
-     * Finds all {@link QuestionSet}s where the name contains a search phrase
-     *
-     * @param name search phrase
-     * @return
-     */
-    public Collection<QuestionSet> getAllContaining(String name){
-        return questionSetRepositoryRepository.findByNameContaining(name);
-    }
-
-    /**
-     * Saves the {@link QuestionSet} to the db
-     *
-     * @param questionSet
-     * @return
-     * @throws IllegalArgumentException
-     */
-    @PreAuthorize("hasAuthority('MANAGER')")
-    public QuestionSet saveQuestionSet(QuestionSet questionSet) throws IllegalArgumentException{
-        if(questionSet == null){
-            throw new IllegalArgumentException("QuestionSet cannot be null!");
-        }
-        if(questionSet.getAuthor() == null){
-            throw new IllegalArgumentException("QuestionSet must have a manager");
-        }
-        if(questionSet.getName() == null){
-            throw new IllegalArgumentException("QuestionSet name cannot be null");
-        }
-        if(questionSet.getName().length() > 100){
-            throw new IllegalArgumentException("QuestionSet name is too long(MAX: 100Chars)");
-        }
-        if(questionSet.getDescription() == null){
-            throw new IllegalArgumentException("QuestionSet description cannot be null");
-        }
-        if(questionSet.getDescription().length() > 300){
-            throw new IllegalArgumentException("QuestionSet description is too long(MAX: 300Chars)");
-        }
-        if(questionSet.getDifficulty() == null){
-            throw new IllegalArgumentException("QuestionSet must have difficulty");
-        }
-
-        if(questionSet.getQuestions() == null){
-            questionSet.setQuestions(new HashSet<>());
-        }
-
-        if(questionSet.isNew()){
-            Set<Question> questions = new HashSet<>(questionSet.getQuestions());
-            Set<Question> savedQuestions = new HashSet<>();
-            questionSet.setQuestions(null); // reset questions to avoid db inconsistency
-            QuestionSet savedQuestionSet = questionSetRepositoryRepository.save(questionSet);
-
-            for (Question q: questions) {
-                q.setQuestionSet(savedQuestionSet);
-                savedQuestions.add(questionService.saveQuestion(q));
-            }
-
-            savedQuestionSet.setQuestions(savedQuestions);
-            return questionSetRepositoryRepository.save(savedQuestionSet);
-        } else {
-            return questionSetRepositoryRepository.save(questionSet);
-        }
-    }
-
-    /**
-     * Deletes a {@link QuestionSet} from the db
-     *
-     * @param questionSet
-     */
-    //@PreAuthorize("principal.username eq questionSet.author.user.username")
-    public void deleteQuestionSet(QuestionSet questionSet){
-        Set<Question> questions = new HashSet<>(questionSet.getQuestions());
-        for(Question q: questions){
-            // TODO if type is file, delete all files
-            if(q.getType() == QuestionType.picture){
-                //...
-            }
-        }
-        questionSetRepositoryRepository.delete(questionSet);
-        log.info("Deleted QuestionSet " + questionSet.getId());
-    }
-
+	
+	/**
+	 * @param id
+	 * 		Id of the {@link QuestionSet} to be found.
+	 * @return The QuestionSet with id.
+	 */
+	public QuestionSet getQuestionSetById(int id)
+	{
+		return questionSetRepository.findOne(id);
+	}
+	
+	/**
+	 * @param question
+	 * 		Question to get the QuestionSet of.
+	 * @return The QuestionSet of the question.
+	 */
+	public QuestionSet getQuestionSetOfQuestion(Question question)
+	{
+		return questionSetRepository.findByQuestions(question);
+	}
+	
+	/**
+	 * @param manager
+	 * 		Manager to get all created QuestionSets of.
+	 * @return All {@link QuestionSet}s of a {@link Manager}.
+	 */
+	public List<QuestionSet> getQuestionSetsOfManager(Manager manager)
+	{
+		return questionSetRepository.findByAuthor(manager);
+	}
+	
+	/**
+	 * @param difficulty
+	 * 		Difficulty of the QuestionSets to be returned.
+	 * @return All {@link QuestionSet} with a certain {@link QuestionSetDifficulty}
+	 */
+	public Collection<QuestionSet> getAllByDifficulty(QuestionSetDifficulty difficulty)
+	{
+		return questionSetRepository.findByDifficulty(difficulty);
+	}
+	
+	/**
+	 * @param name
+	 * 		String to be contained in the name of all QuestionSets returned.
+	 * @return All {@link QuestionSet}s where the name contains a search phrase
+	 */
+	public Collection<QuestionSet> getAllContaining(String name)
+	{
+		return questionSetRepository.findByNameContaining(name);
+	}
+	
+	/**
+	 * Saves the {@link QuestionSet} to the database.
+	 *
+	 * @param questionSet
+	 * 		QuestionSet to be saved.
+	 * @return the new instance. Use for all further operations.
+	 * @throws IllegalArgumentException
+	 * 		If any sanity checks fail.
+	 */
+	@PreAuthorize("hasAuthority('MANAGER')")
+	public QuestionSet saveQuestionSet(QuestionSet questionSet) throws IllegalArgumentException
+	{
+		if (questionSet == null)
+		{
+			throw new IllegalArgumentException("QuestionSet cannot be null!");
+		}
+		if (questionSet.getAuthor() == null)
+		{
+			throw new IllegalArgumentException("QuestionSet must have a manager");
+		}
+		if (questionSet.getName() == null)
+		{
+			throw new IllegalArgumentException("QuestionSet name cannot be null");
+		}
+		if (questionSet.getName().length() > 100)
+		{
+			throw new IllegalArgumentException("QuestionSet name is too long(MAX: 100Chars)");
+		}
+		if (questionSet.getDescription() == null)
+		{
+			throw new IllegalArgumentException("QuestionSet description cannot be null");
+		}
+		if (questionSet.getDescription().length() > 300)
+		{
+			throw new IllegalArgumentException("QuestionSet description is too long(MAX: 300Chars)");
+		}
+		if (questionSet.getDifficulty() == null)
+		{
+			throw new IllegalArgumentException("QuestionSet must have difficulty");
+		}
+		
+		if (questionSet.getQuestions() == null)
+		{
+			questionSet.setQuestions(new HashSet<>());
+		}
+		
+		if (questionSet.isNew())
+		{
+			Set<Question> questions = new HashSet<>(questionSet.getQuestions());
+			Set<Question> savedQuestions = new HashSet<>();
+			questionSet.setQuestions(null); // reset questions to avoid db inconsistency
+			QuestionSet savedQuestionSet = questionSetRepository.save(questionSet);
+			
+			for (Question q : questions)
+			{
+				q.setQuestionSet(savedQuestionSet);
+				savedQuestions.add(questionService.saveQuestion(q));
+			}
+			
+			savedQuestionSet.setQuestions(savedQuestions);
+			return questionSetRepository.save(savedQuestionSet);
+		}
+		else
+		{
+			return questionSetRepository.save(questionSet);
+		}
+	}
+	
+	/**
+	 * Deletes a {@link QuestionSet} from the database.
+	 *
+	 * @param questionSet
+	 * 		QuestionSet to be deleted.
+	 */
+	public void deleteQuestionSet(QuestionSet questionSet)
+	{
+		Set<Question> questions = new HashSet<>(questionSet.getQuestions());
+		for (Question q : questions)
+		{
+			// TODO if type is file, delete all files
+			if (q.getType() == QuestionType.picture)
+			{
+				//...
+			}
+		}
+		questionSetRepository.delete(questionSet);
+		log.info("Deleted QuestionSet " + questionSet.getId());
+	}
+	
 }

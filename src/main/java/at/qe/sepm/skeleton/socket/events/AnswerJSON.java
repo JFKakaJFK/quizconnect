@@ -1,5 +1,8 @@
 package at.qe.sepm.skeleton.socket.events;
 
+/**
+ * Class for JSON representation of an Answer
+ */
 public class AnswerJSON {
 
     private int answerId;

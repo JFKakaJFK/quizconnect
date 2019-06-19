@@ -1,8 +1,7 @@
 package at.qe.sepm.skeleton.tests;
 
 import java.util.List;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+
 import at.qe.sepm.skeleton.model.*;
 import at.qe.sepm.skeleton.repositories.QuestionSetRepository;
 import at.qe.sepm.skeleton.services.ManagerService;
@@ -25,6 +24,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.junit.Assert.*;
+
 /**
  * Tests for the {@link QuestionService}
  */
@@ -41,10 +42,7 @@ public class QuestionSetServiceTest {
 
     @Autowired
     QuestionSetService questionSetService;
-
-    @Autowired
-    QuestionSetRepository questionSetRepository;
-
+    
     @Autowired
     private ManagerService managerService;
 
@@ -89,6 +87,14 @@ public class QuestionSetServiceTest {
             name.add("Too");
         }
         return name.toString();
+    }
+    
+    @Test
+    @WithMockUser(username = "user1", authorities = {"MANAGER"})
+    public void testGetAllQuestionSets()
+    {
+        List allSets = questionSetService.getAllQuestionSets();
+        assertTrue("Wrong number of Sets returned.", allSets.size() >= 3);
     }
 
     @Test
@@ -198,7 +204,7 @@ public class QuestionSetServiceTest {
         QuestionSet saved = questionSetService.saveQuestionSet(testSet);
         questionSetService.deleteQuestionSet(testSet);
 
-        Assert.assertNull("QuestionSet is deleted from DB", questionSetRepository.findOne(saved.getId()));
+        Assert.assertNull("QuestionSet is deleted from DB", questionSetService.getQuestionSetById(saved.getId()));
     }
 
     @Test

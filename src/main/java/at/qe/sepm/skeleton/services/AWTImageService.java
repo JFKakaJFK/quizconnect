@@ -75,10 +75,10 @@ public class AWTImageService implements ImageService {
      *
      * Source: https://stackoverflow.com/a/32266733/6244663
      *
-     * @param input
-     * @param width
-     * @param height
-     * @return
+     * @param input The image to resize.
+     * @param width The desired with.
+     * @param height The desired with.
+     * @return The resized BufferedImage.
      */
     private BufferedImage scaleImage(BufferedImage input, int width, int height){
         int type = (input.getTransparency() == Transparency.OPAQUE) ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
