@@ -123,6 +123,10 @@ meter[value="2"]::-moz-meter-bar { background: var(--warning); box-sizing: borde
 meter[value="3"]::-moz-meter-bar { background: var(--col-5-l); box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; border-right: 2px solid #FFFFFF;}
 meter[value="4"]::-moz-meter-bar { background: var(--col-5-d); }
 
+.collection-header {
+    margin: 0 0 calc(var(--default-padding)  / 2) 2rem;
+}
+
 /* APEX CHARTS */
 .box.chart {
     display: flex;

@@ -1,3 +1,9 @@
+.ready-status {
+    text-align: right;
+    padding-top: var(--default-padding);
+    margin-bottom: calc(0px - (var(--default-padding) / 2));
+}
+
 .players {
     padding: var(--default-padding) 0;
     display: grid;
@@ -11,22 +17,38 @@
 }
 
 .players [data-ready] {
+    transition: all .25s ease-in-out;
+}
 
+.players [data-ready] polyline {
+    transition: all .25s ease-in-out;
 }
 
 .players [data-ready="true"] {
-    color: green;
+    color: var(--default-font-color);
+    opacity: 1;
+}
+
+.players [data-ready="true"] polyline {
+    color: var(--success);
 }
 
 .players [data-ready="false"] {
-    color: #aaa;
+    color: var(--default-disabled-color);
+    opacity: .75;
+}
+
+.players [data-ready="false"] polyline {
+    stroke: var(--danger);
 }
 
 .players [data-action="true"] {
-    color: #fff;
+    color: var(--default-font-color);
+    opacity: 1;
 }
 
 .players [data-action="true"]:hover {
     cursor: pointer;
-    color: dodgerblue;
+    transform: scale(1.2);
+    color: var(--default-active-color);
 }

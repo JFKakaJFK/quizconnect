@@ -108,8 +108,8 @@
 
                 </h:panelGroup>
 
-                <!-- recently played with players -->
-
+                <!-- recently played with players --><!-- TODO heading? -->
+                <h:panelGroup layout="block" rendered="#{not empty profileBean.recentlyPlayedWith}" styleClass="collection-header">#{profileBean.player.user.equals(sessionInfoBean.currentUser) ? 'You' : sessionInfoBean.currentUser.username} recently played with</h:panelGroup>
                 <h:panelGroup layout="block" styleClass="collection">
                     <ui:repeat value="#{profileBean.recentlyPlayedWith}" var="player">
                         <qc:playerbox player="#{player}">

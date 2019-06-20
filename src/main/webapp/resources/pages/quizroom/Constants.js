@@ -16,7 +16,7 @@ const URL_HOME = '/login.xhtml';
 /* --------- GAME STUFF -------- */
 const MAX_ANSWERS = 6;
 const JOKER_REUSE_BUFFER = 1000; // time in ms until joker can be used again
-
+const SERVER_REFRESH_RATE = 1000; // timers are synced every 1000ms
 const ANSWERTYPE_TEXT = 'text';
 const ANSWERTYPE_PICTURE = 'picture';
 const ANSWERTYPE_MATH = 'math';
@@ -68,4 +68,5 @@ export {
   ANSWERTYPE_PICTURE,
   ANSWERTYPE_TEXT,
   PREFIX_ANSWER_PICTURE,
+  SERVER_REFRESH_RATE,
 }

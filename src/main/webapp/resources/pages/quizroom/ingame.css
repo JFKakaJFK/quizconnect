@@ -26,18 +26,3 @@
     background: var(--danger);
     opacity: .5;
 }
-
-/* todo joker use animations */
-.joker-use { /*todo*/
-    transition: all .25s ease-in-out;
-}
-
-.joker-use[data-disabled="true"] {
-    cursor: initial;
-    pointer-events: none;
-    color: red;
-}
-
-.joker-use[data-disabled="false"] {
-    color: green;
-}

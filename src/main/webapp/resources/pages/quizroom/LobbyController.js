@@ -6,7 +6,7 @@ import Animate from './Animate.js';
 import Countdown from './Countdown.js';
 
 const readyIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`;
-const unreadyIcon = readyIcon;
+const unreadyIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-circle"><circle cx="12" cy="12" r="10"></circle></svg>`;
 /**
  * Renders lobby consisting of game info, share modal and players in the lobby
  */
@@ -20,7 +20,9 @@ class LobbyController {
       players: '[data-lobby-players]',
       share_wa: '[data-share-whatsapp]',
       share_tw: '[data-share-twitter]',
-      share_fb: '[data-share-fb]'
+      share_fb: '[data-share-fb]',
+      readyNum: '[data-ready-num]',
+      playersNum: '[data-players-num]',
     };
     this._options = Object.assign(defaults, options);
     this._shareRendered = false;
@@ -233,8 +235,30 @@ class LobbyController {
       if(copy.length > 0){
         copy.forEach(p => {
           ps.innerHTML += this._renderPlayer(p, canReadyUp, lastReadyUp, p.id === id);
-          Animate(`${this._options.players} [data-id="${p.id}"]`, 'fadeIn'); // todo does this work as intended?
+          Animate(`${this._options.players} [data-id="${p.id}"]`, 'fadeIn');
         });
+      }
+    });
+    // animate change in number of ready players
+    const readys = document.querySelectorAll(this._options.readyNum);
+    let readyn = info.players.filter(p => p.ready).length.toString();
+    readys.forEach(r => {
+      if(r.textContent !== readyn){
+        Animate(this._options.readyNum, 'fadeOut', () => {
+          r.textContent = readyn;
+          Animate(this._options.readyNum, 'fadeIn');
+        })
+      }
+    });
+    // animate change in total number of players
+    const players = document.querySelectorAll(this._options.playersNum);
+    let text = info.players.length.toString();
+    players.forEach(p => {
+      if(p.textContent !== text){
+        Animate(this._options.readyNum, 'fadeOut', () => {
+          p.textContent = text;
+          Animate(this._options.readyNum, 'fadeIn');
+        })
       }
     });
   }

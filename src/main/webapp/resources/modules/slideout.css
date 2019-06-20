@@ -12,6 +12,11 @@ body {
     bottom: 0;
     width: 256px;
     min-height: 100vh;
+    min-height: -moz-available;
+    min-height: -webkit-fill-available;
+    min-height: fill-available;
+    min-height: -webkit-stretch;
+    min-height: stretch;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     z-index: 0;

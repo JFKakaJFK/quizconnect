@@ -1,51 +1,31 @@
 "use strict";
 
-import { FINISHED, INGAME, ANSWERTYPE_MATH, ANSWERTYPE_TEXT, ANSWERTYPE_PICTURE, MAX_ANSWERS, PREFIX_ANSWER_PICTURE } from "./Constants.js";
+import { FINISHED, INGAME, ANSWERTYPE_MATH, ANSWERTYPE_TEXT, ANSWERTYPE_PICTURE, MAX_ANSWERS, PREFIX_ANSWER_PICTURE, SERVER_REFRESH_RATE } from "./Constants.js";
 import Client from './Socket.js';
 import {JOKER_REUSE_BUFFER} from "./Constants.js";
 import { getState } from "./State.js";
 import Animate from './Animate.js';
 import { setLayoutText, dangerouslySetHTML, setSimpleText, hash, verify } from "./Utils.js";
 
-let animRunning = false;
-const animateScore = (node, oldScore, newScore) => {
-  if(animRunning) return;
-  animRunning = true;
-  let change = oldScore > newScore ? 'decrease' : 'increase';
-
-  let score = {
-    score: oldScore,
-  };
-
-  anime({
-    targets: score,
-    score: newScore,
-    round: 1,
-    easing: 'linear',
-    update: function() {
-      node.textContent = score.score;
-    },
-    begin: () => {
-      node.classList.add(change);
-    },
-    complete: () => {
-      animRunning = false;
-      node.classList.remove(change);
-    },
-  });
-};
-
 /**
  * Handles all game duties.
  */
 class GameController {
   constructor(){
-    this._question = '#question';  // only works with id
+    this._question = '#question';
+    this._time = '#timer';
     this._answers = '#answers';
     this._joker = '#joker';
     this._score = '[data-score]';
     this._allowJokerUse = true;
-    this._updating = false;
+    this._totalTime = 0;
+    this._remainingTime = 0;
+    this._delta = 1000 / 60;
+    this._interval = null;
+
+    this._aheadOfServer = 0;
+    this._animation = null;
+    this._start = false;
   }
 
   /**
@@ -59,7 +39,7 @@ class GameController {
     const joker = document.querySelector(this._joker);
     if(!joker) return;
     if(this._allowJokerUse && state === INGAME && game.jokersLeft > 0) {
-      Client.useJoker(); // todo fadeout + fadein of question + answers (but for all users)
+      Client.useJoker();
       if(joker) joker.setAttribute('data-disabled', 'true');
       this._allowJokerUse = false;
       setTimeout(() => {
@@ -95,47 +75,141 @@ class GameController {
   }
 
   /**
-   * Displays the current question text.
+   * Sets the current timer progress.
    *
-   * @param question
-   * @param mode
+   * @param percent
    * @private
    */
-  _renderQuestion({ mode, question }){ // todo timer
-    let elem = document.querySelector(this._question);
-    if(!elem || question === null) return;
-    const { questionId, type, question: qtext } = question;
-    if(elem.getAttribute('data-qid') !== questionId.toString()){
-      Animate(this._question, 'fadeOut', () => {
-        // check if the node type is correct
-        if(mode === 'reverse' && type === ANSWERTYPE_PICTURE && elem.nodeName.toLowerCase() !== 'img'){
-          let picture = document.createElement('img');
-          picture.alt = 'question';
-          elem.parentNode.replaceChild(picture, elem);
-          elem = picture;
-          elem.id = this._question;
-          elem.setAttribute('class', 'fast text-center question');
-        } else if(elem.nodeName.toLowerCase() === 'h2'){
-          let temp = document.createElement('h2');
-          elem.parentNode.replaceChild(temp, elem);
-          elem = temp;
-          elem.id = this._question;
-          elem.setAttribute('class', 'fast text-center question');
-        }
+  _setTimerProgress(percent){
+    const elem = document.querySelector(this._time);
+    if(elem) elem.style.width = percent + '%';
+  }
 
-        if(type === ANSWERTYPE_MATH){
-          const temp = document.createElement('span');
-          katex.render(qtext, temp, { throwOnError: false });
-          dangerouslySetHTML(elem, temp.innerHTML);
-        } else if(mode === 'reverse' && type === ANSWERTYPE_PICTURE) {
-          elem.src = qtext;
-        } else {
-          setLayoutText(elem, qtext);
-        }
-        elem.setAttribute('data-qid', questionId.toString());
-        Animate(this._question, 'fadeIn');
-      });
+  /**
+   * Clears the timer interval.
+   *
+   * @private
+   */
+  _clearInterval(){
+    clearInterval(this._interval);
+    this._interval = null;
+  }
+
+  /**
+   * Animates the timer by setting the timer progress.
+   * @private
+   */
+  _animateTimer = () => {
+    // update remaining time
+    this._remainingTime -= this._delta;
+    // get remaining time in percent
+    let remaining = (this._remainingTime / this._totalTime) * 100;
+    //console.log('INT', this._delta, new Date().valueOf(), remaining);
+    // set progress
+    this._setTimerProgress(remaining);
+    // check if time has run out
+    if(this._remainingTime <= 0 || remaining <= 0) this._clearInterval();
+  };
+
+  _animateTimerRAF(timeStamp){
+    if(!this._start) this._start = timeStamp;
+    let delta = timeStamp - this._start;
+    //let correction = this._aheadOfServer * delta;
+
+    //this._remainingTime -= delta + correction;
+
+    let remaining = ((this._totalTime - delta) / this._totalTime) * 100;
+    //console.log('RAF', delta, new Date().valueOf(), remaining, this._aheadOfServer);
+
+    // set progress
+    //this._setTimerProgress(remaining);
+    const elem = document.querySelector('#timerRAF');
+    if(elem) elem.style.width = remaining + '%';
+
+    if(remaining > 0){
+      requestAnimationFrame(this._animateTimerRAF.bind(this));
+    } else {
+      cancelAnimationFrame(this._animation);
+      this._start = false;
     }
+  }
+
+  /**
+   * Handles the assignQuestion event.
+   *
+   * @param mode
+   * @param question
+   * @private
+   */
+  _handleAssignQuestion({ mode, question }){
+    if(question === null) throw new Error('Question cannot be null');
+    const parent = document.querySelector(this._question);
+    if(!parent) throw new Error('Question box not found');
+    const { type, question: qtext, remaining } = question;
+    // set timer
+    this._setTimerProgress(100);
+    this._remainingTime = remaining;
+    this._totalTime = remaining;
+    // start timer
+    this._clearInterval();
+    this._interval = setInterval(this._animateTimer.bind(this), this._delta);
+
+    this._start = false;
+    this._animation = requestAnimationFrame(this._animateTimerRAF.bind(this));
+    console.log('raf should have started');
+    // create node
+    let node;
+    if(mode === 'reverse' && type === ANSWERTYPE_PICTURE){
+      node = document.createElement('img');
+      node.alt = 'question';
+      node.src = PREFIX_ANSWER_PICTURE(qtext);
+      node.setAttribute('class', 'question question-picture');
+    } else {
+      node = document.createElement('h2');
+      node.setAttribute('class', 'text-center question question-text');
+      if(type === ANSWERTYPE_MATH){
+        katex.render(qtext, node, { throwOnError: false });
+      } else {
+        setLayoutText(node, qtext);
+      }
+    }
+    // clear parent
+    parent.innerHTML = '';
+    // append node
+    parent.appendChild(node);
+    // fade in
+    Animate(this._question, 'fadeIn');
+  }
+
+  /**
+   * Updates a question by updating the timer.
+   *
+   * @param question
+   * @private
+   */
+  _handleUpdateQuestion({ remaining }){
+    // update timer
+    this._aheadOfServer = (remaining - this._remainingTime) / SERVER_REFRESH_RATE;
+    if(this._interval) this._clearInterval();
+    this._remainingTime = remaining;
+    this._interval = setInterval(this._animateTimer.bind(this), this._delta);
+
+    //this._remainingTime = remaining; // don't even chenge the animation...
+  }
+
+  /**
+   * Removes a question by removing the timer and deleting the question.
+   *
+   * @private
+   */
+  _handleRemoveQuestion(){
+    // destroy timer
+    cancelAnimationFrame(this._animation);
+    if(this._interval) this._clearInterval();
+    // fadeout
+    Animate(this._question, 'fadeOut');
+    // removing the question after the animation doesn't work, as the animation
+    // is finished after the new question is appended to the layout...
   }
 
   /**
@@ -161,25 +235,6 @@ class GameController {
             s.classList.remove(change, 'faster');
           })
         })
-
-
-        //console.warn('prev',  prev);
-        //let obj = { score: 0 };
-        /*
-        anime({
-          target: SCORE,
-          score: score,
-          round: 1,
-          easing: 'linear',
-          autoplay: true,
-          update: () => {
-            setSimpleText(s, SCORE.score);
-            console.warn(SCORE.score, score);
-          },
-          begin: () => s.classList.add(change),
-          complete: () => s.classList.remove(change),
-        });
-        */
       }
     });
   }
@@ -285,7 +340,7 @@ class GameController {
    * @private
    */
   _renderAnswers({ mode, answers }){
-
+/*
     const container = document.querySelector(this._answers);
     if(!container) return;
     const answerNodes = container.querySelectorAll('.answer');
@@ -319,31 +374,27 @@ class GameController {
         Animate(`[data-id="${this._getAnswerId(a.questionId, a.answerId)}"]`, 'fadeIn');
       }
     }); // todo animation
-
-    /*
+*/
     const container = document.querySelector(this._answers);
     if(!container) return;
     const answerNodes = container.querySelectorAll('.answer');
     if(answerNodes.length > MAX_ANSWERS) console.error("Too many assigned answers");
-    let copy = [...answers];
+    let copy = [...this._shuffleAnswers(answers)];
     answerNodes.forEach(node => {
       const nodeId = node.getAttribute('data-id');
       let answer = copy.find(a => nodeId === this._getAnswerId(a.questionId, a.answerId));
       if(answer === undefined){
-        container.removeChild(node);
+        Animate(`[data-id="${nodeId}"]`, 'fadeOut');
+        setTimeout(container.removeChild(node), 200); // 200 ms delay for animation
       }
       copy = copy.filter(a => nodeId !== this._getAnswerId(a.questionId, a.answerId));
     });
 
+    // todo check if too many answers?
     copy.forEach(a => {
-      if(Math.random() > 0.5){
-        container.appendChild(this._renderAnswer(a, mode));
-      } else {
-        container.insertBefore(this._renderAnswer(a, mode), container.firstChild);
-      }
+      container.appendChild(this._renderAnswer(a, mode));
       Animate(`[data-id="${this._getAnswerId(a.questionId, a.answerId)}"]`, 'fadeIn');
     });
-     */
   }
 
   /**
@@ -359,8 +410,8 @@ class GameController {
       this.destroy();
       return;
     }
-    this._renderQuestion(game);
-    this._renderAnswers(game);
+    // this._renderQuestion(game); // todo event based
+    // this._renderAnswers(game); // todo event based
     this._checkJoker(game.jokersLeft);
   }
 
@@ -379,6 +430,14 @@ class GameController {
   init(){
     // listen for state changes
     document.addEventListener('stateChange', (e) => this._handleStateChange(e.detail));
+
+    document.addEventListener('assignQuestion', (e) => this._handleAssignQuestion(e.detail.game));
+    document.addEventListener('updateQuestion', (e) => this._handleUpdateQuestion(e.detail));
+    document.addEventListener('removeQuestion', this._handleRemoveQuestion.bind(this));
+
+    //document.addEventListener('assignAnswer', (e) => this._renderAnswers(e.detail.game));
+    //document.addEventListener('removeAnswer', (e) => this._renderAnswers(e.detail.game));
+
     document.addEventListener('jokerUse', this._jokerUseAnimation.bind(this));
     const joker = document.querySelector(this._joker);
     if(joker) joker.addEventListener('click', this._handleJokerUse.bind(this));

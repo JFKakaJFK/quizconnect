@@ -3,6 +3,7 @@ package at.qe.sepm.skeleton.ui.controllers;
 import at.qe.sepm.skeleton.logic.IPlayerAction;
 import at.qe.sepm.skeleton.logic.QuizRoomManager;
 import at.qe.sepm.skeleton.model.Player;
+import at.qe.sepm.skeleton.services.PlayerService;
 import at.qe.sepm.skeleton.socket.QRWebSocketConnection;
 import at.qe.sepm.skeleton.ui.beans.SessionInfoBean;
 import org.slf4j.Logger;
@@ -27,18 +28,22 @@ public class JoinGameController {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     private SessionInfoBean sessionInfoBean;
+    private PlayerService playerService;
     private QuizRoomManager quizRoomManager;
     private QRWebSocketConnection qrWebSocketConnection;
 
     @Autowired
     public JoinGameController(SessionInfoBean sessionInfoBean,
                               QuizRoomManager quizRoomManager,
+                              PlayerService playerService,
                               QRWebSocketConnection qrWebSocketConnection){
         assert sessionInfoBean != null;
         assert quizRoomManager != null;
         assert qrWebSocketConnection != null;
+        assert playerService != null;
         this.sessionInfoBean = sessionInfoBean;
         this.quizRoomManager = quizRoomManager;
+        this.playerService = playerService;
         this.qrWebSocketConnection = qrWebSocketConnection;
     }
 
@@ -60,7 +65,7 @@ public class JoinGameController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         }
         int PIN = Integer.valueOf(pin);
-        Player p  = sessionInfoBean.getCurrentUser().getPlayer();
+        Player p  = playerService.getPlayerById(sessionInfoBean.getCurrentUser().getPlayer().getId());
         if(quizRoomManager.doesRoomExist(PIN)){ // TODO since the pin is checked for each keystroke if two pins are nearly identical
             // (e.g. 10 & 100, then a player wanting to join room 100 inevitably tries to join room 10)
             if(qrWebSocketConnection.isPlayerInGame(PIN, p)){

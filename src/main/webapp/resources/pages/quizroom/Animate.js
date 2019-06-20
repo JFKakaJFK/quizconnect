@@ -1,8 +1,22 @@
 "use strict";
 
+/**
+ * Animate an element using Daniel Eden's Animate.css.
+ *
+ * @param element (Selector|Node)
+ * @param animationName
+ * @param callback
+ */
 export default (element, animationName, callback) => {
-  const node = document.querySelector(element);
-  if(!node) throw new Error("Selector is invalid");
+  let node;
+  if(element instanceof HTMLElement){
+    node = element;
+  } else if(typeof element === 'string'){
+    node = document.querySelector(element);
+    if(!node) throw new Error('Selector "' + element + '" is invalid');
+  } else {
+    throw new Error('Element of type "' + typeof element + '" is invalid');
+  }
   node.classList.add('animated', animationName);
 
   function handleAnimationEnd() {

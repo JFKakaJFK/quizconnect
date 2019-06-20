@@ -13,6 +13,10 @@
     align-items: center;
 }
 
+.ingame-answers .answer p {
+    margin: 0;
+}
+
 .ingame-answers .answer:hover {
     cursor: pointer;
 }

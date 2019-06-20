@@ -66,11 +66,12 @@
                         <h3 data-lobby-difficulty>easy</h3>
                         <p>difficulty</p>
                     </div>
-                    <div class="stat stat-lg pin info-pin">
+                    <div class="stat stat-xlg pin info-pin">
                         <h3 data-pin>000000</h3>
                         <p>pin <a href="#" data-toggle="modal" data-target="#sharePin"><i data-feather="share-2"></i></a></p>
                     </div>
                 </div>
+                <div class="ready-status">Ready: <span data-ready-num class="faster"></span>/<span data-players-num class="faster"></span></div>
                 <div data-lobby-players class="players"></div>
             </div>
 
@@ -86,8 +87,11 @@
                     </div>
                 </div>
                 <div class="box ingame-question"><!-- QUESTION -->
-                    <!-- TODO layout + placeholders -->
-                    <h2 id="question" class="fast text-center question"></h2>
+                    <div id="question" class="fast text-center question-box"></div>
+                    interval
+                    <div id="timer" class="time-remaining"></div>
+                    raf
+                    <div id="timerRAF" class="time-remaining"></div>
                 </div>
                 <div id="answers" class="ingame-answers"><!-- ANSWERS -->
                     <div class="answer answer-placeholder box" data-id="-1"></div>
@@ -103,7 +107,7 @@
                 <div class="finished-content">
                     <div class="text-center">
                         <h2 id="highScore" class="highscore"></h2>
-                        <div class="stat stat-lg stat-upper">
+                        <div class="stat stat-xlg stat-upper  final-score">
                             <h3 data-score></h3>
                             <p>score</p>
                         </div>
@@ -237,6 +241,7 @@
         chat.menu.classList.remove('hide');
         fabBtns.style.transition = 'transform 300ms ease';
         fabBtns.style.transform = `translateX(-256px)`;
+        this.menu.scrollTo(0, this.menu.scrollHeight)
       }).on('beforeclose', function() {
         chat.menu.classList.add('hide');
         fabBtns.style.transition = 'transform 300ms ease';

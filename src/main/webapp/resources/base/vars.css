@@ -40,7 +40,8 @@
     --default-font: 'Lato', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     --default-font-weight: 300;
     --default-font-color: var(--gray-5);
-
+    --default-disabled-color: var(--gray-3);
+    --default-active-color: var(--col-2-l);
 
 
     /* THEME COLORS */
@@ -67,6 +68,9 @@
     --questionsetbox-icon-size-small: 1.5rem;
     --questionsetbox-icon-size-detail: 2rem;
     --questionsetbox-icon-background: transparent;
+
+    --fab-btn-background: #16212f;
+    --fab-btn-color: var(--default-font-color);
 
     --chat-background: var(--col-1-m);
     --chat-message-color: var(--gray-5);
@@ -97,6 +101,7 @@
     --success: #5DE59A;
     --warning: #FFBF73;
     --error: #E55D5D;
+
 
     --lighter-red: #ed5e68;
 }

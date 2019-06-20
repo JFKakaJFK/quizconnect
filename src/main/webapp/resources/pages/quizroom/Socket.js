@@ -323,8 +323,9 @@ const handleServerEvent = (response) => {
  * @param num
  * @param players
  * @param state
+ * @param score
  */
-const handleRoomInfo = ({ pin, difficulty, mode, questionSets, numJokers, num, players, state }) => {
+const handleRoomInfo = ({ pin, difficulty, mode, questionSets, numJokers, num, players, state, score }) => {
   setState({
     state,
     info: {
@@ -336,7 +337,7 @@ const handleRoomInfo = ({ pin, difficulty, mode, questionSets, numJokers, num, p
       players,
     },
     game: {
-      score: 0,
+      score: score,
       jokersLeft: numJokers,
     }
   });
@@ -489,15 +490,17 @@ const handleScoreChange = ({ newScore }) => {
  * @param questionId
  * @param remaining
  */
-const handleTimerSync = ({ questionId, remaining }) => { // TODO how to handle?
-  const { game } = getState();
+const handleTimerSync = ({ questionId, remaining }) => {
+  let { game } = getState();
   if(game.question == null){ return; }
   if(questionId === game.question.questionId){
     setState({
       game: {
         question: Object.assign(game.question, { remaining, })
       }
-    })
+    });
+    const qevent = new CustomEvent('updateQuestion', {detail: {remaining}});
+    document.dispatchEvent(qevent);
   }
   console.debug(`SERVER: timer sync, question ${questionId} has ${remaining/1000}s left`);
 };
@@ -569,6 +572,11 @@ const handleAssignQuestion = ({ questionId, type, question, playerId, timeRemain
         }
       }
     });
+    const { game } = getState();
+    const qevent = new CustomEvent('assignQuestion', {detail: {
+      game,
+    }});
+    document.dispatchEvent(qevent);
     console.debug(`SERVER: new question assigned to this player`);
   }
   // if new answers for player, add answers
@@ -586,6 +594,11 @@ const handleAssignQuestion = ({ questionId, type, question, playerId, timeRemain
         ),
       }
     });
+    const { game } = getState();
+    const aevent = new CustomEvent('assignAnswer', {detail: {
+      game,
+    }});
+    document.dispatchEvent(aevent);
     console.debug(`SERVER: new answers assigned to this player`);
   }
 };
@@ -603,7 +616,12 @@ const handleRemoveQuestion = ({ questionId }) => {
       game: {
         question: null,
       }
-    })
+    });
+    const { game } = getState();
+    const qevent = new CustomEvent('removeQuestion', {detail: {
+        game,
+      }});
+    document.dispatchEvent(qevent);
   }
   // does the player have an answer/answers to the question? if so remove them
   if(state.game.answers.find(a => a.questionId === questionId) !== undefined){
@@ -611,7 +629,12 @@ const handleRemoveQuestion = ({ questionId }) => {
       game: {
         answers: state.game.answers.filter(a => a.questionId !== questionId),
       }
-    })
+    });
+    const { game } = getState();
+    const aevent = new CustomEvent('removeAnswer', {detail: {
+        game,
+      }});
+    document.dispatchEvent(aevent);
   }
   console.debug(`SERVER: question ${questionId} was removed`);
 };

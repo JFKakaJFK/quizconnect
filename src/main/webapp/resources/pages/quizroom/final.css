@@ -1,0 +1,13 @@
+.highscore {
+    font-weight: 300;
+    font-size: 1.75rem;
+}
+
+.final-score {
+    margin: var(--default-padding) 0 5vh;
+}
+
+.final-score h3 {
+    font-size: 4rem;
+    font-weight: 300;
+}

@@ -26,19 +26,19 @@
     }
 }
 
-/* TODO */
 .fab-btn {
-    width: 4rem;
-    height: 4rem;
+    width: 5rem;
+    height: 5rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #aaa; /* todo var */
+    background: var(--fab-btn-background);
+    color: var(--fab-btn-color);
     border: 0;
     border-radius: 50%;
     box-shadow:
-            0 0 8px 16px hsla(0, 0%, 0%, .3),
-            0 0 8px 16px hsla(0, 0%, 0%, .3)
+            0 0 16px 8px hsla(0, 0%, 0%, .15),
+            0 0 8px 4px hsla(0, 0%, 0%, .3)
     ;
     transition: all .25s ease-in-out;
     pointer-events: initial;
@@ -49,9 +49,32 @@
     height: 2.25rem;
 }
 
+.fab-btn[data-disabled="true"]{
+    filter: brightness(.5);
+    pointer-events: none;
+}
+
+@media screen and (max-width: 560px) {
+    .fab-actions {
+        bottom: 3rem;
+    }
+
+    .fab-btn {
+        width: 4rem;
+        height: 4rem;
+    }
+
+    .fab-btn .feather {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+}
+
 .fab-btn:hover {
     cursor: pointer;
-    color: var(--col-2-l); /* todo var */
+    color: var(--default-active-color);
+    transform: scale(1.1);
+    filter: brightness(1.5);
 }
 
 body.finished .fab-btn,
