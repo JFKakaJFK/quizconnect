@@ -1,7 +1,10 @@
 package at.qe.sepm.skeleton.tests;
 
+import at.qe.sepm.skeleton.logic.ActiveQuestion;
+import at.qe.sepm.skeleton.logic.IRoomAction;
 import at.qe.sepm.skeleton.logic.MathGenerator;
 import at.qe.sepm.skeleton.logic.QR_Question;
+import at.qe.sepm.skeleton.model.Player;
 import at.qe.sepm.skeleton.model.QuestionSetDifficulty;
 import at.qe.sepm.skeleton.model.QuestionType;
 import org.junit.Before;
@@ -21,7 +24,7 @@ import java.util.List;
 public class MathGeneratorTest
 {
 	private MathGenerator generator;
-	
+
 	@Before
 	public void init()
 	{
@@ -70,4 +73,5 @@ public class MathGeneratorTest
 			assertTrue("Question has invalid wrong answer string.", q.getWrongAnswerString_5() != null && !q.getWrongAnswerString_5().equals(""));
 		}
 	}
+	
 }
