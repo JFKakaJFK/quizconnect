@@ -63,10 +63,7 @@
 
                                 <h:commandLink styleClass="box-action" p:data-toggle="modal"
                                                p:data-target="#infoQuestionset">
-                                    <svg viewBox="0 0 24 24" width="24" height="24">
-                                        <path class="heroicon-ui"
-                                              d="M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-9a1 1 0 0 1 1 1v4a1 1 0 0 1-2 0v-4a1 1 0 0 1 1-1zm0-4a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
-                                    </svg>
+                                    <i data-feather="info"></i>
                                     <f:ajax execute="@this" render=":modals:infoQuestionset:modal-body"/>
                                     <f:setPropertyActionListener value="#{set}"
                                                                  target="#{QSOverviewBean.questionsetForDetails}"/>
@@ -76,20 +73,14 @@
                                                action="/secured/questionset.xhtml?faces-redirect=true"
                                                actionListener="#{questionSetBean.setEditQuestionset(set.id)}"
                                                rendered="#{QSOverviewBean.isByManager(set)}">
-                                    <svg viewBox="0 0 24 24" width="24" height="24">
-                                        <path class="heroicon-ui"
-                                              d="M6.3 12.3l10-10a1 1 0 0 1 1.4 0l4 4a1 1 0 0 1 0 1.4l-10 10a1 1 0 0 1-.7.3H7a1 1 0 0 1-1-1v-4a1 1 0 0 1 .3-.7zM8 16h2.59l9-9L17 4.41l-9 9V16zm10-2a1 1 0 0 1 2 0v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6c0-1.1.9-2 2-2h6a1 1 0 0 1 0 2H4v14h14v-6z"/>
-                                    </svg>
+                                    <i data-feather="edit-3"></i>
                                     <f:ajax execute="@this" render="@none"/>
                                 </h:commandLink>
 
                                 <h:commandLink styleClass="box-action" p:data-toggle="modal"
                                                p:data-target="#deleteQuestionset"
                                                rendered="#{QSOverviewBean.isByManager(set)}">
-                                    <svg viewBox="0 0 24 24" width="24" height="24">
-                                        <path class="heroicon-ui"
-                                              d="M8 6V4c0-1.1.9-2 2-2h4a2 2 0 0 1 2 2v2h5a1 1 0 0 1 0 2h-1v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8H3a1 1 0 1 1 0-2h5zM6 8v12h12V8H6zm8-2V4h-4v2h4zm-4 4a1 1 0 0 1 1 1v6a1 1 0 0 1-2 0v-6a1 1 0 0 1 1-1zm4 0a1 1 0 0 1 1 1v6a1 1 0 0 1-2 0v-6a1 1 0 0 1 1-1z"/>
-                                    </svg>
+                                    <i data-feather="trash"></i>
                                     <f:ajax execute="@this" render="@none"/>
                                     <f:setPropertyActionListener value="#{set}"
                                                                  target="#{QSOverviewBean.questionsetToDelete}"/>
