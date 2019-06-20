@@ -259,7 +259,6 @@ public class QuestionSetBean implements Serializable {
                 logger.info("Added question to Database");
             }
             questionService.saveQuestion(question);
-            bEditQuestion = false;
             initQuestion();
             if (!bEditQuestion) {
                 messageBean.alertInformation("Success", "Saved new Question");
@@ -268,6 +267,7 @@ public class QuestionSetBean implements Serializable {
                 messageBean.alertInformation("Success", "Saved edited Question");
                 messageBean.updateComponent("messages");
             }
+            bEditQuestion = false;
 
         } else {
             logger.error("Invalid question!");
@@ -365,6 +365,7 @@ public class QuestionSetBean implements Serializable {
     private boolean isValidQuestion(Question question) {
 
         if (question.getType() == QuestionType.picture) {
+            logger.info("String for regex: " + question.getRightAnswerString());
             return true;
             //TODO: Validate picture-string too
         }
@@ -379,6 +380,7 @@ public class QuestionSetBean implements Serializable {
         if (question.getWrongAnswerString_1() == null || !validationBean.isValidText(question.getWrongAnswerString_1().trim(), 200)) {
             return false;
         }
+
        return true;
     }
 
