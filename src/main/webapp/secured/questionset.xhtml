@@ -51,7 +51,7 @@
                 <label for="setDesc">Description</label>
                 <h:inputTextarea type="text" styleClass="form-control"
                                  value="#{questionSetBean.questionSet.description}"
-                                 name="setDesc" id="setDesc" pt:placeholder="Easy questions based on semester 1"
+                                 name="setDesc" id="setDesc" pt:placeholder="e.g. 'Music questions for class 3A"
                                  pt:autocomplete="off" pt:maxlength="300"/>
             </div>
 
@@ -79,26 +79,25 @@
         </h:form>
 
         <h:form id="deleteQuestionForm">
+            <h:panelGroup id="questions" layout="block">
             <h:panelGroup styleClass="collection" layout="block" id="questionCollection">
                 <ui:repeat value="#{questionSetBean.questionsDisplay}" var="question">
                     <qc:questionbox question="#{question}">
 
                         <h:commandLink styleClass="box-action" pt:data-toggle="modal" pt:data-target="#infoQuestion">
-                            <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-9a1 1 0 0 1 1 1v4a1 1 0 0 1-2 0v-4a1 1 0 0 1 1-1zm0-4a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+                            <i data-feather="info"></i>
                             <f:ajax execute="@this" render=":questionForForm:infoQuestion:modal-body"/>
                             <f:setPropertyActionListener value="#{question}" target="#{questionSetBean.questionForDetails}"/>
                         </h:commandLink>
 
-                        <h:commandLink styleClass="box-action" action="#{questionSetBean.setEditQuestion(question)}" pt:data-toggle="modal" pt:data-target="#questionModal"
-                                       rendered="#{true}">
-                            <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M6.3 12.3l10-10a1 1 0 0 1 1.4 0l4 4a1 1 0 0 1 0 1.4l-10 10a1 1 0 0 1-.7.3H7a1 1 0 0 1-1-1v-4a1 1 0 0 1 .3-.7zM8 16h2.59l9-9L17 4.41l-9 9V16zm10-2a1 1 0 0 1 2 0v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6c0-1.1.9-2 2-2h6a1 1 0 0 1 0 2H4v14h14v-6z"/></svg>
+                        <h:commandLink styleClass="box-action" action="#{questionSetBean.setEditQuestion(question)}" pt:data-toggle="modal" pt:data-target="#questionModal">
+                            <i data-feather="edit-3"></i>
                             <f:ajax execute="@this" render=":questionForForm:questionModal:modal-header :questionForForm:questionModal:modal-body :questionForForm:questionModal:modal-footer"/>
                         </h:commandLink>
 
-                        <h:commandLink styleClass="box-action" pt:data-toggle="modal" pt:data-target="#deleteQuestion"
-                                       rendered="#{true}">
-                            <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M8 6V4c0-1.1.9-2 2-2h4a2 2 0 0 1 2 2v2h5a1 1 0 0 1 0 2h-1v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8H3a1 1 0 1 1 0-2h5zM6 8v12h12V8H6zm8-2V4h-4v2h4zm-4 4a1 1 0 0 1 1 1v6a1 1 0 0 1-2 0v-6a1 1 0 0 1 1-1zm4 0a1 1 0 0 1 1 1v6a1 1 0 0 1-2 0v-6a1 1 0 0 1 1-1z"/></svg>
-                            <f:ajax execute="@this" render=":deleteQuestionForm:questionCollection"/>
+                        <h:commandLink styleClass="box-action" pt:data-toggle="modal" pt:data-target="#deleteQuestion">
+                            <i data-feather="trash"></i>
+                            <f:ajax execute="@this" render=":deleteQuestionForm:questions"/>
                             <f:setPropertyActionListener value="#{question}" target="#{questionSetBean.questionToDelete}"/>
                         </h:commandLink>
 
@@ -107,6 +106,7 @@
             </h:panelGroup>
 
             <qc:collectionEmpty collection="#{questionSetBean.questionsDisplay}" text="No questions found"/>
+            </h:panelGroup>
 
         </h:form>
 
@@ -122,7 +122,7 @@
                       abort="Cancel"
                       confirmAction="#{questionSetBean.deleteQuestion}"
                       abortButton="btn btn-secondary"
-                      update=":deleteQuestionForm:questionCollection">
+                      update=":deleteQuestionForm:questions">
                 Are you sure? This cannot be undone.
             </qc:modal>
         </h:form>
@@ -133,7 +133,7 @@
                       confirm="#{questionSetBean.bEditQuestion?'Save':'Add'}"
                       confirmAction="#{questionSetBean.saveNewQuestion}"
                       showAbort="false"
-                      update=":deleteQuestionForm:questionCollection :questionSetForm:addQuestionSet" ajax="false">
+                      update=":deleteQuestionForm:questions :questionSetForm:addQuestionSet" ajax="false">
 
                 <div class="row">
                     <ui:repeat id="items" value="#{questionSetBean.types}" var="item">

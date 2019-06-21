@@ -23,7 +23,8 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"/>
 
     <!-- Optional theme -->
-    <link rel="stylesheet" type="text/css" href="/resources/signup.css" />
+    <link rel="stylesheet" type="text/css" href="/resources/signup.css"/>
+
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
@@ -33,9 +34,10 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.4.2/zxcvbn.js"/>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"/>
     <script type="text/javascript" src="/resources/util/passwordhelp.js"/>
+    <script type="text/javascript" src="/resources/util/validatePassword-signup.js"/>
 </h:head>
 
-<h:body styleClass="center-page-content">
+<h:body styleClass="center-page-content align-top">
     <h:form id="signupform" action="#{createManagerBean.redirectRegistration}" method="post">
         <div class="container">
             <div class="row py-3">
@@ -45,7 +47,7 @@
             </div>
             <div class="form-group">
                 <label for="institution">Institution</label>
-                <h:inputText type="text" styleClass="form-control" value="#{createManagerBean.manager.institution}" name="institution" id="institution" pt:id="institution" pt:placeholder="Universtität Innsbruck" pt:autocomplete="off" pt:maxlength="200"/>
+                <h:inputText pt:autofocus="true" type="text" styleClass="form-control" value="#{createManagerBean.manager.institution}" name="institution" id="institution" pt:id="institution" pt:placeholder="Universtität Innsbruck" pt:autocomplete="off" pt:maxlength="200"/>
             </div>
 
             <div class="form-group required">
@@ -59,13 +61,11 @@
                 <h:inputSecret styleClass="form-control" value="#{createManagerBean.password}" name="reg_password" id="reg_password" pt:id="reg_password" pt:placeholder="******" pt:autocomplete="new-password" pt:required="true"/>
 
                 <label for="confirm_password" class="mt-3">Repeat password</label>
-                <h:inputSecret styleClass="form-control" value="#{createManagerBean.repeatPassword}" name="confirm_password" id="confirm_password" pt:placeholder="******" pt:autocomplete="new-password" pt:required="true"/>
+                <h:inputSecret styleClass="form-control" value="#{createManagerBean.repeatPassword}" name="confirm_password" id="confirm_password" pt:id="confirm_password" pt:placeholder="******" pt:autocomplete="new-password" pt:required="true"/>
 
                 <meter max="4" class="meter" id="password-strength-meter"></meter>
 
                 <h:panelGroup layout="block" styleClass="box" pt:id="password-strength-text" id="password-strength-text"/>
-
-                <h:panelGroup layout="block" styleClass="box" pt:name="errorcontainer" pt:id="errorcontainer" id="errorcontainer"/>
             </div>
 
 

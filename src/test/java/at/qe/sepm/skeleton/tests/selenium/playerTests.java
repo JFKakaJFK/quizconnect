@@ -36,8 +36,9 @@ public class playerTests {
     }
 
     @Test
-    public void createGameTest(){
-        driver.findElement(By.id("formId:j_idt58")).click(); //not working button for selenium
+    public void createGameTest() throws InterruptedException {
+        driver.findElement(By.id("form:j_idt47")).click();
+        Thread.sleep(1000);
         String currentURL = driver.getCurrentUrl();
         Assert.assertEquals(currentURL, "http://localhost:8080/quizroom/createRoom.xhtml" );
     }

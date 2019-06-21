@@ -27,7 +27,7 @@
     <ui:define name="content">
         <h:form id="passwordChange">
             <h:commandButton styleClass="btn btn-primary" p:data-toggle="modal" p:data-target="#editManager" value="Change password">
-                <f:ajax execute="@this" render=":passwordForm:editManager:footer :passwordForm:editManager:password :passwordForm:editManager:repeat_password"/>
+                <f:ajax execute="@this" render=":passwordForm:editManager:footer :passwordForm:editManager-body"/>
             </h:commandButton>
 
             <h:commandButton styleClass="btn btn-primary" p:data-toggle="modal" p:data-target="#editEmail" value="Change email">
@@ -49,20 +49,21 @@
                       abortButton="btn btn-secondary"
                       disableConfirm="#{!validationBean.isValidPassword(editManagerBean.password, editManagerBean.repeatPassword)}"
                       update="@this">
-                <h:panelGroup layout="block" styleClass="form-group required">
-                    <h:inputSecret p:placeholder="New password" id="password" value="#{editManagerBean.password}" p:autocomplete="new-password" styleClass="form-control">
+                <h:panelGroup layout="block" styleClass="form-group required" id="inputs">
+                    <label for="new_password">New password</label>
+                    <h:inputSecret p:placeholder="New password" name="new_password" id="new_password" p:id="new_password" value="#{editManagerBean.password}" p:autocomplete="new-password" styleClass="form-control">
                         <f:ajax event="keyup" execute="@this" render="footer"/><!-- TODO updating the bean value does not seem to work properly on input-->
                     </h:inputSecret>
-                    <h:inputSecret p:placeholder="Repeat new password" id="repeat_password" value="#{editManagerBean.repeatPassword}" p:autocomplete="new-password" styleClass="form-control">
+
+                    <label for="repeat_new_password" class="mt-3">Repeat new password</label>
+                    <h:inputSecret p:placeholder="Repeat new password" name="repeat_new_password" id="repeat_new_password" p:id="repeat_new_password" value="#{editManagerBean.repeatPassword}" p:autocomplete="new-password" styleClass="form-control">
                         <f:ajax event="keyup" execute="@this" render="footer"/>
                     </h:inputSecret>
                 </h:panelGroup>
 
                 <meter max="4" class="meter" id="password-strength-meter"></meter>
 
-                <h:panelGroup layout="block" styleClass="box" p:id="password-strength-text" id="password-strength-text"/>
-
-                <h:panelGroup layout="block" styleClass="box" p:name="errorcontainer" p:id="errorcontainer" id="errorcontainer"/>
+                    <h:panelGroup layout="block" styleClass="box" p:id="password-strength-text" id="password-strength-text"/>
 
             </qc:modal>
         </h:form>

@@ -1,1 +1,15 @@
 @import "./main.css";
+
+.box:empty {
+    display: none;
+}
+
+form {
+    max-width: 100%;
+}
+
+@media only screen and (min-width: 768px) {
+    form {
+        width: 50%;
+    }
+}
