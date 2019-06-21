@@ -88,18 +88,28 @@
                 </div>
                 <div class="box ingame-question"><!-- QUESTION -->
                     <div id="question" class="fast text-center question-box"></div>
-                    interval
-                    <div id="timer" class="time-remaining"></div>
-                    raf
-                    <div id="timerRAF" class="time-remaining"></div>
+                    setInterval with correction
+                    <div class="time-remaining-wrapper">
+                        <div id="timer" class="time-remaining"></div>
+                    </div>
+                    RAF
+                    <div class="time-remaining-wrapper type-2">
+                        <div id="timerRAF" class="time-remaining"></div>
+                    </div>
+                    RAF with correction
+                    <div class="time-remaining-wrapper type-2">
+                        <div id="timerRAF2" class="time-remaining"></div>
+                    </div>
                 </div>
                 <div id="answers" class="ingame-answers"><!-- ANSWERS -->
+                    <!--
                     <div class="answer answer-placeholder box" data-id="-1"></div>
                     <div class="answer answer-placeholder box" data-id="-2"></div>
                     <div class="answer answer-placeholder box" data-id="-3"></div>
                     <div class="answer answer-placeholder box" data-id="-4"></div>
                     <div class="answer answer-placeholder box" data-id="-5"></div>
                     <div class="answer answer-placeholder box" data-id="-6"></div>
+                    -->
                 </div>
             </div>
 
@@ -151,13 +161,9 @@
         </nav>
 
         <footer class="sidebar-footer text-center">
-            <div class="sidebar-sfx-volume py-4">
-                <div class="low"><i data-feather="volume" class="lg"></i></div>
-                <div class="high"><i data-feather="volume-2" class="lg"></i></div>
-            </div>
-            <div class="sidebar-sfx-mute py-4">
-                <div class="unmute"><i data-feather="volume-1" class="lg"></i></div>
-                <div class="mute"><i data-feather="volume-x" class="lg"></i></div>
+            <div class="sfx-controls">
+                <div data-volume-icon></div>
+                <input data-volume-slider type="range" min="0" max="1" value=".5" step="0.01" oninput="setVolume(this.value)" onchange="setVolume(this.value)">
             </div>
             <div class="sidebar-themes py-4"><!-- TODO maybe render w/ JS and add active class -->
                 <div class="theme" onclick="changeTheme('light')"><i data-feather="sun" class="lg"></i></div>
@@ -371,10 +377,6 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@0.2.1/dist/confetti.browser.min.js"></script>
     <script src="/resources/modules/anime.min.js"></script>
     <script src="https://unpkg.com/animate-css-grid@latest"></script>
-    <script>
-      const grid = document.querySelector("#answers");
-      //animateCSSGrid.wrapGrid(grid, {easing: 'easeInOut', stagger: 100});
-    </script>
 
     <!-- katex -->
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.js" integrity="sha384-5zUJgoXUAOXAoLeyJm2Ja3vbN3VCnoc2w0rG7dyC2jjGwD8PINuWoDHJ3gNdkOxj" crossorigin="anonymous"></script>
@@ -391,5 +393,15 @@
     <script type="module" src="/resources/pages/quizroom/TimeoutController.js"></script>
     <script type="module" src="/resources/pages/quizroom/ChatController.js"></script>
     <script type="module" src="/resources/pages/quizroom/HTMLActions.js"></script>
+
+    <audio data-game-joker src="/resources/pages/quizroom/audio/game_joker.wav"></audio>
+    <audio data-game-start src="/resources/pages/quizroom/audio/game_start.wav"></audio>
+    <audio data-game-end src="/resources/pages/quizroom/audio/game_end.wav"></audio>
+    <audio data-game-right-answer src="/resources/pages/quizroom/audio/game_right_answer.wav"></audio>
+    <audio data-game-wrong-answer src="/resources/pages/quizroom/audio/game_wrong_answer.wav"></audio>
+    <audio data-game-new-question src="/resources/pages/quizroom/audio/game_new_question.wav"></audio>
+
+    <script src="/resources/modules/sfx.js"></script>
+    <script type="module" src="/resources/pages/quizroom/SFXController.js"></script>
 </body>
 </html>

@@ -144,6 +144,8 @@ const answerQuestion = (questionId, answerId) => {
     answerId,
     questionId,
   });
+  const sfxEvent = new CustomEvent(`sfx${answerId === 0 ? 'Right' : 'Wrong'}Answer`);
+  document.dispatchEvent(sfxEvent);
   console.debug(`CLIENT: answered question ${questionId}`)
 };
 
@@ -426,6 +428,8 @@ const handleGameStart = () => {
   setState({
     state: INGAME,
   });
+  const sfxEvent = new CustomEvent('sfxGameStart');
+  document.dispatchEvent(sfxEvent);
   console.debug(`SERVER: game started`)
 };
 
@@ -450,6 +454,8 @@ const handleGameEnd = () => {
     const event = new CustomEvent('gameEnd');
     document.dispatchEvent(event);
   }
+  const sfxEvent = new CustomEvent('sfxGameEnd');
+  document.dispatchEvent(sfxEvent);
   console.debug(`SERVER: game ended`)
 };
 
@@ -467,6 +473,8 @@ const handleJokerUse = ({ remaining }) => {
   showChatMessage(`A joker was used`);
   const event = new CustomEvent('jokerUse');
   document.dispatchEvent(event);
+  const sfxEvent = new CustomEvent('sfxJoker');
+  document.dispatchEvent(sfxEvent);
   console.debug(`SERVER: joker was used (${remaining} jokers remaining)`)
 };
 
@@ -577,6 +585,8 @@ const handleAssignQuestion = ({ questionId, type, question, playerId, timeRemain
       game,
     }});
     document.dispatchEvent(qevent);
+    const sfxEvent = new CustomEvent(`sfxNewQuestion`);
+    document.dispatchEvent(sfxEvent);
     console.debug(`SERVER: new question assigned to this player`);
   }
   // if new answers for player, add answers

@@ -23,9 +23,12 @@ class GameController {
     this._delta = 1000 / 60;
     this._interval = null;
 
-    this._aheadOfServer = 0;
     this._animation = null;
     this._start = false;
+
+    this._raf = null;
+    this._old = false;
+    this._remainingTimeRAF = 0;
   }
 
   /**
@@ -111,8 +114,12 @@ class GameController {
     if(this._remainingTime <= 0 || remaining <= 0) this._clearInterval();
   };
 
+  /**
+   * Animates the timer by setting the timer progress.
+   * @private
+   */
   _animateTimerRAF(timeStamp){
-    if(!this._start) this._start = timeStamp;
+    if(!this._start) this._start = timeStamp; // TODO in order to correct, always save the new timestamp and remove the delta from this._remaining
     let delta = timeStamp - this._start;
     //let correction = this._aheadOfServer * delta;
 
@@ -124,13 +131,41 @@ class GameController {
     // set progress
     //this._setTimerProgress(remaining);
     const elem = document.querySelector('#timerRAF');
-    if(elem) elem.style.width = remaining + '%';
+    //if(elem) elem.style.width = remaining + '%'; // decrease width
+    //if(elem) elem.style.width = 100 - remaining + '%'; // increase width
+    if(elem) elem.style.transform = 'translate3d(' + (-100 + remaining) + '%,0,0)'; // shift left
 
     if(remaining > 0){
       requestAnimationFrame(this._animateTimerRAF.bind(this));
     } else {
       cancelAnimationFrame(this._animation);
       this._start = false;
+    }
+  }
+
+  /**
+   * Animates the timer by setting the timer progress.
+   * @private
+   */
+  _animateTimerRAF2(timeStamp){
+    if(!this._old) this._old = timeStamp;
+    let delta = timeStamp - this._old;
+    this._old = timeStamp;
+
+    this._remainingTimeRAF -= delta;
+
+    let remaining = (this._remainingTimeRAF / this._totalTime) * 100;
+
+    const elem = document.querySelector('#timerRAF2');
+    //if(elem) elem.style.width = remaining + '%'; // decrease width
+    //if(elem) elem.style.width = 100 - remaining + '%'; // increase width
+    if(elem) elem.style.transform = 'translate3d(' + (-100 + remaining) + '%,0,0)'; // shift left
+
+    if(remaining >= 0){
+      requestAnimationFrame(this._animateTimerRAF2.bind(this));
+    } else {
+      cancelAnimationFrame(this._raf);
+      this._old = false;
     }
   }
 
@@ -149,6 +184,7 @@ class GameController {
     // set timer
     this._setTimerProgress(100);
     this._remainingTime = remaining;
+    this._remainingTimeRAF = remaining;
     this._totalTime = remaining;
     // start timer
     this._clearInterval();
@@ -156,6 +192,9 @@ class GameController {
 
     this._start = false;
     this._animation = requestAnimationFrame(this._animateTimerRAF.bind(this));
+
+    this._old = false;
+    this._raf = requestAnimationFrame(this._animateTimerRAF2.bind(this));
     console.log('raf should have started');
     // create node
     let node;
@@ -192,6 +231,7 @@ class GameController {
     this._aheadOfServer = (remaining - this._remainingTime) / SERVER_REFRESH_RATE;
     if(this._interval) this._clearInterval();
     this._remainingTime = remaining;
+    this._remainingTimeRAF = remaining;
     this._interval = setInterval(this._animateTimer.bind(this), this._delta);
 
     //this._remainingTime = remaining; // don't even chenge the animation...
@@ -205,6 +245,7 @@ class GameController {
   _handleRemoveQuestion(){
     // destroy timer
     cancelAnimationFrame(this._animation);
+    cancelAnimationFrame(this._raf);
     if(this._interval) this._clearInterval();
     // fadeout
     Animate(this._question, 'fadeOut');
@@ -333,6 +374,55 @@ class GameController {
   }
 
   /**
+   * Handles the assignAnswer event.
+   *
+   * @param mode
+   * @param answers
+   * @private
+   */
+  _handleAssignAnswers({ mode, answers }){
+    const container = document.querySelector(this._answers);
+    if(!container) return;
+    const answerNodes = container.querySelectorAll('.answer');
+    if(answerNodes.length > MAX_ANSWERS) console.error("Too many assigned answers");
+    let copy = [...this._shuffleAnswers(answers)];
+    answerNodes.forEach(node => {
+      const nodeId = node.getAttribute('data-id');
+      copy = copy.filter(a => nodeId !== this._getAnswerId(a.questionId, a.answerId));
+    });
+    copy.forEach(a => {
+      container.appendChild(this._renderAnswer(a, mode));
+      Animate(`[data-id="${this._getAnswerId(a.questionId, a.answerId)}"]`, 'fadeIn');
+    });
+  }
+
+  /**
+   * Handles the removeAnswer event.
+   *
+   * @param answers
+   * @private
+   */
+  _handleRemoveAnswers({ answers }){
+    const container = document.querySelector(this._answers);
+    if(!container) return;
+    const answerNodes = container.querySelectorAll('.answer');
+    if(answerNodes.length > MAX_ANSWERS) console.error("Too many assigned answers");
+    let copy = [...answers];
+    answerNodes.forEach(node => {
+      const nodeId = node.getAttribute('data-id');
+      let answer = copy.find(a => nodeId === this._getAnswerId(a.questionId, a.answerId));
+      if(answer === undefined){
+        Animate(`[data-id="${nodeId}"]`, 'fadeOut', () => {
+          container.removeChild(node);
+        });
+
+      } else {
+        copy = copy.filter(a => nodeId !== this._getAnswerId(a.questionId, a.answerId));
+      }
+    });
+  }
+
+  /**
    * Renders all currently active answers.
    *
    * @param mode
@@ -435,8 +525,8 @@ class GameController {
     document.addEventListener('updateQuestion', (e) => this._handleUpdateQuestion(e.detail));
     document.addEventListener('removeQuestion', this._handleRemoveQuestion.bind(this));
 
-    //document.addEventListener('assignAnswer', (e) => this._renderAnswers(e.detail.game));
-    //document.addEventListener('removeAnswer', (e) => this._renderAnswers(e.detail.game));
+    document.addEventListener('assignAnswer', (e) => this._handleAssignAnswers(e.detail.game));
+    document.addEventListener('removeAnswer', (e) => this._handleRemoveAnswers(e.detail.game));
 
     document.addEventListener('jokerUse', this._jokerUseAnimation.bind(this));
     const joker = document.querySelector(this._joker);

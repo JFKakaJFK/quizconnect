@@ -14,6 +14,7 @@
 @import "modules/alerts.css";
 @import "modules/searchbar.css";
 @import "modules/feather.css";
+@import "modules/sfx.css";
 
 /* COMPONENTS */
 @import "quizconnect/styles/modal.css";
@@ -31,3 +32,4 @@
 @import "theme/buttons.css";
 @import "theme/inputs.css";
 @import "theme/links.css";
+@import "theme/range.css";
