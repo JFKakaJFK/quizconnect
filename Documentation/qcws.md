@@ -1,4 +1,4 @@
-# QuizConnect Game Frontend
+# QuizConnect Game Frontend`@DEPRECATED`
 
 Options(Since WS needed, lobby + ingame need to be 1 page):
 
