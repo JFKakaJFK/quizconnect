@@ -2,6 +2,12 @@
 
 import Animate from './Animate.js';
 
+/**
+ * Possible answer layouts, where each list is a layout and the members of the list have a horizontal answer layout.
+ * Since css grid auto-fill-mode: dense is only able to layout some combinations these cannot easily be procedurally generated.
+ *
+ * @type {*[]}
+ */
 const LAYOUTS = [
   [1,4],
   [3,6],

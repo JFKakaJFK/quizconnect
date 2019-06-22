@@ -170,5 +170,3 @@ class JoinController{
 
 const joinController = new JoinController('#join', '#pin', '#errors');
 joinController.init();
-
-// document.addEventListener('DOMContentLoaded', () => setState({}));

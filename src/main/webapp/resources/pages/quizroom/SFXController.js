@@ -1,5 +1,8 @@
 "use strict";
 
+/**
+ * Handles the in game sfx.
+ */
 class SFXController {
   constructor(){
     this._sfx = {
@@ -12,6 +15,9 @@ class SFXController {
     }
   }
 
+  /**
+   * Initializes event listeners for sfx events.
+   */
   init(){
     document.addEventListener('sfxGameStart', () => playSound(this._sfx.start));
     document.addEventListener('sfxGameEnd', () => playSound(this._sfx.end));

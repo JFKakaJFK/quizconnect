@@ -10,7 +10,7 @@ import { INGAME, FINISHED, LOBBY, JOIN } from "./Constants.js";
 let state = {
   // general
   pin: null,
-  id: null, // TODO: frontend + socket docs
+  id: null,
   highScore: null,
   state: JOIN,
 
