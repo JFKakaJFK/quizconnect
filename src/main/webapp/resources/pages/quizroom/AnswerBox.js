@@ -2,15 +2,31 @@
 
 import Animate from './Animate.js';
 
-let counter = 0;
+const LAYOUTS = [
+  [1,4],
+  [3,6],
+  [1,6],
+  [2,5],
+  [1,3,4,5],
+  [2,3,4,6],
+  [1,2,3,4],
+  [1,4,5,6],
+  [1,2,3,6],
+  [3,4,5,6],
+];
+
+let counter = 1;
+let layout = LAYOUTS[Math.floor(Math.random()*LAYOUTS.length)];
+
 /**
  * Container element for a single answer.
  */
 class AnswerBox {
   constructor(parent){
-    this._id = 'answer-box-' + counter++;
+    let id = counter++;
+    this._id = 'answer-box-' + id;
     this._node = document.createElement('div');
-    this._node.classList.add('answer-box', 'empty', 'fast', this._id);
+    this._node.classList.add('answer-box', 'empty', 'fast', this._id, layout.includes(id) ? 'answer-box-1x2' : 'answer-box-2x1');
     this._id = '.' + this._id;
     parent.appendChild(this._node);
     this._DELAY = 800; // delay in ms, in order to show animations for a while
