@@ -48,7 +48,7 @@
     --selection-background: var(--col-4-l);
 
     --background-primary: var(--col-1-d);
-    --background-secondary: var(--col-1-m);
+    --background-secondary: #16212f; /* var(--col-1-m); */
 
     --navbar-background: #16212f;
     --navbar-height: 64px;

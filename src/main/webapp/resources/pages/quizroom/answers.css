@@ -1,9 +1,12 @@
 .ingame-answers {
-    display: grid;
+    display: flex;
+    flex-flow: row-reverse wrap;
+    /*
     grid-template-rows: 1fr 1fr 1fr;
     grid-template-columns: 1fr 1fr;
     grid-auto-flow: dense;
     grid-gap: var(--default-padding);
+    */
     padding-bottom: 6rem;
 }
 
@@ -11,6 +14,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    flex: 1;
 }
 
 .ingame-answers .answer p {

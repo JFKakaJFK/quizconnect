@@ -90,6 +90,8 @@
             </nav>
         </h:form>
 
+        <h:panelGroup layout="block" styleClass="flex-grow-1" rendered="#{!sessionInfoBean.hasRole('MANAGER') and !sessionInfoBean.hasRole('PLAYER')}"/>
+
         <footer class="sidebar-footer text-center">
             <div class="sidebar-themes py-4"><!-- TODO maybe render w/ JS and add active class -->
                 <div class="theme" onclick="changeTheme('light')"><i data-feather="sun" class="lg"></i></div>
@@ -130,9 +132,7 @@
         })
     </script>
 
-
     <ui:insert name="modals"/>
-
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

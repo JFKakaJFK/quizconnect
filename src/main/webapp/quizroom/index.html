@@ -162,7 +162,7 @@
 
         <footer class="sidebar-footer text-center">
             <div class="sfx-controls">
-                <div data-volume-icon></div>
+                <div data-volume-icon title="Mute | Unmute"></div>
                 <input data-volume-slider type="range" min="0" max="1" value=".5" step="0.01" oninput="setVolume(this.value)" onchange="setVolume(this.value)">
             </div>
             <div class="sidebar-themes py-4"><!-- TODO maybe render w/ JS and add active class -->
@@ -200,6 +200,7 @@
         this.panel.classList.add('panel-open');
         fabBtns.style.transition = 'transform 300ms ease';
         fabBtns.style.transform = `translateX(256px)`;
+        document.documentElement.classList.add('sidebar-open');
       }).on('open', function(){
         this.panel.addEventListener('click', close);
         fabBtns.style.transition = '';
@@ -210,6 +211,7 @@
         fabBtns.style.transition = 'transform 300ms ease';
         fabBtns.style.transform = 'translateX(0px)';
         fabBtns.style.zIndex = 1;
+        document.documentElement.classList.remove('sidebar-open');
       }).on('close', function(){
         fabBtns.style.transition = '';
       })
@@ -221,9 +223,10 @@
             </div>
         </header>
         <div id="messages" class="chat-messages"></div>
-        <input class="chat-input" data-chat-input type="text" placeholder="Chat with your teammates..." />
+        <input class="chat-input" data-chat-input type="text" placeholder="Chat with your teammates..." data-meteor-emoji="true" />
     </div>
     <script type="text/javascript">
+      //document.addEventListener('');
       let chat = new Slideout({
         'panel': document.getElementById('main'),
         'menu': document.getElementById('chat'),
@@ -245,6 +248,7 @@
         fabBtns.style.transform = 'translateX(' + translated + 'px)';
       }).on('beforeopen', function() {
         chat.menu.classList.remove('hide');
+        chat.menu.style.minHeight = window.innerHeight.toString() + 'px';
         fabBtns.style.transition = 'transform 300ms ease';
         fabBtns.style.transform = `translateX(-256px)`;
         this.menu.scrollTo(0, this.menu.scrollHeight)
@@ -401,7 +405,16 @@
     <audio data-game-wrong-answer src="/resources/pages/quizroom/audio/game_wrong_answer.wav"></audio>
     <audio data-game-new-question src="/resources/pages/quizroom/audio/game_new_question.wav"></audio>
 
+    <!-- SFX -->
     <script src="/resources/modules/sfx.js"></script>
     <script type="module" src="/resources/pages/quizroom/SFXController.js"></script>
+
+    <!-- emoji picker -->
+    <script src="/resources/modules/meteorEmoji.min.js"></script>
+    <script>
+      (() => {
+        new MeteorEmoji()
+      })()
+    </script>
 </body>
 </html>

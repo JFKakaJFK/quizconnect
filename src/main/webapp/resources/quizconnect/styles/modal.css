@@ -1,5 +1,4 @@
 .modal {
-    --border-radius: 16px;
 }
 
 .modal-dialog {
@@ -11,54 +10,58 @@
 }
 
 .modal-header {
-    background: var(--col-1-m);
+    background: var(--background-secondary);
     border-bottom: 0;
-    border-radius: var(--border-radius) var(--border-radius) 0 0;
+    border-radius: var(--default-padding) var(--default-padding) 0 0;
+    box-shadow: 0 0 8px 4px hsla(0, 0%, 0%, .1);
 }
 
 .modal-title {
 
 }
 
+.modal .close {
+    color: var(--default-font-color);
+}
+
+
 .modal-body {
-    background: var(--col-1-d);
+    background: var(--background-primary);
 }
 
 .modal-footer {
     border-top: 0;
-    background: var(--col-1-m);
-    border-radius: 0 0 var(--border-radius) var(--border-radius);
+    background: var(--background-primary);
+    border-radius: 0 0 var(--default-padding) var(--default-padding);
 }
 
-.modal-warning .modal-header, .modal-warning .modal-body, .modal-warning .modal-footer {
+.modal-warning .modal-header,
+.modal-warning .modal-body,
+.modal-warning .modal-footer {
     background-color: var(--warning);
 }
 
-.modal-error .modal-header, .modal-error .modal-body, .modal-error .modal-footer {
+.modal-error .modal-header,
+.modal-error .modal-body,
+.modal-error .modal-footer {
     background-color: var(--error);
 }
 
-.modal-success .modal-header, .modal-success .modal-body, .modal-success .modal-footer {
+.modal-success .modal-header,
+.modal-success .modal-body,
+.modal-success .modal-footer {
     background-color: var(--success);
 }
 
-.modal-question .modal-header, .modal-question .modal-body, .modal-question .modal-footer {
+.modal-question .modal-header,
+.modal-question .modal-body,
+.modal-question .modal-footer {
     background-color: var(--warning);
 }
 
 /*TODO: Select color for edit-modal*/
-.modal-edit .modal-header, .modal-edit .modal-body, .modal-edit .modal-footer {
+.modal-edit .modal-header,
+.modal-edit .modal-body,
+.modal-edit .modal-footer {
     background-color: var(--col-2-d);
 }
-
-/* fix for centering modals */
-/*
-.modal-dialog-centered {
-    min-height: calc(100vh - 1rem);
-}
-@media (min-width: 576px){
-    .modal-dialog-centered {
-        min-height: calc(100vh - 3.5rem);
-    }
-}
-*/

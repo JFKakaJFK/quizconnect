@@ -92,3 +92,8 @@
         transform: translate3d(5px,0,0)
     }
 }
+
+body [data-ready] svg.join-icon {
+    width: 24px;
+    height: 24px;
+}

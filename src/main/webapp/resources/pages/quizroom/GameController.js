@@ -12,9 +12,11 @@ import { setLayoutText, dangerouslySetHTML, setSimpleText, hash, verify } from "
  */
 class GameController {
   constructor(){
+    this._questionBox = '.ingame-question';
     this._question = '#question';
     this._time = '#timer';
     this._answers = '#answers';
+    this._answerBoxSelector = '.answer-box';
     this._joker = '#joker';
     this._score = '[data-score]';
     this._allowJokerUse = true;
@@ -58,7 +60,7 @@ class GameController {
    * @private
    */
   _jokerUseAnimation(){
-    Animate(this._question, 'pulse');
+    Animate(this._questionBox, 'pulse');
     Animate(this._answers, 'pulse');
   }
 
@@ -187,15 +189,14 @@ class GameController {
     this._remainingTimeRAF = remaining;
     this._totalTime = remaining;
     // start timer
-    this._clearInterval();
+    this._clearInterval(); // todo remove
     this._interval = setInterval(this._animateTimer.bind(this), this._delta);
 
-    this._start = false;
+    this._start = false; // todo remove
     this._animation = requestAnimationFrame(this._animateTimerRAF.bind(this));
 
-    this._old = false;
+    this._old = false; // todo refactor a little
     this._raf = requestAnimationFrame(this._animateTimerRAF2.bind(this));
-    console.log('raf should have started');
     // create node
     let node;
     if(mode === 'reverse' && type === ANSWERTYPE_PICTURE){
@@ -217,7 +218,7 @@ class GameController {
     // append node
     parent.appendChild(node);
     // fade in
-    Animate(this._question, 'fadeIn');
+    Animate(this._questionBox, 'fadeIn');
   }
 
   /**
@@ -248,7 +249,7 @@ class GameController {
     cancelAnimationFrame(this._raf);
     if(this._interval) this._clearInterval();
     // fadeout
-    Animate(this._question, 'fadeOut');
+    Animate(this._questionBox, 'fadeOut');
     // removing the question after the animation doesn't work, as the animation
     // is finished after the new question is appended to the layout...
   }
@@ -412,6 +413,7 @@ class GameController {
       const nodeId = node.getAttribute('data-id');
       let answer = copy.find(a => nodeId === this._getAnswerId(a.questionId, a.answerId));
       if(answer === undefined){
+        node.style.pointerEvents = 'none';
         Animate(`[data-id="${nodeId}"]`, 'fadeOut', () => {
           container.removeChild(node);
         });
@@ -531,6 +533,12 @@ class GameController {
     document.addEventListener('jokerUse', this._jokerUseAnimation.bind(this));
     const joker = document.querySelector(this._joker);
     if(joker) joker.addEventListener('click', this._handleJokerUse.bind(this));
+
+    const container = document.querySelector(this._answers);
+    if(container) container.innerHTML = '';
+    for(let i = 0; i < MAX_ANSWERS; i++){
+      container.innerHTML += `<div class="answer-box box"></div>`;
+    }
   }
 }
 

@@ -7,13 +7,19 @@
 }
 
 .chat {
-    --input-height: 4rem; /* Todo */
+    --chat-input-height: 3rem; /* Todo */
     display: grid;
-    grid-template-rows: var(--navbar-height) 1fr var(--input-height);
+    grid-template-rows: var(--navbar-height) 1fr var(--chat-input-height);
     background: var(--chat-background);
     min-height: 100vh;
     height: 100%;
     overflow-y: auto;
+    transition: transform 300ms ease;
+    transform: translateX(0);
+}
+
+.sidebar-open.slideout-open .chat {
+    transform: translateX(100%);
 }
 
 .chat .chat-header {
@@ -31,12 +37,12 @@
     flex-flow: column nowrap;
     justify-items: flex-start;
     align-items: flex-start;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 .chat .chat-input {
     width: 100%;
-    height: var(--input-height);
+    height: var(--chat-input-height);
     border: 0;
     padding: .5rem 1rem;
     background: transparent;
@@ -163,4 +169,31 @@ body.join .chat,
     [data-toggle-chat] {
         display: none;
     }
+}
+
+.chat-input + a {
+    top: 50% !important;
+    transform: translate(0, -50%);
+}
+
+.chat-input + a svg {
+    width: calc(var(--chat-input-height) / 2);
+    height: calc(var(--chat-input-height) / 2);
+
+}
+
+.chat-input + a + div {
+    --picker-height: 320px;
+
+    height: var(--picker-height);
+    max-height: 80vh;
+    overflow: auto !important;
+    max-width: 100%;
+    top: 0 !important;
+    transform: translate(0, -100%);
+    background: var(--background-primary) !important;
+}
+
+.chat-input + a + div .category {
+    background: var(--navbar-background) !important;
 }

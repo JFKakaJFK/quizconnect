@@ -8,7 +8,7 @@ a {
 }
 
 a:hover {
-    color: var(--col-3-m);
+    color: var(--default-active-color);
     text-decoration: none;
 }
 
