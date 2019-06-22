@@ -214,7 +214,7 @@ public class CreateRoomBean implements Serializable {
      */
 
     /**
-     * Changes the current step in the {@link at.qe.sepm.skeleton.logic.QuizRoom} creation to the next step.
+     * Changes the current step in the {@link at.qe.sepm.skeleton.logic.QuizRoom} creation to the _next step.
      */
     public void nextStep(){
         if(disableNextStep()) return;
@@ -255,7 +255,7 @@ public class CreateRoomBean implements Serializable {
     /**
      * Checks if all inputs of the current step are valid, and advancing is possible
      * @return
-     *          True if the next step should be disabled.
+     *          True if the _next step should be disabled.
      */
     public boolean disableNextStep(){
         if(step == 0){

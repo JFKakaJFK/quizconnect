@@ -5,12 +5,11 @@
     overflow-y: auto;
 }
 
-.state-container {
+body .state-container {
     width: 0;
     height: 0;
     overflow: hidden;
     margin: 0 auto;
-    /* min-height: calc(100vh - var(--navbar-height)); */
     transition: width .5s ease-in-out, opacity .5s ease-in-out;
     opacity: 0;
     visibility: hidden;

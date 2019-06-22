@@ -1,11 +1,12 @@
 "use strict";
 
-import { FINISHED, INGAME, ANSWERTYPE_MATH, ANSWERTYPE_TEXT, ANSWERTYPE_PICTURE, MAX_ANSWERS, PREFIX_ANSWER_PICTURE, SERVER_REFRESH_RATE } from "./Constants.js";
+import { FINISHED, INGAME, ANSWERTYPE_MATH, ANSWERTYPE_TEXT, ANSWERTYPE_PICTURE, MAX_ANSWERS, PREFIX_ANSWER_PICTURE } from "./Constants.js";
 import Client from './Socket.js';
 import {JOKER_REUSE_BUFFER} from "./Constants.js";
 import { getState } from "./State.js";
 import Animate from './Animate.js';
 import { setLayoutText, dangerouslySetHTML, setSimpleText, hash, verify } from "./Utils.js";
+import AnswerBox from './AnswerBox.js';
 
 /**
  * Handles all game duties.
@@ -16,7 +17,7 @@ class GameController {
     this._question = '#question';
     this._time = '#timer';
     this._answers = '#answers';
-    this._answerBoxSelector = '.answer-box';
+    this._answerBoxes = [];
     this._joker = '#joker';
     this._score = '[data-score]';
     this._allowJokerUse = true;
@@ -121,7 +122,7 @@ class GameController {
    * @private
    */
   _animateTimerRAF(timeStamp){
-    if(!this._start) this._start = timeStamp; // TODO in order to correct, always save the new timestamp and remove the delta from this._remaining
+    if(!this._start) this._start = timeStamp;
     let delta = timeStamp - this._start;
     //let correction = this._aheadOfServer * delta;
 
@@ -197,7 +198,7 @@ class GameController {
 
     this._old = false; // todo refactor a little
     this._raf = requestAnimationFrame(this._animateTimerRAF2.bind(this));
-    // create node
+    // create _node
     let node;
     if(mode === 'reverse' && type === ANSWERTYPE_PICTURE){
       node = document.createElement('img');
@@ -215,7 +216,7 @@ class GameController {
     }
     // clear parent
     parent.innerHTML = '';
-    // append node
+    // append _node
     parent.appendChild(node);
     // fade in
     Animate(this._questionBox, 'fadeIn');
@@ -229,7 +230,6 @@ class GameController {
    */
   _handleUpdateQuestion({ remaining }){
     // update timer
-    this._aheadOfServer = (remaining - this._remainingTime) / SERVER_REFRESH_RATE;
     if(this._interval) this._clearInterval();
     this._remainingTime = remaining;
     this._remainingTimeRAF = remaining;
@@ -294,16 +294,16 @@ class GameController {
     let selector = `[data-id="${node.getAttribute('data-id')}"]`;
     node.classList.remove('fast');
     if(answerId === 0){
-      node.classList.add('correct');
+      node.classList.add('correct', 'faster');
       Animate(selector, 'pulse', () => {
         node.classList.add('fast');
-        node.classList.remove('correct');
+        node.classList.remove('correct', 'faster');
       })
     } else {
-      node.classList.add('incorrect');
+      node.classList.add('incorrect', 'faster');
       Animate(selector, 'shake', () => {
         node.classList.add('fast');
-        node.classList.remove('incorrect');
+        node.classList.remove('incorrect', 'faster');
       })
     }
   }
@@ -382,19 +382,87 @@ class GameController {
    * @private
    */
   _handleAssignAnswers({ mode, answers }){
+    /*
     const container = document.querySelector(this._answers);
     if(!container) return;
     const answerNodes = container.querySelectorAll('.answer');
     if(answerNodes.length > MAX_ANSWERS) console.error("Too many assigned answers");
     let copy = [...this._shuffleAnswers(answers)];
-    answerNodes.forEach(node => {
-      const nodeId = node.getAttribute('data-id');
+    answerNodes.forEach(_node => {
+      const nodeId = _node.getAttribute('data-id');
       copy = copy.filter(a => nodeId !== this._getAnswerId(a.questionId, a.answerId));
     });
     copy.forEach(a => {
       container.appendChild(this._renderAnswer(a, mode));
       Animate(`[data-id="${this._getAnswerId(a.questionId, a.answerId)}"]`, 'fadeIn');
     });
+    */
+    /*
+    const container = document.querySelector(this._answers);
+    if(!container) return;
+
+    // get current answers
+    let copy = [...this._shuffleAnswers(answers)];
+    const answerNodes = container.querySelectorAll('.answer');
+    if(answerNodes.length > MAX_ANSWERS) console.error("Too many assigned answers");
+
+    // clear inactive boxes
+    answerNodes.forEach(node => {
+      const nodeId = node.getAttribute('data-id');
+      let answer = copy.find(a => nodeId === this._getAnswerId(a.questionId, a.answerId));
+      if(answer === undefined){
+        node.parentElement.classList.add('empty');
+        node.parentElement.innerHTML = '';
+        console.error('cleared by assign')
+      } else {
+        copy = copy.filter(a => nodeId !== this._getAnswerId(a.questionId, a.answerId));
+      }
+    });
+
+    // get answer boxes
+    const answerBoxes = container.querySelectorAll(this._answerBoxSelector);
+    if(answerBoxes.length > MAX_ANSWERS) console.error("Too many answer boxes");
+    // for each box
+    answerBoxes.forEach(b => {
+      // check if _empty or old answer
+      let answer = b.querySelector('[data-id]');
+      let newAnswer = copy.pop();
+      console.warn(answer, newAnswer, !answer && newAnswer, b);
+      if(!answer && newAnswer){  // if yes: clear innerHTML and append one of the new children
+        b.appendChild(this._renderAnswer(newAnswer, mode));
+        b.classList.remove('empty');
+        Animate(`[data-id="${this._getAnswerId(newAnswer.questionId, newAnswer.answerId)}"]`, 'fadeIn');
+      }
+    });
+
+    // if new answers left: error too many
+    if(copy.length > 0) console.error("Too many assigned answers");
+    */
+
+    console.log('called assign');
+
+    let copy = [...this._shuffleAnswers(answers)];
+    let emptyBoxes = [];
+    this._answerBoxes.forEach(box => {
+      let answerId = box.getAnswerId();
+      console.warn(answerId, JSON.stringify(copy));
+      if(answerId === '' || copy.find(a => answerId === this._getAnswerId(a.questionId, a.answerId)) === undefined){
+        console.warn('EMPTY')
+        box.clear();
+        emptyBoxes.push(box);
+      } else {
+        console.warn('NON-EMPTY')
+        copy = copy.filter(a => answerId !== this._getAnswerId(a.questionId, a.answerId));
+      }
+    });
+
+    copy.forEach(a => {
+      console.warn('trying to add answer', a);
+      if(emptyBoxes.length <= 0) throw new Error('Too many Questions assigned');
+      let box = emptyBoxes.pop();
+      box.assign(this._renderAnswer(a, mode));
+      console.warn('answer should be added');
+    })
   }
 
   /**
@@ -404,6 +472,27 @@ class GameController {
    * @private
    */
   _handleRemoveAnswers({ answers }){
+    /*
+    const container = document.querySelector(this._answers);
+    if(!container) return;
+    const answerNodes = container.querySelectorAll('.answer');
+    if(answerNodes.length > MAX_ANSWERS) console.error("Too many assigned answers");
+    let copy = [...answers];
+    answerNodes.forEach(_node => {
+      const nodeId = _node.getAttribute('data-id');
+      let answer = copy.find(a => nodeId === this._getAnswerId(a.questionId, a.answerId));
+      if(answer === undefined){
+        _node.style.pointerEvents = 'none';
+        Animate(`[data-id="${nodeId}"]`, 'fadeOut', () => {
+          container.removeChild(_node);
+        });
+
+      } else {
+        copy = copy.filter(a => nodeId !== this._getAnswerId(a.questionId, a.answerId));
+      }
+    });
+    */
+    /*
     const container = document.querySelector(this._answers);
     if(!container) return;
     const answerNodes = container.querySelectorAll('.answer');
@@ -412,16 +501,35 @@ class GameController {
     answerNodes.forEach(node => {
       const nodeId = node.getAttribute('data-id');
       let answer = copy.find(a => nodeId === this._getAnswerId(a.questionId, a.answerId));
-      if(answer === undefined){
+      if(answer === undefined){ // check if still active
         node.style.pointerEvents = 'none';
         Animate(`[data-id="${nodeId}"]`, 'fadeOut', () => {
-          container.removeChild(node);
+          let oldNode = container.querySelector(`[data-id="${nodeId}"]`);
+          if(oldNode) {
+            oldNode.parentElement.classList.add('empty');
+            oldNode.parentElement.innerHTML = '';
+          }
+          console.error('cleared by remove')
         });
 
       } else {
         copy = copy.filter(a => nodeId !== this._getAnswerId(a.questionId, a.answerId));
       }
     });
+    // get current answers
+    // for each answer
+
+        // if no, animate + callback: if _node still exists, delete _node
+    */
+    let copy = [...answers];
+    this._answerBoxes.forEach(box => {
+      let answerId = box.getAnswerId();
+      if(answerId === '' || copy.find(a => answerId === this._getAnswerId(a.questionId, a.answerId)) === undefined){
+        box.clear();
+      } else {
+        copy = copy.filter(a => answerId !== this._getAnswerId(a.questionId, a.answerId));
+      }
+    })
   }
 
   /**
@@ -439,11 +547,11 @@ class GameController {
     if(answerNodes.length > MAX_ANSWERS) console.error("Too many assigned answers");
     let copy = [...this._shuffleAnswers(answers)];
     let toRemove = [];
-    answerNodes.forEach(node => {
-      const nodeId = node.getAttribute('data-id');
+    answerNodes.forEach(_node => {
+      const nodeId = _node.getAttribute('data-id');
       let answer = copy.find(a => nodeId === this._getAnswerId(a.questionId, a.answerId));
       if(answer === undefined){
-        toRemove.push(node);
+        toRemove.push(_node);
       }
       copy = copy.filter(a => nodeId !== this._getAnswerId(a.questionId, a.answerId));
     });
@@ -502,8 +610,6 @@ class GameController {
       this.destroy();
       return;
     }
-    // this._renderQuestion(game); // todo event based
-    // this._renderAnswers(game); // todo event based
     this._checkJoker(game.jokersLeft);
   }
 
@@ -537,7 +643,7 @@ class GameController {
     const container = document.querySelector(this._answers);
     if(container) container.innerHTML = '';
     for(let i = 0; i < MAX_ANSWERS; i++){
-      container.innerHTML += `<div class="answer-box box"></div>`;
+      this._answerBoxes.push(new AnswerBox(container));
     }
   }
 }

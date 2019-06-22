@@ -320,7 +320,7 @@ public class QuizRoom implements IPlayerAction
 			playerActivityTimestamps.put(player, now);
 			playerAlivePingTimestamps.put(player, now);
 
-			// add additional question to distribute on next call
+			// add additional question to distribute on _next call
 			questionSystem.addMissingQuestions(1);
 		}
 	}

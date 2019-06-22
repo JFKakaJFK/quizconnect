@@ -25,7 +25,7 @@
     line-height: 1;
     letter-spacing: var(--space);
     padding: 0 0 0 var(--space);
-    width: calc(166px + (8 * var(--space))); /* TODO find a better solution */
+    width: calc(166px + (8 * var(--space)));
 
     display: block;
     text-align: center;

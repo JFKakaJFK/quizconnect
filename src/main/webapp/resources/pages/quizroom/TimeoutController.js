@@ -54,7 +54,7 @@ class TimeoutController {
   _handleTimeout(){
     if(!this._active) return;
     // display remaining in seconds
-    const seconds = (this._remaining / 1000).toFixed(1);  // TODO 0 or 1 decimal place?
+    const seconds = (this._remaining / 1000).toFixed(1);
     let elem = document.getElementById('timeoutRemainingTime');
     setSimpleText(elem, seconds.toString());
 

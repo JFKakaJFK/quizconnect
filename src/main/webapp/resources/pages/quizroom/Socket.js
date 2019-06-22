@@ -15,6 +15,7 @@ import {
   INFO_MSG,
 } from "./Constants.js";
 import setState, { getState } from "./State.js";
+import Animate from './Animate.js';
 
 let socket = null;
 let stompClient = null;
@@ -441,6 +442,7 @@ const handleGameEnd = () => {
   if(state === LOBBY || state === JOIN){
     disconnect();
     // TODO show error or something -> game ended early
+    Animate('body', 'fadeOut');
     alert('Something happened');
     setTimeout(() => window.location.href = URL_HOME, 500);
   } else {
@@ -671,7 +673,7 @@ const handleChatMessages = ({ messages }) => {
   /* FUN FACT
    * The LobbyControllers functions to handle the ready up process have a fundamental design flaw
    * based on this method and the fact, that the question history is requested immediately after the room info.
-   * Since the ready up buttons attach the event listeners before the node (player box) is attached to the DOM
+   * Since the ready up buttons attach the event listeners before the _node (player box) is attached to the DOM
    * the ready up events can only be listened for if the ready up button method is called twice, which is achieved
    * by this method...*/
   setState({

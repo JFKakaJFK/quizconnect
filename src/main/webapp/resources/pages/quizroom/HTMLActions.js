@@ -23,7 +23,7 @@ leaveActions.forEach(a => a.addEventListener('click', leaveAction));
  * Leaves the game correctly by closing the socket and leaving
  */
 const confirmLeaveAction = () => {
-  // call leaveRoom (socket) & redirect TODO
+  // call leaveRoom (socket) & redirect
   Client.leaveRoom();
   window.location.href = URL_HOME;
 };

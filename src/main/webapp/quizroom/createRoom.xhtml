@@ -57,7 +57,7 @@
                 </ui:fragment>
 
                 <!-- STEP 2: question sets -->
-                <ui:fragment rendered="#{createRoomBean.step eq 1}"><!-- TODO overflow handling -> nav fixed, qsets with scroll overflow -->
+                <ui:fragment rendered="#{createRoomBean.step eq 1}">
                     <header class="step-header">
                         <h2 class="text-center">Select Sets</h2>
                         <h:inputText p:autocomplete="some random search input dont autocomplete pls@googlebot" p:placeholder="Search" value="#{createRoomBean.searchPhrase}" styleClass="form-control search-available">

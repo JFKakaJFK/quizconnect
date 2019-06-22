@@ -70,7 +70,7 @@ public class QuestionSetBean implements Serializable {
         questionToDelete = null;
         // creates internal set ("questions") of questions created in this process which is later assigned to the questionSet
         //initQuestions();
-        // create an empty question on startup
+        // create an _empty question on startup
         //initQuestion();
         // create a new QuestionSet
         //initQuestionSet();

@@ -93,7 +93,7 @@ class LobbyController {
     diffs.forEach(d => setSimpleText(d, info.difficulty));
     // render questionsets
     const qsets = document.querySelectorAll(this._options.sets);
-    if(info.mode === 'mathgod'){ // todo have modes as constants?
+    if(info.mode === 'mathgod'){
       qsets.forEach(set =>  set.parentNode.parentNode.removeChild(set.parentNode));
     } else {
       qsets.forEach(set => {
@@ -269,7 +269,7 @@ class LobbyController {
    * @param pin
    * @private
    */
-  _renderPin(pin){ // TODO move to general renderer (not lobby specific)? -> lobby renderer could be destroyed after lobby state
+  _renderPin(pin){
     if(!pin) return;
     const pins = document.querySelectorAll(this._options.pin);
     pins.forEach(p => setSimpleText(p, pin.toString().padStart(6, '0')));

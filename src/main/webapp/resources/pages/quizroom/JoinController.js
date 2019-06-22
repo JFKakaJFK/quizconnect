@@ -95,17 +95,19 @@ class JoinController{
         Animate(this._messages, 'shake');
       } else if(data.playerId && data.highScore){ // on success store pin + success
         // delay + animation
-        // TODO
         Animate(this._root, 'fadeOut');
         errors.classList.remove('error');
         errors.classList.add('success');
         errors.innerText = 'Successfully joined room';
+        Animate(`${this._root} ${this._messages}`, 'pulse');
         const elem = document.querySelector(`${this._root} ${this._selector}`);
         elem.setAttribute('readonly', 'true');
         elem.removeEventListener('change', this._handleInput.bind(this));
         elem.removeEventListener('input', this._handleInput.bind(this));
 
         setTimeout(() => {
+          const joinEvent = new CustomEvent('joinGame');
+          document.dispatchEvent(joinEvent);
           setState({
             state: LOBBY,
             pin,

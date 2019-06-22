@@ -15,7 +15,7 @@
     height: 100vh;
     padding: 0;
 }
-/* TODO */
+
 .qc-error-container {
     box-sizing: border-box;
     position: absolute;
@@ -38,5 +38,4 @@
     vertical-align: bottom;
     width: 3.25rem;
     height: 3.25rem;
-    /* margin: -.2rem; */ /* TODO seems to break the layout */
 }

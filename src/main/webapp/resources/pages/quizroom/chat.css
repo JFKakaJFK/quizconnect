@@ -7,7 +7,7 @@
 }
 
 .chat {
-    --chat-input-height: 3rem; /* Todo */
+    --chat-input-height: 4rem;
     display: grid;
     grid-template-rows: var(--navbar-height) 1fr var(--chat-input-height);
     background: var(--chat-background);

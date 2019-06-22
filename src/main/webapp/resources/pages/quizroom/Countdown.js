@@ -111,7 +111,7 @@ class Countdown {
     let text = this._values[this._from - this._current];
     if(oldVal > this._current) this._element.innerText = text !== undefined ? text : this._current - 1;
 
-    // keep animating or restore initial markup and execute the callback
+    // keep _emptying or restore initial markup and execute the callback
     if(this._from > elapsed){
       window.requestAnimationFrame(this._countdown.bind(this));
     } else {

@@ -21,7 +21,7 @@ const setLayoutText = (node, text) => {
 };
 
 /**
- * The fastest way to replace the html content of a node.
+ * The fastest way to replace the html content of a _node.
  *
  * @param node
  * @param html
@@ -31,7 +31,7 @@ const dangerouslySetHTML = (node, html) => {
 };
 
 /**
- * Removes all children from the node.
+ * Removes all children from the _node.
  *
  * @param node
  */

@@ -211,7 +211,7 @@ class QR_QuestionSystem
 	}
 	
 	/**
-	 * Adds count number of Questions as missing (= to be distributed on next call).
+	 * Adds count number of Questions as missing (= to be distributed on _next call).
 	 *
 	 * @param count
 	 * 		Number of Questions to add as missing.

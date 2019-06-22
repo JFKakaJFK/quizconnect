@@ -101,16 +101,7 @@
                         <div id="timerRAF2" class="time-remaining"></div>
                     </div>
                 </div>
-                <div id="answers" class="ingame-answers"><!-- ANSWERS -->
-                    <!--
-                    <div class="answer answer-placeholder box" data-id="-1"></div>
-                    <div class="answer answer-placeholder box" data-id="-2"></div>
-                    <div class="answer answer-placeholder box" data-id="-3"></div>
-                    <div class="answer answer-placeholder box" data-id="-4"></div>
-                    <div class="answer answer-placeholder box" data-id="-5"></div>
-                    <div class="answer answer-placeholder box" data-id="-6"></div>
-                    -->
-                </div>
+                <div id="answers" class="ingame-answers"></div>
             </div>
 
             <div id="finished" class="state-container finished-container d-flex justify-content-center align-items-center">
@@ -118,7 +109,7 @@
                     <div class="text-center">
                         <h2 id="highScore" class="highscore"></h2>
                         <div class="stat stat-xlg stat-upper  final-score">
-                            <h3 data-score></h3>
+                            <h3 data-score>0</h3>
                             <p>score</p>
                         </div>
                         <a href="/login.xhtml" class="btn btn-primary">Home</a>
@@ -146,7 +137,7 @@
     <div class="fab-actions"><!-- ACTIONS -->
         <a href="#" class="fab-btn" data-leave title="Leave Game"><i data-feather="arrow-left"></i></a>
         <div id="joker" class="fab-btn joker-use" title="Use a joker"><i data-feather="shuffle"></i></div>
-        <div data-toggle-chat class="fab-btn chat-open" title="Open Chat"><i data-feather="message-square"></i></div><!-- TODO or circle ? -->
+        <div data-toggle-chat class="fab-btn chat-open" title="Open Chat"><i data-feather="message-square"></i></div>
     </div>
 
     <div id="menu" class="sidebar flex-column">
@@ -226,41 +217,42 @@
         <input class="chat-input" data-chat-input type="text" placeholder="Chat with your teammates..." data-meteor-emoji="true" />
     </div>
     <script type="text/javascript">
-      //document.addEventListener('');
-      let chat = new Slideout({
-        'panel': document.getElementById('main'),
-        'menu': document.getElementById('chat'),
-        'padding': 256,
-        'tolerance': 70,
-        'side': 'right',
+      document.addEventListener('joinGame', () => {
+        let chat = new Slideout({
+          'panel': document.getElementById('main'),
+          'menu': document.getElementById('chat'),
+          'padding': 256,
+          'tolerance': 70,
+          'side': 'right',
+        });
+
+        let chatbtns = document.querySelectorAll('[data-toggle-chat]');
+        chatbtns.forEach(btn => btn.addEventListener('click', () => {
+          chat.toggle();
+        }));
+
+        window.addEventListener('resize', () => {
+          if(window.innerWidth >= 992 && chat.isOpen()) chat.close();
+        });
+
+        chat.on('translate', function(translated) {
+          fabBtns.style.transform = 'translateX(' + translated + 'px)';
+        }).on('beforeopen', function() {
+          chat.menu.classList.remove('hide');
+          chat.menu.style.minHeight = window.innerHeight.toString() + 'px';
+          fabBtns.style.transition = 'transform 300ms ease';
+          fabBtns.style.transform = `translateX(-256px)`;
+          this.menu.scrollTo(0, this.menu.scrollHeight)
+        }).on('beforeclose', function() {
+          chat.menu.classList.add('hide');
+          fabBtns.style.transition = 'transform 300ms ease';
+          fabBtns.style.transform = `translateX(0px)`;
+        }).on('open', function(){
+          fabBtns.style.transition = '';
+        }).on('close', function(){
+          fabBtns.style.transition = '';
+        })
       });
-
-      let chatbtns = document.querySelectorAll('[data-toggle-chat]');
-      chatbtns.forEach(btn => btn.addEventListener('click', () => {
-        chat.toggle();
-      }));
-
-      window.addEventListener('resize', () => {
-        if(window.innerWidth >= 992 && chat.isOpen()) chat.close();
-      });
-
-      chat.on('translate', function(translated) {
-        fabBtns.style.transform = 'translateX(' + translated + 'px)';
-      }).on('beforeopen', function() {
-        chat.menu.classList.remove('hide');
-        chat.menu.style.minHeight = window.innerHeight.toString() + 'px';
-        fabBtns.style.transition = 'transform 300ms ease';
-        fabBtns.style.transform = `translateX(-256px)`;
-        this.menu.scrollTo(0, this.menu.scrollHeight)
-      }).on('beforeclose', function() {
-        chat.menu.classList.add('hide');
-        fabBtns.style.transition = 'transform 300ms ease';
-        fabBtns.style.transform = `translateX(0px)`;
-      }).on('open', function(){
-        fabBtns.style.transition = '';
-      }).on('close', function(){
-        fabBtns.style.transition = '';
-      })
     </script>
 
     <div class="modal fade" id="leave" tabindex="-1" role="dialog" aria-labelledby="leaveModal" aria-hidden="true">
