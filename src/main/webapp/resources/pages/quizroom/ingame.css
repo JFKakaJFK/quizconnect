@@ -21,33 +21,36 @@
     opacity: 1;
 }
 .answer.correct {
-    background: var(--success);
+    background: var(--success) !important;
     opacity: .5;
 }
 .answer.incorrect {
-    background: var(--danger);
+    background: var(--danger) !important;
     opacity: .5;
 }
 
 /* QUESTION */
 
+.ingame-question {
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    min-height: 120px;
+    display: grid;
+    grid-template-rows: 1fr auto;
+    align-items: center;
+}
+
 .time-remaining-wrapper {
     border: 1px solid var(--game-timer-color);
     border-radius: var(--default-padding);
+    overflow: hidden;
+    box-shadow: 0 0 8px 4px hsla(0, 0%, 0%, 0.05), inset 0 0 8px 4px hsla(0, 0%, 0%, 0.05);
 }
 
 .time-remaining {
     background: var(--game-timer-color);
     height: calc(var(--default-padding) / 4);
-    /* will-change: width; */
-
-}
-
-.time-remaining-wrapper.type-2 {
-    overflow: hidden;
-}
-
-.time-remaining-wrapper.type-2 .time-remaining {
     width: 100%;
 }
 
@@ -62,7 +65,11 @@
     padding-bottom: 6rem;
 }
 
-/* Todo picture answers */
+.answer-picture {
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
 
 .ingame-answers .answer-box.empty {
     visibility: hidden;

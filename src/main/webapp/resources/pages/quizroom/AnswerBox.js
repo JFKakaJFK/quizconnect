@@ -13,16 +13,18 @@ const LAYOUTS = [
   [3,6],
   [1,6],
   [2,5],
+  // the following layouts are not mobile friendly and cause overflow...
   [1,3,4,5],
   [2,3,4,6],
   [1,2,3,4],
   [1,4,5,6],
   [1,2,3,6],
   [3,4,5,6],
+  //[1,2,3,4,5,6],
 ];
 
 let counter = 1;
-let layout = LAYOUTS[Math.floor(Math.random()*LAYOUTS.length)];
+let layout = LAYOUTS[Math.floor(Math.random()*(window.innerWidth <= 768 ? 4 : LAYOUTS.length))];
 
 /**
  * Container element for a single answer.
@@ -46,7 +48,7 @@ class AnswerBox {
    * @private
    */
   _clear(){
-    this._node.innerHTML = '';
+    if(this._node) this._node.innerHTML = '';
     this._node.classList.add('empty');
     this._emptying = false;
   }

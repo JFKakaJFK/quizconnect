@@ -88,17 +88,8 @@
                 </div>
                 <div class="box ingame-question"><!-- QUESTION -->
                     <div id="question" class="fast text-center question-box"></div>
-                    setInterval with correction
                     <div class="time-remaining-wrapper">
                         <div id="timer" class="time-remaining"></div>
-                    </div>
-                    RAF
-                    <div class="time-remaining-wrapper type-2">
-                        <div id="timerRAF" class="time-remaining"></div>
-                    </div>
-                    RAF with correction
-                    <div class="time-remaining-wrapper type-2">
-                        <div id="timerRAF2" class="time-remaining"></div>
                     </div>
                 </div>
                 <div id="answers" class="ingame-answers"></div>
@@ -217,8 +208,9 @@
         <input class="chat-input" data-chat-input type="text" placeholder="Chat with your teammates..." data-meteor-emoji="true" />
     </div>
     <script type="text/javascript">
+      let chat;
       document.addEventListener('joinGame', () => {
-        let chat = new Slideout({
+        chat = new Slideout({
           'panel': document.getElementById('main'),
           'menu': document.getElementById('chat'),
           'padding': 256,
@@ -252,6 +244,10 @@
         }).on('close', function(){
           fabBtns.style.transition = '';
         })
+      });
+
+      document.addEventListener('endGame', () => {
+        chat.destroy();
       });
     </script>
 

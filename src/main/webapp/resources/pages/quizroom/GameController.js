@@ -1,11 +1,11 @@
 "use strict";
 
-import { FINISHED, INGAME, ANSWERTYPE_MATH, ANSWERTYPE_TEXT, ANSWERTYPE_PICTURE, MAX_ANSWERS, PREFIX_ANSWER_PICTURE } from "./Constants.js";
+import { FINISHED, INGAME, ANSWERTYPE_MATH, ANSWERTYPE_PICTURE, MAX_ANSWERS, PREFIX_ANSWER_PICTURE } from "./Constants.js";
 import Client from './Socket.js';
 import {JOKER_REUSE_BUFFER} from "./Constants.js";
 import { getState } from "./State.js";
 import Animate from './Animate.js';
-import { setLayoutText, dangerouslySetHTML, setSimpleText, hash, verify } from "./Utils.js";
+import { setLayoutText, setSimpleText } from "./Utils.js";
 import AnswerBox from './AnswerBox.js';
 
 /**
@@ -15,23 +15,17 @@ class GameController {
   constructor(){
     this._questionBox = '.ingame-question';
     this._question = '#question';
-    this._time = '#timer';
     this._answers = '#answers';
     this._answerBoxes = [];
     this._joker = '#joker';
     this._score = '[data-score]';
     this._allowJokerUse = true;
+
+    this._time = '#timer';
     this._totalTime = 0;
-    this._remainingTime = 0;
-    this._delta = 1000 / 60;
-    this._interval = null;
-
     this._animation = null;
-    this._start = false;
-
-    this._raf = null;
-    this._old = false;
-    this._remainingTimeRAF = 0;
+    this._oldTimeStamp = false;
+    this._remainingTime = 0;
   }
 
   /**
@@ -40,7 +34,6 @@ class GameController {
    * @private
    */
   _handleJokerUse(){
-    console.warn('joker use called');
     const { state, game } = getState();
     const joker = document.querySelector(this._joker);
     if(!joker) return;
@@ -81,130 +74,57 @@ class GameController {
   }
 
   /**
-   * Sets the current timer progress.
-   *
-   * @param percent
-   * @private
-   */
-  _setTimerProgress(percent){
-    const elem = document.querySelector(this._time);
-    if(elem) elem.style.width = percent + '%';
-  }
-
-  /**
-   * Clears the timer interval.
-   *
-   * @private
-   */
-  _clearInterval(){
-    clearInterval(this._interval);
-    this._interval = null;
-  }
-
-  /**
    * Animates the timer by setting the timer progress.
    * @private
    */
-  _animateTimer = () => {
-    // update remaining time
-    this._remainingTime -= this._delta;
-    // get remaining time in percent
+  _animateTimer(timeStamp){
+    if(!this._oldTimeStamp) this._oldTimeStamp = timeStamp;
+    let delta = timeStamp - this._oldTimeStamp;
+    this._oldTimeStamp = timeStamp;
+
+    this._remainingTime -= delta;
+
     let remaining = (this._remainingTime / this._totalTime) * 100;
-    //console.log('INT', this._delta, new Date().valueOf(), remaining);
-    // set progress
-    this._setTimerProgress(remaining);
-    // check if time has run out
-    if(this._remainingTime <= 0 || remaining <= 0) this._clearInterval();
-  };
 
-  /**
-   * Animates the timer by setting the timer progress.
-   * @private
-   */
-  _animateTimerRAF(timeStamp){
-    if(!this._start) this._start = timeStamp;
-    let delta = timeStamp - this._start;
-    //let correction = this._aheadOfServer * delta;
-
-    //this._remainingTime -= delta + correction;
-
-    let remaining = ((this._totalTime - delta) / this._totalTime) * 100;
-    //console.log('RAF', delta, new Date().valueOf(), remaining, this._aheadOfServer);
-
-    // set progress
-    //this._setTimerProgress(remaining);
-    const elem = document.querySelector('#timerRAF');
-    //if(elem) elem.style.width = remaining + '%'; // decrease width
-    //if(elem) elem.style.width = 100 - remaining + '%'; // increase width
-    if(elem) elem.style.transform = 'translate3d(' + (-100 + remaining) + '%,0,0)'; // shift left
-
-    if(remaining > 0){
-      requestAnimationFrame(this._animateTimerRAF.bind(this));
-    } else {
-      cancelAnimationFrame(this._animation);
-      this._start = false;
-    }
-  }
-
-  /**
-   * Animates the timer by setting the timer progress.
-   * @private
-   */
-  _animateTimerRAF2(timeStamp){
-    if(!this._old) this._old = timeStamp;
-    let delta = timeStamp - this._old;
-    this._old = timeStamp;
-
-    this._remainingTimeRAF -= delta;
-
-    let remaining = (this._remainingTimeRAF / this._totalTime) * 100;
-
-    const elem = document.querySelector('#timerRAF2');
-    //if(elem) elem.style.width = remaining + '%'; // decrease width
-    //if(elem) elem.style.width = 100 - remaining + '%'; // increase width
+    const elem = document.querySelector(this._time);
     if(elem) elem.style.transform = 'translate3d(' + (-100 + remaining) + '%,0,0)'; // shift left
 
     if(remaining >= 0){
-      requestAnimationFrame(this._animateTimerRAF2.bind(this));
+      requestAnimationFrame(this._animateTimer.bind(this));
     } else {
-      cancelAnimationFrame(this._raf);
-      this._old = false;
+      cancelAnimationFrame(this._animation);
+      this._oldTimeStamp = false;
     }
   }
 
   /**
    * Handles the assignQuestion event.
    *
-   * @param mode
-   * @param question
+   * @param state
    * @private
    */
-  _handleAssignQuestion({ mode, question }){
+  _handleAssignQuestion(state){
+    const {
+      info: { mode },
+      game: { question },
+    } = state; // get mode and question from state
+
     if(question === null) throw new Error('Question cannot be null');
     const parent = document.querySelector(this._question);
     if(!parent) throw new Error('Question box not found');
+    parent.parentElement.style.backgroundImage = ''; // clear picture questions
+    parent.parentElement.style.opacity = '0';
+
     const { type, question: qtext, remaining } = question;
     // set timer
-    this._setTimerProgress(100);
     this._remainingTime = remaining;
-    this._remainingTimeRAF = remaining;
     this._totalTime = remaining;
-    // start timer
-    this._clearInterval(); // todo remove
-    this._interval = setInterval(this._animateTimer.bind(this), this._delta);
-
-    this._start = false; // todo remove
-    this._animation = requestAnimationFrame(this._animateTimerRAF.bind(this));
-
-    this._old = false; // todo refactor a little
-    this._raf = requestAnimationFrame(this._animateTimerRAF2.bind(this));
+    this._oldTimeStamp = false;
+    this._animation = requestAnimationFrame(this._animateTimer.bind(this));
     // create _node
     let node;
-    if(mode === 'reverse' && type === ANSWERTYPE_PICTURE){
-      node = document.createElement('img');
-      node.alt = 'question';
-      node.src = PREFIX_ANSWER_PICTURE(qtext);
-      node.setAttribute('class', 'question question-picture');
+    if(mode === 'reverse' && type === ANSWERTYPE_PICTURE && (qtext.toLowerCase().endsWith('.png') || qtext.toLowerCase().endsWith('.jpg'))){
+      parent.parentElement.style.backgroundImage = `url('${PREFIX_ANSWER_PICTURE(qtext)}')`;
     } else {
       node = document.createElement('h2');
       node.setAttribute('class', 'text-center question question-text');
@@ -217,9 +137,10 @@ class GameController {
     // clear parent
     parent.innerHTML = '';
     // append _node
-    parent.appendChild(node);
+    if(node) parent.appendChild(node);
     // fade in
     Animate(this._questionBox, 'fadeIn');
+    parent.parentElement.style.opacity = '';
   }
 
   /**
@@ -230,12 +151,7 @@ class GameController {
    */
   _handleUpdateQuestion({ remaining }){
     // update timer
-    if(this._interval) this._clearInterval();
     this._remainingTime = remaining;
-    this._remainingTimeRAF = remaining;
-    this._interval = setInterval(this._animateTimer.bind(this), this._delta);
-
-    //this._remainingTime = remaining; // don't even chenge the animation...
   }
 
   /**
@@ -246,8 +162,6 @@ class GameController {
   _handleRemoveQuestion(){
     // destroy timer
     cancelAnimationFrame(this._animation);
-    cancelAnimationFrame(this._raf);
-    if(this._interval) this._clearInterval();
     // fadeout
     Animate(this._questionBox, 'fadeOut');
     // removing the question after the animation doesn't work, as the animation
@@ -317,18 +231,17 @@ class GameController {
    * @private
    */
   _getAnswerId(questionId, answerId){
-    return questionId.toString() + answerId.toString(); // todo hash & verify
+    return questionId.toString() + answerId.toString();
   }
 
   /**
    * Renders a single answer.
    *
-   * @param mode
    * @param answer
    * @return {HTMLElement}
    * @private
    */
-  _renderAnswer(answer, mode){
+  _renderAnswer(answer){
     if(!answer) return null;
     const { questionId, type, answerId, answer: text } = answer;
     const answerNode = document.createElement('div');
@@ -342,20 +255,16 @@ class GameController {
         katex.render(text, inner, { throwOnError: false });
         break;
       case ANSWERTYPE_PICTURE:
-        if(mode === 'reverse' && !(text.endsWith('.png') || text.endsWith('.jpg'))){
-          inner = document.createElement('p');
-          inner.innerText = text;
-        } else {
-          inner = document.createElement('img');
-          inner.alt = 'answer';
-          inner.src = PREFIX_ANSWER_PICTURE(text);
+        if(text.toLowerCase().endsWith('.png') || text.endsWith('.jpg')){
+          answerNode.style.backgroundImage = `url('${PREFIX_ANSWER_PICTURE(text)}')`;
+          break;
         }
-        break;
+        // fall through if not an image, is more tolerant and handles reverse mode well
       default:
         inner = document.createElement('p');
         inner.innerText = text;
     }
-    answerNode.appendChild(inner);
+    if(inner) answerNode.appendChild(inner);
     return answerNode;
   }
 
@@ -377,11 +286,10 @@ class GameController {
   /**
    * Handles the assignAnswer event.
    *
-   * @param mode
    * @param answers
    * @private
    */
-  _handleAssignAnswers({ mode, answers }){
+  _handleAssignAnswers({ answers }){
     let copy = [...this._shuffleAnswers(answers)];
     let emptyBoxes = [];
     this._answerBoxes.forEach(box => {
@@ -397,7 +305,7 @@ class GameController {
     copy.forEach(a => {
       if(emptyBoxes.length <= 0) throw new Error('Too many Questions assigned');
       let box = emptyBoxes.pop();
-      box.assign(this._renderAnswer(a, mode));
+      box.assign(this._renderAnswer(a));
     })
   }
 
@@ -451,7 +359,7 @@ class GameController {
     // listen for state changes
     document.addEventListener('stateChange', (e) => this._handleStateChange(e.detail));
 
-    document.addEventListener('assignQuestion', (e) => this._handleAssignQuestion(e.detail.game));
+    document.addEventListener('assignQuestion', (e) => this._handleAssignQuestion(e.detail));
     document.addEventListener('updateQuestion', (e) => this._handleUpdateQuestion(e.detail));
     document.addEventListener('removeQuestion', this._handleRemoveQuestion.bind(this));
 

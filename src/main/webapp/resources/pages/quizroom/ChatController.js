@@ -21,7 +21,7 @@ class ChatController {
    * @param unsafeText
    * @returns {string}
    */
-  _escapeHTML = (unsafeText) => {
+  _escapeHTML(unsafeText){
     let div = document.createElement('div');
     div.innerText = unsafeText;
     return div.innerHTML;

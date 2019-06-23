@@ -441,7 +441,6 @@ const handleGameEnd = () => {
   const { state } = getState();
   if(state === LOBBY || state === JOIN){
     disconnect();
-    // TODO show error or something -> game ended early
     Animate('body', 'fadeOut');
     alert('Something happened');
     setTimeout(() => window.location.href = URL_HOME, 500);
@@ -449,7 +448,7 @@ const handleGameEnd = () => {
     const params = new URLSearchParams(window.location.search);
     if(params.has('pin')) window.history.replaceState({}, document.title, '/quizroom/index.html');
     showChatMessage(`Game ended.`);
-    disconnect(); // TODO leave open for chat?
+    disconnect();
     setState({
       state: FINISHED,
     });
@@ -458,6 +457,9 @@ const handleGameEnd = () => {
   }
   const sfxEvent = new CustomEvent('sfxGameEnd');
   document.dispatchEvent(sfxEvent);
+
+  const endEvent = new CustomEvent('endGame'); // for closing chat
+  document.dispatchEvent(endEvent);
   console.debug(`SERVER: game ended`)
 };
 
@@ -582,10 +584,7 @@ const handleAssignQuestion = ({ questionId, type, question, playerId, timeRemain
         }
       }
     });
-    const { game } = getState();
-    const qevent = new CustomEvent('assignQuestion', {detail: {
-      game,
-    }});
+    const qevent = new CustomEvent('assignQuestion', {detail: {...getState()}});
     document.dispatchEvent(qevent);
     const sfxEvent = new CustomEvent(`sfxNewQuestion`);
     document.dispatchEvent(sfxEvent);
@@ -607,9 +606,7 @@ const handleAssignQuestion = ({ questionId, type, question, playerId, timeRemain
       }
     });
     const { game } = getState();
-    const aevent = new CustomEvent('assignAnswer', {detail: {
-      game,
-    }});
+    const aevent = new CustomEvent('assignAnswer', {detail: {...getState()}});
     document.dispatchEvent(aevent);
     console.debug(`SERVER: new answers assigned to this player`);
   }
