@@ -56,7 +56,7 @@ public class AddPlayerBean implements Serializable {
         Player p = new Player();
         p.setAvatarPath(null); // the default avatar is loaded automatically
         p.setCreator(manager);
-		playerService.saveNewPlayer(p, username, passwordBean.encodePassword(password));
+        p = playerService.saveNewPlayer(p, username, passwordBean.encodePassword(password));
         clear();
         allPlayersBean.addPlayer(p);
     }
