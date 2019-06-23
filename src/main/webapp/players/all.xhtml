@@ -86,7 +86,7 @@
                       title="Add Player"
                       update=":form:players :addPlayerForm:addPlayer:inputs :addPlayerForm:addPlayer:footer"
                       bodyId="body" footerId="footer"
-                      disableConfirm="#{!addPlayerBean.validateInput()}"
+                      disableConfirm="#{!addPlayerBean.validateInput(false)}"
                       abortAction="#{addPlayerBean.clear}"
                       closeAction="#{addPlayerBean.clear}"
                       confirmAction="#{addPlayerBean.addUser}"

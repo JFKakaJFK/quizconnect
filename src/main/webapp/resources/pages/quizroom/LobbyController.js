@@ -1,5 +1,5 @@
 "use strict";
-import { LOBBY, INGAME, FINISHED, SHARE_WHATSAPP, SHARE_PIN_MESSAGE, SHARE_TWITTER, SHARE_FACEBOOK } from "./Constants.js";
+import { LOBBY, INGAME, FINISHED, SHARE_WHATSAPP, SHARE_PIN_MESSAGE, SHARE_TWITTER, SHARE_FACEBOOK, SHARE_JOIN_URL } from "./Constants.js";
 import { setSimpleText, clearNode, dangerouslySetHTML } from "./Utils.js";
 import Client from "./Socket.js";
 import Animate from './Animate.js';
@@ -20,7 +20,7 @@ class LobbyController {
       players: '[data-lobby-players]',
       share_wa: '[data-share-whatsapp]',
       share_tw: '[data-share-twitter]',
-      share_fb: '[data-share-fb]',
+      share_fb: '[data-share-facebook]',
       readyNum: '[data-ready-num]',
       playersNum: '[data-players-num]',
     };

@@ -52,7 +52,7 @@
 
 .time-remaining {
     background: var(--game-timer-color);
-    height: calc(var(--default-padding) / 4);
+    height: 4px;
     width: 100%;
 }
 

@@ -52,7 +52,7 @@ public class AddPlayerBean implements Serializable {
     }
 
     public void addUser(){
-        if(!validateInput()){ return; }
+        if(!validateInput(true)){ return; }
         Player p = new Player();
         p.setAvatarPath(null); // the default avatar is loaded automatically
         p.setCreator(manager);
@@ -63,27 +63,36 @@ public class AddPlayerBean implements Serializable {
         messageBean.updateComponent("messages");
     }
 
-    public boolean validateInput(){
+    public boolean validateInput(boolean showMessages){
         if(username == null || userService.loadUser(username) != null){
-            messageBean.alertError("Error", "Username is already taken.");
-            messageBean.updateComponent("messages");
+            if(showMessages){
+                messageBean.alertError("Error", "Username is already taken.");
+                messageBean.updateComponent("messages");
+            }
             return false;
         }
 
         if(username.length() < 3){
-            messageBean.alertError("Error", "Username is too short (MIN. 3 Letters).");
-            messageBean.updateComponent("messages");
+            if(showMessages){
+                messageBean.alertError("Error", "Username is too short (MIN. 3 Letters).");
+                messageBean.updateComponent("messages");
+            }
             return false;
         }
 
         if(!validationBean.isValidText(username, 100)){
-            messageBean.alertError("Error", "Username invalid.");
-            messageBean.updateComponent("messages");
+            if(showMessages){
+                messageBean.alertError("Error", "Username invalid.");
+                messageBean.updateComponent("messages");
+            }
+            return false;
         }
 
         if(password == null || !validationBean.isValidPassword(password, repeatPassword)){
-            messageBean.alertError("Error", "Password invalid.");
-            messageBean.updateComponent("messages");
+            if(showMessages){
+                messageBean.alertError("Error", "Password invalid.");
+                messageBean.updateComponent("messages");
+            }
             return false;
         }
         return true;

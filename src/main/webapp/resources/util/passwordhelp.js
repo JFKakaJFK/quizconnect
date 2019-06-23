@@ -16,6 +16,7 @@ function _pwhelp(inputSelector, meterSelector, strengthSelector, modalSelector){
   };
 
   const modal = document.querySelector(modalSelector);
+  if(!modal) return;
   const elem = modal.querySelector(inputSelector);
   const text = modal.querySelector(strengthSelector);
   if(!elem || !text) throw new Error('Selector(s) invalid');

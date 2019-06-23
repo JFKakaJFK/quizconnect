@@ -49,7 +49,7 @@
     --selection-background: var(--col-4-l);  /* todo theme */
 
     --background-primary: #16212f;  /* todo theme */
-    --background-secondary: var(--gray-1); /*#232d41; /*var(--col-1-d); /* var(--col-1-m); */  /* todo theme */
+    --background-secondary: #1E2E39; /*#232d41; /*var(--col-1-d); /* var(--col-1-m); */  /* todo theme */
 
     --navbar-background: var(--background-secondary);
     --navbar-height: 64px;
