@@ -26,6 +26,9 @@ class GameController {
     this._animation = null;
     this._oldTimeStamp = false;
     this._remainingTime = 0;
+
+    this._DELAY = 800; // animation delay in ms
+    this._removing = false;
   }
 
   /**
@@ -134,13 +137,17 @@ class GameController {
         setLayoutText(node, qtext);
       }
     }
-    // clear parent
-    parent.innerHTML = '';
-    // append _node
-    if(node) parent.appendChild(node);
-    // fade in
-    Animate(this._questionBox, 'fadeIn');
-    parent.parentElement.style.opacity = '';
+
+    // if fading out, wait a little
+    setTimeout(() => {
+      // clear parent
+      parent.innerHTML = '';
+      // append _node
+      if(node) parent.appendChild(node);
+      // fade in
+      Animate(this._questionBox, 'fadeIn');
+      parent.parentElement.style.opacity = '';
+    }, this._removing ? this._DELAY : 0);
   }
 
   /**
@@ -160,10 +167,11 @@ class GameController {
    * @private
    */
   _handleRemoveQuestion(){
+    this._removing = true;
     // destroy timer
     cancelAnimationFrame(this._animation);
     // fadeout
-    Animate(this._questionBox, 'fadeOut');
+    Animate(this._questionBox, 'fadeOut', () => this._removing = false);
     // removing the question after the animation doesn't work, as the animation
     // is finished after the new question is appended to the layout...
   }

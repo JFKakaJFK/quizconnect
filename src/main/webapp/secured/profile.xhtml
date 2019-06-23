@@ -1,6 +1,3 @@
-<?xml version='1.0' encoding='UTF-8' ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:h="http://java.sun.com/jsf/html"
@@ -16,13 +13,6 @@
 
     <ui:define name="site-specific-css">
         <link rel="stylesheet" type="text/css" href="profile.css"/>
-    </ui:define>
-
-    <ui:define name="site-specific-javascript">
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"/>
-        <script type="text/javascript" src="../resources/util/validatePassword.js"/>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.4.2/zxcvbn.js"/>
-        <script type="text/javascript" src="../resources/util/passwordhelp.js"/>
     </ui:define>
 
     <ui:define name="content">
@@ -60,7 +50,7 @@
                       update=":passwordForm:editPassword:inputs :passwordForm:editPassword:footer">
                 <h:panelGroup layout="block" styleClass="form-group required" id="inputs">
                     <label for="new_password">New password</label>
-                    <h:inputSecret p:placeholder="New password" name="new_password" id="new_password" p:id="new_password" value="#{editManagerBean.password}" p:autocomplete="new-password" styleClass="form-control">
+                    <h:inputSecret p:data-js-new-password="" p:placeholder="New password" name="new_password" id="new_password" p:id="new_password" value="#{editManagerBean.password}" p:autocomplete="new-password" styleClass="form-control">
                         <f:ajax event="keyup" execute="@this" render="footer"/><!-- TODO updating the bean value does not seem to work properly on input-->
                     </h:inputSecret>
 
@@ -70,10 +60,9 @@
                     </h:inputSecret>
                 </h:panelGroup>
 
-                <meter max="4" class="meter" id="password-strength-meter"></meter>
+                <meter data-js-meter="" max="4" class="meter" ></meter>
 
-                <h:panelGroup layout="block" styleClass="box" p:id="password-strength-text" id="password-strength-text"/>
-
+                <h:panelGroup layout="block" styleClass="box" p:data-js-strength=""/>
             </qc:modal>
         </h:form>
 
@@ -92,5 +81,15 @@
                 </h:inputText>
             </qc:modal>
         </h:form>
+    </ui:define>
+
+    <ui:define name="site-specific-javascript">
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"/>
+        <script type="text/javascript" src="../resources/util/validatePassword.js"/>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.4.2/zxcvbn.js"/>
+        <script type="text/javascript" src="../resources/util/passwordhelp.js"/>
+        <script type="text/javascript">
+          pwhelp('#editPassword');
+        </script>
     </ui:define>
 </ui:composition>

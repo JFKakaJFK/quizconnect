@@ -16,8 +16,6 @@
 
     <ui:define name ="content">
 
-        <!-- // TODO fix update after game (redirect to login redirect) -> use get param if player home !! -->
-
         <h:form id="form">
 
             <!-- error handling if player is null -->
@@ -158,7 +156,7 @@
 
                         <h:panelGroup layout="block" styleClass="form-group required" id="inputs">
                             <label for="new_password">New password</label>
-                            <h:inputSecret p:placeholder="New password" name="new_password" id="new_password" p:id="new_password" value="#{playerDetailController.password}" p:autocomplete="new-password" styleClass="form-control">
+                            <h:inputSecret p:data-js-new-password="" p:placeholder="New password" name="new_password" id="new_password" p:id="new_password" value="#{playerDetailController.password}" p:autocomplete="new-password" styleClass="form-control">
                                 <f:ajax event="keyup" execute="@this" render="footer"/>
                             </h:inputSecret>
 
@@ -168,9 +166,9 @@
                             </h:inputSecret>
                         </h:panelGroup>
 
-                        <meter max="4" class="meter" id="password-strength-meter"></meter>
+                        <meter data-js-meter="" max="4" class="meter" id="password-strength-meter"></meter>
 
-                        <h:panelGroup layout="block" styleClass="box" p:id="password-strength-text" id="password-strength-text"/>
+                        <h:panelGroup layout="block" styleClass="box" p:data-js-strength=""/>
                     </qc:modal>
                 </h:form>
 
@@ -208,6 +206,9 @@
             <script type="text/javascript" src="validatePassword.js"/>
             <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.4.2/zxcvbn.js"/>
             <script type="text/javascript" src="../resources/util/passwordhelp.js"/>
+            <script type="text/javascript">
+              pwhelp('#editPlayer');
+            </script>
         </ui:fragment>
     </ui:define>
 </ui:composition>

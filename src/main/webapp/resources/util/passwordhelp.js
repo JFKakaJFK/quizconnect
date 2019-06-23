@@ -1,52 +1,58 @@
-window.onload=function() {
-  const strength = {
-      0: "Worst",
-      1: "Bad",
-      2: "Weak",
-      3: "Good",
-      4: "Strong"
+/**
+ * Helper function for indicating password strength.
+ *
+ * @param inputSelector
+ * @param meterSelector
+ * @param strengthSelector
+ * @param modalSelector
+ */
+function _pwhelp(inputSelector, meterSelector, strengthSelector, modalSelector){
+  const STRENGTH = {
+    0: "Worst",
+    1: "Bad",
+    2: "Weak",
+    3: "Good",
+    4: "Strong"
   };
 
+  const modal = document.querySelector(modalSelector);
+  const elem = modal.querySelector(inputSelector);
+  const text = modal.querySelector(strengthSelector);
+  if(!elem || !text) throw new Error('Selector(s) invalid');
 
-  const password = document.querySelector('[type=password]'); //selects the first input-field of type password
-  const password_two = document.getElementById('new_password_edit');
+  text.innerText = "Please start entering a password to show some hints regarding the strength of it";
 
-  alert("ONE:" + password.getAttribute("id"));
-    alert("TWO:" + password_two.getAttribute("id"));
-  const meter = document.getElementById('password-strength-meter');
-  const text = document.getElementById('password-strength-text');
-  const meter_two = document.getElementById('password-strength-meter_two');
-  const text_two = document.getElementById('password-strength-text_two');
+  elem.addEventListener('input', function (e) {
+    const modal = document.querySelector(modalSelector);
+    const inputElement = modal.querySelector(inputSelector);
+    const meterElement = modal.querySelector(meterSelector);
+    const strengthElement = modal.querySelector(strengthSelector);
+    if(!inputElement || !meterElement || !strengthElement) throw new Error('Selector(s) invalid');
 
-  text.innerHTML = "Please start entering a password to show some hints regarding the strength of it";
-  text_two.innerHTML = "Please start entering a password to show some hints regarding the strength of it";
-
-
-  password.addEventListener('input', function () {
-      alert("One");
-    let val = password.value;
-    let result = zxcvbn(val);
+    let value = e.target.value;
+    let result = zxcvbn(value);
     // Update the meter
-    meter.value = result.score;
+    meterElement.value = result.score;
     // Update the text indicator
-    if (val !== "") {
-        text.innerHTML = "Strength: " + "<strong>" + strength[result.score] + "</strong>" + "<br/>" + (result.feedback.warning ? result.feedback.warning + "<br/>" : '') + (result.feedback.suggestions ? result.feedback.suggestions : '') + "</span>";
+    if (value !== "") {
+      strengthElement.innerHTML = `<span>Strength: <strong>${STRENGTH[result.score]}</strong><br/>${result.feedback.warning ? result.feedback.warning + '<br/>' : ''}${result.feedback.suggestions ? result.feedback.suggestions : ''}</span>`;
     } else {
-        text.innerHTML = "";
+      strengthElement.innerText = '';
     }
   });
+}
 
-    password_two.addEventListener('input', function () {
-        alert("Two");
-        let val= password_two.value;
-        let result = zxcvbn(val);
-        // Update the meter
-        meter_two.value = result.score;
-        // Update the text indicator
-        if (val !== "") {
-            text_two.innerHTML = "Strength: " + "<strong>" + strength[result.score] + "</strong>" + "<br/>" + (result.feedback.warning ? result.feedback.warning + "<br/>" : '') + (result.feedback.suggestions ? result.feedback.suggestions : '') + "</span>";
-        } else {
-            text_two.innerHTML = "";
-        }
-    });
-};
+/**
+ * Helper function for indicating password strength.
+ *
+ * @param inputSelector
+ * @param meterSelector
+ * @param strengthSelector
+ * @param modalSelector
+ */
+function pwhelp(modalSelector, inputSelector = '[data-js-new-password]', meterSelector = '[data-js-meter]', strengthSelector = '[data-js-strength]') {
+  _pwhelp(inputSelector, meterSelector, strengthSelector, modalSelector);
+  $(modalSelector).on('shown.bs.modal', function () {
+    _pwhelp(inputSelector, meterSelector, strengthSelector, modalSelector);
+  });
+}

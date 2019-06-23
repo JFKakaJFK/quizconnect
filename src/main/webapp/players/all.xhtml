@@ -102,7 +102,7 @@
                     </h:inputText>
 
                     <label for="new_password" class="mt-3">Password</label>
-                    <h:inputSecret p:placeholder="Password" name="new_password" id="new_password" p:id="new_password" value="#{addPlayerBean.password}" p:autocomplete="new-password" styleClass="form-control">
+                    <h:inputSecret p:data-js-new-password="" p:placeholder="Password" name="new_password" id="new_password" p:id="new_password" value="#{addPlayerBean.password}" p:autocomplete="new-password" styleClass="form-control">
                         <f:ajax event="keyup" execute="@this" render="footer"/><!-- TODO updating the bean value does not seem to work properly on input-->
                     </h:inputSecret>
 
@@ -112,9 +112,9 @@
                     </h:inputSecret>
                 </h:panelGroup>
 
-                <meter max="4" class="meter" id="password-strength-meter"></meter>
+                <meter data-js-meter="" max="4" class="meter"></meter>
 
-                <h:panelGroup layout="block" styleClass="box" p:id="password-strength-text" id="password-strength-text"/>
+                <h:panelGroup layout="block" styleClass="box" p:data-js-strength=""/>
             </qc:modal>
         </h:form>
 
@@ -131,7 +131,7 @@
 
                 <h:panelGroup layout="block" styleClass="form-group required" id="inputs_edit">
                     <label for="new_password_edit">New password</label>
-                    <h:inputSecret p:placeholder="New password" name="new_password_edit" id="new_password_edit" p:id="new_password_edit" value="#{playerDetailController.password}" p:autocomplete="new-password" styleClass="form-control">
+                    <h:inputSecret p:data-js-new-password="" p:placeholder="New password" name="new_password_edit" id="new_password_edit" p:id="new_password_edit" value="#{playerDetailController.password}" p:autocomplete="new-password" styleClass="form-control">
                         <f:ajax event="keyup" execute="@this" render="footer"/><!-- TODO updating the bean value does not seem to work properly on input-->
                     </h:inputSecret>
 
@@ -141,9 +141,9 @@
                     </h:inputSecret>
                 </h:panelGroup>
 
-                <meter max="4" class="meter" id="password-strength-meter_two"></meter>
+                <meter data-js-meter="" max="4" class="meter"></meter>
 
-                <h:panelGroup layout="block" styleClass="box" p:id="password-strength-text_two" id="password-strength-text_two"/>
+                <h:panelGroup layout="block" styleClass="box" p:data-js-strength=""/>
             </qc:modal>
         </h:form>
 
@@ -173,5 +173,9 @@
         <script type="text/javascript" src="validatePassword_all.js"/>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.4.2/zxcvbn.js"/>
         <script type="text/javascript" src="../resources/util/passwordhelp.js"/>
+        <script type="text/javascript">
+          pwhelp('#addPlayer');
+          pwhelp('#editPlayer');
+        </script>
     </ui:define>
 </ui:composition>

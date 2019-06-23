@@ -31,50 +31,51 @@
     --accent-2: #FB5BFF;
     --accent-3: #FB78FF;
 
-    --grad-d: linear-gradient(35deg, rgba(23,162,173,1) 0%, rgba(9,189,90,1) 100%);
-    --grad-m: linear-gradient(35deg, rgb(25, 184, 196) 0%, rgb(10, 212, 100) 100%);
-    --grad-l: linear-gradient(35deg, rgb(83, 202, 212) 0%, rgb(93, 229, 154) 100%);
+    --grad-d: linear-gradient(35deg, rgba(23,162,173,1) 0%, rgba(9,189,90,1) 100%);   /* todo theme */
+    --grad-m: linear-gradient(35deg, rgb(25, 184, 196) 0%, rgb(10, 212, 100) 100%);   /* todo theme */
+    --grad-l: linear-gradient(35deg, rgb(83, 202, 212) 0%, rgb(93, 229, 154) 100%);   /* todo theme */
 
 
     /* TYPOGRAPHY */
     --default-font: 'Lato', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     --default-font-weight: 300;
-    --default-font-color: var(--gray-5);
-    --default-disabled-color: var(--gray-3);
-    --default-active-color: var(--col-2-l);
+
+    --default-font-color: var(--gray-5);  /* todo theme */
+    --default-disabled-color: var(--gray-3);  /* todo theme */
+    --default-active-color: var(--col-2-l);  /* todo theme */
 
 
     /* THEME COLORS */
-    --selection-background: var(--col-4-l);
+    --selection-background: var(--col-4-l);  /* todo theme */
 
-    --background-primary: var(--col-1-d);
-    --background-secondary: #16212f; /* var(--col-1-m); */
+    --background-primary: #16212f;  /* todo theme */
+    --background-secondary: var(--gray-1); /*#232d41; /*var(--col-1-d); /* var(--col-1-m); */  /* todo theme */
 
-    --navbar-background: #16212f;
+    --navbar-background: var(--background-secondary);
     --navbar-height: 64px;
 
-    --sidebar-overlay: hsl(217, 100%, 5%);
-    --sidebar-background: hsl(214, 36%, 14%);
-    --sidebar-background-gradient: linear-gradient(145deg, hsl(214, 36%, 14%) 25%, hsl(216, 22%, 22%) 100%);
+    --sidebar-overlay: hsl(217, 100%, 5%);   /* todo theme */
+    --sidebar-background: hsl(214, 36%, 14%);   /* todo theme */
+    --sidebar-background-gradient: linear-gradient(145deg, hsl(214, 36%, 14%) 25%, hsl(216, 22%, 22%) 100%);   /* todo theme */
 
-    --box-border-color: var(--col-2-d);
+    --box-border-color: var(--col-2-d);   /* todo theme */
 
     --collection-box-icon-size-small: 1.6rem;
     --collection-box-icon-size: 3rem;
 
     --playerbox-avatar-size-detail: 8rem;
-    --playerbox-avatar-background: transparent;
+    --playerbox-avatar-background: transparent;   /* todo theme */
 
     --questionsetbox-icon-size-small: 1.5rem;
     --questionsetbox-icon-size-detail: 2rem;
-    --questionsetbox-icon-background: transparent;
+    --questionsetbox-icon-background: transparent;   /* todo theme */
 
-    --fab-btn-background: #16212f;
+    --fab-btn-background: var(--background-secondary);
     --fab-btn-color: var(--default-font-color);
 
-    --game-timer-color: var(--col-3-d);
+    --game-timer-color: var(--col-3-d);   /* todo theme */
 
-    --chat-background: var(--col-1-m);
+    --chat-background: var(--col-1-m);   /* todo theme */
     --chat-message-color: var(--gray-5);
     --chat-message-background: var(--gray-1);
 
@@ -83,8 +84,6 @@
 
     --chat-message-info-color: var(--info);
     --chat-message-info-background: var(--gray-1);
-
-    --chart-area-stroke: var(--col-3-m);
 
     --input-background: var(--col-1-m);
     --input-focus-background: var(--col-1-d);
@@ -97,9 +96,9 @@
     --range-background-color: var(--input-background);
 
     /* DEFAULT LAYOUT VARIABLES */
-    --default-padding: 1rem;
+    --default-padding: 2rem;
 
-    /* ACTION TYPES */ /* todo are error and danger swapped? */
+    /* ACTION TYPES */ /* are error and danger swapped? */
     --danger: #FB78FF;
     --danger-gradient: linear-gradient(35deg, #DD439C 0%, #973FDC 100%);
     --alert: #53CAD4;
@@ -109,7 +108,4 @@
     --warning: #FFBF73;
     --error: #E55D5D;
     --error-gradient: linear-gradient(35deg, #F86D70 0%, #F86DB8 100%);
-
-
-    --lighter-red: #ed5e68;
 }

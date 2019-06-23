@@ -76,9 +76,9 @@ meter {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-    margin: 1em auto;
+    margin: var(--default-padding) auto;
     width: 100%;
-    height: 1em;
+    height: 1rem;
     /* Applicable only to Firefox */
     background: none;
     background: linear-gradient(90deg, rgba(229,93,93,0.15) 25%, rgba(255,191,115,0.15) 50%, rgba(93,229,154,0.15) 75%, rgba(9,189,90,0.15) 100%);
@@ -89,6 +89,7 @@ meter::-webkit-meter-bar {
     background: none;
     background: linear-gradient(90deg, rgba(229,93,93,0.15) 25%, rgba(255,191,115,0.15) 50%, rgba(93,229,154,0.15) 75%, rgba(9,189,90,0.15) 100%);
 }
+
 meter[value="1"]::-webkit-meter-optimum-value { background: var(--error); box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; border-right: 2px solid #FFFFFF;}
 meter[value="2"]::-webkit-meter-optimum-value { background: var(--warning); box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; border-right: 2px solid #FFFFFF;}
 meter[value="3"]::-webkit-meter-optimum-value { background: var(--col-5-l); box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; border-right: 2px solid #FFFFFF;}
