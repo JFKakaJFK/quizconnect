@@ -88,6 +88,8 @@ public class ChangeAvatarBean implements Serializable {
         }
         filename = null;
         profileBean.setPlayer(player);
+        messageBean.alertInformation("Success", "Avatar changed successfully.");
+        messageBean.updateComponent("messages");
     }
 
     //TODO: JavaDoc for abort

@@ -20,12 +20,12 @@ public class AddPlayerBean implements Serializable {
     private AllPlayersBean allPlayersBean;
     private PasswordBean passwordBean;
     private ValidationBean validationBean;
+    private MessageBean messageBean;
     private Manager manager;
 
     private String username = "";
     private String password = "";
     private String repeatPassword = "";
-
 
     @Autowired
     public AddPlayerBean(PlayerService playerService,
@@ -33,41 +33,57 @@ public class AddPlayerBean implements Serializable {
                          UserService userService,
                          AllPlayersBean allPlayersBean,
                          PasswordBean passwordBean,
-                         ValidationBean validationBean){
+                         ValidationBean validationBean,
+                         MessageBean messageBean){
         assert sessionInfoBean.getCurrentUser().getManager() != null;
         assert userService != null;
         assert playerService != null;
         assert allPlayersBean != null;
         assert passwordBean != null;
         assert validationBean != null;
+        assert messageBean != null;
         this.manager = sessionInfoBean.getCurrentUser().getManager();
         this.userService = userService;
         this.playerService = playerService;
         this.allPlayersBean = allPlayersBean;
         this.passwordBean = passwordBean;
         this.validationBean = validationBean;
+        this.messageBean = messageBean;
     }
 
     public void addUser(){
-        if(!validateInput()){
-            System.out.println("HAHAHA INVALID INPUT");
-            return;
-        }
+        if(!validateInput()){ return; }
         Player p = new Player();
         p.setAvatarPath(null); // the default avatar is loaded automatically
         p.setCreator(manager);
         p = playerService.saveNewPlayer(p, username, passwordBean.encodePassword(password));
         clear();
         allPlayersBean.addPlayer(p);
+        messageBean.alertInformation("Success", "Successfully created new player.");
+        messageBean.updateComponent("messages");
     }
 
     public boolean validateInput(){
-        if(username == null || userService.loadUser(username) != null || username.length() < 3 || !validationBean.isValidText(username, 100)){
-            // TODO message username already taken
+        if(username == null || userService.loadUser(username) != null){
+            messageBean.alertError("Error", "Username is already taken.");
+            messageBean.updateComponent("messages");
             return false;
         }
 
+        if(username.length() < 3){
+            messageBean.alertError("Error", "Username is too short (MIN. 3 Letters).");
+            messageBean.updateComponent("messages");
+            return false;
+        }
+
+        if(!validationBean.isValidText(username, 100)){
+            messageBean.alertError("Error", "Username invalid.");
+            messageBean.updateComponent("messages");
+        }
+
         if(password == null || !validationBean.isValidPassword(password, repeatPassword)){
+            messageBean.alertError("Error", "Password invalid.");
+            messageBean.updateComponent("messages");
             return false;
         }
         return true;
