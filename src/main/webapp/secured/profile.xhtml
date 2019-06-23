@@ -26,21 +26,21 @@
 
     <ui:define name="content">
         <h:form id="passwordChange">
-            <h:commandButton styleClass="btn btn-primary" p:data-toggle="modal" p:data-target="#editManager" value="Change password">
-                <f:ajax execute="@this" render=":passwordForm:editManager:footer :passwordForm:editManager-body"/>
-            </h:commandButton>
+            <h:commandLink styleClass="btn btn-primary" p:data-toggle="modal" p:data-target="#editPassword" value="Change password">
+                <f:ajax execute="@this" render=":passwordForm:editPassword:footer :passwordForm:editPassword:inputs" />
+            </h:commandLink>
 
-            <h:commandButton styleClass="btn btn-primary" p:data-toggle="modal" p:data-target="#editEmail" value="Change email">
+            <h:commandLink styleClass="btn btn-primary" p:data-toggle="modal" p:data-target="#editEmail" value="Change email">
                 <f:ajax execute="@this" render=":emailForm:editEmail:footer :emailForm:editEmail:email"/>
                 <f:setPropertyActionListener value="#{sessionInfoBean.currentUser.manager.email}" target="#{editManagerBean.email}"/>
-            </h:commandButton>
+            </h:commandLink>
         </h:form>
     </ui:define>
 
     <ui:define name="modals">
         <h:form id="passwordForm">
-            <qc:modal id="editManager"
-                      target="editManager"
+            <qc:modal id="editPassword"
+                      target="editPassword"
                       title="Edit Password"
                       confirm="Edit Password"
                       abort="Cancel"
@@ -48,7 +48,7 @@
                       confirmAction="#{editManagerBean.changePassword}"
                       abortButton="btn btn-secondary"
                       disableConfirm="#{!validationBean.isValidPassword(editManagerBean.password, editManagerBean.repeatPassword)}"
-                      update="@this">
+                      update=":passwordForm:editPassword:inputs :passwordForm:editPassword:footer">
                 <h:panelGroup layout="block" styleClass="form-group required" id="inputs">
                     <label for="new_password">New password</label>
                     <h:inputSecret p:placeholder="New password" name="new_password" id="new_password" p:id="new_password" value="#{editManagerBean.password}" p:autocomplete="new-password" styleClass="form-control">
@@ -63,7 +63,7 @@
 
                 <meter max="4" class="meter" id="password-strength-meter"></meter>
 
-                    <h:panelGroup layout="block" styleClass="box" p:id="password-strength-text" id="password-strength-text"/>
+                <h:panelGroup layout="block" styleClass="box" p:id="password-strength-text" id="password-strength-text"/>
 
             </qc:modal>
         </h:form>

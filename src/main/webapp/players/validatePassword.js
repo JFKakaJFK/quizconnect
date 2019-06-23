@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    $("#passwordForm").validate({
+    $("#editForm").validate({
         onkeyup: function(element) {$(element).valid()},
         errorPlacement: function(error, element) {
             // Append error within linked label
@@ -10,24 +10,24 @@ $(document).ready(function () {
         },
         errorElement: "span",
         rules: {
-            "passwordForm:editPassword:new_password": {
+            "editForm:editPlayer:new_password": {
                 required: true,
                 minlength: 5
             },
 
-            "passwordForm:editPassword:repeat_new_password": {
+            "editForm:editPlayer:repeat_new_password": {
                 required: true,
                 equalTo: "#new_password"
             }
 
         },
         messages: {
-            "passwordForm:editPassword:new_password": {
+            "editForm:editPlayer:new_password": {
                 required: " (Please provide a password)",
                 minlength: " (Min. {0} characters necessary)"
             },
 
-            "passwordForm:editPassword:repeat_new_password": {
+            "editForm:editPlayer:repeat_new_password": {
                 required: " (Repeat your password)",
                 equalTo: " (Your passwords do not match)"
             }

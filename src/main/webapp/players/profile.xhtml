@@ -38,20 +38,20 @@
                                            styleClass="box-action icon" p:data-toggle="modal" p:data-target="#changeAvatar"
                                            p:data-backdrop="static">
                                 <i data-feather="image"></i>
-                                <f:ajax execute="@this" render=":modals:changeAvatar:body :modals:changeAvatar:footer" />
+                                <f:ajax execute="@this" render=":changeAvatarForm:changeAvatar:body :changeAvatarForm:changeAvatar:footer" />
+                            </h:commandLink>
+
+                            <h:commandLink styleClass="box-action icon" p:data-toggle="modal" p:data-target="#editPlayer"
+                                           rendered="#{allPlayersBean.isEditable(profileBean.player)}">
+                                <i data-feather="edit-3"></i>
+                                <f:ajax execute="@this" render=":editForm:editPlayer:footer :editForm:editPlayer:inputs"/>
+                                <f:setPropertyActionListener value="#{profileBean.player}" target="#{playerDetailController.player}"/>
                             </h:commandLink>
 
                             <h:commandLink styleClass="box-action icon" p:data-toggle="modal" p:data-target="#deletePlayer"
                                            rendered="#{allPlayersBean.isDeletable(profileBean.player)}">
                                 <i data-feather="trash"></i>
                                 <f:ajax execute="@this" render="@none"/>
-                                <f:setPropertyActionListener value="#{profileBean.player}" target="#{playerDetailController.player}"/>
-                            </h:commandLink>
-
-                            <h:commandLink styleClass="box-action icon" p:data-toggle="modal" p:data-target="#editPlayer"
-                                           rendered="#{allPlayersBean.isEditable(profileBean.player)}">
-                                <i data-feather="edit-3"></i>
-                                <f:ajax execute="@this" render=":modals:editPlayer:footer :modals:editPlayer:body"/>
                                 <f:setPropertyActionListener value="#{profileBean.player}" target="#{playerDetailController.player}"/>
                             </h:commandLink>
                         </div>
@@ -127,46 +127,62 @@
     </ui:define>
 
     <ui:define name="modals">
-        <h:form id="modals" enctype="multipart/formdata">
             <ui:fragment rendered="#{profileBean.player != null}">
                 <!-- MODAL ACTIONS -->
 
-                <qc:modal id="deletePlayer"
-                          target="deletePlayer"
-                          title="Delete Player"
-                          confirm="Delete Player"
-                          confirmButton="btn btn-danger"
-                          abortButton="btn btn-secondary"
-                          abort="Cancel"
-                          confirmAction="#{playerDetailController.deletePlayer}"
-                          update="@this">
-                    Are you sure? This cannot be undone.
-                </qc:modal>
+                <h:form id="deleteForm">
+                    <qc:modal id="deletePlayer"
+                              target="deletePlayer"
+                              title="Delete Player"
+                              confirm="Delete Player"
+                              confirmButton="btn btn-danger"
+                              abortButton="btn btn-secondary"
+                              abort="Cancel"
+                              confirmAction="#{playerDetailController.deletePlayer}"
+                              update="@this">
+                        Are you sure? This cannot be undone.
+                    </qc:modal>
+                </h:form>
 
-                <qc:modal id="editPlayer"
-                          target="editPlayer"
-                          title="Edit Password"
-                          confirm="Edit Password"
-                          abort="Cancel"
-                          bodyId="body" footerId="footer"
-                          confirmAction="#{playerDetailController.changePassword}"
-                          disableConfirm="#{!playerDetailController.passwordValid}"
-                          update="@this :modals:editPlayer:footer :modals:editPlayer:body">
-                    <h:inputSecret p:placeholder="New password" value="#{playerDetailController.password}" p:autocomplete="new-password" styleClass="form-control">
-                        <f:ajax event="keyup" execute="@this" render=":modals:editPlayer:footer"/>
-                    </h:inputSecret>
-                    <h:inputSecret p:placeholder="Repeat new password" value="#{playerDetailController.repeatPassword}" p:autocomplete="new-password" styleClass="form-control">
-                        <f:ajax event="keyup" execute="@this" render=":modals:editPlayer:footer"/>
-                    </h:inputSecret>
-                </qc:modal>
+                <h:form id="editForm">
+                    <qc:modal id="editPlayer"
+                              target="editPlayer"
+                              title="Edit Password"
+                              confirm="Edit Password"
+                              abort="Cancel"
+                              bodyId="body" footerId="footer"
+                              confirmAction="#{playerDetailController.changePassword}"
+                              disableConfirm="#{!validationBean.isValidPassword(playerDetailController.password, playerDetailController.repeatPassword)}"
+                              update="@this :editForm:editPlayer:inputs">
 
+
+                        <h:panelGroup layout="block" styleClass="form-group required" id="inputs">
+                            <label for="new_password">New password</label>
+                            <h:inputSecret p:placeholder="New password" name="new_password" id="new_password" p:id="new_password" value="#{playerDetailController.password}" p:autocomplete="new-password" styleClass="form-control">
+                                <f:ajax event="keyup" execute="@this" render="footer"/>
+                            </h:inputSecret>
+
+                            <label for="repeat_new_password" class="mt-3">Repeat new password</label>
+                            <h:inputSecret p:placeholder="Repeat new password" name="repeat_new_password" id="repeat_new_password" p:id="repeat_new_password" value="#{playerDetailController.repeatPassword}" p:autocomplete="new-password" styleClass="form-control">
+                                <f:ajax event="keyup" execute="@this" render="footer"/>
+                            </h:inputSecret>
+                        </h:panelGroup>
+
+                        <meter max="4" class="meter" id="password-strength-meter"></meter>
+
+                        <h:panelGroup layout="block" styleClass="box" p:id="password-strength-text" id="password-strength-text"/>
+                    </qc:modal>
+                </h:form>
+
+
+                <h:form id="changeAvatarForm" enctype="multipart/formdata">
                 <qc:modal id="changeAvatar"
                           target="changeAvatar"
                           title="Change Avatar"
                           closeAction="#{changeAvatarBean.abort}"
                           abortAction="#{changeAvatarBean.abort}"
                           confirmAction="#{changeAvatarBean.saveAvatar}"
-                          update="@this :form:avatar :modals:changeAvatar:body :modals:changeAvatar:footer"
+                          update="@this :form:avatar :changeAvatarForm:changeAvatar:body :changeAvatarForm:changeAvatar:footer"
                           bodyId="body"
                           footerId="footer"
                           rendered="#{profileBean.player.user.equals(sessionInfoBean.currentUser)}"
@@ -177,18 +193,21 @@
 
                     <qc:upload target="#{changeAvatarBean.file}"
                                listener="#{changeAvatarBean.handleFileUpload}"
-                               accept="image/*" update=":modals:changeAvatar:body :modals:changeAvatar:footer"
+                               accept="image/*" update=":changeAvatarForm:changeAvatar:body :changeAvatarForm:changeAvatar:footer"
                                text="Upload Avatar" />
                 </qc:modal>
+                </h:form>
             </ui:fragment>
-
-        </h:form>
     </ui:define>
 
     <ui:define name="site-specific-javascript">
         <ui:fragment rendered="#{statUtil.getGamesPlayed(profileBean.player) != 0}">
             <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
             <script type="text/javascript" src="/resources/pages/profile/stats.js"></script>
+            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"/>
+            <script type="text/javascript" src="validatePassword.js"/>
+            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.4.2/zxcvbn.js"/>
+            <script type="text/javascript" src="../resources/util/passwordhelp.js"/>
         </ui:fragment>
     </ui:define>
 </ui:composition>
