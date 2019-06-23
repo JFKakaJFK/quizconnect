@@ -51,7 +51,7 @@ class ChatController {
     escapedMessage = escapedMessage.replace(/[\*\_]{2}([^\*\_]+)[\*\_]{2}/g, '<b>$1</b>');
     escapedMessage = escapedMessage.replace(/[\*\_]{1}([^\*\_]+)[\*\_]{1}/g, '<i>$1</i>');
     escapedMessage = escapedMessage.replace(/[\~]{2}([^\~]+)[\~]{2}/g, '<del>$1</del>');
-    escapedMessage = escapedMessage.replace(/[\[]{1}([^\]]+)[\]]{1}[\(]{1}([^\)\"]+)(\"(.+)\")?[\)]{1}/g, '<a href="$2" title="$4">$1</a>');
+    escapedMessage = escapedMessage.replace(/[\[]{1}([^\]]+)[\]]{1}[\(]{1}([^\)\"]+)(\"(.+)\")?[\)]{1}/g, '<a href="https://$2" title="$4">$1</a>');
 
     msg.innerHTML = `<p class="chat-message-content">${escapedMessage}</p><p class="chat-meta">${from === INFO_MSG ? '' : `<span class="chat-from">${this._escapeHTML(from)}</span> `}
     <span class="chat-timestamp">${ts.getHours().toString().padStart(2, '0')}:${ts.getMinutes().toString().padStart(2, '0')}:${ts.getSeconds().toString().padStart(2, '0')}</span></p>`;

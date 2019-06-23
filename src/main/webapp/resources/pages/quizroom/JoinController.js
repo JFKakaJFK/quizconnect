@@ -93,7 +93,7 @@ class JoinController{
         errors.classList.add('error');
         errors.innerText = data.error;
         Animate(this._messages, 'shake');
-      } else if(data.playerId && data.highScore){ // on success store pin + success
+      } else if(data.hasOwnProperty('playerId') && data.hasOwnProperty('highScore')){ // on success store pin + success
         // delay + animation
         Animate(this._root, 'fadeOut');
         errors.classList.remove('error');
@@ -163,6 +163,7 @@ class JoinController{
     elem.addEventListener('input', this._handleInput.bind(this));
     if(pin !== null){
       elem.value = pin.toString().padStart(6, '0');
+      console.debug('JOIN_CONTROLLER: found pin ' + pin);
       this._join(pin, false);
     }
   }
