@@ -1,8 +1,8 @@
 .alert-container {
     display: grid;
     grid-auto-rows: 1fr;
-    margin-top: var(--default-padding);
-    grid-gap: var(--default-padding);
+    margin-top: var(--default-spacing);
+    grid-gap: var(--default-spacing);
     position: fixed;
     left: 50%;
     transform: translateX(-50%);
@@ -17,7 +17,7 @@
     display: grid;
     grid-template-columns: auto 1fr auto;
     grid-auto-rows: 1fr;
-    grid-gap: var(--default-padding);
+    grid-gap: var(--default-spacing);
     grid-template-areas:
         "icon content close"
     ;

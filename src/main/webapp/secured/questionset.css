@@ -1,6 +1,6 @@
 .question-info-box {
     display: grid;
-    grid-gap: var(--default-padding);
+    grid-gap: var(--default-spacing);
     grid-template-columns: 1fr;
     grid-template-rows: 1fr;
     align-items: center;

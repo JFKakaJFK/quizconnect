@@ -1,18 +1,18 @@
 .profile-grid {
     display: grid;
-    grid-gap: var(--default-padding);
+    grid-gap: var(--default-spacing);
     padding-bottom: var(--default-padding);
     box-sizing: border-box;
 }
 
 .profile-actions {
     display: grid;
-    grid-gap: var(--default-padding);
+    grid-gap: var(--default-spacing);
 }
 
 .profile-stat-box {
     display: grid;
-    grid-gap: var(--default-padding);
+    grid-gap: var(--default-spacing);
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr 1fr;
     align-items: center;
@@ -97,7 +97,7 @@
 }
 
 .collection-header {
-    margin: 0 0 calc(var(--default-padding)  / 2) 2rem;
+    margin: 0 0 calc(var(--default-spacing)  / 2) 2rem;
 }
 
 /* APEX CHARTS */

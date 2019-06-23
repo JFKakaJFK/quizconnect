@@ -4,7 +4,7 @@
 }
 
 .final-score {
-    margin: var(--default-padding) 0 5vh;
+    margin: var(--default-spacing) 0 5vh;
 }
 
 .final-score h3 {

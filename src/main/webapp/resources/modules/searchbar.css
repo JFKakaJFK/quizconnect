@@ -1,7 +1,7 @@
 .searchbar { /* TODO */
     display: flex;
     flex-wrap: wrap;
-    padding-bottom: var(--default-padding);
+    padding-bottom: var(--default-spacing);
 }
 
 .searchbar .searchbar-search {

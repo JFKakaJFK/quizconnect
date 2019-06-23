@@ -4,14 +4,14 @@
     height: calc(100vh - var(--navbar-height) - var(--default-padding));
     grid-template-columns:  1fr;
     grid-auto-columns: 1fr;
-    grid-gap: var(--default-padding);
+    grid-gap: var(--default-spacing);
     font-size: 1.5em;
     text-align: center;
 }
 
 @media only screen and (min-width: 768px) {
     .grid-container {
-        grid-gap: var(--default-padding);
+        grid-gap: var(--default-spacing);
         grid-template-rows: 1fr 1fr;
         grid-template-columns: 1fr 1fr;
         font-size: 2em;

@@ -1,7 +1,7 @@
 .box {
     padding: var(--default-padding);
     border: 1px solid var(--box-border-color);
-    border-radius: var(--default-padding);
+    border-radius: var(--default-border-radius);
     box-sizing: border-box;
     position: relative;
     min-height: calc(3 * var(--default-padding));

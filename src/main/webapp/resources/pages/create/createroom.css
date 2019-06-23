@@ -17,13 +17,13 @@
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    padding-top: var(--default-padding);
+    padding-top: var(--default-spacing);
 }
 
 @media only screen and (max-width: 325px) {
     .form-steps-nav .btn {
         width: 100%;
-        margin: calc(var(--default-padding) / 2) 0;
+        margin: calc(var(--default-spacing) / 2) 0;
     }
 
     .form-steps-nav .btn:first-child {
@@ -38,7 +38,7 @@
 .collection-sets-wrapper {
     max-height: calc(90vh - var(--navbar-height) - 166px);
     display: grid;
-    grid-gap: var(--default-padding);
+    grid-gap: var(--default-spacing);
     align-items: start;
     overflow-y: auto;
     overflow-x: visible;
@@ -52,7 +52,7 @@
 
 .collection-sets {
     display: grid;
-    grid-gap: var(--default-padding);
+    grid-gap: var(--default-spacing);
     overflow-y: auto;
     overflow-x: visible;
     max-height: 25vh;

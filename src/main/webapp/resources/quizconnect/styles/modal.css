@@ -12,7 +12,7 @@
 .modal-header {
     background: var(--background-secondary);
     border-bottom: 0;
-    border-radius: var(--default-padding) var(--default-padding) 0 0;
+    border-radius: var(--default-border-radius) var(--default-border-radius) 0 0;
     box-shadow: 0 0 8px 4px hsla(0, 0%, 0%, .1);
 }
 
@@ -32,7 +32,7 @@
 .modal-footer {
     border-top: 0;
     background: var(--background-primary);
-    border-radius: 0 0 var(--default-padding) var(--default-padding);
+    border-radius: 0 0 var(--default-border-radius) var(--default-border-radius);
 }
 
 .modal-warning .modal-header,

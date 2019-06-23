@@ -48,8 +48,8 @@
     /* THEME COLORS */
     --selection-background: var(--col-4-l);  /* todo theme */
 
-    --background-primary: #16212f;  /* todo theme */
-    --background-secondary: #1E2E39; /*#232d41; /*var(--col-1-d); /* var(--col-1-m); */  /* todo theme */
+    --background-primary: var(--col-1-d); /*#100f10;/*#16212f;  /* todo theme */
+    --background-secondary: var(--col-1-m);/*#232429; /*#1E2E39; /*#232d41; /*var(--col-1-d); /* var(--col-1-m); */  /* todo theme */
 
     --navbar-background: var(--background-secondary);
     --navbar-height: 64px;
@@ -96,7 +96,9 @@
     --range-background-color: var(--input-background);
 
     /* DEFAULT LAYOUT VARIABLES */
-    --default-padding: 2rem;
+    --default-spacing: 1rem;
+    --default-padding: 1rem;
+    --default-border-radius: 1rem;
 
     /* ACTION TYPES */ /* are error and danger swapped? */
     --danger: #FB78FF;
@@ -108,4 +110,11 @@
     --warning: #FFBF73;
     --error: #E55D5D;
     --error-gradient: linear-gradient(35deg, #F86D70 0%, #F86DB8 100%);
+}
+
+@media only screen and (min-width: 560px) {
+    :root {
+        --default-spacing: 2rem;
+        --default-padding: 2rem;
+    }
 }
