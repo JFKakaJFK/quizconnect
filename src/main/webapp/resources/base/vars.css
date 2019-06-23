@@ -99,13 +99,16 @@
     /* DEFAULT LAYOUT VARIABLES */
     --default-padding: 1rem;
 
-    /* ACTION TYPES */
+    /* ACTION TYPES */ /* todo are error and danger swapped? */
     --danger: #FB78FF;
+    --danger-gradient: linear-gradient(35deg, #DD439C 0%, #973FDC 100%);
     --alert: #53CAD4;
     --info: #5DE59A;
     --success: #5DE59A;
+    --success-gradient: linear-gradient(35deg, #19B8C4 0%, #0AD464 100%);
     --warning: #FFBF73;
     --error: #E55D5D;
+    --error-gradient: linear-gradient(35deg, #F86D70 0%, #F86DB8 100%);
 
 
     --lighter-red: #ed5e68;

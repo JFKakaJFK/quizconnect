@@ -22,10 +22,12 @@
 }
 .answer.correct {
     background: var(--success) !important;
+    background: var(--success-gradient) !important;
     opacity: .5;
 }
 .answer.incorrect {
     background: var(--danger) !important;
+    background: var(--danger-gradient) !important;
     opacity: .5;
 }
 
