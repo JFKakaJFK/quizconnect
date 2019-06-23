@@ -98,7 +98,7 @@
 
                         <h:commandLink styleClass="box-action" pt:data-toggle="modal" pt:data-target="#deleteQuestion">
                             <i data-feather="trash"></i>
-                            <f:ajax execute="@this" render=":deleteQuestionForm:questions"/>
+                            <f:ajax execute="@this" render="@form"/>
                             <f:setPropertyActionListener value="#{question}" target="#{questionSetBean.questionToDelete}"/>
                         </h:commandLink>
 
@@ -123,7 +123,7 @@
                       abort="Cancel"
                       confirmAction="#{questionSetBean.deleteQuestion}"
                       abortButton="btn btn-secondary"
-                      update=":deleteQuestionForm:questions">
+                      update=":deleteQuestionForm:questionCollection">
                 Are you sure? This cannot be undone.
             </qc:modal>
         </h:form>
