@@ -131,6 +131,8 @@ public class PlayerDetailController implements Serializable {
      * Returns true if the new password is valid
      *
      * @return Boolean if the new password is valid.
+     *
+     * TODO: REMOVE, USES VALIDATIONBEAN
      */
     public boolean isPasswordValid(){
         return password != null && validationBean.isValidPassword(password) && repeatPassword != null && repeatPassword.equals(password);
