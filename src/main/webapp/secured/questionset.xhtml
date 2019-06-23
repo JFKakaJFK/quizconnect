@@ -93,7 +93,7 @@
                         <h:commandLink styleClass="box-action" pt:data-toggle="modal" pt:data-target="#questionModal">
                             <i data-feather="edit-3"></i>
                             <f:ajax execute="@this" render=":questionForForm:questionModal:modal-header :questionForForm:questionModal:modal-body :questionForForm:questionModal:modal-footer"/>
-                            <f:setPropertyActionListener value="#{question}" target="#{questionSetBean.setEditQuestion}"/>
+                            <f:setPropertyActionListener value="#{question}" target="#{questionSetBean.editQuestion}"/>
                         </h:commandLink>
 
                         <h:commandLink styleClass="box-action" pt:data-toggle="modal" pt:data-target="#deleteQuestion">

@@ -15,6 +15,7 @@
     <ui:define name="title">Profile</ui:define>
 
     <ui:define name="site-specific-css">
+        <link rel="stylesheet" type="text/css" href="profile.css"/>
     </ui:define>
 
     <ui:define name="site-specific-javascript">
@@ -25,15 +26,23 @@
     </ui:define>
 
     <ui:define name="content">
-        <h:form id="passwordChange">
-            <h:commandLink styleClass="btn btn-primary" p:data-toggle="modal" p:data-target="#editPassword" value="Change password">
-                <f:ajax execute="@this" render=":passwordForm:editPassword:footer :passwordForm:editPassword:inputs" />
-            </h:commandLink>
 
-            <h:commandLink styleClass="btn btn-primary" p:data-toggle="modal" p:data-target="#editEmail" value="Change email">
-                <f:ajax execute="@this" render=":emailForm:editEmail:footer :emailForm:editEmail:email"/>
-                <f:setPropertyActionListener value="#{sessionInfoBean.currentUser.manager.email}" target="#{editManagerBean.email}"/>
-            </h:commandLink>
+        <h:form id="passwordChange" styleClass="center-page-content">
+            <h:panelGroup layout="block" styleClass=" grid-container">
+                <h:commandLink styleClass="box" p:data-toggle="modal" p:data-target="#editPassword">
+                    <img src="password.svg"></img>
+                    <span>Change password</span>
+                    <f:ajax execute="@this" render=":passwordForm:editPassword:footer :passwordForm:editPassword:inputs" />
+                </h:commandLink>
+
+                <h:commandLink styleClass="box" p:data-toggle="modal" p:data-target="#editEmail">
+                    <img src="email.svg"></img>
+                    <span>Change email</span>
+                    <f:ajax execute="@this" render=":emailForm:editEmail:footer :emailForm:editEmail:email"/>
+                    <f:setPropertyActionListener value="#{sessionInfoBean.currentUser.manager.email}" target="#{editManagerBean.email}"/>
+                </h:commandLink>
+            </h:panelGroup>
+
         </h:form>
     </ui:define>
 
