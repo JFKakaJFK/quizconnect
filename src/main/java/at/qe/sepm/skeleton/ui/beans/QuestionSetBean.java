@@ -236,7 +236,10 @@ public class QuestionSetBean implements Serializable {
         questionService.deleteQuestion(questionToDelete);
         logger.info("Question deleted");
         messageBean.alertInformation("Success", "Deleted question");
+        /*
+        FacesContext.getCurrentInstance().getPartialViewContext().getRenderIds().add("deleteQuestionForm"); // todo wtf??
         messageBean.updateComponent("messages");
+        */
     }
 
     /**

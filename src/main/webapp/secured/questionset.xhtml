@@ -109,12 +109,16 @@
             <qc:collectionEmpty collection="#{questionSetBean.questionsDisplay}" text="No questions found"/>
             </h:panelGroup>
 
+            <h:commandButton styleClass="jsf-hide js-f-jsf">
+                <f:ajax execute="@this" render="@form"/>
+            </h:commandButton>
         </h:form>
 
     </ui:define>
 
     <ui:define name="modals">
-        <h:form>
+
+        <h:form >
             <qc:modal id="deleteQuestion"
                       target="deleteQuestion"
                       title="Delete Question"
@@ -123,7 +127,7 @@
                       abort="Cancel"
                       confirmAction="#{questionSetBean.deleteQuestion}"
                       abortButton="btn btn-secondary"
-                      update=":deleteQuestionForm:questionCollection">
+                      update="deleteQuestionForm">
                 Are you sure? This cannot be undone.
             </qc:modal>
         </h:form>
