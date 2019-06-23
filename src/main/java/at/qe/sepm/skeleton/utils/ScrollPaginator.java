@@ -80,7 +80,7 @@ public class ScrollPaginator <T> {
     }
 
     /**
-     * Initializes the next {@link ScrollPart} of the {@link ScrollPaginator}
+     * Initializes the _next {@link ScrollPart} of the {@link ScrollPaginator}
      */
     public void initNext(){
         if(initialized >= parts.size()){

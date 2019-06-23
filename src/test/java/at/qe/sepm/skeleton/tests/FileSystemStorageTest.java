@@ -94,7 +94,7 @@ public class FileSystemStorageTest {
 
         Assert.assertTrue("Stored file exists", Files.exists(avatars.resolve(stored)));
         Assert.assertTrue("Stored file has right path", avatars.resolve(stored).toString().contains(rightPath));
-        Assert.assertTrue("Stored file is non empty", avatars.resolve(stored).toFile().length() > 0);
+        Assert.assertTrue("Stored file is non _empty", avatars.resolve(stored).toFile().length() > 0);
         Assert.assertEquals("Stored file is of right type", avatarType, FilenameUtils.getExtension(stored));
 
         Files.deleteIfExists(avatars.resolve(stored));
@@ -108,7 +108,7 @@ public class FileSystemStorageTest {
 
         Assert.assertTrue("Stored answer exists", Files.exists(answers.resolve(stored)));
         Assert.assertTrue("Stored answer has right path", answers.resolve(stored).toString().contains(rightPath));
-        Assert.assertTrue("Stored file is non empty", answers.resolve(stored).toFile().length() > 0);
+        Assert.assertTrue("Stored file is non _empty", answers.resolve(stored).toFile().length() > 0);
         Assert.assertEquals("Stored file is of right type", answerType, FilenameUtils.getExtension(stored));
 
         Files.deleteIfExists(answers.resolve(stored));
@@ -122,7 +122,7 @@ public class FileSystemStorageTest {
 
         Assert.assertTrue("Stored answer exists", Files.exists(answers.resolve(stored)));
         Assert.assertTrue("Stored answer has right path", answers.resolve(stored).toString().contains(rightPath));
-        Assert.assertTrue("Stored file is non empty", answers.resolve(stored).toFile().length() > 0);
+        Assert.assertTrue("Stored file is non _empty", answers.resolve(stored).toFile().length() > 0);
         Assert.assertEquals("Stored file is of right type", answerType, FilenameUtils.getExtension(stored));
 
         String rightPath1 = answers.toString();
@@ -131,7 +131,7 @@ public class FileSystemStorageTest {
 
         Assert.assertTrue("Stored answer exists", Files.exists(answers.resolve(stored1)));
         Assert.assertTrue("Stored answer has right path", answers.resolve(stored1).toString().contains(rightPath1));
-        Assert.assertTrue("Stored file is non empty", answers.resolve(stored1).toFile().length() > 0);
+        Assert.assertTrue("Stored file is non _empty", answers.resolve(stored1).toFile().length() > 0);
         Assert.assertEquals("Stored file is of right type", answerType, FilenameUtils.getExtension(stored1));
 
         fileSystemStorageService.deleteAllAnswersOfQuestionSet(manager, qSetId);
@@ -165,7 +165,7 @@ public class FileSystemStorageTest {
         Path loaded = fileSystemStorageService.loadAvatar(stored);
 
         Assert.assertTrue("Retrieved avatar exists", Files.exists(loaded));
-        Assert.assertTrue("Retrieved file is non empty", loaded.toFile().length() > 0);
+        Assert.assertTrue("Retrieved file is non _empty", loaded.toFile().length() > 0);
         Assert.assertEquals("Retrieved file is of right type", avatarType, FilenameUtils.getExtension(loaded.toString()));
 
         Files.deleteIfExists(avatars.resolve(stored));
@@ -177,7 +177,7 @@ public class FileSystemStorageTest {
 
         Assert.assertTrue("Default exists", Files.exists(loaded));
         Assert.assertEquals("Default filename matches", defaultAvatar, FilenameUtils.getName(loaded.toString()));
-        Assert.assertTrue("Default is non empty", loaded.toFile().length() > 0);
+        Assert.assertTrue("Default is non _empty", loaded.toFile().length() > 0);
     }
 
     @Test
@@ -186,7 +186,7 @@ public class FileSystemStorageTest {
 
         Assert.assertTrue("Default exists", Files.exists(loaded));
         Assert.assertEquals("Default filename matches", defaultAnswer, FilenameUtils.getName(loaded.toString()));
-        Assert.assertTrue("Default is non empty", loaded.toFile().length() > 0);
+        Assert.assertTrue("Default is non _empty", loaded.toFile().length() > 0);
     }
 
     @Test
@@ -196,7 +196,7 @@ public class FileSystemStorageTest {
         Path loaded = fileSystemStorageService.loadAnswer(stored);
 
         Assert.assertTrue("Retrieved answer exists", Files.exists(loaded));
-        Assert.assertTrue("Retrieved file is non empty", loaded.toFile().length() > 0);
+        Assert.assertTrue("Retrieved file is non _empty", loaded.toFile().length() > 0);
         Assert.assertEquals("Retrieved file is of right type", answerType, FilenameUtils.getExtension(loaded.toString()));
 
         Files.deleteIfExists(answers.resolve(stored));

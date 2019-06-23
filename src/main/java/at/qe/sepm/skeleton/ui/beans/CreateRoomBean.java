@@ -40,7 +40,7 @@ public class CreateRoomBean implements Serializable {
     private QuestionSetService questionSetService;
 
     private int playerLimit = 42; // initial value
-    private int step = 0; // the creation is split into 2 or 3 steps (depending on chosen options)
+    private int step = 0; // the creation is split into 2 or 3 steps (depending on chosen areaOptions)
     private boolean setSelectionIsInitialized = false;
     private String searchPhrase = "";
     private RoomDifficulty difficulty = RoomDifficulty.easy;
@@ -214,7 +214,7 @@ public class CreateRoomBean implements Serializable {
      */
 
     /**
-     * Changes the current step in the {@link at.qe.sepm.skeleton.logic.QuizRoom} creation to the next step.
+     * Changes the current step in the {@link at.qe.sepm.skeleton.logic.QuizRoom} creation to the _next step.
      */
     public void nextStep(){
         if(disableNextStep()) return;
@@ -255,7 +255,7 @@ public class CreateRoomBean implements Serializable {
     /**
      * Checks if all inputs of the current step are valid, and advancing is possible
      * @return
-     *          True if the next step should be disabled.
+     *          True if the _next step should be disabled.
      */
     public boolean disableNextStep(){
         if(step == 0){
@@ -278,6 +278,15 @@ public class CreateRoomBean implements Serializable {
         return step == 0;
     }
 
+    /**
+     * Returns whether to show the selected sets.
+     *
+     * @return
+     *          True if the selected sets should be shown.
+     */
+    public boolean showSelectedSets(){
+        return !mode.equals(GameMode.mathgod);
+    }
 
     public int getPlayerLimit() {
         return playerLimit;

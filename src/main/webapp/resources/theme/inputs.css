@@ -63,6 +63,10 @@ select option:checked {
     color: var(--error);
 }
 
+.form-group:last-child {
+    margin-bottom: 0;
+}
+
 span.error {
     color: var(--error);
 }

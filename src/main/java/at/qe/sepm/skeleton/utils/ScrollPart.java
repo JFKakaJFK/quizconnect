@@ -7,7 +7,7 @@ import java.util.List;
  * A Frame for the Items of the {@link ScrollPaginator}.
  *
  * This class is a simple wrapper for the {@link List} type, it simply
- * return either the list items or an empty list, depending on wheter
+ * return either the list items or an _empty list, depending on wheter
  * {@link this#initialized} is true.
  *
  * @param <T>

@@ -12,6 +12,11 @@ body {
     bottom: 0;
     width: 256px;
     min-height: 100vh;
+    min-height: -moz-available;
+    min-height: -webkit-fill-available;
+    min-height: fill-available;
+    min-height: -webkit-stretch;
+    min-height: stretch;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     z-index: 0;
@@ -29,6 +34,7 @@ body {
 .slideout-panel {
     position: relative;
     z-index: 1;
+    background: inherit;
     will-change: transform;
     min-height: 100vh;
 }
@@ -44,14 +50,14 @@ body {
 }
 
 /* Styles for backdrop */
-.panel:before {
+.slideout-panel.slideout-backdrop:before {
     content: '';
     display: block;
     background-color: var(--sidebar-overlay);
     opacity: 0;
     transition: opacity 0.5s ease-in-out;
 }
-.panel-open:before {
+.slideout-panel.slideout-backdrop.panel-open:before {
     position: absolute;
     top: 0;
     bottom: 0;

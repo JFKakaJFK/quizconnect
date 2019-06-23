@@ -1,0 +1,20 @@
+.sfx-controls {
+    display: flex;
+    align-items: center;
+    padding: var(--default-padding);
+}
+
+[data-volume-icon] {
+    transition: all .25s ease-in-out;
+    padding-right: var(--default-padding);
+    transform: scale(1.2);
+}
+
+[data-volume-icon]:hover {
+    cursor: pointer;
+    color: var(--default-active-color);
+}
+
+[data-volume-slider] {
+    flex: 1;
+}

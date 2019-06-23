@@ -38,7 +38,7 @@
 .sidebar .sidebar-toggle:hover,
 .sidebar .theme:hover {
     cursor: pointer;
-    color: var(--col-3-m); /* TODO css var */
+    color: var(--default-active-color);
 }
 
 .sidebar .sidebar-logout {

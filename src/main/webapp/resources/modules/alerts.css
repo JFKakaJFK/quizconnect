@@ -1,11 +1,8 @@
-.add-margin{
-    margin-top:20px;
-}
-
 .alert-container {
-    display: table-cell;
-
-
+    display: grid;
+    grid-auto-rows: 1fr;
+    margin-top: var(--default-padding);
+    grid-gap: var(--default-padding);
     position: fixed;
     left: 50%;
     transform: translateX(-50%);
@@ -13,46 +10,32 @@
     z-index: 1060;
 }
 
-
-
-
-@keyframes stretch {
-    0% {
-        transform: scale(.9);
-        background-color: #440000;
-        border-radius: 100%;
-    }
-    100% {
-        transform: scale(1);
-        background-color: red;
-        border-radius: 100%;
-    }
-}
-
-
 /* Custom */
 .alert {
-    /*ext-align:left;
-    padding: 21px 0;
-    background-color:#fff;
-    border-radius:4px;
-    max-width: 500px;
-    top: 0px;
-    position:relative;
-    box-shadow: 1px 7px 14px -5px rgba(0,0,0,0.2);*/
+    --alert-border-radius: 4px;
 
-    box-shadow: 1px 7px 14px -5px rgba(0,0,0,0.2);
-    padding: 21px 0;
-    background-color:#fff;
-    border-radius:4px;
-}
-
-.alert-cell{
-    display:inline-block;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-auto-rows: 1fr;
+    grid-gap: var(--default-padding);
+    grid-template-areas:
+        "icon content close"
+    ;
+    box-shadow: 4px 4px 16px 8px hsla(0,0%,0%,.3);
+    padding: var(--default-padding);
+    background-color: var(--background-secondary);
+    border-radius: var(--alert-border-radius);
+    border: 0;
+    opacity: 1;
+    margin: 0;
+    /* TODO default dimensions @Johannes Spies (adjust w/ min-width/height) */
+    min-width: 400px;
+    min-height: 120px;
 }
 
 .alert-svg{
-    fill:#fff;
+    color: inherit;
+    fill: currentColor;
 }
 
 .alert:before {
@@ -62,72 +45,79 @@
     left: 0;
     width: 4px;
     height: 100%;
-    border-top-left-radius:4px;
-    border-bottom-left-radius: 4px;
-
+    border-radius: var(--alert-border-radius) 0 0 var(--alert-border-radius);
 }
+
 .alert-icon{
-    position:absolute;
-    top:50%;
-    left:22px;
-    transform:translateY(-50%);
-    width:14px;
-    height:14px;
-    padding: 7px;
-    border-radius:50%;
-    display:inline-block;
+    grid-area: icon;
+    align-self: center;
+    justify-self: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--default-font-color);
 }
 
 .alert-content {
-    padding-left:70px;
-    padding-right:60px;
+    grid-area: content;
+    color: var(--default-font-color);
 }
 
 .alert-summary {
-    color: #3e3e3e;
-    font-weight: 700;
-    margin-top: 0;
-    margin-bottom: 8px;
+    color: inherit;
+    font-weight: 400;
+    margin: 0 0 calc(var(--default-padding) / 2);
+    line-height: 1;
 }
 
-.alert-message {
-    font-size: 14px;
-    margin-top: 0;
-    margin-bottom: 0;
-    color: #878787;
+.alert-text{
+    font-weight: var(--default-font-weight);
+    color: inherit;
+    margin: 0;
+    line-height: 1;
 }
 
 .alert-close {
-    position: absolute;
-    right: 10px;
-    top: 10%;
-    width: 14px;
-    cursor:pointer;
-    height: auto;
-    fill:#878787;
-    transform: translateY(-50%);
+    grid-area: close;
+    align-self: start;
+    text-shadow: none;
+    border: 0;
+    background: transparent;
+    padding: 0;
+    line-height: 1;
 }
 
+.alert-close:hover {
+    cursor: pointer;
+}
+
+.alert-close svg {
+    color: var(--default-font-color);
+}
+
+.alert-close:hover svg {
+    color: var(--default-active-color);
+}
+
+.alert-info:before,
 .alert-info .alert-icon{
-    background-color:#2BDE3F;
+    background:var(--info);
 }
 
-.alert-info:before{
-    background-color:#2BDE3F;
+.alert-warning:before,
+.alert-warning .alert-icon {
+    background: var(--warning);
 }
 
-.toast--blue .toast__icon{
-    background-color:#1D72F3;
+.alert-error:before,
+.alert-error .alert-icon {
+    background: var(--error);
 }
 
-.toast--blue:before{
-    background-color:#1D72F3;
-}
-
-.toast--yellow .toast__icon{
-    background-color:#FFC007;
-}
-
-.toast--yellow:before{
-    background-color:#FFC007;
+.alert-fatal:before,
+.alert-fatal .alert-icon {
+    background: var(--danger);
 }

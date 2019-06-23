@@ -1,0 +1,32 @@
+.states-container {
+    width: 100%;
+    min-height: calc(100vh - var(--navbar-height));
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+body .state-container {
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    margin: 0 auto;
+    transition: width .5s ease-in-out, opacity .5s ease-in-out;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+body.join .join-container,
+body.lobby .lobby-container,
+body.ingame .ingame-container,
+body.finished .finished-container {
+    overflow: initial;
+    height: auto;
+    width: 100%;
+    min-height: calc(100vh - var(--navbar-height));
+    padding: var(--default-padding);
+    visibility: visible;
+    opacity: 1;
+    transition: width .5s ease-in-out, opacity .5s ease-in-out;
+    pointer-events: initial;
+}

@@ -5,76 +5,251 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <script type="text/javascript" src="../../resources/js/themes.js"></script>
+    <script type="text/javascript" src="/resources/theme/themes.js"></script>
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.css" integrity="sha384-+MsSfd29vjUzcyqYURxcmpWGtqoSHBy+QdEJNLEslXQftxojQv0k6BGDqUNp9GtA" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css">
     <link rel="stylesheet" type="text/css" href="../resources/main.css" />
     <link rel="stylesheet" type="text/css" href="../resources/quizroom.css" />
-
 
     <title>In Game | QuizConnect&trade;</title>
 
 </head>
-<body>
+<body class="join">
 
-    <div data-pushbar-id="bar" class="pushbar from_left">
-        <div class="pushbar-close">
-            <span data-pushbar-close="" class="py-2 px-2 my-2 mx-3">
-                <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M16.24 14.83a1 1 0 0 1-1.41 1.41L12 13.41l-2.83 2.83a1 1 0 0 1-1.41-1.41L10.59 12 7.76 9.17a1 1 0 0 1 1.41-1.41L12 10.59l2.83-2.83a1 1 0 0 1 1.41 1.41L13.41 12l2.83 2.83z"/></svg>
-            </span>
-        </div>
+    <main id="main" class="slideout-backdrop">
 
-        <nav class="pushbar-nav pl-4 pr-3 py-4">
-            <ul class="list-unstyled">
-                <li class="my-3"> <!-- TODO show normal menu in JOIN & FINISHED states? -->
-                    <a href="#" data-toggle="modal" data-target="#leave" data-backdrop="static" onclick="if(state.state === JOIN || state.state === FINISHED){ window.location.href = URL_LEAVE }">Leave Game</a>
-                </li>
-            </ul>
-
-            <!-- TODO -->
-            <div onclick="changeTheme('default')">default</div>
-            <div onclick="changeTheme('outrun')">outrun</div>
-        </nav>
-    </div>
-
-    <div class="pushbar_main_content">
-
-        <header class="navbar d-flex py-2">
-            <div class="navbar-burger py-2 px-2" data-pushbar-target="bar">
-                <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M4 5h16a1 1 0 0 1 0 2H4a1 1 0 1 1 0-2zm0 6h16a1 1 0 0 1 0 2H4a1 1 0 0 1 0-2zm0 6h16a1 1 0 0 1 0 2H4a1 1 0 0 1 0-2z"/></svg>
+        <header class="navbar d-flex py-2 px-3">
+            <div class="navbar-burger js-toggle-sidebar">
+                <i data-feather="menu" class="xlg"></i>
             </div>
-            <div class="d-flex flex-grow-1 justify-content-sm-center justify-content-end px-2">
-                <a class="navbar-logo" href="#">
+
+            <div class="d-flex flex-grow-1 justify-content-center px-2">
+                <h2 id="title" class="site-title faster">Join</h2>
+            </div>
+
+            <div class="d-flex justify-content-end px-2">
+                <a class="navbar-logo icon" href="#">
                     <svg id="icon" viewBox="0 0 2000 2000" width="30" height="30"><defs><style>.cls-1,.cls-2{fill:none;stroke-miterlimit:10;stroke-width:200px;}.cls-1{stroke:#018786;stroke-dasharray:248.33 19.87;}.cls-2{stroke:#00c4b4;stroke-linecap:round;}.cls-3{fill:#3bc5b5;}</style></defs><circle class="cls-1" cx="1000" cy="1000" r="853.59"/><path class="cls-2" d="M1000,1853.59c-471.42,0-853.59-382.16-853.59-853.59S528.58,146.41,1000,146.41"/><path class="cls-3" d="M1042.58,866.18,1949,1953,898.42,1004.82A100.25,100.25,0,0,1,1032.76,856,109.71,109.71,0,0,1,1042.58,866.18Z"/></svg>
                 </a>
             </div>
         </header>
 
-        <div id="root" data-state="3">
+        <div id="root" class="states-container">
             <!-- game will be rendered here -->
 
             <!-- JOIN VIEW (Why use JS if it can be done w/ HTML? -->
-            <div class="join">
-                <div>
-                    <div class="stat stat-lg">
-                        <input id="pin" type="number" placeholder="000000" max="999999" min="1" />
+            <div id="join" class="fast state-container join-container d-flex justify-content-center align-items-center">
+                <div class="join-content">
+                    <div class="stat stat-xlg">
+                        <input id="pin" type="tel" placeholder="000000" max="999999" min="1" minlength="1" size="6" pattern="[0-9]{1,6}"/>
                         <p>enter pin</p>
                     </div>
-                    <span id="errors" style="display: block; text-align: center; color: var(--alert);"></span>
+                    <span id="errors" class="status faster"></span>
+                    <a href="#" data-leave class="btn btn-secondary">Back Home</a>
                 </div>
             </div>
 
-        </div>
-        <div class="chat chat-wrapper">
-            <div id="messages" class="chat chat-messages">
-
+            <div id="lobby" class="state-container lobby-container slow">
+                <div class="info box">
+                    <div class="stat info-sets">
+                        <div data-lobby-sets></div>
+                        <p>question sets</p>
+                    </div>
+                    <div class="stat stat-upper stat-sm">
+                        <h3 data-lobby-mode>normal</h3>
+                        <p>game mode</p>
+                    </div>
+                    <div class="stat stat-upper stat-sm">
+                        <h3 data-lobby-difficulty>easy</h3>
+                        <p>difficulty</p>
+                    </div>
+                    <div class="stat stat-xlg pin info-pin">
+                        <h3 data-pin>000000</h3>
+                        <p>pin <a href="#" data-toggle="modal" data-target="#sharePin"><i data-feather="share-2"></i></a></p>
+                    </div>
+                </div>
+                <div class="ready-status">Ready: <span data-ready-num class="faster"></span>/<span data-players-num class="faster"></span></div>
+                <div data-lobby-players class="players"></div>
             </div>
-            <input class="chat chat-input" type="text" placeholder="Chat with your teammates..." onkeyup="if(event.key === 'Enter'){sendChatMessage(this.value.substring(0, 100)); this.value = '';}"/>
+
+            <div id="ingame" class="state-container ingame-container">
+                <div class="box ingame-stats d-flex flex-wrap align-items-center justify-content-around">
+                    <div class="stat stat-upper stat-lg pin mx-2">
+                        <h3 data-pin>000000</h3>
+                        <p>pin <a href="#" data-toggle="modal" data-target="#sharePin"><i data-feather="share-2"></i></a></p>
+                    </div>
+                    <div class="stat stat-upper stat-lg mx-2">
+                        <h3 data-score>0</h3>
+                        <p>score</p>
+                    </div>
+                </div>
+                <div class="box ingame-question"><!-- QUESTION -->
+                    <div id="question" class="fast text-center question-box"></div>
+                    <div class="time-remaining-wrapper">
+                        <div id="timer" class="time-remaining"></div>
+                    </div>
+                </div>
+                <div id="answers" class="ingame-answers"></div>
+            </div>
+
+            <div id="finished" class="state-container finished-container d-flex justify-content-center align-items-center">
+                <div class="finished-content">
+                    <div class="text-center">
+                        <h2 id="highScore" class="highscore"></h2>
+                        <div class="stat stat-xlg stat-upper  final-score">
+                            <h3 data-score>0</h3>
+                            <p>score</p>
+                        </div>
+                        <a href="/login.xhtml" class="btn btn-primary">Home</a>
+                    </div>
+                    <div class="share-links">
+                        <a class="share-link share-whatsapp" data-finished-whatsapp href="#" ping="http://ibiza.fpoe.at/integrity?sellout" rel="noopener nofollow noreferrer" target="_blank">
+                            <?xml version="1.0" encoding="utf-8"?>
+                            <svg width="1792" height="1792" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1113 974q13 0 97.5 44t89.5 53q2 5 2 15 0 33-17 76-16 39-71 65.5t-102 26.5q-57 0-190-62-98-45-170-118t-148-185q-72-107-71-194v-8q3-91 74-158 24-22 52-22 6 0 18 1.5t19 1.5q19 0 26.5 6.5t15.5 27.5q8 20 33 88t25 75q0 21-34.5 57.5t-34.5 46.5q0 7 5 15 34 73 102 137 56 53 151 101 12 7 22 7 15 0 54-48.5t52-48.5zm-203 530q127 0 243.5-50t200.5-134 134-200.5 50-243.5-50-243.5-134-200.5-200.5-134-243.5-50-243.5 50-200.5 134-134 200.5-50 243.5q0 203 120 368l-79 233 242-77q158 104 345 104zm0-1382q153 0 292.5 60t240.5 161 161 240.5 60 292.5-60 292.5-161 240.5-240.5 161-292.5 60q-195 0-365-94l-417 134 136-405q-108-178-108-389 0-153 60-292.5t161-240.5 240.5-161 292.5-60z" /></svg>
+                        </a>
+                        <a href="#" class="share-link share-twitter" data-finished-twitter ping="http://ibiza.fpoe.at/integrity?sellout" rel="noopener nofollow noreferrer" target="_blank">
+                            <?xml version="1.0" encoding="utf-8"?>
+                            <svg width="1792" height="1792" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1684 408q-67 98-162 167 1 14 1 42 0 130-38 259.5t-115.5 248.5-184.5 210.5-258 146-323 54.5q-271 0-496-145 35 4 78 4 225 0 401-138-105-2-188-64.5t-114-159.5q33 5 61 5 43 0 85-11-112-23-185.5-111.5t-73.5-205.5v-4q68 38 146 41-66-44-105-115t-39-154q0-88 44-163 121 149 294.5 238.5t371.5 99.5q-8-38-8-74 0-134 94.5-228.5t228.5-94.5q140 0 236 102 109-21 205-78-37 115-142 178 93-10 186-50z" /></svg>
+                        </a>
+                        <a href="#" class="share-link  share-facebook" data-finished-facebook ping="http://ibiza.fpoe.at/integrity?sellout" rel="noopener nofollow noreferrer" target="_blank">
+                            <?xml version="1.0" encoding="utf-8"?>
+                            <svg width="1792" height="1792" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1343 12v264h-157q-86 0-116 36t-30 108v189h293l-39 296h-254v759h-306v-759h-255v-296h255v-218q0-186 104-288.5t277-102.5q147 0 228 12z" /></svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
 
+    </main>
+
+    <div class="fab-actions"><!-- ACTIONS -->
+        <a href="#" class="fab-btn" data-leave title="Leave Game"><i data-feather="arrow-left"></i></a>
+        <div id="joker" class="fab-btn joker-use" title="Use a joker"><i data-feather="shuffle"></i></div>
+        <div data-toggle-chat class="fab-btn chat-open" title="Open Chat"><i data-feather="message-square"></i></div>
     </div>
+
+    <div id="menu" class="sidebar flex-column">
+        <div class="d-flex py-2 px-3 justify-content-end">
+            <span class="sidebar-toggle js-toggle-sidebar pointer">
+                <i data-feather="x" class="xlg"></i>
+            </span>
+        </div>
+
+        <nav class="d-flex flex-column flex-grow-1">
+            <a href="#" class="sidebar-link" data-leave><i data-feather="arrow-left" class="lg mr-3"></i> Leave Game</a>
+        </nav>
+
+        <footer class="sidebar-footer text-center">
+            <div class="sfx-controls">
+                <div data-volume-icon title="Mute | Unmute"></div>
+                <input data-volume-slider type="range" min="0" max="1" value=".5" step="0.01" oninput="setVolume(this.value)" onchange="setVolume(this.value)">
+            </div>
+            <div class="sidebar-themes py-4"><!-- TODO maybe render w/ JS and add active class -->
+                <div class="theme" onclick="changeTheme('light')"><i data-feather="sun" class="lg"></i></div>
+                <div class="theme" onclick="changeTheme('outrun')"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sunset lg"><path d="M17 18a5 5 0 0 0-10 0"></path><line x1="12" y1="9" x2="12" y2="7"></line><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"></line><line x1="1" y1="18" x2="3" y2="18"></line><line x1="21" y1="18" x2="23" y2="18"></line><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"></line><line x1="23" y1="22" x2="1" y2="22"></line></svg><!--<i data-feather="sunset" class="lg"></i>--></div>
+                <div class="theme" onclick="changeTheme('default')"><i data-feather="moon" class="lg"></i></div>
+            </div>
+        </footer>
+    </div>
+    <script type="text/javascript" src="../../resources/modules/slideout.min.js"></script>
+    <script type="text/javascript">
+      let sidebar = new Slideout({
+        'panel': document.getElementById('main'),
+        'menu': document.getElementById('menu'),
+        'padding': 256,
+        'tolerance': 70
+      });
+
+      let btns = document.querySelectorAll('.js-toggle-sidebar');
+      btns.forEach(btn => btn.addEventListener('click', () => {
+        sidebar.toggle();
+      }));
+
+      const close = (e) => {
+        e.preventDefault();
+        sidebar.close();
+      };
+
+      // code for activating backdrop
+      const fabBtns = document.querySelector('.fab-actions');
+
+      sidebar.on('translate', function(translated) {
+        fabBtns.style.transform = 'translateX(' + translated + 'px)';
+      }).on('beforeopen', function(){
+        this.panel.classList.add('panel-open');
+        fabBtns.style.transition = 'transform 300ms ease';
+        fabBtns.style.transform = `translateX(256px)`;
+        document.documentElement.classList.add('sidebar-open');
+      }).on('open', function(){
+        this.panel.addEventListener('click', close);
+        fabBtns.style.transition = '';
+        fabBtns.style.zIndex = 0;
+      }).on('beforeclose', function(){
+        this.panel.classList.remove('panel-open');
+        this.panel.removeEventListener('click', close);
+        fabBtns.style.transition = 'transform 300ms ease';
+        fabBtns.style.transform = 'translateX(0px)';
+        fabBtns.style.zIndex = 1;
+        document.documentElement.classList.remove('sidebar-open');
+      }).on('close', function(){
+        fabBtns.style.transition = '';
+      })
+    </script>
+    <div id="chat" class="chat hide">
+        <header class="navbar d-flex py-2 px-3 chat-header">
+            <div class="navbar-burger" data-toggle-chat>
+                <i data-feather="arrow-left" class="xlg"></i>
+            </div>
+        </header>
+        <div id="messages" class="chat-messages"></div>
+        <input class="chat-input" data-chat-input type="text" placeholder="Chat with your teammates..." data-meteor-emoji="true" />
+    </div>
+    <script type="text/javascript">
+      let chat;
+      document.addEventListener('joinGame', () => {
+        chat = new Slideout({
+          'panel': document.getElementById('main'),
+          'menu': document.getElementById('chat'),
+          'padding': 256,
+          'tolerance': 70,
+          'side': 'right',
+        });
+
+        let chatbtns = document.querySelectorAll('[data-toggle-chat]');
+        chatbtns.forEach(btn => btn.addEventListener('click', () => {
+          chat.toggle();
+        }));
+
+        window.addEventListener('resize', () => {
+          if(window.innerWidth >= 992 && chat.isOpen()) chat.close();
+        });
+
+        chat.on('translate', function(translated) {
+          fabBtns.style.transform = 'translateX(' + translated + 'px)';
+        }).on('beforeopen', function() {
+          chat.menu.classList.remove('hide');
+          chat.menu.style.minHeight = window.innerHeight.toString() + 'px';
+          fabBtns.style.transition = 'transform 300ms ease';
+          fabBtns.style.transform = `translateX(-256px)`;
+          this.menu.scrollTo(0, this.menu.scrollHeight)
+        }).on('beforeclose', function() {
+          chat.menu.classList.add('hide');
+          fabBtns.style.transition = 'transform 300ms ease';
+          fabBtns.style.transform = `translateX(0px)`;
+        }).on('open', function(){
+          fabBtns.style.transition = '';
+        }).on('close', function(){
+          fabBtns.style.transition = '';
+        })
+      });
+
+      document.addEventListener('endGame', () => {
+        chat.destroy();
+      });
+    </script>
 
     <div class="modal fade" id="leave" tabindex="-1" role="dialog" aria-labelledby="leaveModal" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
@@ -83,7 +258,7 @@
                     <h5 class="modal-title" id="leaveModal">Leave Game</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">
-                            <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M16.24 14.83a1 1 0 0 1-1.41 1.41L12 13.41l-2.83 2.83a1 1 0 0 1-1.41-1.41L10.59 12 7.76 9.17a1 1 0 0 1 1.41-1.41L12 10.59l2.83-2.83a1 1 0 0 1 1.41 1.41L13.41 12l2.83 2.83z"/></svg>
+                            <i data-feather="x"></i>
                         </span>
                     </button>
                 </div>
@@ -92,8 +267,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <!-- TODO test leave action -->
-                    <button type="button" class="btn btn-primary" onclick="leaveRoom()"><a href="/players/profile.xhtml?leave=true">Leave Game</a></button>
+                    <a href="#" data-confirm-leave class="btn btn-primary">Leave Game</a>
                 </div>
             </div>
         </div>
@@ -106,7 +280,7 @@
                     <h5 class="modal-title" id="timeoutModal">Timeout</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">
-                            <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M16.24 14.83a1 1 0 0 1-1.41 1.41L12 13.41l-2.83 2.83a1 1 0 0 1-1.41-1.41L10.59 12 7.76 9.17a1 1 0 0 1 1.41-1.41L12 10.59l2.83-2.83a1 1 0 0 1 1.41 1.41L13.41 12l2.83 2.83z"/></svg>
+                            <i data-feather="x"></i>
                         </span>
                     </button>
                 </div>
@@ -127,7 +301,7 @@
                     <h5 class="modal-title" id="confirmReadyModal">Ready Up</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">
-                            <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M16.24 14.83a1 1 0 0 1-1.41 1.41L12 13.41l-2.83 2.83a1 1 0 0 1-1.41-1.41L10.59 12 7.76 9.17a1 1 0 0 1 1.41-1.41L12 10.59l2.83-2.83a1 1 0 0 1 1.41 1.41L13.41 12l2.83 2.83z"/></svg>
+                            <i data-feather="x"></i>
                         </span>
                     </button>
                 </div>
@@ -136,7 +310,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Abort</button>
-                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="readyUp()">Start Game</button>
+                    <button type="button" id="confirmReadyBtn" class="btn btn-primary" data-dismiss="modal">Start Game</button>
                 </div>
             </div>
         </div>
@@ -149,32 +323,31 @@
                     <h5 class="modal-title" id="sharePinModal">Invite Friends</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">
-                            <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M16.24 14.83a1 1 0 0 1-1.41 1.41L12 13.41l-2.83 2.83a1 1 0 0 1-1.41-1.41L10.59 12 7.76 9.17a1 1 0 0 1 1.41-1.41L12 10.59l2.83-2.83a1 1 0 0 1 1.41 1.41L13.41 12l2.83 2.83z"/></svg>
+                            <i data-feather="x"></i>
                         </span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div>
                         <div class="stat stat-lg pin">
-                            <h3 id="share_pin"></h3>
+                            <h3 data-pin></h3>
                             <p>pin</p>
                         </div>
                         <div class="share-links">
-                            <a id="share_whatsapp" class="share-link share-whatsapp" href="#" ping="ibiza.fpoe.at/sellout" rel="noopener nofollow noreferrer" target="_blank">
+                            <a data-share-whatsapp class="share-link share-whatsapp" href="#" ping="http://ibiza.fpoe.at/integrity?sellout" rel="noopener nofollow noreferrer" target="_blank">
                                 <?xml version="1.0" encoding="utf-8"?>
                                 <svg width="1792" height="1792" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1113 974q13 0 97.5 44t89.5 53q2 5 2 15 0 33-17 76-16 39-71 65.5t-102 26.5q-57 0-190-62-98-45-170-118t-148-185q-72-107-71-194v-8q3-91 74-158 24-22 52-22 6 0 18 1.5t19 1.5q19 0 26.5 6.5t15.5 27.5q8 20 33 88t25 75q0 21-34.5 57.5t-34.5 46.5q0 7 5 15 34 73 102 137 56 53 151 101 12 7 22 7 15 0 54-48.5t52-48.5zm-203 530q127 0 243.5-50t200.5-134 134-200.5 50-243.5-50-243.5-134-200.5-200.5-134-243.5-50-243.5 50-200.5 134-134 200.5-50 243.5q0 203 120 368l-79 233 242-77q158 104 345 104zm0-1382q153 0 292.5 60t240.5 161 161 240.5 60 292.5-60 292.5-161 240.5-240.5 161-292.5 60q-195 0-365-94l-417 134 136-405q-108-178-108-389 0-153 60-292.5t161-240.5 240.5-161 292.5-60z" /></svg>
                             </a>
-                            <a id="share_twitter" href="#" class="share-link share-twitter" ping="ibiza.fpoe.at/sellout" rel="noopener nofollow noreferrer" target="_blank">
+                            <a data-share-twitter href="#" class="share-link share-twitter" ping="http://ibiza.fpoe.at/integrity?sellout" rel="noopener nofollow noreferrer" target="_blank">
                                 <?xml version="1.0" encoding="utf-8"?>
                                 <svg width="1792" height="1792" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1684 408q-67 98-162 167 1 14 1 42 0 130-38 259.5t-115.5 248.5-184.5 210.5-258 146-323 54.5q-271 0-496-145 35 4 78 4 225 0 401-138-105-2-188-64.5t-114-159.5q33 5 61 5 43 0 85-11-112-23-185.5-111.5t-73.5-205.5v-4q68 38 146 41-66-44-105-115t-39-154q0-88 44-163 121 149 294.5 238.5t371.5 99.5q-8-38-8-74 0-134 94.5-228.5t228.5-94.5q140 0 236 102 109-21 205-78-37 115-142 178 93-10 186-50z" /></svg>
                             </a>
-                            <a id="share_fb" href="#" class="share-link share-facebook" ping="ibiza.fpoe.at/sellout" rel="noopener nofollow noreferrer" target="_blank">
+                            <a data-share-facebook href="#" class="share-link share-facebook" ping="http://ibiza.fpoe.at/integrity?sellout" rel="noopener nofollow noreferrer" target="_blank">
                                 <?xml version="1.0" encoding="utf-8"?>
                                 <svg width="1792" height="1792" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1343 12v264h-157q-86 0-116 36t-30 108v189h293l-39 296h-254v759h-306v-759h-255v-296h255v-218q0-186 104-288.5t277-102.5q147 0 228 12z" /></svg>
                             </a>
                         </div>
                     </div>
-
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -182,6 +355,9 @@
             </div>
         </div>
     </div>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script>feather.replace()</script>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
@@ -191,6 +367,8 @@
 
     <!-- fun -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@0.2.1/dist/confetti.browser.min.js"></script>
+    <script src="/resources/modules/anime.min.js"></script>
+    <script src="https://unpkg.com/animate-css-grid@latest"></script>
 
     <!-- katex -->
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.js" integrity="sha384-5zUJgoXUAOXAoLeyJm2Ja3vbN3VCnoc2w0rG7dyC2jjGwD8PINuWoDHJ3gNdkOxj" crossorigin="anonymous"></script>
@@ -200,26 +378,31 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 
     <!-- QuizRoom JS -->
-    <script src="../resources/pages/quizroom/Countdown.js"></script>
-    <script src="../resources/util/util.js"></script>
-    <script src="../resources/pages/quizroom/constants.js"></script>
-    <script src="../resources/pages/quizroom/render.js"></script>
-    <script src="../resources/pages/quizroom/state.js"></script>
-    <script src="../resources/pages/quizroom/client.js"></script>
-    <script src="../resources/pages/quizroom/server.js"></script>
-    <script src="../resources/pages/quizroom/socket.js"></script>
-    <script src="../resources/pages/quizroom/join.js"></script>
-    <script src="../resources/pages/quizroom/chat.js"></script>
-    <script src="../resources/pages/quizroom/init.js"></script>
+    <script type="module" src="/resources/pages/quizroom/JoinController.js"></script>
+    <script type="module" src="/resources/pages/quizroom/LobbyController.js"></script>
+    <script type="module" src="/resources/pages/quizroom/GameController.js"></script>
+    <script type="module" src="/resources/pages/quizroom/FinishController.js"></script>
+    <script type="module" src="/resources/pages/quizroom/TimeoutController.js"></script>
+    <script type="module" src="/resources/pages/quizroom/ChatController.js"></script>
+    <script type="module" src="/resources/pages/quizroom/HTMLActions.js"></script>
 
+    <audio data-game-joker src="/resources/pages/quizroom/audio/game_joker.wav"></audio>
+    <audio data-game-start src="/resources/pages/quizroom/audio/game_start.wav"></audio>
+    <audio data-game-end src="/resources/pages/quizroom/audio/game_end.wav"></audio>
+    <audio data-game-right-answer src="/resources/pages/quizroom/audio/game_right_answer.wav"></audio>
+    <audio data-game-wrong-answer src="/resources/pages/quizroom/audio/game_wrong_answer.wav"></audio>
+    <audio data-game-new-question src="/resources/pages/quizroom/audio/game_new_question.wav"></audio>
 
-    <!-- Pushbar JS -->
-    <script type="text/javascript" src="../resources/modules/pushbar.js"></script>
-    <script type="text/javascript">
-      const pushbar = new Pushbar({
-        blur:true,
-        overlay:true,
-      });
+    <!-- SFX -->
+    <script src="/resources/modules/sfx.js"></script>
+    <script type="module" src="/resources/pages/quizroom/SFXController.js"></script>
+
+    <!-- emoji picker -->
+    <script src="/resources/modules/meteorEmoji.min.js"></script>
+    <script>
+      (() => {
+        new MeteorEmoji()
+      })()
     </script>
 </body>
 </html>

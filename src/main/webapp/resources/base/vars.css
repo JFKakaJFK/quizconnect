@@ -40,12 +40,15 @@
     --default-font: 'Lato', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     --default-font-weight: 300;
     --default-font-color: var(--gray-5);
+    --default-disabled-color: var(--gray-3);
+    --default-active-color: var(--col-2-l);
 
-    --selection-background: var(--col-4-l);
 
     /* THEME COLORS */
+    --selection-background: var(--col-4-l);
+
     --background-primary: var(--col-1-d);
-    --background-secondary: var(--col-1-m);
+    --background-secondary: #16212f; /* var(--col-1-m); */
 
     --navbar-background: #16212f;
     --navbar-height: 64px;
@@ -66,6 +69,23 @@
     --questionsetbox-icon-size-detail: 2rem;
     --questionsetbox-icon-background: transparent;
 
+    --fab-btn-background: #16212f;
+    --fab-btn-color: var(--default-font-color);
+
+    --game-timer-color: var(--col-3-d);
+
+    --chat-background: var(--col-1-m);
+    --chat-message-color: var(--gray-5);
+    --chat-message-background: var(--gray-1);
+
+    --chat-message-out-color: var(--gray-5);
+    --chat-message-out-background: var(--gray-3);
+
+    --chat-message-info-color: var(--info);
+    --chat-message-info-background: var(--gray-1);
+
+    --chart-area-stroke: var(--col-3-m);
+
     --input-background: var(--col-1-m);
     --input-focus-background: var(--col-1-d);
     --input-color: var(--col-1-l);
@@ -73,15 +93,23 @@
     --input-border-color: var(--col-1-m);
     --input-focus-border-color: var(--col-1-m);
 
+    --range-thumb-color: var(--input-focus-background);
+    --range-background-color: var(--input-background);
+
     /* DEFAULT LAYOUT VARIABLES */
     --default-padding: 1rem;
 
-    /* ACTION TYPES */
+    /* ACTION TYPES */ /* todo are error and danger swapped? */
     --danger: #FB78FF;
+    --danger-gradient: linear-gradient(35deg, #DD439C 0%, #973FDC 100%);
     --alert: #53CAD4;
     --info: #5DE59A;
+    --success: #5DE59A;
+    --success-gradient: linear-gradient(35deg, #19B8C4 0%, #0AD464 100%);
     --warning: #FFBF73;
     --error: #E55D5D;
+    --error-gradient: linear-gradient(35deg, #F86D70 0%, #F86DB8 100%);
+
 
     --lighter-red: #ed5e68;
 }

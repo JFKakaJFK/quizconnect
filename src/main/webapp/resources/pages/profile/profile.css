@@ -54,12 +54,20 @@
     justify-content: center;
 }
 
-
 .preview,
 .player-box-info .player-box-icon {
-    width: 8rem; /* TODO var */
-    height: 8rem;
+    width: 6rem; /* TODO var */
+    height: 6rem;
     margin: 0 auto;
+}
+
+@media only screen and (min-width: 560px) {
+    .preview,
+    .player-box-info .player-box-icon {
+        width: 8rem; /* TODO var */
+        height: 8rem;
+        margin: 0 auto;
+    }
 }
 
 .preview img,
@@ -87,3 +95,45 @@
 .box:empty {
     display: none;
 }
+
+.collection-header {
+    margin: 0 0 calc(var(--default-padding)  / 2) 2rem;
+}
+
+/* APEX CHARTS */
+.box.chart {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.apexcharts-canvas {
+    background: transparent !important;
+}
+
+.apexcharts-canvas .apexcharts-yaxis .apexcharts-yaxis-label,
+.apexcharts-canvas .apexcharts-xaxis .apexcharts-xaxis-label,
+.apexcharts-canvas .apexcharts-xaxis .apexcharts-xaxis-label tspan,
+.apexcharts-canvas .apexcharts-legend-text {
+    font-weight: var(--default-font-weight);
+    font-family: var(--default-font) !important;
+    color: var(--default-font-color);
+    font-size: 14px !important;
+}
+
+.apexcharts-canvas .apexcharts-toolbar {
+    display: none;
+}
+
+.apexcharts-canvas .apexcharts-tooltip-title {
+    display: none;
+}
+/*
+.apexcharts-svg .apexcharts-inner .apexcharts-area {
+    stroke: red;
+    stroke-width: 2px;
+}
+
+.apexcharts-svg .apexcharts-inner #apexcharts-area-0 {
+    fill: green;
+}*/

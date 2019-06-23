@@ -1,53 +1,38 @@
-const line = document.querySelector("#line"); // TODO refactor charts
-const pie = document.querySelector("#pie")
+// todo set colors in theme
 
-let options = {
+const areaColor = '#17A2AD';
+const donutColors = ['#247291', '#11B8A3', '#17A2AD', '#09BD5A', '#C955DC'];
+
+let areaOptions = {
   theme: {
-    palette: 'palette1',
     mode: 'dark',
-    /*
-    monochrome: {
-      enabled: true,
-      color: '#13CFB8',
-      // color: 'var(--col-4-m)',
-    }
-    */
   },
-  /*
-  colors: [
-    'var(--col-2-m)',
-    'var(--col-3-m)',
-    'var(--col-4-m)',
-    'var(--col-5-m)',
-  ],
-  */
+  colors: [areaColor],
+  stroke: {
+    curve: 'smooth', // 'straight'
+    colors: ['#17A2AD'],
+    width: 2,
+  },
+  fill: {
+    type: 'gradient',
+    gradient: {
+      shade: 'dark',
+      type: 'vertical',
+      gradientToColors: [areaColor],
+      opacityFrom: .9,
+      opacityTo: .1,
+    }
+  },
   chart: {
     width: '100%',
     height: 'auto',
     type: 'area'
   },
-  series: [{
-    name: 'question set 1',
-    data: [30,40,35,50,49,60,70,91,125]
-  },
-    {
-      name: 'question set 2',
-      data: [60,50,22,18,23,45,56,77,69]
-    },
-    {
-      name: 'question set3',
-      data: [88, 120, 95, 80, 95, 76, 40, 50, 45]
-    },
-    {
-      name: 'average',
-      data: [60, 70, 60, 55, 45, 40, 35, 40, 50]
-    },
-  ],
   dataLabels: {
     enabled: false,
   },
   tooltip: {
-    enabled: false,
+    enabled: true,
   },
   toolbar: {
     show: false,
@@ -57,7 +42,7 @@ let options = {
     labels: {
       show: true,
       style: {
-        color: 'var(--fg)',
+        color: 'var(--default-font-color)',
       },
       formatter: (value) => value,
     }
@@ -65,18 +50,16 @@ let options = {
   legend: {
     show: true,
     labels: {
-      colors: 'var(--fg)',
+      colors: 'var(--default-font-color)',
     }
   }
-}
+};
 
-
-
-let options1 = {
+let donutOptions = {
   theme: {
     mode: 'dark',
-    palette: 'palette1',
   },
+  colors: donutColors,
   chart: {
     width: '100%',
     height: 'auto',
@@ -86,19 +69,18 @@ let options1 = {
     enabled: false,
   },
   tooltip: {
-    enabled: false,
+    enabled: true,
+    x: {
+      show: false,
+    }
   },
   stroke: {
     show: false,
     width: 0,
   },
-  series: [44, 55, 41, 17, 15],
   responsive: [{
     breakpoint: 480,
     options: {
-      chart: {
-        width: 200
-      },
       legend: {
         position: 'bottom'
       }
@@ -112,10 +94,12 @@ let options1 = {
 };
 
 const URL = `/players/stats`;
+const areaNode = document.querySelector('#area');
+const donutNode = document.querySelector("#donut");
+
 fetch(URL, {
   method: 'POST',
-})
-  .then(response => {
+}).then(response => {
     if(!response.ok){
       throw Error(response.statusText || response.status.toString());
     }
@@ -125,29 +109,38 @@ fetch(URL, {
   .then(({ playedSets, setPlayCounts, lastGameScores }) => {
     console.debug(playedSets, setPlayCounts, lastGameScores);
 
-    if(lastGameScores.reduce((acc, val) => acc + val, 0) === 0) return;
+    try {
+      if(lastGameScores.reduce((acc, val) => acc + val, 0) === 0) console.warn('User has not played yet/only achieved a score of 0');
 
-    options.series = [{
-      name: 'Scores of last games',
-      data: lastGameScores
-    }];
+      lastGameScores = lastGameScores.map(s => s === 0 ? null : s);
 
-    let chart = new ApexCharts(line, options);
+      areaOptions.series = [{
+        name: 'Score',
+        data: lastGameScores || [],
+      }];
 
-    line.innerHTML = '';
-    chart.render();
+      areaNode.innerHTML = '';
+      let areaChart = new ApexCharts(areaNode, areaOptions);
+      areaChart.render();
+    } catch (e) {
+      areaNode.parentNode.removeChild(areaNode);
+    }
 
-    if(playedSets.length !== setPlayCounts.length || playedSets.length === 0) return;
+    try {
+      if(playedSets.length !== setPlayCounts.length) throw new Error('Played sets and play counts of sets do not match.');
 
-    // TODO handle null values
-    options1.labels = playedSets;
-    options1.series = setPlayCounts;
+      donutOptions.labels = playedSets || [];
+      donutOptions.series = setPlayCounts || [];
 
-    let chart1 = new ApexCharts(
-      pie,
-      options1
-    );
-    pie.innerHTML = '';
-    chart1.render();
+      donutNode.innerHTML = '';
+      let donutChart = new ApexCharts(donutNode, donutOptions);
+      donutChart.render();
+    } catch (e) {
+      donutNode.parentNode.removeChild(donutNode);
+    }
+  }).catch(e => {
+    console.error(e);
+    areaNode.parentNode.removeChild(areaNode);
+    donutNode.parentNode.removeChild(donutNode);
   });
 

@@ -122,16 +122,13 @@ public class BootstrapMessagesRenderer extends MessagesRenderer {
 
         writer.startElement("div", uiMessages);
         writer.writeAttribute("class", "alert-container", "alert-container");
-        writer.startElement("div", uiMessages);
-        writer.writeAttribute("class", "alert-cell", "alert-cell");
-
 
         for (FacesMessage msg : messages){
             String summary = msg.getSummary() != null ? msg.getSummary() : "";
             String detail = msg.getDetail() != null ? msg.getDetail() : summary;
 
             writer.startElement("div", null); //start individual container div
-            writer.writeAttribute("class", "alert " + alertSeverityClass + " add-margin" + " fade show", "alert " + alertSeverityClass + " add-margin" + " fade show");
+            writer.writeAttribute("class", "alert " + alertSeverityClass + " fade show", "alert " + alertSeverityClass + " fade show");
             writer.writeAttribute("role", "alert", "alert");
 
             writer.startElement("div", null); //start icon-div
@@ -139,18 +136,18 @@ public class BootstrapMessagesRenderer extends MessagesRenderer {
             switch (alertSeverityClass) {
 
                 case ("alert-info"):
-                    writer.write("<i data-feather=\"check\"></i>");
+                    writer.write("<i data-feather=\"check\" class=\"lg\"></i>");
                     break;
                 case ("alert-warning"):
-                    writer.write("<i data-feather=\"alert-circle\"></i>");
+                    writer.write("<i data-feather=\"alert-circle\" class=\"lg\"></i>");
                     System.out.println("warning");
                     break;
                 case ("alert-error"):
-                    writer.write("<i data-feather=\"slash\"></i>");
+                    writer.write("<i data-feather=\"slash\" class=\"lg\"></i>");
                     System.out.println("error");
                     break;
                 case ("alert-fatal"):
-                    writer.write("<i data-feather=\"zap\"></i>");
+                    writer.write("<i data-feather=\"zap\" class=\"lg\"></i>");
                     System.out.println("fatal");
                     break;
             }
@@ -173,22 +170,17 @@ public class BootstrapMessagesRenderer extends MessagesRenderer {
             }
             writer.endElement("div"); //end content-div
 
-            writer.startElement("div", null);
-            writer.writeAttribute("class", "alert-close", "alert-close");
-            writer.write("<button type=\"button\" class=\"close alert-close\" id=\"close-modal-button\" data-dismiss=\"alert\" aria-label=\"Close\">\n" +
-                    "    <span aria-hidden=\"true\">&times;</span>\n" +
+            writer.write("<button type=\"button\" class=\"alert-close\" data-dismiss=\"alert\" aria-label=\"Close\">\n" +
+                    "    <span aria-hidden=\"true\"><i data-feather=\"x\"></i></span>\n" +
                     "  </button>");
-            writer.endElement("div");
             writer.endElement("div"); //end  individual container div
             msg.rendered();
         }
 
-        writer.endElement("div"); //end of cell
         writer.endElement("div"); //end of alert-container
-
         writer.write("    <script type=\"text/javascript\">\n" +
-                "            window.setTimeout(function () {\n" +
-                "                $(\"#close-modal-button\").click();\n" +
+                "            setTimeout(function () {\n" +
+                "                $(\".alert-close\").click();\n" +
                 "            }, 5000);\n" +
                 "    </script>");
     }

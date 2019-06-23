@@ -3,13 +3,19 @@
     vertical-align: bottom;
 }
 
+.container {
+    margin: 0;
+    padding: 0;
+}
+
 #particles-js {
     position: absolute;
     box-sizing: border-box;
     min-width: 100%;
     height: 100vh;
+    padding: 0;
 }
-/* TODO */
+
 .qc-error-container {
     box-sizing: border-box;
     position: absolute;
@@ -25,12 +31,11 @@
     box-sizing: border-box;
     display: grid;
     grid-gap: 1rem;
-    background: var(--background-primary);
+    background: var(--background-secondary);
 }
 
 .qc-error-content h2 svg {
     vertical-align: bottom;
     width: 3.25rem;
     height: 3.25rem;
-    /* margin: -.2rem; */ /* TODO seems to break the layout */
 }

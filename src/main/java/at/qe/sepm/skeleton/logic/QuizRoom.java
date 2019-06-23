@@ -106,6 +106,7 @@ public class QuizRoom implements IPlayerAction
 		activityCheckTime = 0;
 		aliveCheckTime = 0;
 		timerSyncTime = 0;
+		gameStartTime = 0;
 		
 		numReshuffleJokers = defaultNumberJokers;
 		correctlyAnsweredQuestions = new HashMap<>();
@@ -140,7 +141,7 @@ public class QuizRoom implements IPlayerAction
 		
 		if (deltaTime > 2 * frameTimeStep)
 		{
-			LOGGER.debug("large delay in frameUpdate call of QR [" + pin + "] (" + deltaTime + "ms)");
+			LOGGER.debug("### WARNING ### large delay in frameUpdate call of QR [" + pin + "] (" + deltaTime + "ms)");
 		}
 		
 		checkDelayQueue();
@@ -152,7 +153,7 @@ public class QuizRoom implements IPlayerAction
 			aliveCheckTime = 0;
 		}
 		
-		if (!wfpMode) // disable during wfp mode
+		if (!wfpMode && gameStartTime != 0) // disable during wfp mode / game start countdown
 		{
 			activityCheckTime += deltaTime;
 			if (activityCheckTime >= activityTimeStep)
@@ -319,7 +320,7 @@ public class QuizRoom implements IPlayerAction
 			playerActivityTimestamps.put(player, now);
 			playerAlivePingTimestamps.put(player, now);
 
-			// add additional question to distribute on next call
+			// add additional question to distribute on _next call
 			questionSystem.addMissingQuestions(1);
 		}
 	}
@@ -359,6 +360,12 @@ public class QuizRoom implements IPlayerAction
 		playerAlivePingTimestamps.remove(player);
 		correctlyAnsweredQuestions.remove(player);
 		totalAnsweredQuestions.remove(player);
+		
+		if (wfpMode)
+		{
+			readyPlayers.remove(player);
+			checkIfAllReady();
+		}
 	}
 	
 	/**
@@ -368,14 +375,6 @@ public class QuizRoom implements IPlayerAction
 	{
 		readyPlayers = null;
 		
-		long now = new Date().getTime() + roomStartDelay;
-		for (Player player : players)
-		{
-			// initialize time stamps
-			playerActivityTimestamps.put(player, now);
-		}
-		
-		wfpMode = false;
 		gameStartTime = new Date().getTime();
 		
 		eventCall(x -> x.onGameStart(pin));
@@ -448,27 +447,32 @@ public class QuizRoom implements IPlayerAction
      */
     protected synchronized void changeScore(int code, long timeRemaining)
     {
-        questionSystem.addCompletedQuestions(1);
-        switch (code)
-        {
-            case 0:
-                score -= (difficulty == RoomDifficulty.easy ? 50 : 75);
-                break;
-            case 1:
-                score -= (difficulty == RoomDifficulty.easy ? 75 : 100);
-                break;
-            case 2:
-                score += (difficulty == RoomDifficulty.easy ? 100 : 125) + (int) (timeRemaining / 1000);
-                break;
-            case 3:
-                score += (difficulty == RoomDifficulty.easy ? 125 : 150) + (int) (timeRemaining / 1000);
-                break;
-            case 4:
-                score -= (difficulty == RoomDifficulty.easy ? 50 : 75);
-                break;
-            case 5:
-                score -= (difficulty == RoomDifficulty.easy ? 75 : 100);
-                break;
+	    int mathGodBonus = 10;
+	    questionSystem.addCompletedQuestions(1);
+	    switch (code)
+	    {
+		    case 0:
+			    score -= (difficulty == RoomDifficulty.easy ? 60 : 85);
+			    break;
+		    case 1:
+			    score -= (difficulty == RoomDifficulty.easy ? 85 : 110);
+			    break;
+		    case 2:
+			    score += (difficulty == RoomDifficulty.easy ? 100 : 125) + (int) (timeRemaining / 1000);
+			    if (gameMode == GameMode.mathgod)
+				    score += mathGodBonus;
+			    break;
+		    case 3:
+			    score += (difficulty == RoomDifficulty.easy ? 125 : 150) + (int) (timeRemaining / 1000);
+			    if (gameMode == GameMode.mathgod)
+				    score += 2 * mathGodBonus;
+			    break;
+		    case 4:
+			    score -= (difficulty == RoomDifficulty.easy ? 50 : 75);
+			    break;
+		    case 5:
+			    score -= (difficulty == RoomDifficulty.easy ? 75 : 100);
+			    break;
         }
         
         eventCall(x -> x.onScoreChange(pin, score));
@@ -565,13 +569,34 @@ public class QuizRoom implements IPlayerAction
 		
 		readyPlayers.add(p);
 		
+		eventCall(x -> x.onReadyUp(pin, p, readyPlayers.size()));
+		
 		// are all players ready?
-		if (readyPlayers.size() == players.size())
+		checkIfAllReady();
+	}
+	
+	/**
+	 * Called when QR is in WFP mode and any player readies up or leaves.
+	 */
+	private synchronized void checkIfAllReady()
+	{
+		if (!wfpMode)
+			return;
+		
+		//check if all players ready; prevent start with <2 players
+		if (players.size() >= 2 && readyPlayers.size() == players.size())
 		{
+			long now = new Date().getTime() + roomStartDelay;
+			for (Player player : players)
+			{
+				// initialize time stamps
+				playerActivityTimestamps.put(player, now);
+			}
+			
+			wfpMode = false;
+			eventCall(x -> x.onAllReady(pin));
 			addDelayedAction(new DelayedAction((new Date().getTime()) + roomStartDelay, this::onGameStart));
 		}
-		
-		eventCall(x -> x.onReadyUp(pin, p, readyPlayers.size()));
 	}
 	
 	@Override
