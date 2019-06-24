@@ -52,6 +52,8 @@
     --background-lighter: hsl(218, 29%, 20%); /*#303e4f;/* var(--col-1-m);/*#232429; /*#1E2E39; /*#232d41; /*var(--col-1-d); /* var(--col-1-m); */  /* todo theme */
     --background-darker: #081627; /*#101723; */
 
+    --main-panel-background: var(--background-primary);
+
     --navbar-background:  var(--background-lighter); /*hsl(214, 36%, 14%); /*var(--background-darker); */
     --navbar-height: 64px;
 

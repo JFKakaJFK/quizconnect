@@ -8,6 +8,12 @@
 .modal-content {
     background: transparent;
     border: 1px solid transparent;
+    border-radius: var(--default-border-radius);
+}
+
+[data-theme-name="outrun"] .modal-content {
+    box-shadow: var(--default-box-shadow);
+    border: 1px solid var(--background-primary);
 }
 
 .modal-header {

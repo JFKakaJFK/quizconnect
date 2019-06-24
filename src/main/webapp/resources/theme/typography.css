@@ -13,3 +13,16 @@ h4 {
 h5 {
     font-weight: 400;
 }
+
+
+[data-theme-name="outrun"] * {
+    text-shadow:
+            0 0 4px #fff,
+            0 0 8px var(--text-glow-color),
+            0 0 16px var(--text-glow-color),
+            0 0 32px var(--text-glow-color);
+}
+
+[data-theme-name="outrun"] svg {
+    color: var(--text-glow-color);
+}

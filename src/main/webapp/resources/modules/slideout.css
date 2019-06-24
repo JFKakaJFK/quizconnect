@@ -34,7 +34,10 @@ body {
 .slideout-panel {
     position: relative;
     z-index: 1;
-    background: inherit;
+    background: var(--main-panel-background);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     will-change: transform;
     min-height: 100vh;
 }

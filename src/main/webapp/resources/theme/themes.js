@@ -1,57 +1,31 @@
 const themes = {
   default: {
-    '--col-1-d': '#303e4f',
-    '--col-1-m': '#4a607a',
-    '--col-1-l': '#919EAD',
-
-    '--col-2-d': '#247291',
-    '--col-2-m': '#2A86AB',
-    '--col-2-l': '#54A9CC',
-
-    '--col-3-d': '#17A2AD',
-    '--col-3-m': '#19B8C4',
-    '--col-3-l': '#53CAD4',
-
-    '--col-4-d': '#11B8A3',
-    '--col-4-m': '#13CFB8',
-    '--col-4-l': '#65E3D4',
-
-    '--col-5-d': '#09BD5A',
-    '--col-5-m': '#0AD464',
-    '--col-5-l': '#5DE59A',
-
-    '--gray-1': '#383D42',
-    '--gray-2': '#5A626B',
-    '--gray-3': '#7A8591',
-    '--gray-4': '#B3BECD',
-    '--gray-5': '#EFF2F5',
+    // either todo or have default in vars css
   },
   outrun: { // TODO https://i.redd.it/aepphltiqy911.png
-    '--col-1-d': '#303',
-    '--col-1-m': '#4a6',
-    '--col-1-l': '#919',
-
-    '--col-2-d': '#247',
-    '--col-2-m': '#2A8',
-    '--col-2-l': '#54A',
-
-    '--col-3-d': '#17A',
-    '--col-3-m': '#19B',
-    '--col-3-l': '#53C',
-
-    '--col-4-d': '#11B',
-    '--col-4-m': '#13C',
-    '--col-4-l': '#65E',
-
-    '--col-5-d': '#09B',
-    '--col-5-m': '#0AD',
-    '--col-5-l': '#5DE',
-
-    '--gray-1': '#383',
-    '--gray-2': '#5A6',
-    '--gray-3': '#7A8',
-    '--gray-4': '#B3B',
-    '--gray-5': '#EFF',
+    '--text-glow-color': '#F6019D',
+    '--default-font-color': '#FFF',
+    '--background-primary': '#261447',
+    '--background-lighter': '#241734',
+    '--background-darker': '#0D0221',
+    '--sidebar-background': '#0D0221',
+    '--sidebar-background-gradient': 'linear-gradient(145deg, #0D0221 25%, #241734 100%)',
+    '--default-box-shadow': '1px 1px 8px -4px hsla(0, 0%, 100%, .75), 4px 4px 16px 0 #540D6E',
+    '--default-active-color': '#FFF',
+    '--active-glow-color': '#f706cf',// todo
+    '--default-active-background': 'hsla(310, 95%, 50%, .2)',
+    '--default-accent-gradient': 'linear-gradient(35deg, #FF3864 25%, #FF6C11 100%)',
+    '--game-timer-color': '#FF3864',
+    '--chat-message-background': '#D40078',
+    '--chat-message-out-background': '#2De2e6',
+    '--chat-message-info-background': '#023788',
+    // todo
+    '--danger': '#ff6c11',
+    '--danger-gradient': 'linear-gradient(35deg, #FF3864 25%, #FF6C11 100%)',
+    '--success': '#2de2e6',
+    '--success-gradient': 'linear-gradient(35deg, #2de2e6 25%, #F706cf 100%)',
+    '--error': '#FD1D53',
+    '--main-panel-background': 'url("https://i.imgur.com/M8Qj9bu.jpg")', // todo
   },
   light: {
     '--default-font-color': '#424242',
