@@ -37,7 +37,7 @@ public class playerTests {
 
     @Test
     public void createGameTest() throws InterruptedException {
-        driver.findElement(By.id("form:j_idt47")).click();
+        driver.findElement(By.id("form:j_idt45")).click();
         Thread.sleep(1000);
         String currentURL = driver.getCurrentUrl();
         Assert.assertEquals(currentURL, "http://localhost:8080/quizroom/createRoom.xhtml" );
