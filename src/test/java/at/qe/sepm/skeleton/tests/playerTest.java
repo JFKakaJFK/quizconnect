@@ -1,4 +1,4 @@
-package at.qe.sepm.skeleton.tests.selenium;
+package at.qe.sepm.skeleton.tests;
 
 
 import org.junit.After;
