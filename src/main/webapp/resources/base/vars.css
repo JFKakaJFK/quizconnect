@@ -1,67 +1,43 @@
 :root {
-
-    /* DEFAULT COLORS */
-    --col-1-d: #303e4f;
-    --col-1-m: #081627; /* #4a607a; */
-    --col-1-l: #919EAD;
-
-    --col-2-d: #247291;
-    --col-2-m: #2A86AB;
-    --col-2-l: #54A9CC;
-
-    --col-3-d: #17A2AD;
-    --col-3-m: #19B8C4;
-    --col-3-l: #53CAD4;
-
-    --col-4-d: #11B8A3;
-    --col-4-m: #13CFB8;
-    --col-4-l: #65E3D4;
-
-    --col-5-d: #09BD5A;
-    --col-5-m: #0AD464;
-    --col-5-l: #5DE59A;
-
-    --gray-1: #383D42; /* grays are used with themes, be careful when changing */
-    --gray-2: #5A626B;
-    --gray-3: #7A8591;
-    --gray-4: #B3BECD;
-    --gray-5: #EFF2F5;
-
-    --accent-1: #C955DC;
-    --accent-2: #FB5BFF;
-    --accent-3: #FB78FF;
-
-    --default-accent-gradient: linear-gradient(35deg, rgba(23,162,173,1) 0%, rgba(9,189,90,1) 100%);   /* todo theme */
-
     /* TYPOGRAPHY */
     --default-font: 'Lato', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     --default-font-weight: 300;
 
-    --default-font-color: var(--gray-5);
-    --default-disabled-color: var(--gray-3);
-    --default-active-color: var(--col-2-l);
-    --default-active-background: hsla(214, 36%, 22%, .7);
-
-    --default-box-shadow: 2px 2px 16px 4px hsla(0, 0%, 0%, .2), 4px 4px 32px 8px hsla(0, 0%, 0%, .05);
-
-
     /* THEME COLORS */
-    --selection-background: var(--col-4-l);  /* todo theme */
+    --selection-background: #65E3D4;
+    --default-font-color: #EFF2F5;
 
-    --background-primary: #1e2736;/* var(--col-1-d); /*#100f10;/*#16212f;  /* todo theme */
-    --background-lighter: hsl(218, 29%, 20%); /*#303e4f;/* var(--col-1-m);/*#232429; /*#1E2E39; /*#232d41; /*var(--col-1-d); /* var(--col-1-m); */  /* todo theme */
-    --background-darker: #081627; /*#101723; */
+    --background-primary: #1e2736;
+    --background-lighter: hsl(218, 29%, 20%);
+    --background-darker: #081627;
 
     --main-panel-background: var(--background-primary);
 
-    --navbar-background:  var(--background-lighter); /*hsl(214, 36%, 14%); /*var(--background-darker); */
+    --navbar-background: var(--background-lighter);
     --navbar-height: 64px;
 
     --sidebar-overlay: hsl(217, 100%, 5%);
     --sidebar-background: hsl(214, 36%, 14%);
-    --sidebar-background-gradient: linear-gradient(145deg, hsl(214, 36%, 14%) 25%, hsl(216, 22%, 22%) 100%);   /* todo theme */
+    --sidebar-background-gradient: linear-gradient(145deg, hsl(214, 36%, 14%) 25%, hsl(216, 22%, 22%) 100%);
 
-    --box-border-color: var(--col-2-d);
+    --default-disabled-color: #7A8591;
+    --default-active-color: #54A9CC;
+    --default-active-background: hsla(214, 36%, 22%, .7);
+
+    --default-accent-gradient: linear-gradient(35deg, rgba(23,162,173,1) 0%, rgba(9,189,90,1) 100%);
+
+    /* ACTION TYPES */ /* are error and danger swapped? */
+    --danger: #FB78FF;
+    --danger-gradient: linear-gradient(35deg, #DD439C 0%, #973FDC 100%);
+    --alert: #53CAD4;
+    --info: #0AD464;
+    --success: #09BD5A;
+    --success-gradient: linear-gradient(35deg, #19B8C4 0%, #0AD464 100%);
+    --warning: #FFBF73;
+    --error: #E55D5D; /* #dc3545 */
+    --error-gradient: linear-gradient(35deg, #F86D70 0%, #F86DB8 100%);
+
+    --box-border-color: transparent;
 
     --collection-box-icon-size-small: 1.6rem;
     --collection-box-icon-size: 3rem;
@@ -76,14 +52,14 @@
     --fab-btn-background: var(--background-lighter);
     --fab-btn-color: var(--default-font-color);
 
-    --game-timer-color: var(--col-3-d);   /* todo theme */
+    --game-timer-color: #17A2AD;
 
     --chat-background: var(--background-darker);
     --chat-message-color: var(--default-font-color);
-    --chat-message-background: var(--gray-1);
+    --chat-message-background: #383D42;
 
     --chat-message-out-color: var(--default-font-color);
-    --chat-message-out-background: var(--gray-3);
+    --chat-message-out-background: #7A8591;
 
     --chat-message-info-color: var(--default-font-color);
     --chat-message-info-background: var(--background-primary);
@@ -91,7 +67,7 @@
     --input-background: var(--background-darker);
     --input-focus-background: var(--background-primary);
     --input-box-shadow: 2px 2px 16px 0 hsla(0, 0%, 0%, .075);
-    --input-color: var(--gray-3);
+    --input-color: #7A8591;
     --input-focus-color: var(--default-font-color);
     --input-border-color: var(--background-darker);
     --input-focus-border-color: var(--background-darker);
@@ -104,16 +80,7 @@
     --default-padding: 1rem;
     --default-border-radius: 1rem;
 
-    /* ACTION TYPES */ /* are error and danger swapped? */
-    --danger: #FB78FF;
-    --danger-gradient: linear-gradient(35deg, #DD439C 0%, #973FDC 100%);
-    --alert: #53CAD4;
-    --info: #09BD5A;
-    --success: #09BD5A;
-    --success-gradient: linear-gradient(35deg, #19B8C4 0%, #0AD464 100%);
-    --warning: #FFBF73;
-    --error: #E55D5D; /* #dc3545 */
-    --error-gradient: linear-gradient(35deg, #F86D70 0%, #F86DB8 100%);
+    --default-box-shadow: 2px 2px 16px 4px hsla(0, 0%, 0%, .2), 4px 4px 32px 8px hsla(0, 0%, 0%, .05);
 }
 
 @media only screen and (min-width: 560px) {

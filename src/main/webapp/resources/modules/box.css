@@ -1,35 +1,13 @@
 .box {
     padding: var(--default-padding);
-    border: 1px solid var(--box-border-color);
     border-radius: var(--default-border-radius);
     box-sizing: border-box;
     position: relative;
     min-height: calc(3 * var(--default-padding));
-
-    /* NEW TODO */
-    /*
-    background: #16212f;
-    background-image: linear-gradient(135deg, hsl(214, 36%, 14%) 25%, hsl(216, 22%, 20%) 100%);
-    border: 0;
-    border-radius: 12px;
-
-    */
     box-shadow: var(--default-box-shadow);
-
-    border-color: var(--background-lighter);
+    /* border: 1px solid var(--box-border-color); */
     border: 0;
     background: var(--background-lighter);
-
-    /*
-    border: 0;
-    background: #251734;
-    box-shadow:
-        0 0 2px 1px #fff,
-        0 0 16px 4px #f706cf,
-        inset 0 0 2px 1px #fff,
-        inset 0 0 16px 4px #f706cf
-;
-*/
 }
 
 .box-actions {
@@ -51,16 +29,4 @@ fieldset.box legend {
     width: auto;
     padding: 0 var(--default-padding);
     font-size: 1rem;
-
-    /*
-    background: #251734;
-    border-radius: 1rem;
-    text-shadow: 0 0 8px #fff, 0 0 106px #f706cf;
-
-    box-shadow:
-            0 0 2px 1px #fff,
-            0 0 16px 4px #f706cf,
-            inset 0 0 2px 1px #fff,
-            inset 0 0 16px 4px #f706cf
-            */
 }

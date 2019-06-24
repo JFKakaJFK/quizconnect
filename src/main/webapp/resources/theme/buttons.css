@@ -57,7 +57,7 @@ TODO
 .btn-danger:hover {
     background-color: var(--error);
     border-color: var(--error);
-    color: var(--gray-5);
+    color: var(--default-font-color);
     transition: all 0.3s ease 0s;
     filter: saturate(1.2);
 }
