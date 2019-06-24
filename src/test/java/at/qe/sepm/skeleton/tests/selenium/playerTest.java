@@ -9,7 +9,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
-public class playerTests {
+public class playerTest {
 
     private WebDriver driver;
     private String loginpage = "localhost:8080/login.xhtml";

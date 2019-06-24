@@ -13,7 +13,7 @@ import org.openqa.selenium.interactions.Actions;
 
 import java.io.File;
 
-public class homePageTests {
+public class homePageTest {
 
     private WebDriver driver;
     private String homepage = "localhost:8080";
