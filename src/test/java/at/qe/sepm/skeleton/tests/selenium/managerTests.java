@@ -31,7 +31,7 @@ public class managerTests {
     }
     @Test
     public void openQuestionSets() {
-        WebElement questionSetButton = driver.findElement(By.xpath("//a[@href='/secured/overview.xhtml']"));
+        WebElement questionSetButton = driver.findElement(By.xpath("//img[@src='questions.svg']"));
         questionSetButton.click();
         String currentURL = driver.getCurrentUrl();
         Assert.assertEquals(currentURL, "http://localhost:8080/secured/overview.xhtml" );
@@ -62,11 +62,11 @@ public class managerTests {
         driver.get(playerOverview);
         driver.findElement(By.id("form:j_idt14")).click();
         Thread.sleep(1000);
-        driver.findElement(By.id("modals:addPlayer:j_idt60")).sendKeys("testUser");
-        driver.findElement(By.id("modals:addPlayer:j_idt62")).sendKeys("testPassword");
-        driver.findElement(By.id("modals:addPlayer:j_idt63")).sendKeys("testPassword");
+        driver.findElement(By.id("new_username")).sendKeys("testUser");
+        driver.findElement(By.id("new_password")).sendKeys("testPassword");
+        driver.findElement(By.id("repeat_new_password")).sendKeys("testPassword");
         Thread.sleep(1000);
-        driver.findElement(By.id("modals:addPlayer:j_idt73")).click();
+        driver.findElement(By.id("addPlayerForm:addPlayer:j_idt76")).click();
     }
 
 
