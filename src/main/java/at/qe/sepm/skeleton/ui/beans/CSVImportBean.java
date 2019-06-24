@@ -60,7 +60,7 @@ public class CSVImportBean implements Serializable {
     public void handleFileUpload(){
         if(file != null){
             try(InputStream is = new FileInputStream(file)){
-                // If there is no upload in the time between processing this upload & the next upload of the user,
+                // If there is no upload in the time between processing this upload & the _next upload of the user,
                 // the file attribute could be used directly
                 filename = Files.createTempFile(temp, "qs", ".csv");
                 Files.copy(is, filename, StandardCopyOption.REPLACE_EXISTING);
@@ -92,11 +92,11 @@ public class CSVImportBean implements Serializable {
 
         QSOverviewBean.addQuestionSetForDisplay(questionSet);
 
-        messageBean.updateComponent("formOverview-QSets:overview-QSets");
+        //messageBean.updateComponent("formOverview-QSets:overview-QSets");
 
-        String message = String.format("Successfully imported CSV");
-        messageBean.showGlobalInformation(message);
-        messageBean.updateComponent("messages");
+        //String message = String.format("Successfully imported CSV");
+        //messageBean.showGlobalInformation(message);
+        //messageBean.updateComponent("messages");
 
         descriptionCSV = null;
         nameCSV = null;
@@ -107,7 +107,6 @@ public class CSVImportBean implements Serializable {
     }
 
     public void setManager(Manager manager) {
-        logger.info("Set manager with ID:" + manager.getId());
         this.manager = manager;
     }
 

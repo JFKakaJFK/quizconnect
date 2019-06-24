@@ -55,7 +55,7 @@ public class AWTImageServiceTest {
 
         Assert.assertTrue("Stored file exists", Files.exists(output));
         Assert.assertTrue("Stored file has right path", Files.exists(testFolder.resolve(output.getFileName())));
-        Assert.assertTrue("Stored file is non empty", output.toFile().length() > 0);
+        Assert.assertTrue("Stored file is non _empty", output.toFile().length() > 0);
         Assert.assertEquals("File type matches", "jpg", FilenameUtils.getExtension(output.toString()));
     }
 
@@ -65,7 +65,7 @@ public class AWTImageServiceTest {
 
         Assert.assertTrue("Stored file exists", Files.exists(output));
         Assert.assertTrue("Stored file has right path", Files.exists(testFolder.resolve(output.getFileName())));
-        Assert.assertTrue("Stored file is non empty", output.toFile().length() > 0);
+        Assert.assertTrue("Stored file is non _empty", output.toFile().length() > 0);
         Assert.assertEquals("File type matches", "png", FilenameUtils.getExtension(output.toString()));
     }
 
@@ -75,7 +75,7 @@ public class AWTImageServiceTest {
 
         Assert.assertTrue("Stored file exists", Files.exists(output));
         Assert.assertTrue("Stored file has right path", Files.exists(testFolder.resolve(output.getFileName())));
-        Assert.assertTrue("Stored file is non empty", output.toFile().length() > 0);
+        Assert.assertTrue("Stored file is non _empty", output.toFile().length() > 0);
         Assert.assertEquals("File type matches", "jpg", FilenameUtils.getExtension(output.toString()));
     }
 
@@ -85,7 +85,7 @@ public class AWTImageServiceTest {
 
         Assert.assertTrue("Stored file exists", Files.exists(output));
         Assert.assertTrue("Stored file has right path", Files.exists(testFolder.resolve(output.getFileName())));
-        Assert.assertTrue("Stored file is non empty", output.toFile().length() > 0);
+        Assert.assertTrue("Stored file is non _empty", output.toFile().length() > 0);
         Assert.assertEquals("File type matches", "png", FilenameUtils.getExtension(output.toString()));
     }
 
@@ -95,7 +95,7 @@ public class AWTImageServiceTest {
 
         Assert.assertTrue("Stored file exists", Files.exists(output));
         Assert.assertTrue("Stored file has right path", Files.exists(testFolder.resolve(output.getFileName())));
-        Assert.assertTrue("Stored file is non empty", output.toFile().length() > 0);
+        Assert.assertTrue("Stored file is non _empty", output.toFile().length() > 0);
         Assert.assertEquals("File type matches", "jpg", FilenameUtils.getExtension(output.toString()));
 
         BufferedImage img = ImageIO.read(output.toFile());
@@ -109,7 +109,7 @@ public class AWTImageServiceTest {
 
         Assert.assertTrue("Stored file exists", Files.exists(output));
         Assert.assertTrue("Stored file has right path", Files.exists(testFolder.resolve(output.getFileName())));
-        Assert.assertTrue("Stored file is non empty", output.toFile().length() > 0);
+        Assert.assertTrue("Stored file is non _empty", output.toFile().length() > 0);
         Assert.assertEquals("File type matches", "jpg", FilenameUtils.getExtension(output.toString()));
         BufferedImage img = ImageIO.read(output.toFile());
         Assert.assertEquals("Width matches", 5000, img.getWidth());
@@ -124,7 +124,7 @@ public class AWTImageServiceTest {
 
         Assert.assertTrue("Stored file exists", Files.exists(output));
         Assert.assertTrue("Stored file has right path", Files.exists(testFolder.resolve(output.getFileName())));
-        Assert.assertTrue("Stored file is non empty", output.toFile().length() > 0);
+        Assert.assertTrue("Stored file is non _empty", output.toFile().length() > 0);
         Assert.assertEquals("File type matches", "png", FilenameUtils.getExtension(output.toString()));
         Assert.assertEquals("Width is scaled probably", 100, bufferedOutput.getWidth());
         Assert.assertEquals("Height is scaled probably", 205, bufferedOutput.getHeight());

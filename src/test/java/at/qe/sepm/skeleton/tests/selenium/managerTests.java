@@ -16,7 +16,7 @@ public class managerTests {
     private String loginpage = "localhost:8080/login.xhtml";
     private String managerUsername = "user1";
     private String managerPassword = "pw1";
-    private String questionSetOverview ="http://localhost:8080/secured/questionSet.xhtml";
+    private String questionSetOverview ="http://localhost:8080/secured/overview.xhtml";
     private String playerOverview = "http://localhost:8080/players/all.xhtml";
     private String driverPath = "src\\test\\java\\at\\qe\\sepm\\skeleton\\tests\\selenium\\chromedriver.exe";//chromedriver for 64-bit Version of Chrome 74
 
@@ -31,10 +31,10 @@ public class managerTests {
     }
     @Test
     public void openQuestionSets() {
-        WebElement questionSetButton = driver.findElement(By.xpath("//a[@href='/secured/questionSet.xhtml']"));
+        WebElement questionSetButton = driver.findElement(By.xpath("//a[@href='/secured/overview.xhtml']"));
         questionSetButton.click();
         String currentURL = driver.getCurrentUrl();
-        Assert.assertEquals(currentURL, "http://localhost:8080/secured/questionSet.xhtml" );
+        Assert.assertEquals(currentURL, "http://localhost:8080/secured/overview.xhtml" );
     }
 
 
@@ -42,44 +42,31 @@ public class managerTests {
     @Test
     public void createEasyQuestionSetTest() throws InterruptedException {
         driver.get(questionSetOverview);
-        driver.findElement(By.id("questionSetForm:saveQuestion")).click();
+        driver.findElement(By.id("form:CreateNew")).click();
         driver.findElement(By.id("questionSetForm:setName")).sendKeys("testQuestionSet");
         driver.findElement(By.id("questionSetForm:setDesc")).sendKeys("testQuestionSetDescription");
-        driver.findElement(By.id("questionSetForm:saveQuestion")).click();
-        driver.findElement(By.id("questionForm:question")).sendKeys("Question?");
-        driver.findElement(By.id("questionForm:corrAnswer")).sendKeys("CorrectAnswer");
-        driver.findElement(By.id("questionForm:wrongAnswer1")).sendKeys("WrongAnswer1");
-        driver.findElement(By.id("questionForm:wrongAnswer2")).sendKeys("WrongAnswer2");
-        driver.findElement(By.id("questionForm:wrongAnswer3")).sendKeys("WrongAnswer3");
-        driver.findElement(By.name("questionForm:j_idt94")).click();
-        WebElement yesButton = driver.findElement(By.id("questionForm:j_idt97:j_idt107"));
+        driver.findElement(By.id("questionSetForm:addQuestionSet")).click();
         Thread.sleep(1000);
-        yesButton.click();
-        Thread.sleep(1000);
-        driver.findElement(By.id("questionForm:question")).sendKeys("Question?");
-        driver.findElement(By.id("questionForm:corrAnswer")).sendKeys("CorrectAnswer");
-        driver.findElement(By.id("questionForm:wrongAnswer1")).sendKeys("WrongAnswer1");
-        driver.findElement(By.id("questionForm:wrongAnswer2")).sendKeys("WrongAnswer2");
-        driver.findElement(By.id("questionForm:wrongAnswer3")).sendKeys("WrongAnswer3");
-        driver.findElement(By.name("questionForm:j_idt94")).click();
-        WebElement noButton = driver.findElement(By.id("questionForm:j_idt97:j_idt107"));
-        Thread.sleep(1000);
-        noButton.click();
+        driver.findElement(By.id("questionForForm:questionModal:question")).sendKeys("Question?");
+        driver.findElement(By.id("questionForForm:questionModal:corrAnswer")).sendKeys("CorrectAnswer");
+        driver.findElement(By.id("questionForForm:questionModal:wrongAnswer1")).sendKeys("WrongAnswer1");
+        driver.findElement(By.id("questionForForm:questionModal:wrongAnswer2")).sendKeys("WrongAnswer2");
+        driver.findElement(By.id("questionForForm:questionModal:wrongAnswer3")).sendKeys("WrongAnswer3");
+        driver.findElement(By.name("questionForForm:questionModal:submitButton")).click();
         String currentURL = driver.getCurrentUrl();
-        Assert.assertEquals(currentURL, "http://localhost:8080/secured/questionSet.xhtml" );
-
-
+        Assert.assertEquals(currentURL, "http://localhost:8080/secured/questionset.xhtml" );
     }
 
     @Test
     public void createNewPlayer() throws InterruptedException {
         driver.get(playerOverview);
-        driver.findElement(By.id("form:j_idt32")).click();
+        driver.findElement(By.id("form:j_idt14")).click();
         Thread.sleep(1000);
-        driver.findElement(By.id("form:modal:j_idt61")).sendKeys("testUser");
-        driver.findElement(By.id("form:modal:j_idt63")).sendKeys("testPassword");
+        driver.findElement(By.id("modals:addPlayer:j_idt60")).sendKeys("testUser");
+        driver.findElement(By.id("modals:addPlayer:j_idt62")).sendKeys("testPassword");
+        driver.findElement(By.id("modals:addPlayer:j_idt63")).sendKeys("testPassword");
         Thread.sleep(1000);
-        driver.findElement(By.id("form:addPlayer:j_idt73")).click();
+        driver.findElement(By.id("modals:addPlayer:j_idt73")).click();
     }
 
 

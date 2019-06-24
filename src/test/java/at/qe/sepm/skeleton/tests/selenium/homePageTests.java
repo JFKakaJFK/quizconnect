@@ -30,7 +30,7 @@ public class homePageTests {
     @Test
     public void loginButtonTest() {
         driver.get(homepage);
-        WebElement button = driver.findElement(By.xpath("//a[@class='btn btn-primary btn-lg']"));
+        WebElement button = driver.findElement(By.xpath("//a[@class='btn btn-primary']"));
         button.click();
         String currentURL = driver.getCurrentUrl();
         Assert.assertEquals(currentURL, "http://localhost:8080/login.xhtml" );

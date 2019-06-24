@@ -1,0 +1,64 @@
+.grid-container {
+    width: 100%;
+    display: grid;
+    grid-auto-rows: minmax(40vh, 1fr);
+    grid-gap: var(--default-spacing);
+    font-size: 1.5em;
+    text-align: center;
+}
+
+@media only screen and (min-width: 768px) {
+    .grid-container {
+        grid-gap: var(--default-spacing);
+        grid-template-columns: 1fr 1fr;
+        font-size: 2em;
+    }
+}
+
+a.box {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+a.box img {
+    display: inline-block;
+    visibility: visible;
+    opacity: 1;
+    max-height: 80%;
+    max-width: 80%;
+    -webkit-transition: visibility 0.5s, opacity 0.5s;
+    -moz-transition: visibility 0.5s, opacity 0.5s;
+    -ms-transition: visibility 0.5s, opacity 0.5s;
+    -o-transition: visibility 0.5s, opacity 0.5s;
+    transition: visibility 0.5s, opacity 0.5s;
+
+}
+
+a.box span {
+    visibility: hidden;
+    opacity: 0;
+    -webkit-transition: visibility 0.5s, opacity 0.5s;
+    -moz-transition: visibility 0.5s, opacity 0.5s;
+    -ms-transition: visibility 0.5s, opacity 0.5s;
+    -o-transition: visibility 0.5s, opacity 0.5s;
+    transition: visibility 0.5s, opacity 0.5s;
+    position: absolute;
+    display: inline-block;
+    font-family: var(--default-font);
+    color: var(--default-font-color);
+    font-size: 2em;
+
+}
+a.box:hover span {
+    visibility: visible;
+    opacity: 1;
+}
+
+a.box:hover img {
+    visibility: hidden;
+    opacity: 0;
+}

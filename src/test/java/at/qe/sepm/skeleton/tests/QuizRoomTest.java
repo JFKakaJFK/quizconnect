@@ -109,6 +109,11 @@ public class QuizRoomTest
 		{
 		
 		}
+
+		@Override
+		public void onAllReady(int pin) {
+
+		}
 	}
 	
 	

@@ -1,0 +1,29 @@
+.collection {
+    width: 100%;
+    display: grid;
+    grid-template-columns:  1fr;
+    grid-auto-columns: 1fr;
+    grid-gap: var(--default-spacing);
+}
+
+@media only screen and (min-width: 768px) {
+    .collection {
+        grid-template-columns:  1fr 1fr;
+        grid-auto-columns: 1fr 1fr;
+    }
+}
+
+@media only screen and (min-width: 1200px) {
+    .collection {
+        grid-template-columns:  1fr 1fr 1fr;
+        grid-auto-columns: 1fr 1fr 1fr;
+    }
+}
+
+.collection-empty-message {
+    display: block;
+    width: 100%;
+    text-align: center;
+    font-weight: var(--default-font-weight);
+    font-size: 2rem;
+}

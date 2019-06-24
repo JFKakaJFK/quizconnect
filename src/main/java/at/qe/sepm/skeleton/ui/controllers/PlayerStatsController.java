@@ -59,7 +59,7 @@ public class PlayerStatsController {
         int i = 0; // keeping a second counter probably is better than rewriting the keySet to an Array
         for(int key: qSetPlayCounts.keySet()){
             QuestionSet qs = questionSetService.getQuestionSetById(key);
-            if(qs == null){
+            if(qs == null){ // remove a set from the played ones if it was deleted
                 profileBean.getPlayer().removeQSetFromPlayed(key);
                 playerService.savePlayer(profileBean.getPlayer());
             } else {

@@ -1,0 +1,22 @@
+@import "./main.css";
+
+.userexists p {
+    color: var(--error);
+    text-align: center;
+    font-weight: var(--default-font-weight);
+    font-size: 1.125rem;
+}
+
+.userexists:empty {
+    display: none;
+}
+
+form {
+    max-width: 100%;
+}
+
+@media only screen and (min-width: 768px) {
+    form {
+        width: 50%;
+    }
+}

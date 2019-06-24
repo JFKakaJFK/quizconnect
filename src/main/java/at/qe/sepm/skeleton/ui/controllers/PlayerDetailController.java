@@ -6,10 +6,7 @@ import at.qe.sepm.skeleton.services.ManagerService;
 import at.qe.sepm.skeleton.services.PlayerService;
 import at.qe.sepm.skeleton.services.StorageService;
 import at.qe.sepm.skeleton.services.UserService;
-import at.qe.sepm.skeleton.ui.beans.AllPlayersBean;
-import at.qe.sepm.skeleton.ui.beans.PasswordBean;
-import at.qe.sepm.skeleton.ui.beans.SessionInfoBean;
-import at.qe.sepm.skeleton.ui.beans.ValidationBean;
+import at.qe.sepm.skeleton.ui.beans.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +31,8 @@ public class PlayerDetailController implements Serializable {
     private PlayerService playerService;
     private StorageService storageService;
     private ManagerService managerService;
-    private AllPlayersBean allPlayersBean;
     private ValidationBean validationBean;
+    private MessageBean messageBean;
 
     private User currentUser;
     private Player player;
@@ -50,16 +47,16 @@ public class PlayerDetailController implements Serializable {
             PlayerService playerService,
             SessionInfoBean sessionInfoBean,
             ManagerService managerService,
-            AllPlayersBean allPlayersBean,
-            ValidationBean validationBean){
+            ValidationBean validationBean,
+            MessageBean messageBean){
         assert passwordBean != null;
         assert userService != null;
         assert managerService != null;
         assert playerService != null;
         assert storageService != null;
         assert sessionInfoBean != null;
-        assert allPlayersBean != null;
         assert validationBean != null;
+        assert messageBean != null;
 
         this.passwordBean = passwordBean;
         this.userService = userService;
@@ -67,14 +64,24 @@ public class PlayerDetailController implements Serializable {
         this.playerService = playerService;
         this.currentUser = sessionInfoBean.getCurrentUser();
         this.managerService = managerService;
-        this.allPlayersBean = allPlayersBean;
         this.validationBean = validationBean;
+        this.messageBean = messageBean;
     }
 
     /**
      * Deletes a Player if the current user is the creator of the Player.
      */
     public void deletePlayer(){
+        deletePlayer(null);
+    }
+
+    /**
+     * Deletes a Player if the current user is the creator of the Player.
+     *
+     * @param allPlayersBean
+     *         The bean to refresh.
+     */
+    public void deletePlayer(AllPlayersBean allPlayersBean){
         if(player == null || player.isNew() || !currentUser.getUsername().equals(managerService.getManagerOfPlayer(player).getUser().getUsername())){
             return;
         }
@@ -88,10 +95,14 @@ public class PlayerDetailController implements Serializable {
         playerService.deletePlayer(player);
         userService.deleteUser(user);
 
-        allPlayersBean.removePlayer(player);
-        log.info("Player " + player.getUser().getUsername() + " was successfully deleted");
-        player = null;
+        messageBean.alertInformation("Success", "Player deleted.");
+        messageBean.updateComponent("messages");
 
+        log.info("Player " + player.getUser().getUsername() + " was successfully deleted");
+        if(allPlayersBean != null){
+            allPlayersBean.removePlayer(player);
+        }
+        player = null;
 
         FacesContext fc = FacesContext.getCurrentInstance();
         String viewId = fc.getViewRoot().getViewId();
@@ -112,8 +123,12 @@ public class PlayerDetailController implements Serializable {
         if(player != null && isPasswordValid()){
             player.getUser().setPassword(passwordBean.encodePassword(password));
             userService.saveUser(player.getUser());
+
+            messageBean.alertInformation("Success", "Password was successfully changed.");
+            messageBean.updateComponent("messages");
         }
         password = null;
+        repeatPassword = null;
         player = null;
     }
 
@@ -123,7 +138,7 @@ public class PlayerDetailController implements Serializable {
      * @return Boolean if the new password is valid.
      */
     public boolean isPasswordValid(){
-        return password != null && validationBean.isValidPassword(password) && repeatPassword != null && repeatPassword.equals(password);
+        return validationBean.isValidPassword(password, repeatPassword);
     }
 
     public Player getPlayer() {

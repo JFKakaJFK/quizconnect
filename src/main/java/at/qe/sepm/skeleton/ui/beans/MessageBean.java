@@ -38,14 +38,35 @@ public class MessageBean implements Serializable {
     }
     
     /**
+     * Show success message
+     *
+     * @param summary
+     *      Short summary.
      * @param text
      * 		Text to be displayed.
      */
-    public void showGlobalInformation(String text) {
+    public void alertInformation(String summary, String text) {
         logger.info("messageBean called with global and text: "+text);
         if(FacesContext.getCurrentInstance() != null) {
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", text)
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, summary, text)
+            );
+        }
+    }
+
+    /**
+     * Show error message
+     *
+     * @param summary
+     *      Short summary.
+     * @param text
+     * 		Text to be displayed.
+     */
+    public void alertError(String summary, String text) {
+        logger.info("messageBean called with global and text: " + text);
+        if(FacesContext.getCurrentInstance() != null) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, summary, text)
             );
         }
     }
@@ -67,6 +88,12 @@ public class MessageBean implements Serializable {
         }
     }
 
+    /**
+     * Updates a message component.
+     *
+     * @param id
+     *  Id to update.
+     */
     public void updateComponent(String id) {
         logger.info("updating component: " + id);
         FacesContext.getCurrentInstance().getPartialViewContext().getRenderIds().add(id);

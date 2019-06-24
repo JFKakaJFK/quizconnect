@@ -49,7 +49,7 @@ public class SessionInfoBean implements Serializable {
     }
 
     /**
-     * Returns the username of the user for this session, empty string if no
+     * Returns the username of the user for this session, _empty string if no
      * user has been authenticated for this session.
      *
      * @return
@@ -65,7 +65,7 @@ public class SessionInfoBean implements Serializable {
 
     /**
      * Returns the roles of the user for this session as space-separated list,
-     * empty string if no user has been authenticated for this session-
+     * _empty string if no user has been authenticated for this session-
      *
      * @return
      */

@@ -25,25 +25,33 @@ public class ChangeAvatarBean implements Serializable {
     private StorageService storageService;
     private PlayerService playerService;
     private ManagerService managerService;
-
-    @Autowired
-    public ChangeAvatarBean(StorageService storageService, PlayerService playerService, ManagerService managerService){
-        assert storageService != null;
-        assert playerService != null;
-        assert managerService != null;
-        this.storageService = storageService;
-        this.playerService = playerService;
-        this.managerService = managerService;
-    }
+    private MessageBean messageBean;
+    private ProfileBean profileBean;
 
     private String filename = null;
     private File file;
     private Player player;
-    
+
+    @Autowired
+    public ChangeAvatarBean(StorageService storageService, PlayerService playerService, ManagerService managerService, MessageBean messageBean, ProfileBean profileBean){
+        assert storageService != null;
+        assert playerService != null;
+        assert managerService != null;
+        assert messageBean != null;
+        assert profileBean != null;
+        this.storageService = storageService;
+        this.playerService = playerService;
+        this.managerService = managerService;
+        this.messageBean = messageBean;
+        this.profileBean = profileBean;
+        this.player = profileBean.getPlayer();
+    }
+
     /**
      * Uploads the upload of a new Avatar picture, deleting the previously uploaded one if it exists.
      */
     public void handleFileUpload(){
+        if(player == null) return;
         if(file != null){
             log.debug("file for " + player.getUser().getUsername() + "is " + file.getName());
             if(filename != null){
@@ -53,20 +61,24 @@ public class ChangeAvatarBean implements Serializable {
             try {
                 Manager manager = managerService.getManagerOfPlayer(player);
                 filename = storageService.storeAvatar(file, manager.getId().toString());
-                Files.deleteIfExists(file.toPath());
+                if(filename == null){
+                    messageBean.alertError("Error", "File could not be stored.");
+                    messageBean.updateComponent("messages");
+                } else {
+                    Files.deleteIfExists(file.toPath());
+                }
             } catch (IOException e){
                 filename = null;
                 log.error("Exception while saving Avatar");
             }
         }
     }
-
-    //TODO: JavaDoc for saveAvatar
     
     /**
      * Saves the current selected Avatar as the Players', deleting the old one if it exists.
      */
     public void saveAvatar(){
+        if(player == null) return;
         if(filename == null){
             return;
         }
@@ -74,12 +86,15 @@ public class ChangeAvatarBean implements Serializable {
         String old = player.getAvatarPath();
 
         player.setAvatarPath(filename);
-        playerService.savePlayer(player);
+        this.player = playerService.savePlayer(player);
 
         if(old != null){
             storageService.deleteAvatar(old);
         }
         filename = null;
+        profileBean.setPlayer(player);
+        messageBean.alertInformation("Success", "Avatar changed successfully.");
+        messageBean.updateComponent("messages");
     }
     
     
@@ -91,14 +106,6 @@ public class ChangeAvatarBean implements Serializable {
             storageService.deleteAvatar(filename);
             filename = null;
         }
-    }
-
-    public Player getPlayer() {
-        return player;
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player;
     }
 
     public boolean getDisabled(){

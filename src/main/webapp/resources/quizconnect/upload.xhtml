@@ -43,6 +43,7 @@
     <cc:attribute name="text" required="false" default="Upload File" />
     <cc:attribute name="accept" required="false" default="*/*" />
     <cc:attribute name="styleClass" required="false" default=""/>
+    <cc:attribute name="buttonStyle" required="false" default="btn-primary"/>
     <cc:attribute name="update" required="false" default="@none" />
     <cc:attribute name="required" required="false" default="false" type="boolean"/>
     <cc:attribute name="ajax" required="false" default="true" type="boolean"/>
@@ -51,7 +52,7 @@
 
 <cc:implementation>
     <input type="file" accept="#{cc.attrs.accept}"  name="files[]" id="#{cc.clientId}" class="jsf-hide" />
-    <label for="#{cc.clientId}" class="btn btn-primary #{cc.attrs.styleClass}">#{cc.attrs.text}</label>
+    <label for="#{cc.clientId}" id="#{cc.clientId}" class="btn #{cc.attrs.buttonStyle} #{cc.attrs.styleClass}">#{cc.attrs.text}</label>
 
     <h:commandButton styleClass="upload-ajax-btn jsf-hide" action="#{cc.attrs.listener}" rendered="#{empty cc.attrs.listenerString}">
         <f:setPropertyActionListener value="#{uploadService.getUpload()}" target="#{cc.attrs.target}"/>

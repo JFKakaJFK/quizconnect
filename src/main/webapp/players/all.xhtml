@@ -5,95 +5,120 @@
                 xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
                 xmlns:qc="http://java.sun.com/jsf/composite/quizconnect"
                 template="/WEB-INF/templates/main.xhtml">
+
+    <ui:define name="title">All players</ui:define>
+
     <ui:define name="site-specific-css">
-        <link rel="stylesheet" href="../resources/css/allplayers.css" />
+       <!-- <link rel="stylesheet" href="../resources/main.css" /> TODO -->
     </ui:define>
 
     <ui:define name ="content">
         <h:form p:autocomplete="off" id="form" enctype="multipart/form-data">
 
-            <h:panelGroup layout="block" styleClass="actions">
+            <h:panelGroup layout="block" styleClass="searchbar" id="searchbar">
 
-                <h:inputText p:autocomplete="new-password" p:placeholder="Search" value="#{allPlayersBean.searchPhrase}" styleClass="form-control">
+                <h:inputText id="searchPrase" p:autocomplete="nein-danke-bitte-nicht" p:placeholder="Search" value="#{allPlayersBean.searchPhrase}" styleClass="form-control searchbar-search">
                     <f:ajax listener="#{allPlayersBean.handleSearch}" event="keyup" execute="@this" render="players"/>
                 </h:inputText>
 
-                <h:panelGroup id="showByManager" rendered="#{sessionInfoBean.hasRole('MANAGER')}">
-                    <h:selectBooleanCheckbox p:id="showByManager" value="#{allPlayersBean.onlyByManager}" styleClass="jsf-hide">
-                        <f:ajax listener="#{allPlayersBean.setOnlyByManager(!allPlayersBean.onlyByManager)}" render="showByManager players"/>
-                    </h:selectBooleanCheckbox>
+                <ui:fragment rendered="#{sessionInfoBean.hasRole('MANAGER')}">
+                    <h:commandButton rendered="#{allPlayersBean.onlyByManager}" value="All Players" styleClass="btn btn-secondary searchbar-action">
+                        <f:ajax listener="#{allPlayersBean.setOnlyByManager(false)}" render="searchbar players"/>
+                    </h:commandButton>
+                    <h:commandButton rendered="#{!allPlayersBean.onlyByManager}" value="My Players" styleClass="btn btn-secondary searchbar-action">
+                        <f:ajax listener="#{allPlayersBean.setOnlyByManager(true)}" render="searchbar players"/>
+                    </h:commandButton>
+                </ui:fragment>
 
-                    <label for="showByManager" class="btn btn-tertiary">
-                        #{allPlayersBean.onlyByManager ? 'Show all players' : 'Show only your Players'}
-                    </label>
-                </h:panelGroup>
-
-                <h:commandButton styleClass="btn btn-tertiary" p:data-toggle="modal" p:data-target="#addPlayer" value="Add Player" rendered="#{sessionInfoBean.hasRole('MANAGER')}">
-                    <f:ajax execute="@this" render=":form:addPlayer:footer :form:addPlayer:body"/>
+                <h:commandButton styleClass="btn btn-secondary searchbar-action" p:data-toggle="modal" p:data-target="#addPlayer" value="Add Player" rendered="#{sessionInfoBean.hasRole('MANAGER')}">
+                    <f:ajax execute="@this" render=":modals:addPlayer:footer :modals:addPlayer:body"/>
                 </h:commandButton>
 
             </h:panelGroup>
 
             <h:panelGroup id="players" layout="block">
-                <h:panelGroup class="players px-3" layout="block">
+                <h:panelGroup class="collection" layout="block">
                     <ui:repeat value="#{allPlayersBean.paginator.parts}" var="part">
                         <ui:repeat value="#{part.items}" var="player">
 
-                            <qc:playerbox player="#{player}" online="#{randomOnlineTestBean.online}">
+                            <qc:playerbox player="#{player}">
 
-                                <h:commandLink p:class="ml-2" p:data-toggle="modal" p:data-target="#deletePlayer"
-                                               rendered="#{allPlayersBean.isDeletable(player)}">
-                                    <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M8 6V4c0-1.1.9-2 2-2h4a2 2 0 0 1 2 2v2h5a1 1 0 0 1 0 2h-1v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8H3a1 1 0 1 1 0-2h5zM6 8v12h12V8H6zm8-2V4h-4v2h4zm-4 4a1 1 0 0 1 1 1v6a1 1 0 0 1-2 0v-6a1 1 0 0 1 1-1zm4 0a1 1 0 0 1 1 1v6a1 1 0 0 1-2 0v-6a1 1 0 0 1 1-1z"/></svg>                                    <f:ajax execute="@form" render="@none" />
-                                    <f:ajax execute="@this" render="@none"/>
-                                    <f:setPropertyActionListener value="#{player}" target="#{playerDetailController.player}"/>
-                                </h:commandLink>
-
-                                <h:commandLink p:class="ml-2" p:data-toggle="modal" p:data-target="#editPlayer"
-                                               rendered="#{allPlayersBean.isEditable(player)}">
-                                    <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M9 4.58V4c0-1.1.9-2 2-2h2a2 2 0 0 1 2 2v.58a8 8 0 0 1 1.92 1.11l.5-.29a2 2 0 0 1 2.74.73l1 1.74a2 2 0 0 1-.73 2.73l-.5.29a8.06 8.06 0 0 1 0 2.22l.5.3a2 2 0 0 1 .73 2.72l-1 1.74a2 2 0 0 1-2.73.73l-.5-.3A8 8 0 0 1 15 19.43V20a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-.58a8 8 0 0 1-1.92-1.11l-.5.29a2 2 0 0 1-2.74-.73l-1-1.74a2 2 0 0 1 .73-2.73l.5-.29a8.06 8.06 0 0 1 0-2.22l-.5-.3a2 2 0 0 1-.73-2.72l1-1.74a2 2 0 0 1 2.73-.73l.5.3A8 8 0 0 1 9 4.57zM7.88 7.64l-.54.51-1.77-1.02-1 1.74 1.76 1.01-.17.73a6.02 6.02 0 0 0 0 2.78l.17.73-1.76 1.01 1 1.74 1.77-1.02.54.51a6 6 0 0 0 2.4 1.4l.72.2V20h2v-2.04l.71-.2a6 6 0 0 0 2.41-1.4l.54-.51 1.77 1.02 1-1.74-1.76-1.01.17-.73a6.02 6.02 0 0 0 0-2.78l-.17-.73 1.76-1.01-1-1.74-1.77 1.02-.54-.51a6 6 0 0 0-2.4-1.4l-.72-.2V4h-2v2.04l-.71.2a6 6 0 0 0-2.41 1.4zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0-2a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/></svg>                                    <f:ajax execute="@form" render="@none" />
-                                    <f:ajax execute="@this" render="@none"/>
-                                    <f:setPropertyActionListener value="#{player}" target="#{playerDetailController.player}"/>
-                                </h:commandLink>
-
-                                <h:commandLink action="profile?faces-redirect=true" styleClass="ml-2">
-                                    <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-9a1 1 0 0 1 1 1v4a1 1 0 0 1-2 0v-4a1 1 0 0 1 1-1zm0-4a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
-                                    <f:ajax execute="@this" render="@none"/>
+                                <h:commandLink action="profile?faces-redirect=true" styleClass="box-action">
+                                    <i data-feather="info"></i>
+                                    <f:ajax execute="@this" render=":addPlayerForm:addPlayer:footer :addPlayerForm:addPlayer:inputs :password-strength-text :password-strength-meter"/>
                                     <f:setPropertyActionListener value="#{player}" target="#{profileBean.player}"/>
                                 </h:commandLink>
+
+                                <h:commandLink styleClass="box-action" p:data-toggle="modal" p:data-target="#editPlayer"
+                                               rendered="#{allPlayersBean.isEditable(player)}">
+                                    <i data-feather="edit-3"></i>
+                                    <f:ajax execute="@this" render=":editPlayerForm:editPlayer:footer :editPlayerForm:editPlayer:inputs_edit :password-strength-text_two :password-strength-meter_two"/>
+                                    <f:setPropertyActionListener value="#{player}" target="#{playerDetailController.player}"/>
+                                </h:commandLink>
+
+                                <h:commandLink styleClass="box-action" p:data-toggle="modal" p:data-target="#deletePlayer"
+                                               rendered="#{allPlayersBean.isDeletable(player)}">
+                                    <i data-feather="trash"></i>
+                                    <f:ajax execute="@this" render="@none"/>
+                                    <f:setPropertyActionListener value="#{player}" target="#{playerDetailController.player}"/>
+                                </h:commandLink>
+
                             </qc:playerbox>
 
                         </ui:repeat>
                     </ui:repeat>
 
                 </h:panelGroup>
+                <qc:collectionEmpty collection="#{allPlayersBean.paginator.parts}" text="No players found"/>
 
                 <qc:paginator paginator="#{allPlayersBean.paginator}" update=":form:players"/>
 
             </h:panelGroup>
 
+        </h:form>
+
+    </ui:define>
+
+    <ui:define name="modals">
+        <h:form id="addPlayerForm">
             <qc:modal id="addPlayer"
                       target="addPlayer"
                       title="Add Player"
-                      update=":form:players :form:addPlayer:body :form:addPlayer:footer"
+                      update=":form:players :addPlayerForm:addPlayer:inputs :addPlayerForm:addPlayer:footer"
                       bodyId="body" footerId="footer"
-                      disableConfirm="#{!addPlayerBean.validateInput()}"
+                      disableConfirm="#{!addPlayerBean.validateInput(false)}"
                       abortAction="#{addPlayerBean.clear}"
                       closeAction="#{addPlayerBean.clear}"
                       confirmAction="#{addPlayerBean.addUser}"
                       confirm="Save Player" abort="Cancel"
                       rendered="#{sessionInfoBean.hasRole('MANAGER')}">
-                <h:inputText p:placeholder="Username" styleClass="form-control" p:autocomplete="new-password"
-                             value="#{addPlayerBean.username}">
-                    <f:ajax event="keyup" execute="@this" render=":form:addPlayer:footer"/>
-                </h:inputText>
 
-                <!-- TODO password field + pw repeat + pw strength indicator (like manager signup) -->
-                <h:inputText p:autocomplete="new-password" p:placeholder="Password" styleClass="form-control"
-                             value="#{addPlayerBean.password}">
-                    <f:ajax event="keyup" execute="@this" render=":form:addPlayer:footer"/>
-                </h:inputText>
+                <h:panelGroup layout="block" styleClass="form-group required" id="inputs">
+
+                    <label for="new_username">Username</label>
+                    <h:inputText p:placeholder="Username" id="new_username" p:id="new_username" styleClass="form-control" p:autocomplete="new-username"
+                                 value="#{addPlayerBean.username}">
+                        <f:ajax event="keyup" execute="@this" render="footer"/>
+                    </h:inputText>
+
+                    <label for="new_password" class="mt-3">Password</label>
+                    <h:inputSecret p:data-js-new-password="" p:placeholder="Password" name="new_password" id="new_password" p:id="new_password" value="#{addPlayerBean.password}" p:autocomplete="new-password" styleClass="form-control">
+                        <f:ajax event="keyup" execute="@this" render="footer"/><!-- TODO updating the bean value does not seem to work properly on input-->
+                    </h:inputSecret>
+
+                    <label for="repeat_new_password" class="mt-3">Repeat password</label>
+                    <h:inputSecret p:placeholder="Repeat password" name="repeat_new_password" id="repeat_new_password" p:id="repeat_new_password" value="#{addPlayerBean.repeatPassword}" p:autocomplete="new-password" styleClass="form-control">
+                        <f:ajax event="keyup" execute="@this" render="footer"/>
+                    </h:inputSecret>
+                </h:panelGroup>
+
+                <meter data-js-meter="" max="4" class="meter"></meter>
+
+                <h:panelGroup layout="block" styleClass="box" p:data-js-strength=""/>
             </qc:modal>
+        </h:form>
 
+        <h:form id="editPlayerForm">
             <qc:modal id="editPlayer"
                       target="editPlayer"
                       title="Edit Password"
@@ -102,34 +127,55 @@
                       bodyId="body" footerId="footer"
                       confirmAction="#{playerDetailController.changePassword}"
                       disableConfirm="#{!playerDetailController.passwordValid}"
-                      update="@this">
-                <h:inputSecret p:placeholder="New password" value="#{playerDetailController.password}" p:autocomplete="new-password" styleClass="form-control">
-                    <f:ajax event="keyup" execute="@this" render=":form:editPlayer:footer"/>
-                </h:inputSecret>
-                <h:inputSecret p:placeholder="Repeat new password" value="#{playerDetailController.repeatPassword}" p:autocomplete="new-password" styleClass="form-control">
-                    <f:ajax event="keyup" execute="@this" render=":form:editPlayer:footer"/>
-                </h:inputSecret>
-            </qc:modal>
+                      update=":editPlayerForm:editPlayer:footer :editPlayerForm:editPlayer:inputs_edit">
 
+                <h:panelGroup layout="block" styleClass="form-group required" id="inputs_edit">
+                    <label for="new_password_edit">New password</label>
+                    <h:inputSecret p:data-js-new-password="" p:placeholder="New password" name="new_password_edit" id="new_password_edit" p:id="new_password_edit" value="#{playerDetailController.password}" p:autocomplete="new-password" styleClass="form-control">
+                        <f:ajax event="keyup" execute="@this" render="footer"/><!-- TODO updating the bean value does not seem to work properly on input-->
+                    </h:inputSecret>
+
+                    <label for="repeat_new_password_edit" class="mt-3">Repeat new password</label>
+                    <h:inputSecret p:placeholder="Repeat new password" name="repeat_new_password_edit" id="repeat_new_password_edit" p:id="repeat_new_password_edit" value="#{playerDetailController.repeatPassword}" p:autocomplete="new-password" styleClass="form-control">
+                        <f:ajax event="keyup" execute="@this" render="footer"/>
+                    </h:inputSecret>
+                </h:panelGroup>
+
+                <meter data-js-meter="" max="4" class="meter"></meter>
+
+                <h:panelGroup layout="block" styleClass="box" p:data-js-strength=""/>
+            </qc:modal>
+        </h:form>
+
+        <h:form id="deletePlayerForm">
             <qc:modal id="deletePlayer"
                       target="deletePlayer"
                       title="Delete Player"
                       confirm="Delete Player"
+                      confirmButton="btn btn-danger"
+                      abortButton="btn btn-secondary"
                       abort="Cancel"
-                      confirmAction="#{playerDetailController.deletePlayer}"
+                      confirmAction="#{playerDetailController.deletePlayer(allPlayersBean)}"
                       update="@this :form:players">
                 Are you sure? This cannot be undone.
             </qc:modal>
-
         </h:form>
-
     </ui:define>
 
     <ui:define name="site-specific-javascript">
-        <script type="text/javascript" src="/resources/js/util/scroll.js"></script>
+        <script type="text/javascript" src="/resources/quizconnect/js/scroll.js"></script>
         <script type="text/javascript">
             const sl = new ScrollLoader('.load');
             sl.init();
+        </script>
+
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"/>
+        <script type="text/javascript" src="validatePassword_all.js"/>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.4.2/zxcvbn.js"/>
+        <script type="text/javascript" src="../resources/util/passwordhelp.js"/>
+        <script type="text/javascript">
+          pwhelp('#addPlayer');
+          pwhelp('#editPlayer');
         </script>
     </ui:define>
 </ui:composition>
