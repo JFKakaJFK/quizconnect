@@ -135,10 +135,11 @@
         <h:form id="questionForForm" enctype="multipart/formdata">
             <qc:modal target="questionModal" id="questionModal" closable="false" modaltype="info"
                       title="#{questionSetBean.bEditQuestion?'Edit question':'New question'}"
-                      abort="Abort"
+                      abort="Cancel"
                       confirm="#{questionSetBean.bEditQuestion?'Save':'Add'}"
                       confirmAction="#{questionSetBean.saveNewQuestion}"
-                      showAbort="false"
+                      abortButton="btn btn-secondary"
+                      abortAction="#{questionSetBean.abort()}"
                       update=":deleteQuestionForm:questions :questionSetForm:addQuestionSet" ajax="false">
 
                 <div class="row">

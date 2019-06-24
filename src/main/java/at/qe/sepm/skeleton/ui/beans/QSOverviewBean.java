@@ -81,15 +81,12 @@ public class QSOverviewBean implements Serializable {
         logger.info("deleting QuestionSet with name: " + questionsetToDelete.getName());
 
         storageService.deleteAllAnswersOfQuestionSet(sessionInfoBean.getCurrentUser().getId(), questionsetToDelete.getId().toString());
-        logger.info("deleted all answers of QuestionSet");
 
         //delete from DB
         questionSetService.deleteQuestionSet(questionSetService.getQuestionSetById(questionsetToDelete.getId()));
-        logger.info("deleted from database");
 
         //delete from displayed ArrayList
         questionSets.remove(questionsetToDelete);
-        logger.info("deleted from displayed list");
 
         // removes the set from the list of sets by manager too, so isByManager doesn't need to check against already deleted sets (contains = O(n))
         questionSetsByManager.remove(questionsetToDelete);
@@ -99,7 +96,7 @@ public class QSOverviewBean implements Serializable {
         filterAndUpdateSets();
 
         //show success message
-        messageBean.alertInformation("Success", "Deleted QuestionSet");
+        messageBean.alertInformation("Success", "Deleted Questionset");
         messageBean.updateComponent("messages");
     }
 

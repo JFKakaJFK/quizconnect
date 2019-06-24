@@ -65,15 +65,8 @@ public class QuestionSetBean implements Serializable {
 
     @PostConstruct
     public void init() {
-        logger.debug("init of QuestionSetBean called");
         currentUser = sessionInfoBean.getCurrentUser();
         questionToDelete = null;
-        // creates internal set ("questions") of questions created in this process which is later assigned to the questionSet
-        //initQuestions();
-        // create an _empty question on startup
-        //initQuestion();
-        // create a new QuestionSet
-        //initQuestionSet();
     }
 
     public void onPageLoad() {
@@ -82,9 +75,6 @@ public class QuestionSetBean implements Serializable {
                 initQuestions();
                 initQuestion();
                 initQuestionSet();
-                logger.info("--------- onPageLoad executed --------- (meaning: edit=false");
-            } else {
-                logger.info("--------- onPageLoad NOT executed --------- (meaning: edit=true)");
             }
         }
 
@@ -124,7 +114,6 @@ public class QuestionSetBean implements Serializable {
     }
 
     public void saveQuestionPicture(String property, Question question) {
-        logger.info("---> saveQuestionPicture called! <---");
         if (filename == null) {
             return;
         }
@@ -135,62 +124,55 @@ public class QuestionSetBean implements Serializable {
             case "rightAnswerString":
                 if (question.getRightAnswerString()!= null && !question.getRightAnswerString().isEmpty()) {
                     storageService.deleteAnswer(question.getRightAnswerString());
-                    logger.info("Deleted picture of rightAnswerString");
                 }
                 question.setRightAnswerString(filename);
                 break;
             case "wrongAnswerString_1":
                 if (question.getWrongAnswerString_1()!= null && !question.getWrongAnswerString_1().isEmpty()) {
                     storageService.deleteAnswer(question.getWrongAnswerString_1());
-                    logger.info("Deleted picture of WrongAnswerString_1");
                 }
                 question.setWrongAnswerString_1(filename);
                 break;
             case "wrongAnswerString_2":
                 if (question.getWrongAnswerString_2()!= null && !question.getWrongAnswerString_2().isEmpty()) {
                     storageService.deleteAnswer(question.getWrongAnswerString_2());
-                    logger.info("Deleted picture of WrongAnswerString_2");
                 }
                 question.setWrongAnswerString_2(filename);
                 break;
             case "wrongAnswerString_3":
                 if (question.getWrongAnswerString_3()!= null && !question.getWrongAnswerString_3().isEmpty()) {
                     storageService.deleteAnswer(question.getWrongAnswerString_3());
-                    logger.info("Deleted picture of WrongAnswerString_1");
                 }
                 question.setWrongAnswerString_3(filename);
                 break;
             case "wrongAnswerString_4":
                 if (question.getWrongAnswerString_4()!= null && !question.getWrongAnswerString_4().isEmpty()) {
                     storageService.deleteAnswer(question.getWrongAnswerString_4());
-                    logger.info("Deleted picture of WrongAnswerString_4");
                 }
                 question.setWrongAnswerString_4(filename);
                 break;
             case "wrongAnswerString_5":
                 if (question.getWrongAnswerString_5()!= null && !question.getWrongAnswerString_5().isEmpty()) {
                     storageService.deleteAnswer(question.getWrongAnswerString_5());
-                    logger.info("Deleted picture of WrongAnswerString_5");
                 }
                 question.setWrongAnswerString_5(filename);
                 break;
             default:
-                logger.info("well, something in the switch-case went wrong");
+                logger.info("No valid case matched");
         }
         filename = null;
     }
 
-    //TODO: JavaDoc for abort
+    /**
+     * Called on "Cancel" of Question-Modal. Re-uses the listener which also deletes pictures in case a user decides to change the type to text.
+     */
     public void abort() {
-        if (filename != null) {
-            storageService.deleteAvatar(filename);
-            filename = null;
-        }
+        logger.info("Type was set to: " + question.getType());
+        typeChangeListener();
     }
 
     /**
      * Used as a default listener for the fileUpload
-     * TODO: Find a better solution
      */
     public void none() {
 
@@ -200,8 +182,8 @@ public class QuestionSetBean implements Serializable {
      * Creates a new instance of {@link Question} and sets the default {@link QuestionType} to text (pre-selection for JSF selectOneRadio)
      */
     public void initQuestion() {
-        logger.debug("initQuestion called");
         question = new Question();
+
         //pre-selection for radio buttons
         question.setType(QuestionType.text);
     }
@@ -210,7 +192,6 @@ public class QuestionSetBean implements Serializable {
      * Creates a new {@link HashSet<Question>} for the {@link Question}s of a {@link QuestionSet} and a {@link ArrayList<Question>} for the JSF ui:repeat
      */
     private void initQuestions() {
-        logger.debug("initQuestions called");
         questions = new HashSet<Question>();
         questionsDisplay = new ArrayList<Question>();
     }
@@ -221,7 +202,6 @@ public class QuestionSetBean implements Serializable {
      * Sets the default {@link QuestionSetDifficulty} to easy (pre-selection for the toggle-button)
      */
     private void initQuestionSet() {
-        logger.debug("initQuestionSet called");
         questionSet = new QuestionSet();
         questionSetSaved = false;
         questionSet.setDifficulty(QuestionSetDifficulty.easy);
@@ -234,7 +214,6 @@ public class QuestionSetBean implements Serializable {
         questions.remove(questionToDelete);
         questionsDisplay.remove(questionToDelete);
         questionService.deleteQuestion(questionToDelete);
-        logger.info("Question deleted");
         messageBean.alertInformation("Success", "Deleted question");
         /*
         FacesContext.getCurrentInstance().getPartialViewContext().getRenderIds().add("deleteQuestionForm"); // todo wtf??
@@ -251,13 +230,11 @@ public class QuestionSetBean implements Serializable {
      */
     public void saveNewQuestion() {
         if (isValidQuestion(question)) {
-            logger.info("saveNewQuestion called");
             removeSpacesAndSet(question);
 
             if (bEditQuestion == false) {
                 questions.add(question);
                 questionsDisplay.add(question);
-                logger.info("Added question to DisplayList");
                 question.setQuestionSet(questionSet);
                 logger.info("Added question to Database");
             }
@@ -367,24 +344,96 @@ public class QuestionSetBean implements Serializable {
      */
     private boolean isValidQuestion(Question question) {
 
-        if (question.getType() == QuestionType.picture) {
-            logger.info("String for regex: " + question.getRightAnswerString());
-            return true;
-            //TODO: Validate picture-string too
-        }
+        boolean bValidPicture = true;
+        boolean bValidText = true;
+
         if (question.getQuestionString() == null || !validationBean.isValidText(question.getQuestionString().trim(), 200)) {
-            return false;
+            messageBean.alertError("Error", "Question is invalid. Please remove special chars except '.,;-_€@$äÄöÖüÜ!?#&='");
+            messageBean.updateComponent("messages");
+            bValidText = false;
+            bValidPicture = false;
+        }
+
+        if (question.getType() == QuestionType.picture) {
+            if (question.getRightAnswerString() == null || !validationBean.isValidPictureString(question.getRightAnswerString(), 200)) {
+                messageBean.alertError("Error", "Picture for correct answer is invalid. Please try again!");
+                messageBean.updateComponent("messages");
+                bValidPicture = false;
+            }
+
+            if (question.getWrongAnswerString_1() == null || !validationBean.isValidPictureString(question.getWrongAnswerString_1(), 200)) {
+                messageBean.alertError("Error", "Picture for wrong answer #1 is invalid. Please try again!");
+                messageBean.updateComponent("messages");
+                bValidPicture = false;
+            }
+
+            // also check other (optional) inputs if they are correct, of course just if they are provided by the user
+
+            if (question.getWrongAnswerString_2() != null && !question.getWrongAnswerString_2().isEmpty() && !validationBean.isValidPictureString(question.getWrongAnswerString_2(), 200)) {
+                messageBean.alertError("Error", "Picture for wrong answer #2 is invalid. Please try again!");
+                messageBean.updateComponent("messages");
+                bValidPicture = false;
+            }
+
+            if (question.getWrongAnswerString_3() != null && !question.getWrongAnswerString_3().isEmpty() && !validationBean.isValidPictureString(question.getWrongAnswerString_3(), 200)) {
+                messageBean.alertError("Error", "Picture for wrong answer #3 is invalid. Please try again!");
+                messageBean.updateComponent("messages");
+                bValidPicture = false;
+            }
+
+            if (question.getWrongAnswerString_4() != null && !question.getWrongAnswerString_4().isEmpty() && !validationBean.isValidPictureString(question.getWrongAnswerString_4(), 200)) {
+                messageBean.alertError("Error", "Picture for wrong answer #4 is invalid. Please try again!");
+                messageBean.updateComponent("messages");
+                bValidPicture = false;
+            }
+
+            if (question.getWrongAnswerString_5() != null && !question.getWrongAnswerString_5().isEmpty() && !validationBean.isValidPictureString(question.getWrongAnswerString_5(), 200)) {
+                messageBean.alertError("Error", "Picture for wrong answer #5 is invalid. Please try again!");
+                messageBean.updateComponent("messages");
+                bValidPicture = false;
+            }
+
+            return bValidPicture;
         }
 
         if (question.getRightAnswerString() == null || !validationBean.isValidText(question.getRightAnswerString().trim(), 200)) {
-            return false;
+            messageBean.alertError("Error", "Correct answer is invalid. Please remove special chars except '.,;-_€@$äÄöÖüÜ!?#&='");
+            messageBean.updateComponent("messages");
+            bValidText = false;
         }
 
         if (question.getWrongAnswerString_1() == null || !validationBean.isValidText(question.getWrongAnswerString_1().trim(), 200)) {
-            return false;
+            messageBean.alertError("Error", "Wrong answer #1 is invalid. Please remove special chars except '.,;-_€@$äÄöÖüÜ!?#&='");
+            messageBean.updateComponent("messages");
+            bValidText = false;
         }
 
-       return true;
+        // also check other (optional) inputs if they are correct, of course just if they are provided by the user
+        if (question.getWrongAnswerString_2() != null && !question.getWrongAnswerString_2().isEmpty() && !validationBean.isValidText(question.getWrongAnswerString_2().trim(), 200)) {
+            messageBean.alertError("Error", "Wrong answer #2 is invalid. Please remove special chars except '.,;-_€@$äÄöÖüÜ!?#&='");
+            messageBean.updateComponent("messages");
+            bValidText = false;
+        }
+
+        if (question.getWrongAnswerString_3() != null && !question.getWrongAnswerString_3().isEmpty() && !validationBean.isValidText(question.getWrongAnswerString_3().trim(), 200)) {
+            messageBean.alertError("Error", "Wrong answer #3 is invalid. Please remove special chars except '.,;-_€@$äÄöÖüÜ!?#&='");
+            messageBean.updateComponent("messages");
+            bValidText = false;
+        }
+
+        if (question.getWrongAnswerString_4() != null && !question.getWrongAnswerString_4().isEmpty() && !validationBean.isValidText(question.getWrongAnswerString_4().trim(), 200)) {
+            messageBean.alertError("Error", "Wrong answer #4 is invalid. Please remove special chars except '.,;-_€@$äÄöÖüÜ!?#&='");
+            messageBean.updateComponent("messages");
+            bValidText = false;
+        }
+
+        if (question.getWrongAnswerString_5() != null && !question.getWrongAnswerString_5().isEmpty() && !validationBean.isValidText(question.getWrongAnswerString_5().trim(), 200)) {
+            messageBean.alertError("Error", "Wrong answer #5 is invalid. Please remove special chars except '.,;-_€@$äÄöÖüÜ!?#&='");
+            messageBean.updateComponent("messages");
+            bValidText = false;
+        }
+
+       return bValidText;
     }
 
 
@@ -397,7 +446,38 @@ public class QuestionSetBean implements Serializable {
     }
 
     public void typeChangeListener() {
-        //Maybe TODO
+        if (question.getType() == QuestionType.picture) {
+            if (question.getRightAnswerString()!=null && !question.getRightAnswerString().isEmpty()) {
+                storageService.deleteAnswer(question.getRightAnswerString());
+                question.setRightAnswerString("");
+            }
+
+            if (question.getWrongAnswerString_1()!=null && !question.getWrongAnswerString_1().isEmpty()) {
+                storageService.deleteAnswer(question.getWrongAnswerString_1());
+                question.setWrongAnswerString_1("");
+            }
+
+            if (question.getWrongAnswerString_2()!=null && !question.getWrongAnswerString_2().isEmpty()) {
+                storageService.deleteAnswer(question.getWrongAnswerString_2());
+                question.setWrongAnswerString_2("");
+            }
+
+            if (question.getWrongAnswerString_3()!=null && !question.getWrongAnswerString_3().isEmpty()) {
+                storageService.deleteAnswer(question.getWrongAnswerString_3());
+                question.setWrongAnswerString_3("");
+            }
+
+            if (question.getWrongAnswerString_4()!=null && !question.getWrongAnswerString_4().isEmpty()) {
+                storageService.deleteAnswer(question.getWrongAnswerString_4());
+                question.setWrongAnswerString_4("");
+            }
+
+            if (question.getWrongAnswerString_5()!=null && !question.getWrongAnswerString_5().isEmpty()) {
+                storageService.deleteAnswer(question.getWrongAnswerString_5());
+                question.setWrongAnswerString_5("");
+            }
+
+        }
     }
 
     public void setEditQuestion(Question selectedQuestion) {
