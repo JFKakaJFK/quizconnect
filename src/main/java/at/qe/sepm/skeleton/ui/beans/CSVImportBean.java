@@ -107,7 +107,6 @@ public class CSVImportBean implements Serializable {
     }
 
     public void setManager(Manager manager) {
-        logger.info("Set manager with ID:" + manager.getId());
         this.manager = manager;
     }
 
