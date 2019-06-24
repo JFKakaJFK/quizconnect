@@ -9,6 +9,7 @@
 
 .btn:hover {
     /*TODO: add styling */
+    transition: all .3s ease-in-out;
 }
 
 /*
@@ -19,25 +20,25 @@ TODO
 
 
 .btn-primary {
-    background: var(--grad-m);
+    background: var(--default-accent-gradient);
     border: 0;
 }
 
 .btn-primary:hover {
-    background: var(--grad-d);
+    filter: brightness(1.15);
     border: 0;
 }
 
 .btn-secondary {
-    color: var(--gray-5);
-    background: transparent;
-    border: solid 2px var(--col-1-l);
+    color: var(--default-font-color);
+    background: var(--background-lighter);
+    border: solid 2px var(--background-darker);
 }
 
 .btn-secondary:hover {
-    color: var(--gray-5);
-    background: transparent;
-    border: solid 2px var(--gray-5);
+    color: var(--default-active-color);
+    background: var(--background-lighter);
+    border: solid 2px var(--default-active-color);
 }
 
 .btn-danger {
@@ -50,13 +51,13 @@ TODO
     color: var(--error);
     background: transparent;
     border: solid 2px var(--error);
-
+    border-color: var(--error);
 }
 
 .btn-danger:hover {
-    background-color: #dc3545;
+    background-color: var(--error);
+    border-color: var(--error);
     color: var(--gray-5);
-    border: solid 2px #dc3545;
     transition: all 0.3s ease 0s;
-
+    filter: saturate(1.2);
 }

@@ -36,10 +36,7 @@
     color: var(--fab-btn-color);
     border: 0;
     border-radius: 50%;
-    box-shadow:
-            0 0 16px 8px hsla(0, 0%, 0%, .15),
-            0 0 8px 4px hsla(0, 0%, 0%, .3)
-    ;
+    box-shadow: var(--default-box-shadow);
     transition: all .25s ease-in-out;
     pointer-events: initial;
 }

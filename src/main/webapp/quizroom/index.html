@@ -156,7 +156,7 @@
                 <div data-volume-icon title="Mute | Unmute"></div>
                 <input data-volume-slider type="range" min="0" max="1" value=".5" step="0.01" oninput="setVolume(this.value)" onchange="setVolume(this.value)">
             </div>
-            <div class="sidebar-themes py-4"><!-- TODO maybe render w/ JS and add active class -->
+            <div class="sidebar-themes py-4">
                 <div class="theme" onclick="changeTheme('light')"><i data-feather="sun" class="lg"></i></div>
                 <div class="theme" onclick="changeTheme('outrun')"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sunset lg"><path d="M17 18a5 5 0 0 0-10 0"></path><line x1="12" y1="9" x2="12" y2="7"></line><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"></line><line x1="1" y1="18" x2="3" y2="18"></line><line x1="21" y1="18" x2="23" y2="18"></line><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"></line><line x1="23" y1="22" x2="1" y2="22"></line></svg><!--<i data-feather="sunset" class="lg"></i>--></div>
                 <div class="theme" onclick="changeTheme('default')"><i data-feather="moon" class="lg"></i></div>
@@ -272,7 +272,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <h2>Are you sure? Things will happen</h2>
+                    <h5 class="text-center font-weight-light">Are you sure?</h5>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
@@ -294,7 +294,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <h2>Do something or be kicked in <span id="timeoutRemainingTime"></span>s.</h2>
+                    <h5 class="text-center font-weight-light">Do something or be kicked in <span id="timeoutRemainingTime"></span>s.</h5>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel Timeout</button>
@@ -315,7 +315,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <h2>The game will start when you are ready.</h2>
+                    <h5 class="text-center font-weight-light">The game will start when you are ready.</h5>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Abort</button>

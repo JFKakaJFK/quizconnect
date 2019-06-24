@@ -412,13 +412,14 @@ const handlePlayerJoin = ({ player }) => {
  */
 const handlePlayerLeave = ({ playerId }) => {
   const { info } = getState();
+  let player = info.players.find(p => p.id === playerId);
+  console.warn(player)
   setState({
     info: {
       players: info.players.filter(p => p.id !== playerId),
     }
   });
-  let p = info.players.find(p => p.id === playerId);
-  if(p !== undefined) showChatMessage(`${p.username} left the game`);
+  if(player) showChatMessage(`${player.username} left the game`);
   console.debug(`SERVER: player ${playerId} left`)
 };
 

@@ -94,20 +94,22 @@
                             <qc:stat value="#{profileBean.player.totalAnswers - profileBean.player.correctAnswersCount}" label="wrong answers" />
                         </div>
 
-                        <fieldset class="box chart">
-                            <legend>Last Scores</legend>
+                        <div class="box chart">
+                            <h5>Last Scores</h5>
                             <div id="area" ></div>
-                        </fieldset>
-                        <fieldset class="box chart">
-                            <legend>Played QuestionSets</legend>
+                        </div>
+                        <div class="box chart">
+                            <h5>Played QuestionSets</h5>
                             <div id="donut"></div>
-                        </fieldset>
+                        </div>
                     </ui:fragment>
 
                 </h:panelGroup>
 
-                <!-- recently played with players --><!-- TODO heading? -->
-                <h:panelGroup layout="block" rendered="#{not empty profileBean.recentlyPlayedWith}" styleClass="collection-header">#{profileBean.player.user.equals(sessionInfoBean.currentUser) ? 'You' : sessionInfoBean.currentUser.username} recently played with</h:panelGroup>
+                <!-- recently played with players -->
+                <h:panelGroup layout="block" rendered="#{not empty profileBean.recentlyPlayedWith}" styleClass="collection-header">
+                    <h5>#{profileBean.player.user.equals(sessionInfoBean.currentUser) ? 'You' : sessionInfoBean.currentUser.username} recently played with</h5>
+                </h:panelGroup>
                 <h:panelGroup layout="block" styleClass="collection">
                     <ui:repeat value="#{profileBean.recentlyPlayedWith}" var="player">
                         <qc:playerbox player="#{player}">

@@ -21,9 +21,9 @@
     grid-template-areas:
         "icon content close"
     ;
-    box-shadow: 4px 4px 16px 8px hsla(0,0%,0%,.3);
+    box-shadow: var(--default-box-shadow);
     padding: var(--default-padding);
-    background-color: var(--background-secondary);
+    background-color: var(--background-lighter);
     border-radius: var(--alert-border-radius);
     border: 0;
     opacity: 1;

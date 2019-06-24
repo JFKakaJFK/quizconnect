@@ -53,6 +53,22 @@ const themes = {
     '--gray-4': '#B3B',
     '--gray-5': '#EFF',
   },
+  light: {
+    '--default-font-color': '#424242',
+    '--background-primary': '#f2f2f2',
+    '--background-lighter': '#ffffff',
+    '--background-darker': '#e6e6e6',
+    '--sidebar-background': '#ffffff',
+    '--sidebar-background-gradient': 'linear-gradient(145deg, #ffffff 25%, #f2f2f2 100%)',
+    '--default-box-shadow': '2px 2px 16px 4px hsla(0, 0%, 75%, .2), 4px 4px 32px 8px hsla(0, 0%, 50%, .05)',
+    '--default-active-color': '#19B8C4',
+    '--default-active-background': 'hsla(173, 69%, 64%, .1)',
+    '--default-accent-gradient': 'linear-gradient(35deg, #19B8C4 25%, #54A9CC 100%)',
+    '--game-timer-color': '#19B8C4',
+    '--chat-message-background': '#d2d2d2',
+    '--chat-message-out-background': '#8BD7F3',
+    '--chat-message-info-background': '#35d6c7',
+  }
 };
 
 /**
@@ -65,6 +81,8 @@ const loadTheme = () => {
     themeName = 'default';
   }
 
+  document.documentElement.setAttribute('data-theme-name', themeName);
+  document.documentElement.style.cssText = '';
   const theme = themes[themeName];
   for(let key of Object.keys(theme)){
     document.documentElement.style.setProperty(key, theme[key])

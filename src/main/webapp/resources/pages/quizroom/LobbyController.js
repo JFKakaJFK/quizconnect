@@ -225,7 +225,10 @@ class LobbyController {
         if(player){ // check if anything to do
           this._updatePlayer(node, player, canReadyUp, lastReadyUp, player.id === id);
         } else { // delete players who left
-          Animate(`${this._options.players} [data-id="${pid}"]`, 'fadeOut', () =>  ps.removeChild(node));
+          Animate(`${this._options.players} [data-id="${pid}"]`, 'fadeOut', () => {
+            let p = ps.querySelector(`[data-id="${pid}"]`);
+            if(p) ps.removeChild(p);
+          });
         }
         // remove player from copy (make search space smaller)
         copy = copy.filter(p => p.id !== pid);

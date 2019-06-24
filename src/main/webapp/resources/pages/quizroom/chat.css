@@ -46,7 +46,7 @@
     border: 0;
     padding: .5rem 1rem;
     background: transparent;
-    color: var(--gray-5);
+    color: var(--default-font-color);
     box-shadow: 0 0 8px 4px hsla(0, 0%, 0%, .3);
 }
 
@@ -130,6 +130,10 @@
 .chat .chat-message.chat-info  .chat-message-content {
     color: var(--chat-message-info-color);
     background: var(--chat-message-info-background);
+}
+
+.chat .chat-message.chat-info .chat-message-content:before {
+    border-bottom-color: var(--chat-message-info-background);
 }
 
 body.finished .chat,

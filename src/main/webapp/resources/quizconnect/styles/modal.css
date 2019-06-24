@@ -7,13 +7,15 @@
 
 .modal-content {
     background: transparent;
+    border: 1px solid transparent;
 }
 
 .modal-header {
-    background: var(--background-secondary);
+    background: var(--background-lighter);
     border-bottom: 0;
     border-radius: var(--default-border-radius) var(--default-border-radius) 0 0;
-    box-shadow: 0 0 8px 4px hsla(0, 0%, 0%, .1);
+    box-shadow: var(--default-box-shadow);
+    padding: var(--default-padding);
 }
 
 .modal-title {
@@ -27,12 +29,14 @@
 
 .modal-body {
     background: var(--background-primary);
+    padding: var(--default-padding) var(--default-padding) 0;
 }
 
 .modal-footer {
     border-top: 0;
     background: var(--background-primary);
     border-radius: 0 0 var(--default-border-radius) var(--default-border-radius);
+    padding: var(--default-padding);
 }
 
 .modal-warning .modal-header,

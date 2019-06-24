@@ -99,10 +99,8 @@ public class PlayerDetailController implements Serializable {
         messageBean.updateComponent("messages");
 
         log.info("Player " + player.getUser().getUsername() + " was successfully deleted");
-        // wheter to simply remove the player or whether to refresh from the db is still subject of discussion // TODO
         if(allPlayersBean != null){
             allPlayersBean.removePlayer(player);
-            // allPlayersBean.refresh();
         }
         player = null;
 

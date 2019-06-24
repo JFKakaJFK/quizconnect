@@ -118,6 +118,7 @@ class JoinController{
           connect();
           // init local storage update timer
           this._storePin();
+          window.history.replaceState({}, document.title, '/quizroom/index.html')
         }, delay ? this._delay : 0); // delay the room join for animation purposes
       }
     }).catch(e => {

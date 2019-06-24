@@ -101,10 +101,9 @@
 }
 
 /* APEX CHARTS */
-.box.chart {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.collection-header h5,
+.box.chart h5 {
+    font-weight: var(--default-font-weight);
 }
 
 .apexcharts-canvas {
@@ -117,8 +116,12 @@
 .apexcharts-canvas .apexcharts-legend-text {
     font-weight: var(--default-font-weight);
     font-family: var(--default-font) !important;
-    color: var(--default-font-color);
+    color: var(--default-font-color) !important;
     font-size: 14px !important;
+}
+
+.apexcharts-canvas .apexcharts-xaxis .apexcharts-xaxis-label {
+    fill: var(--default-font-color) !important;
 }
 
 .apexcharts-canvas .apexcharts-toolbar {
@@ -128,12 +131,3 @@
 .apexcharts-canvas .apexcharts-tooltip-title {
     display: none;
 }
-/*
-.apexcharts-svg .apexcharts-inner .apexcharts-area {
-    stroke: red;
-    stroke-width: 2px;
-}
-
-.apexcharts-svg .apexcharts-inner #apexcharts-area-0 {
-    fill: green;
-}*/
