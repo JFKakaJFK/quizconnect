@@ -129,6 +129,12 @@ fetch(URL, {
     try {
       if(playedSets.length !== setPlayCounts.length) throw new Error('Played sets and play counts of sets do not match.');
 
+      // remove invalid data (deleted sets)
+      while(playedSets[playedSets.length - 1] === null){
+        playedSets.pop();
+        setPlayCounts.pop();
+      }
+
       donutOptions.labels = playedSets || [];
       donutOptions.series = setPlayCounts || [];
 
