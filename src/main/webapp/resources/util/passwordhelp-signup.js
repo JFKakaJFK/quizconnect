@@ -1,4 +1,4 @@
-window.onload=function() {
+document.addEventListener('DOMContentLoaded', function() {
     const strength = {
         0: "Worst",
         1: "Bad",
@@ -27,4 +27,4 @@ window.onload=function() {
             text.innerHTML = "";
         }
     });
-};
+});

@@ -3,6 +3,8 @@
 .userexists p {
     color: var(--error);
     text-align: center;
+    font-weight: var(--default-font-weight);
+    font-size: 1.125rem;
 }
 
 .userexists:empty {
