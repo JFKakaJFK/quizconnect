@@ -1,1 +1,9 @@
 @import "./main.css";
+
+.welcome-image {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+    margin-top: 1em;
+}

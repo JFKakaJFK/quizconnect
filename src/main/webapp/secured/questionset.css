@@ -8,8 +8,10 @@
 
 .question-info-box.picture img {
     width: 50%;
+    border-radius: var(--default-border-radius);
 }
 
 .preview-overview img {
     max-width: 35%;
+    border-radius: var(--default-border-radius);
 }

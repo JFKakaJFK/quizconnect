@@ -1,6 +1,11 @@
 @import "./main.css";
 
-.box:empty {
+.userexists p {
+    color: var(--error);
+    text-align: center;
+}
+
+.userexists:empty {
     display: none;
 }
 
