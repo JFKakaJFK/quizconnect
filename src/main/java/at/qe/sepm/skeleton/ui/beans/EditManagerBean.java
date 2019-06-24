@@ -17,14 +17,12 @@ import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Bean for editing a {@link at.qe.sepm.skeleton.model.Manager}.
+ */
 @Controller
 @Scope("view")
-
 public class EditManagerBean implements Serializable {
-
-    /**
-     * Changes a {@link Player}s password if the new password is valid
-     */
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -56,7 +54,10 @@ public class EditManagerBean implements Serializable {
     private void init() {
         user = userService.loadUser(sessionInfoBean.getCurrentUser().getUsername());
     }
-
+    
+    /**
+     * Changes the password of the Manager if the current password is valid and clears all fields.
+     */
     public void changePassword() {
         if (user != null && validationBean.isValidPassword(password, repeatPassword)) {
             user.setPassword(passwordBean.encodePassword(password));
@@ -70,7 +71,10 @@ public class EditManagerBean implements Serializable {
         password = null;
         repeatPassword = null;
     }
-
+    
+    /**
+     * Changes the email of the Manager if the current email is valid.
+     */
     public void changeEmail() {
         if (user != null && validationBean.isValidEmail(email)) {
             user.getManager().setEmail(email);

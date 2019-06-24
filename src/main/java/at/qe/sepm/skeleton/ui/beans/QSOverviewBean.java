@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
  *
  * @author Johannes Spies
  */
-
 @Controller
 @Scope("view")
 public class QSOverviewBean implements Serializable {
@@ -70,13 +69,22 @@ public class QSOverviewBean implements Serializable {
         //store all questionSets by currently logged-in manager to allow fast access to check if a Set belongs to a manager (enable edit/delete)
         this.questionSetsByManager = new ArrayList<>(questionSetService.getQuestionSetsOfManager(manager));
     }
-
+    
+    /**
+     * Adds a QuestionSet to the display.
+     *
+     * @param toAdd
+     * 		QuestionSet to add.
+     */
     public void addQuestionSetForDisplay(QuestionSet toAdd) {
         questionSets.add(toAdd);
         questionSetsByManager.add(toAdd); //add to questionSetsByManager to correctly show edit/delete button right after the import (without having to reload the page)
         logger.info("Added QuestionSet to DisplayList");
     }
 
+    /**
+     * Deletes a QuestionSet form the database.
+     */
     public void deleteQuestionSet() {
         logger.info("deleting QuestionSet with name: " + questionsetToDelete.getName());
 
@@ -106,8 +114,6 @@ public class QSOverviewBean implements Serializable {
 
     /**
      * Filters the {@link Player}s using {@link this#searchPhrase} and updates {@link this#paginator}.
-     *
-     * Any mutation of {@link this#allPlayers} or {@link this#allByManager} must call this method to update the {@link ScrollPaginator}.
      */
     private void filterAndUpdateSets(){
         paginator.updateList((onlyByManager && true ? questionSetsByManager : questionSets).stream().parallel()

@@ -13,8 +13,9 @@ import org.springframework.stereotype.Controller;
 import java.io.*;
 import java.nio.file.Files;
 
-// TODO jdoc
-
+/**
+ * Bean for changing the Avatar of a {@link Player}.
+ */
 @Controller
 @Scope("view")
 public class ChangeAvatarBean implements Serializable {
@@ -46,7 +47,9 @@ public class ChangeAvatarBean implements Serializable {
         this.player = profileBean.getPlayer();
     }
 
-    // TODO jdoc
+    /**
+     * Uploads the upload of a new Avatar picture, deleting the previously uploaded one if it exists.
+     */
     public void handleFileUpload(){
         if(player == null) return;
         if(file != null){
@@ -70,8 +73,10 @@ public class ChangeAvatarBean implements Serializable {
             }
         }
     }
-
-    //TODO: JavaDoc for saveAvatar
+    
+    /**
+     * Saves the current selected Avatar as the Players', deleting the old one if it exists.
+     */
     public void saveAvatar(){
         if(player == null) return;
         if(filename == null){
@@ -91,8 +96,11 @@ public class ChangeAvatarBean implements Serializable {
         messageBean.alertInformation("Success", "Avatar changed successfully.");
         messageBean.updateComponent("messages");
     }
-
-    //TODO: JavaDoc for abort
+    
+    
+    /**
+     * Cancels the upload of an Avatar, deleting any uploaded but unused ones.
+     */
     public void abort(){
         if(filename != null){
             storageService.deleteAvatar(filename);

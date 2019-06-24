@@ -43,7 +43,7 @@ public class MathGenerator
 	 *            Runtime id to start at (inclusive). Will generate ids up to startId + count.
 	 * @return The List of QR_Questions.
 	 */
-	protected List<QR_Question> generateQuestions(QuestionSetDifficulty difficulty, int count, int startId)
+	public List<QR_Question> generateQuestions(QuestionSetDifficulty difficulty, int count, int startId)
 	{
 		List<QR_Question> questions = new LinkedList<>();
 		HashSet<String> qs = new HashSet<>();

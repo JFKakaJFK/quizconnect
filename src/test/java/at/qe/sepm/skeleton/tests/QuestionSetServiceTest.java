@@ -15,6 +15,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
@@ -86,14 +87,6 @@ public class QuestionSetServiceTest {
             name.add("Too");
         }
         return name.toString();
-    }
-    
-    @Test
-    @WithMockUser(username = "user1", authorities = {"MANAGER"})
-    public void testGetAllQuestionSets()
-    {
-        List allSets = questionSetService.getAllQuestionSets();
-        assertTrue("Wrong number of Sets returned.", allSets.size() >= 3);
     }
 
     @Test
@@ -172,6 +165,7 @@ public class QuestionSetServiceTest {
     }
 
     @Test
+    @DirtiesContext
     @WithMockUser(username = "user1", authorities = { "MANAGER" })
     public void testSaveQuestionSetSaveSet() {
         QuestionSet testSet = validQuestionSet();
@@ -181,6 +175,7 @@ public class QuestionSetServiceTest {
     }
 
     @Test
+    @DirtiesContext
     @WithMockUser(username = "user1", authorities = { "MANAGER" })
     public void testSaveQuestionSetOverwriteSet() {
         String changingString = "ThatChanged";
@@ -194,6 +189,7 @@ public class QuestionSetServiceTest {
 
 
     @Test
+    @DirtiesContext
     @WithMockUser(username = "user1", authorities = { "MANAGER" })
     public void testDeleteQuestionSet() {
         QuestionSet testSet = validQuestionSet();
@@ -204,6 +200,7 @@ public class QuestionSetServiceTest {
     }
 
     @Test
+    @DirtiesContext
     @WithMockUser(username = "user1", authorities = { "MANAGER" })
     public void testGetAllContaining() {
         String testString = "RightName";
@@ -224,6 +221,7 @@ public class QuestionSetServiceTest {
     }
 
     @Test
+    @DirtiesContext
     @WithMockUser(username = "user1", authorities = { "MANAGER" })
     public void testGetAllByDifficulty() {
         QuestionSet testSet1 = validQuestionSet();
@@ -255,4 +253,14 @@ public class QuestionSetServiceTest {
         Assert.assertTrue("Right QuestionSet was loaded from DB", checkSet.equals(questionSetService.getQuestionSetOfQuestion(testQuestion)));
     }
 
+    /**
+     * This test executed in the whole testsuite usually fails since during the test random QuestionSets get added to
+     * DB therefore its impossible to assert
+     */
+
+    @Test
+    @WithMockUser(username = "user1", authorities = { "MANAGER" })
+    public void testGetAllQuestionSets(){
+        Assert.assertEquals(questionSetService.getAllQuestionSets().size(), 3);
+    }
 }

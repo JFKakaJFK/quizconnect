@@ -59,14 +59,12 @@ public class AllPlayersBean implements Serializable {
                 .filter(player -> player.getUser().getUsername().toLowerCase().contains(searchPhrase.toLowerCase()))
                 .collect(Collectors.toList()));
     }
-
+    
     /**
-     * Returns all {@link Player}s by the currently logged in {@link at.qe.sepm.skeleton.model.Manager} or {@link null}
-     * if the current {@link User} is no {@link at.qe.sepm.skeleton.model.Manager}. Fetches from the Database if necessary.
-     *
-     * @return
+     * @return All {@link Player}s by the currently logged in {@link at.qe.sepm.skeleton.model.Manager} or {@link null}
+     * 		if the current {@link User} is no {@link at.qe.sepm.skeleton.model.Manager}. Fetches from the Database if necessary.
      */
-    private List<Player> getAllByManager(){
+    public List<Player> getAllByManager(){
         if(isManager() && allByManager == null){
             allByManager = playerService.getPlayersOfManager(user.getManager());
         }
@@ -85,38 +83,34 @@ public class AllPlayersBean implements Serializable {
     /**
      * Returns true if the current {@link User} is a {@link at.qe.sepm.skeleton.model.Manager}
      *
-     * @return
+     * @return True if the current {@link User} is a {@link at.qe.sepm.skeleton.model.Manager}
      */
     public boolean isManager(){
         return user.getManager() != null;
     }
-
+    
     /**
-     * Returns true if the current {@link User} is allowed to edit the {@link Player}
-     *
      * @param p
-     * @return
+     * 		Player to be potentially edited.
+     * @return True if the current {@link User} is allowed to edit the {@link Player}
      */
     public boolean isEditable(Player p){
         return (user.getPlayer() != null && user.getPlayer().equals(p)) || isDeletable(p);
     }
-
+    
     /**
-     * Returns true if the current {@link User} is allowed to delete the {@link Player}
-     *
      * @param p
-     * @return
+     * 		Player to be potentially deleted.
+     * @return True if the current {@link User} is allowed to delete the {@link Player}
      */
     public boolean isDeletable(Player p){
         return isManager() && getAllByManager().contains(p);
     }
 
     /**
-     * Returns all {@link Player}s . Fetches from the Database if necessary.
-     *
-     * @return
+     * @return All {@link Player}s . Fetches from the Database if necessary.
      */
-    private List<Player> getAllPlayers(){
+    public List<Player> getAllPlayers(){
         if(allPlayers == null){
             allPlayers = new ArrayList<>(playerService.getAllPlayers());
         }
@@ -197,4 +191,9 @@ public class AllPlayersBean implements Serializable {
     public void setPaginator(ScrollPaginator<Player> paginator) {
         this.paginator = paginator;
     }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
 }

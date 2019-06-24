@@ -8,14 +8,19 @@ import org.springframework.stereotype.Component;
 import java.io.Serializable;
 import java.util.regex.Pattern;
 
+/**
+ * Bean for validating different kinds of inputs.
+ */
 @Component
 @Scope("view")
 public class ValidationBean implements Serializable {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
+     * Validates an email.
      *
      * @param email
+     * 		String to check.
      * @return <code>true</code> if string contains a valid e-mail address
      */
     public boolean isValidEmail(String email) {
@@ -29,10 +34,12 @@ public class ValidationBean implements Serializable {
         }
         return false;
     }
-
+    
     /**
+     * Validates a number.
      *
      * @param numerics
+     * 		String to check.
      * @return <code>true</code> if string only contains digits 0-9
      */
     public boolean isValidPositiveNumber(String numerics) {
@@ -43,10 +50,12 @@ public class ValidationBean implements Serializable {
         }
         return false;
     }
-
-    /** Validates text using a regular expression
+    
+    /**
+     * Validates text using a regular expression
      *
      * @param safetext
+     * 		String to check.
      * @return <code>true</code> if string only contains lowercase letters, uppercase letters or digits.
      */
     public boolean isValidText (String safetext) {
@@ -58,6 +67,15 @@ public class ValidationBean implements Serializable {
         return false;
     }
 
+    /**
+     * Validates text using a regular expression and checks for maximal length.
+     *
+     * @param safetext
+     * 		String to check.
+     * @param maxlength
+     *      Maximal length.
+     * @return <code>true</code> if string only contains lowercase letters, uppercase letters or digits.
+     */
     public boolean isValidText (String safetext, int maxlength) {
         return isValidText(safetext) && safetext.length() <= maxlength;
     }
@@ -94,6 +112,15 @@ public class ValidationBean implements Serializable {
         return false;
     }
 
+    /**
+     * Returns true if the extension of the filename is a supported image.
+     *
+     * @param pictureString
+     *      Filename of a potential image.
+     * @param maxlength
+     *      Maximal length of filename.
+     * @return <code>true</code> if the extension of the filename is a supported image.
+     */
     public boolean isValidPictureString (String pictureString, int maxlength) {
         if (pictureString != null && pictureString.length() <= maxlength) {
             String passwordRegex = "^[0-9]{3,}\\/[0-9]{3,}\\/.*\\.{1,1}.*$";
