@@ -11,7 +11,8 @@ document.addEventListener('keydown', function(e) {
         konamiCounter++;
         if (konamiCounter >= konami.length) {
             //TODO make it do something
-            window.location.href = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+            localStorage.setItem('theme', "outrun");
+            loadTheme();
         }
     } else {
         konamiCounter = 0;
