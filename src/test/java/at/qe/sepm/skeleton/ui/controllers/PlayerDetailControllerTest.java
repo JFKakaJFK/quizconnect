@@ -10,6 +10,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+/**
+ * Tests PlayerDetailController
+ */
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 public class PlayerDetailControllerTest {

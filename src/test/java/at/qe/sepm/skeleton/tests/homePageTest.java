@@ -13,6 +13,10 @@ import org.openqa.selenium.interactions.Actions;
 
 import java.io.File;
 
+/**
+ * Selenium Tests for Homepage
+ */
+
 public class homePageTest {
 
     private WebDriver driver;

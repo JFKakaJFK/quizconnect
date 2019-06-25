@@ -18,6 +18,11 @@ import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 
+/**
+ * Test for QRWebsocket events
+ * @author Lorenz_Smidt
+ */
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @WebAppConfiguration
