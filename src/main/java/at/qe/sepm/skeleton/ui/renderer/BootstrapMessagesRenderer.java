@@ -178,10 +178,12 @@ public class BootstrapMessagesRenderer extends MessagesRenderer {
         }
 
         writer.endElement("div"); //end of alert-container
+        /*
         writer.write("    <script type=\"text/javascript\">\n" +
                 "            setTimeout(function () {\n" +
                 "                $(\".alert-close\").click();\n" +
                 "            }, 5000);\n" +
                 "    </script>");
+                */
     }
 }

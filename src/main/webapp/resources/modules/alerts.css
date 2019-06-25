@@ -1,13 +1,16 @@
 .alert-container {
     display: grid;
     grid-auto-rows: 1fr;
-    margin-top: var(--default-spacing);
+    padding: var(--default-spacing);
     grid-gap: var(--default-spacing);
     position: fixed;
     left: 50%;
     transform: translateX(-50%);
     top: 0;
     z-index: 1060;
+    pointer-events: none;
+    width: 400px;
+    max-width: 100vw;
 }
 
 /* Custom */
@@ -28,9 +31,12 @@
     border: 0;
     opacity: 1;
     margin: 0;
-    /* TODO default dimensions @Johannes Spies (adjust w/ min-width/height) */
-    min-width: 400px;
-    min-height: 120px;
+}
+
+@media only screen and (min-width: 560px) {
+    .alert {
+        min-height: 100px;
+    }
 }
 
 .alert-svg{
@@ -88,6 +94,7 @@
     background: transparent;
     padding: 0;
     line-height: 1;
+    pointer-events: all;
 }
 
 .alert-close:hover {

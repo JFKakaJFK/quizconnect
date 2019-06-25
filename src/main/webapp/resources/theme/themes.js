@@ -2,7 +2,7 @@ const themes = {
   default: {
     // default variables are in vars css -> nothing to do
   },
-  outrun: { // TODO https://i.redd.it/aepphltiqy911.png
+  outrun: { // colors from https://i.redd.it/aepphltiqy911.png
     '--text-glow-color': '#F6019D',
     '--default-font-color': '#FFF',
     '--background-primary': '#261447',
@@ -12,14 +12,13 @@ const themes = {
     '--sidebar-background-gradient': 'linear-gradient(145deg, #0D0221 25%, #241734 100%)',
     '--default-box-shadow': '1px 1px 8px -4px hsla(0, 0%, 100%, .75), 4px 4px 16px 0 #540D6E',
     '--default-active-color': '#FFF',
-    '--active-glow-color': '#f706cf',// todo
+    '--active-glow-color': '#f706cf',
     '--default-active-background': 'hsla(310, 95%, 50%, .2)',
     '--default-accent-gradient': 'linear-gradient(35deg, #FF3864 25%, #FF6C11 100%)',
     '--game-timer-color': '#FF3864',
     '--chat-message-background': '#D40078',
     '--chat-message-out-background': '#2De2e6',
     '--chat-message-info-background': '#023788',
-    // todo
     '--danger': '#ff6c11',
     '--danger-gradient': 'linear-gradient(35deg, #FF3864 25%, #FF6C11 100%)',
     '--success': '#2de2e6',

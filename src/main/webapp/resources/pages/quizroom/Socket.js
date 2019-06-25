@@ -413,7 +413,6 @@ const handlePlayerJoin = ({ player }) => {
 const handlePlayerLeave = ({ playerId }) => {
   const { info } = getState();
   let player = info.players.find(p => p.id === playerId);
-  console.warn(player)
   setState({
     info: {
       players: info.players.filter(p => p.id !== playerId),

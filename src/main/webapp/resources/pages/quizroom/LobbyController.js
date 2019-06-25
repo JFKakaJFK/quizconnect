@@ -178,7 +178,7 @@ class LobbyController {
     const temp = document.createElement('div');
     this._renderReady(temp, canReadyUp, player.ready, lastReadyUp, isPlayer);
 
-    return `<div class="box collection-box" data-id="${player.id}">
+    return `<div class="box collection-box player-box" data-id="${player.id}">
         <div class="collection-box-icon "><img src="${player.avatar}" alt="avatar"></div>
         <div class="box-actions">${temp.innerHTML}</div>
         <span class="collection-box-name">${player.username}</span>

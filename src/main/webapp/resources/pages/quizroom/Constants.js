@@ -27,7 +27,7 @@ const PREFIX_ANSWER_PICTURE = (path) => `/answers/${path}`;
 const SHARE_WHATSAPP = (text) => `https://wa.me/?text=${encodeURIComponent(text)}`;
 const SHARE_TWITTER = (text) => `https://twitter.com/intent/tweet?hashtags=quiz,quizconnect&related=bitconnect&text=${encodeURIComponent(text)}`;
 const SHARE_FACEBOOK = (url) => `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&t=QuizConnect`;
-const SHARE_JOIN_URL = (pin) => `https://www.${DOMAIN}/quizroom/join.html?pin=${pin.toString().padStart(6, '0')}`;
+const SHARE_JOIN_URL = (pin) => `https://www.${DOMAIN}/quizroom/index.html?pin=${pin.toString().padStart(6, '0')}`;
 const SHARE_PIN_MESSAGE = (pin) =>  `Your QuizConnect pin is ${pin.toString().padStart(6, '0')}:
 
 ${SHARE_JOIN_URL(pin)}`;
