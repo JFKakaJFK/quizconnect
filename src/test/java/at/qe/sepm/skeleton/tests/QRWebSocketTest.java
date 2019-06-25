@@ -30,6 +30,7 @@ public class QRWebSocketTest
 	@Test
 	public void TestAnswerJSON()
 	{
+		AnswerJSON j = new AnswerJSON();
 		AnswerJSON n = new AnswerJSON(1, "answer", 2);
 		assertEquals("wrong a id.", 1, n.getAnswerId());
 		assertEquals("wrong answer", "answer", n.getAnswer());
@@ -46,6 +47,7 @@ public class QRWebSocketTest
 	@Test
 	public void TestAssignQuestionEvent()
 	{
+		AssignQuestionEvent aqe = new AssignQuestionEvent();
 		QR_Question qrq = new QR_Question(1, QuestionType.text, "question", "answer", "wrong1", "wrong2", "wrong3", "wrong4", "wrong5");
 		Player p1 = playerService.getPlayerById(201);
 		Player p2 = playerService.getPlayerById(202);
@@ -77,6 +79,7 @@ public class QRWebSocketTest
 	@Test
 	public void TestChatMessageJSON()
 	{
+		ChatMessageJSON cmj = new ChatMessageJSON();
 		ChatMessageJSON n = new ChatMessageJSON("message", "p1", 1, 20);
 		
 		assertEquals("message is wrong", "message", n.getMessage());
@@ -100,6 +103,7 @@ public class QRWebSocketTest
 	@Test
 	public void TestChatMessageEvent()
 	{
+		ChatMessageEvent cme = new ChatMessageEvent();
 		ChatMessageEvent n = new ChatMessageEvent("message", "p1", 1, 20);
 		assertEquals("wrong event", "chatMessage", n.getEvent());
 		
@@ -122,6 +126,7 @@ public class QRWebSocketTest
 	@Test
 	public void TestChatHistoryEvent()
 	{
+		ChatHistoryEvent che = new ChatHistoryEvent();
 		ChatHistoryEvent n = new ChatHistoryEvent(null);
 		assertNotNull("messages are null", n.getMessages());
 		assertEquals("message count wrong", 0, n.getMessages().size());
@@ -151,6 +156,7 @@ public class QRWebSocketTest
 	@Test
 	public void TestJokerUseEvent()
 	{
+		JokerUseEvent jue = new JokerUseEvent();
 		JokerUseEvent n = new JokerUseEvent(2);
 		assertEquals("wrong number", 2, n.getRemaining());
 		
@@ -162,6 +168,7 @@ public class QRWebSocketTest
 	@Test
 	public void TestPlayerJSON()
 	{
+		PlayerJSON pj = new PlayerJSON();
 		Player p1 = playerService.getPlayerById(201);
 		PlayerJSON n = new PlayerJSON(p1, "p");
 		
@@ -184,6 +191,7 @@ public class QRWebSocketTest
 	@Test
 	public void TestPlayerJoinEvent()
 	{
+		PlayerJoinEvent pje = new PlayerJoinEvent();
 		Player p1 = playerService.getPlayerById(201);
 		PlayerJoinEvent n = new PlayerJoinEvent(p1, "p");
 		
@@ -210,6 +218,7 @@ public class QRWebSocketTest
 	@Test
 	public void TestPlayerKickEvent()
 	{
+		PlayerKickEvent pke = new PlayerKickEvent();
 		Player p1 = playerService.getPlayerById(201);
 		PlayerKickEvent n = new PlayerKickEvent(p1);
 		
@@ -222,6 +231,7 @@ public class QRWebSocketTest
 	@Test
 	public void TestPlayerLeaveEvent()
 	{
+		PlayerLeaveEvent ple = new PlayerLeaveEvent();
 		Player p1 = playerService.getPlayerById(201);
 		PlayerLeaveEvent n = new PlayerLeaveEvent(p1, "reason");
 		
@@ -237,6 +247,7 @@ public class QRWebSocketTest
 	@Test
 	public void TestPlayerTimeoutEvent()
 	{
+		PlayerTimeoutEvent pte = new PlayerTimeoutEvent();
 		Player p1 = playerService.getPlayerById(201);
 		PlayerTimeoutEvent n = new PlayerTimeoutEvent(p1, 1000);
 		
@@ -252,6 +263,7 @@ public class QRWebSocketTest
 	@Test
 	public void TestReadyUpEvent()
 	{
+		ReadyUpEvent rue = new ReadyUpEvent();
 		Player p1 = playerService.getPlayerById(201);
 		ReadyUpEvent n = new ReadyUpEvent(p1, 1000);
 		
@@ -267,6 +279,7 @@ public class QRWebSocketTest
 	@Test
 	public void TestRemoveQuestionEvent()
 	{
+		RemoveQuestionEvent rqe = new RemoveQuestionEvent();
 		QR_Question qrq = new QR_Question(1, QuestionType.text, "question", "answer", "wrong1", "wrong2", "wrong3", "wrong4", "wrong5");
 		Player p1 = playerService.getPlayerById(201);
 		Player p2 = playerService.getPlayerById(202);
@@ -281,6 +294,7 @@ public class QRWebSocketTest
 	@Test
 	public void TestRoomInfoEvent()
 	{
+		RoomInfoEvent rie = new RoomInfoEvent();
 		RoomInfoEvent n = new RoomInfoEvent(1, "easy", "normal", null, 2, 3, 4, true, new ArrayList<>());
 		
 		assertEquals("wrong pin", 1, n.getPin());
@@ -322,6 +336,7 @@ public class QRWebSocketTest
 	@Test
 	public void TestScoreChangeEvent()
 	{
+		ScoreChangeEvent sce = new ScoreChangeEvent();
 		ScoreChangeEvent n = new ScoreChangeEvent(1);
 		
 		assertEquals("wrong new score", 1, n.getNewScore());
@@ -332,6 +347,7 @@ public class QRWebSocketTest
 	@Test
 	public void TestTimerSyncEvent()
 	{
+		TimerSyncEvent tse = new TimerSyncEvent();
 		QR_Question qrq = new QR_Question(1, QuestionType.text, "question", "answer", "wrong1", "wrong2", "wrong3", "wrong4", "wrong5");
 		Player p1 = playerService.getPlayerById(201);
 		Player p2 = playerService.getPlayerById(202);
@@ -346,5 +362,12 @@ public class QRWebSocketTest
 		
 		assertEquals("wrong question id", 2, n.getQuestionId());
 		assertEquals("wrong remaining", 500, n.getRemaining());
+	}
+	
+	@Test
+	public void TestGenericSocketEvent()
+	{
+		GenericSocketEvent gse = new GenericSocketEvent();
+		GenericSocketEvent n = new GenericSocketEvent("event");
 	}
 }
