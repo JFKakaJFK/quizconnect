@@ -5,11 +5,11 @@
     border-radius: 10rem;
     box-sizing: border-box;
     height: 42px;
+    transition: all .3s ease-in-out;
 }
 
 .btn:hover {
-    /*TODO: add styling */
-    transition: all .3s ease-in-out;
+    cursor: pointer;
 }
 
 .btn-primary {
@@ -47,4 +47,13 @@
     color: var(--default-font-color);
     transition: all 0.3s ease 0s;
     filter: saturate(1.2);
+}
+
+
+.btn[disabled] {
+    filter: brightness(0.9);
+}
+
+.btn[disabled]:hover {
+    filter: brightness(0.9);
 }
