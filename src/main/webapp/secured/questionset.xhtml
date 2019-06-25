@@ -55,7 +55,7 @@
                                  pt:autocomplete="off" pt:maxlength="300"/>
             </div>
 
-            <h:panelGroup id="button-actions" layout="block" styleClass="mb-5">
+            <h:panelGroup id="button-actions" layout="block" styleClass="mb-5 qset-actions">
                 <h:commandButton type="button" styleClass="btn btn-primary" id="addQuestionSet"
                                  disabled="#{!questionSetBean.validQuestionSet()}" rendered="#{not questionSetBean.bEditSet and not questionSetBean.questionSetSaved}" action="#{questionSetBean.saveNewQuestionSet}" value="Save and add question"
                                  pt:data-toggle="modal" pt:data-target="#questionModal">

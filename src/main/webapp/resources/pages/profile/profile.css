@@ -46,7 +46,7 @@
 }
 
 .player-box-icon {
-    background: var(--playerbox-avatar-background);
+    background: var(--collection-box-icon-background);
     border-radius: 50%;
     margin: 0 auto;
     display: flex;

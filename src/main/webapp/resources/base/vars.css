@@ -43,13 +43,7 @@
 
     --collection-box-icon-size-small: 1.6rem;
     --collection-box-icon-size: 3rem;
-
-    --playerbox-avatar-size-detail: 8rem;
-    --playerbox-avatar-background: transparent;
-
-    --questionsetbox-icon-size-small: 1.5rem;
-    --questionsetbox-icon-size-detail: 2rem;
-    --questionsetbox-icon-background: transparent;
+    --collection-box-icon-background: transparent;
 
     --fab-btn-background: var(--background-lighter);
     --fab-btn-color: var(--default-font-color);

@@ -25,7 +25,7 @@
     </cc:interface>
 
     <cc:implementation>
-        <qc:collectionbox name="#{cc.attrs.player.user.username}" icon="#{avatarBean.getAvatar(cc.attrs.player)}" sub="#{cc.attrs.player.playerRank}">
+        <qc:collectionbox name="#{cc.attrs.player.user.username}" icon="#{avatarBean.getAvatar(cc.attrs.player)}" sub="#{cc.attrs.player.playerRank}" styleClass="player-box">
             <cc:insertChildren />
         </qc:collectionbox>
     </cc:implementation>
