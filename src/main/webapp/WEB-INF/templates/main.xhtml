@@ -160,5 +160,9 @@
     </script>
 
     <ui:insert name="site-specific-javascript"/>
+
+    <ui:fragment rendered="#{sessionInfoBean.hasRole('PLAYER')}">
+        <script type="text/javascript" src="/resources/util/konami.js" />
+    </ui:fragment>
 </h:body>
 </html>
