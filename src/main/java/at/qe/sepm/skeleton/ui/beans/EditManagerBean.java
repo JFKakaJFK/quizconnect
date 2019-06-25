@@ -30,9 +30,6 @@ public class EditManagerBean implements Serializable {
     private UserService userService;
 
     @Autowired
-    private ManagerService managerService;
-
-    @Autowired
     private PasswordBean passwordBean;
 
     @Autowired
@@ -45,7 +42,6 @@ public class EditManagerBean implements Serializable {
     private MessageBean messageBean;
 
     private User user;
-    private String email;
     private String password;
     private String repeatPassword;
 
@@ -62,6 +58,7 @@ public class EditManagerBean implements Serializable {
         if (user != null && validationBean.isValidPassword(password, repeatPassword)) {
             user.setPassword(passwordBean.encodePassword(password));
             this.user = userService.saveUser(user);
+            logger.info(user.getUsername() + " changed password");
             messageBean.alertInformation("Success", "Saved new password");
             messageBean.updateComponent("messages");
         } else {
@@ -71,33 +68,7 @@ public class EditManagerBean implements Serializable {
         password = null;
         repeatPassword = null;
     }
-    
-    /**
-     * Changes the email of the Manager if the current email is valid.
-     */
-    public void changeEmail() {
-        if (user != null && validationBean.isValidEmail(email)) {
-            user.getManager().setEmail(email);
-            managerService.saveManager(user.getManager());
-            logger.info("Manager with ID " + user.getManager().getId() + " changed e-mail to " + user.getManager().getEmail());
-            messageBean.alertInformation("Success", "Saved new email address");
-            messageBean.updateComponent("messages");
-        } else {
-            messageBean.alertError("Error", "Couldn't save new email address - please try again");
-            messageBean.updateComponent("messages");
-        }
-    }
 
-    public String getEmail() {
-        if (email == null) {
-            email = user.getManager().getEmail();
-        }
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
 
     public String getPassword() {
         return password;

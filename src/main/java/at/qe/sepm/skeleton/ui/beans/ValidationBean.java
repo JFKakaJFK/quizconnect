@@ -123,7 +123,7 @@ public class ValidationBean implements Serializable {
      */
     public boolean isValidPictureString (String pictureString, int maxlength) {
         if (pictureString != null && pictureString.length() <= maxlength) {
-            String passwordRegex = "^[0-9]{3,}\\/[0-9]{3,}\\/.*\\.{1,1}.*$";
+            String passwordRegex = "^[0-9]+\\/[0-9]+\\/.*(\\.png|\\.jpg)$";
             Pattern pat = Pattern.compile(passwordRegex);
             return pat.matcher(pictureString).matches();
         }

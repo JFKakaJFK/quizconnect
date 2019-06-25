@@ -70,23 +70,6 @@ public class MessageBean implements Serializable {
             );
         }
     }
-    
-    /**
-     * Show error message
-     *
-     * @param id
-     * 		Target id.
-     * @param text
-     * 		Text to be displayed.
-     */
-    public void showError(String id, String text) {
-        logger.info("showError called with global and text: "+text);
-        if(FacesContext.getCurrentInstance() != null) {
-            FacesContext.getCurrentInstance().addMessage(id,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Fehler", text)
-            );
-        }
-    }
 
     /**
      * Updates a message component.

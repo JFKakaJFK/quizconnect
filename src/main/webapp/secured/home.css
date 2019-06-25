@@ -1,7 +1,7 @@
 .grid-container {
     width: 100%;
     display: grid;
-    height: calc(100vh - var(--navbar-height) - var(--default-padding));
+    height: calc(100vh - var(--navbar-height) - 2* var(--default-padding));
     grid-template-columns:  1fr;
     grid-auto-columns: 1fr;
     grid-gap: var(--default-spacing);
@@ -20,7 +20,7 @@
 
 
 
-.box {
+.box:not(#no-hover){
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
@@ -29,7 +29,7 @@
     cursor: pointer;
 }
 
-.box img {
+.box:not(#no-hover) img {
     display: inline-block;
     visibility: visible;
     opacity: 1;
@@ -43,7 +43,7 @@
 
 }
 
-.box span {
+.box:not(#no-hover) span {
     visibility: hidden;
     opacity: 0;
     -webkit-transition: visibility 0.5s, opacity 0.5s;
@@ -58,12 +58,12 @@
     font-size: 2em;
 
 }
-.box:hover span {
+.box:hover:not(#no-hover) span {
     visibility: visible;
     opacity: 1;
 }
 
-.box:hover img {
+.box:hover:not(#no-hover) img {
     visibility: hidden;
     opacity: 0;
 }
