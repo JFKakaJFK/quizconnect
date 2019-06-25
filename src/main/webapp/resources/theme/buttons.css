@@ -12,13 +12,6 @@
     transition: all .3s ease-in-out;
 }
 
-/*
-TODO
-- button styles
-- hover + active states
-*/
-
-
 .btn-primary {
     background: var(--default-accent-gradient);
     border: 0;
@@ -42,16 +35,10 @@ TODO
 }
 
 .btn-danger {
-    /*background: var(--danger);
-    background: var(--error);
-    border: none;
-    color: var(--gray-5);
-    */
-
     color: var(--error);
     background: transparent;
     border: solid 2px var(--error);
-    border-color: var(--error);
+    border-color: var(--error); /* Bootstrap override */
 }
 
 .btn-danger:hover {

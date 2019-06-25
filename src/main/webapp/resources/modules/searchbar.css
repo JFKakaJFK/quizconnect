@@ -1,4 +1,4 @@
-.searchbar { /* TODO */
+.searchbar {
     display: flex;
     flex-wrap: wrap;
     padding-bottom: var(--default-spacing);

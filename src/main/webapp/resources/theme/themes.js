@@ -1,6 +1,6 @@
 const themes = {
   default: {
-    // either todo or have default in vars css
+    // default variables are in vars css -> nothing to do
   },
   outrun: { // TODO https://i.redd.it/aepphltiqy911.png
     '--text-glow-color': '#F6019D',

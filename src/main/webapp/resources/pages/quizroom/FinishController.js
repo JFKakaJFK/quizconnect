@@ -53,7 +53,7 @@ class FinishController {
     } else if(score < -100){
       const hs = document.querySelector(this._highScore);
       if(!hs) return;
-      hs.textContent = 'You could do worse'; // todo change text?
+      hs.textContent = 'You could do worse';
     }
   }
 
