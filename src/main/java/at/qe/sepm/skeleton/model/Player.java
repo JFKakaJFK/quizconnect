@@ -380,7 +380,6 @@ public class Player implements Persistable<Integer>
 		this.avatarPath = avatarPath;
 	}
 
-	@Deprecated // TODO remove deprecated
 	public Manager getCreator()
 	{
 		return creator;

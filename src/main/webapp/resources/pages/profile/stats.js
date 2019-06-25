@@ -1,5 +1,4 @@
-// todo set colors in theme
-
+// optionally set colors in theme
 const areaColor = '#17A2AD';
 const donutColors = ['#247291', '#11B8A3', '#17A2AD', '#09BD5A', '#C955DC'];
 
