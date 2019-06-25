@@ -19,6 +19,11 @@ import static org.junit.Assert.*;
 import java.awt.geom.GeneralPath;
 import java.util.List;
 
+/**
+ * Basic tests for the MathGenerator.
+ *
+ * @author Lorenz_Smidt
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 public class MathGeneratorTest

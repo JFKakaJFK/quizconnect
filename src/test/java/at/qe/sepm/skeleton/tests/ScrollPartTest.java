@@ -12,6 +12,12 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Basic Test for ScrollPart (simply for coverage)
+ *
+ * @author Simon Triendl
+ */
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @WebAppConfiguration

@@ -16,6 +16,10 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Test for ProfileBean
+ */
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @WebAppConfiguration
@@ -35,17 +39,4 @@ public class ProfileBeanTest {
         Assert.assertNotNull(profileBean.getPlayer());
     }
 
-    /* TODO check if test still valid
-    @Test
-    public void testGetAndSetter(){
-        Assert.assertEquals(profileBean.getId(), 0);
-        profileBean.setId(201);
-        Player testPlayer = playerService.getPlayerById(201);
-        Assert.assertEquals(profileBean.getPlayer(), testPlayer);
-        List<Player> playerList = new ArrayList<>();
-        profileBean.setRecentlyPlayedWith(playerList);
-        Assert.assertTrue(profileBean.getRecentlyPlayedWith().isEmpty());
-
-    }
-    */
 }

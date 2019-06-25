@@ -28,6 +28,8 @@ import static org.junit.Assert.*;
 
 /**
  * Tests for the {@link QuestionService}
+ *
+ * @author Simon Triendl
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
