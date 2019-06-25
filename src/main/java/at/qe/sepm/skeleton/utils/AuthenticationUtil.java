@@ -8,7 +8,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-
+/**
+ * Class for authentication (used when accessing data with required security context)
+ */
 public final class AuthenticationUtil
 {
 

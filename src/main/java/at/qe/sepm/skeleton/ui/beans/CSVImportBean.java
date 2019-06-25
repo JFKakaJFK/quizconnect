@@ -19,6 +19,11 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
 
+/**
+ * Bean that connects frontend with CSVImportService
+ *
+ * @author Johannes Koch, Johannes Spies, Simon Triendl
+ */
 @Controller
 @Scope("view")
 public class CSVImportBean implements Serializable {

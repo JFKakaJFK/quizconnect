@@ -8,6 +8,9 @@ import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.Collections;
 
+/**
+ * Utility Class for converting and associating stats for Players
+ */
 @Controller
 @Scope("request")
 public class StatUtil implements Serializable {
