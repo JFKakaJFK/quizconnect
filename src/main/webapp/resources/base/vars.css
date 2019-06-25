@@ -11,7 +11,7 @@
     --background-lighter: hsl(218, 29%, 20%);
     --background-darker: #081627;
 
-    --background-gradient: var(--background-primary); /* todo  linear-gradient(60deg, rgba(48,62,79,1) 0%, rgba(75,84,101,1) 25%, rgba(30,39,54,1) 50%, rgba(35,42,54,1) 75%, rgba(52,61,77,1) 100%); */
+    --background-gradient: var(--background-primary);
 
     --main-panel-background: var(--background-primary);
 
