@@ -126,20 +126,19 @@
                       confirmButton="btn btn-danger"
                       abort="Cancel"
                       confirmAction="#{questionSetBean.deleteQuestion}"
-                      abortButton="btn btn-secondary"
                       update="deleteQuestionForm">
                 Are you sure? This cannot be undone.
             </qc:modal>
         </h:form>
 
         <h:form id="questionForForm" enctype="multipart/formdata">
-            <qc:modal target="questionModal" id="questionModal" closable="false" modaltype="info"
+            <qc:modal target="questionModal" id="questionModal" closable="false"
                       title="#{questionSetBean.bEditQuestion?'Edit question':'New question'}"
                       abort="Cancel"
                       confirm="#{questionSetBean.bEditQuestion?'Save':'Add'}"
                       confirmAction="#{questionSetBean.saveNewQuestion}"
-                      abortButton="btn btn-secondary"
                       abortAction="#{questionSetBean.abort()}"
+                      executeOnAbort="#{questionSetBean.bEditQuestion?'@none' : '@form'}"
                       update=":deleteQuestionForm:questions :questionSetForm:addQuestionSet" ajax="false">
 
                 <div class="row">

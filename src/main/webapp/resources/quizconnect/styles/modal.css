@@ -33,38 +33,3 @@
     border-radius: 0 0 var(--default-border-radius) var(--default-border-radius);
     padding: var(--default-padding);
 }
-
-
-
-
-/*TODO: Still relevant??*/
-.modal-warning .modal-header,
-.modal-warning .modal-body,
-.modal-warning .modal-footer {
-    background-color: var(--warning);
-}
-
-.modal-error .modal-header,
-.modal-error .modal-body,
-.modal-error .modal-footer {
-    background-color: var(--error);
-}
-
-.modal-success .modal-header,
-.modal-success .modal-body,
-.modal-success .modal-footer {
-    background-color: var(--success);
-}
-
-.modal-question .modal-header,
-.modal-question .modal-body,
-.modal-question .modal-footer {
-    background-color: var(--warning);
-}
-
-
-.modal-edit .modal-header,
-.modal-edit .modal-body,
-.modal-edit .modal-footer {
-    background-color: #247291;
-}

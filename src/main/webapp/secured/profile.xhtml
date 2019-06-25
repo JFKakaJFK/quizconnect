@@ -45,7 +45,6 @@
                       abort="Cancel"
                       bodyId="body" footerId="footer"
                       confirmAction="#{editManagerBean.changePassword}"
-                      abortButton="btn btn-secondary"
                       disableConfirm="#{!validationBean.isValidPassword(editManagerBean.password, editManagerBean.repeatPassword)}"
                       update=":passwordForm:editPassword:inputs :passwordForm:editPassword:footer">
                 <h:panelGroup layout="block" styleClass="form-group required" id="inputs">

@@ -49,7 +49,6 @@
     <cc:attribute name="disableConfirm" default="false"/>
     <cc:attribute name="closeOnConfirm" default="#{true}" required="false" type="java.lang.Boolean"/>
     <cc:attribute name="update" default="@none"/>
-    <cc:attribute name="modaltype" default=""/>
     <cc:attribute name="closable" default="true"/>
     <cc:attribute name="ajax" default="true" type="boolean"/>
 
@@ -74,7 +73,7 @@
 <cc:implementation>
     <div class="modal fade" id="#{cc.attrs.target}" tabindex="-1" role="dialog" aria-labelledby="#{cc.attrs.id}"
          aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-#{cc.attrs.modaltype}" role="document">
+        <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div jsf:id="#{cc.attrs.headerId}" class="modal-header">
                     <h5 class="modal-title">#{cc.attrs.title}</h5>
@@ -91,15 +90,8 @@
 
                 </div>
 
-                <div jsf:id="#{cc.attrs.bodyId}" class="modal-body"><!-- todo replace icons with feather icon or remove funtionality -->
+                <div jsf:id="#{cc.attrs.bodyId}" class="modal-body">
                     <div class="text-center">
-                        <c:if test="#{cc.attrs.modaltype == 'warning'}"><i
-                                class="fas fa-exclamation fa-4x mb-3"></i></c:if>
-                        <c:if test="#{cc.attrs.modaltype == 'success'}"><i class="fas fa-check fa-4x mb-3"></i></c:if>
-                        <c:if test="#{cc.attrs.modaltype == 'error'}"><i class="fas fa-times fa-4x mb-3"></i></c:if>
-                        <c:if test="#{cc.attrs.modaltype == 'question'}"><i
-                                class="fas fa-question fa-4x mb-3"></i></c:if>
-                        <c:if test="#{cc.attrs.modaltype == 'edit'}"><i class="fas fa-edit fa-4x mb-3"></i></c:if>
                         <cc:insertChildren/>
                     </div>
                 </div>

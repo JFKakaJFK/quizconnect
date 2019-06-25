@@ -167,8 +167,12 @@ public class QuestionSetBean implements Serializable {
      * Called on "Cancel" of Question-Modal. Re-uses the listener which also deletes pictures in case a user decides to change the type to text.
      */
     public void abort() {
-        logger.info("Type was set to: " + question.getType());
-        typeChangeListener();
+        // delete pictures if question is a new one and user cancels
+        if (!bEditQuestion) {
+            logger.info("Removing pictures because of 'Cancel'");
+            typeChangeListener();
+        }
+
     }
 
     /**
