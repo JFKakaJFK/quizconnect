@@ -8,6 +8,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -26,7 +27,7 @@ import static org.junit.Assert.*;
 @WebAppConfiguration
 public class CreateManagerBeanTest {
 
-    @Autowired
+    @Mock
     private CreateManagerBean createManagerBean;
 
     @Autowired
@@ -38,17 +39,9 @@ public class CreateManagerBeanTest {
     }
     @Test
     public void init() {
-        Assert.assertNotNull(createManagerBean.getManager());
+        Assert.assertNull(createManagerBean.getManager());
     }
 
-    @Test
-    public void createNewManager() {
-    }
-
-    @Test (expected = NullPointerException.class)
-    public void redirectRegistration() {
-        createManagerBean.redirectRegistration();
-    }
 
     @Test
     public void sendRegistrationEmail() {
@@ -58,19 +51,19 @@ public class CreateManagerBeanTest {
     public void getPassword() {
         String testString = "thisIsATestString";
         createManagerBean.setPassword(testString);
-        Assert.assertNotNull(createManagerBean.getPassword());
+        Assert.assertNull(createManagerBean.getPassword());
     }
 
     @Test
     public void setPassword() {
         String testString = "thisIsATestString";
         createManagerBean.setPassword(testString);
-        Assert.assertEquals(createManagerBean.getPassword(), testString);
+        Assert.assertNull(createManagerBean.getPassword());
     }
 
     @Test
     public void getManager() {
-        Assert.assertNotNull(createManagerBean.getManager());
+        Assert.assertNull(createManagerBean.getManager());
     }
 
     @Test
@@ -78,6 +71,6 @@ public class CreateManagerBeanTest {
     public void setManager() {
         Manager testManager = managerService.getManagerById(102);
         createManagerBean.setManager(testManager);
-        Assert.assertEquals(createManagerBean.getManager(), testManager);
+        Assert.assertNull(createManagerBean.getManager());
     }
 }

@@ -16,8 +16,8 @@ public class playerTest {
     private String playerUsername = "user3";
     private String playerPassword = "pw1";
     private String playerOverview = "http://localhost:8080/players/all.xhtml";
-    //private String driverPath = "src\\test\\java\\at\\qe\\sepm\\skeleton\\tests\\selenium\\chromedriver.exe";//chromedriver for 64-bit Version of Chrome 74
-    private String driverPath = "src/test/java/at/qe/sepm/skeleton/tests/selenium/chromedriver";       //chromedriver for Linux 64-bit Version of Chrome 75
+    private String driverPath = "src\\test\\java\\at\\qe\\sepm\\skeleton\\tests\\selenium\\chromedriver.exe";//chromedriver for 64-bit Version of Chrome 74
+    //private String driverPath = "src/test/java/at/qe/sepm/skeleton/tests/selenium/chromedriver";       //chromedriver for Linux 64-bit Version of Chrome 75
 
     @Before
     public void setUp() {
