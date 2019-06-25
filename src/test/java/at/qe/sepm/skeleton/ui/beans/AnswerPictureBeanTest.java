@@ -10,6 +10,10 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import static org.junit.Assert.*;
 
+/**
+ * Basic test for AnswerPictureBean
+ */
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @WebAppConfiguration

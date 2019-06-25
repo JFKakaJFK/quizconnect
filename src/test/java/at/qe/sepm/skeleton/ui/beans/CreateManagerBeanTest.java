@@ -21,6 +21,10 @@ import java.io.IOException;
 
 import static org.junit.Assert.*;
 
+/**
+ * Basic tests for CreateManagerBean
+ * (does only contribute to coverage and not valid testing)
+ */
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest

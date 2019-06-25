@@ -17,6 +17,9 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
+/**
+ * Few tests for the QuizRoom
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 public class QuizRoomTest
