@@ -231,7 +231,7 @@ public class QRWebSocketConnection implements IRoomAction {
         SocketEvent event = new TimerSyncEvent(q, remaining);
         event.setEvent(TIMER_SYNC);
         broadcast(event, pin);
-        log.debug("Game " + pin + ": time remaining of question " + q.question.getId() + " is " + remaining + "ms");
+        //log.debug("Game " + pin + ": time remaining of question " + q.question.getId() + " is " + remaining + "ms");
     }
 
     /**
