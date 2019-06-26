@@ -11,8 +11,6 @@
     --background-lighter: hsl(218, 29%, 20%);
     --background-darker: #081627;
 
-    --background-gradient: var(--background-primary);
-
     --main-panel-background: var(--background-primary);
 
     --navbar-background: var(--background-lighter);
@@ -50,7 +48,7 @@
 
     --game-timer-color: #17A2AD;
 
-    --chat-background: var(--background-darker);
+    --chat-background: hsl(218, 29%, 14%);
     --chat-message-color: var(--default-font-color);
     --chat-message-background: #383D42;
 

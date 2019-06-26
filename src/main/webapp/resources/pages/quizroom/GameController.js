@@ -253,7 +253,7 @@ class GameController {
     if(!answer) return null;
     const { questionId, type, answerId, answer: text } = answer;
     const answerNode = document.createElement('div');
-    answerNode.classList.add('box', 'answer', 'fast', 'answer-' + type); //, 'answer-order-' + Math.floor(Math.random() * 9));
+    answerNode.classList.add('box', 'answer', 'fast', 'answer-' + type, 'text-center'); //, 'answer-order-' + Math.floor(Math.random() * 9));
     answerNode.setAttribute('data-id', this._getAnswerId(questionId, answerId));
     answerNode.addEventListener('click', () => this._handleAnswerQuestion(answerNode, questionId, answerId));
     let inner;

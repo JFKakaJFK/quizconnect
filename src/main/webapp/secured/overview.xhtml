@@ -50,7 +50,7 @@
 
                 <h:commandButton styleClass="btn btn-secondary searchbar-action" p:data-toggle="modal"
                                  p:data-target="#uploadCSV" p:data-backdrop="static" value="Upload CSV">
-                    <f:ajax execute="@form" render="@none"/>
+                    <f:ajax execute="@form" render=":modals:modal:body :modals:modal:footer"/>
                 </h:commandButton>
             </h:panelGroup>
 
@@ -119,7 +119,8 @@
                       closeAction="#{CSVImportBean.abort}"
                       abortAction="#{CSVImportBean.abort}"
                       confirmAction="#{CSVImportBean.processCSV}"
-                      update=":form"
+                      disableConfirm="#{CSVImportBean.disableConfirm()}"
+                      update=":form :modals:modal:footer :modals:modal:body"
                       bodyId="body"
                       footerId="footer">
 
@@ -146,13 +147,17 @@
                 <div class="form-group required">
                     <label for="nameCSV">Name</label>
                     <h:inputText styleClass="form-control" id="nameCSV" value="#{CSVImportBean.nameCSV}"
-                                 p:required="true" p:pattern="[\s\S]*\S[\s\S]*"></h:inputText>
+                                 p:required="true" p:pattern="[\s\S]*\S[\s\S]*">
+                        <f:ajax event="keyup" execute="@this" render=":modals:modal:footer"/>
+                    </h:inputText>
                 </div>
 
                 <div class="form-group required">
                     <label for="descriptionCSV">Description</label>
                     <h:inputText styleClass="form-control" id="descriptionCSV" value="#{CSVImportBean.descriptionCSV}"
-                                 p:required="true" p:pattern="[\s\S]*\S[\s\S]*"></h:inputText>
+                                 p:required="true" p:pattern="[\s\S]*\S[\s\S]*">
+                        <f:ajax event="keyup" execute="@this" render=":modals:modal:footer"/>
+                    </h:inputText>
                 </div>
             </qc:modal>
 

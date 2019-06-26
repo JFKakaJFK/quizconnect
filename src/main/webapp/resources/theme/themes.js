@@ -16,6 +16,7 @@ const themes = {
     '--default-active-background': 'hsla(310, 95%, 50%, .2)',
     '--default-accent-gradient': 'linear-gradient(35deg, #FF3864 25%, #FF6C11 100%)',
     '--game-timer-color': '#FF3864',
+    '--chat-background': 'var(--background-darker)',
     '--chat-message-background': '#D40078',
     '--chat-message-out-background': '#2De2e6',
     '--chat-message-info-background': '#023788',
@@ -41,6 +42,7 @@ const themes = {
     '--chat-message-background': '#d2d2d2',
     '--chat-message-out-background': '#8BD7F3',
     '--chat-message-info-background': '#35d6c7',
+    '--chat-background': 'var(--background-darker)',
   }
 };
 

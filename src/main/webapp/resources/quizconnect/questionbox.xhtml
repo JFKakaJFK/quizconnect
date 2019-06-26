@@ -31,7 +31,7 @@
         </c:if>
         <c:if test="#{!cc.attrs.detail}">
             <qc:collectionbox name="#{cc.attrs.question.questionString}" sub="#{cc.attrs.question.type == 'picture' ? '' : cc.attrs.question.rightAnswerString}" styleClass="question-box" smallIcon="true"
-                              icon="#{cc.attrs.question.type == 'picture' ? '/resources/quizconnect/styles/picture.svg' : '/resources/quizconnect/styles/text.svg'}" >
+                              icon="#{cc.attrs.question.type == 'picture' ? '/resources/quizconnect/styles/image.svg' : '/resources/quizconnect/styles/italic.svg'}" >
                 <cc:insertChildren/>
             </qc:collectionbox>
         </c:if>

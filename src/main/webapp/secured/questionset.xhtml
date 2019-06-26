@@ -56,6 +56,11 @@
             </div>
 
             <h:panelGroup id="button-actions" layout="block" styleClass="mb-5 qset-actions">
+                <h:commandButton type="button" styleClass="btn btn-secondary"
+                                 action="/secured/overview.xhtml?faces-redirect=true" value="Back">
+                    <f:ajax execute="@this" render="@none"/>
+                </h:commandButton><!-- todo @jspies remove / delete todo -->
+
                 <h:commandButton type="button" styleClass="btn btn-primary" id="addQuestionSet"
                                  disabled="#{!questionSetBean.validQuestionSet()}" rendered="#{not questionSetBean.bEditSet and not questionSetBean.questionSetSaved}" action="#{questionSetBean.saveNewQuestionSet}" value="Save and add question"
                                  pt:data-toggle="modal" pt:data-target="#questionModal">
@@ -74,6 +79,7 @@
                     <f:actionListener binding="#{questionSetBean.setbEditQuestion(false)}"/>
                     <f:ajax execute="@this" render=":questionForForm:questionModal:modal-header :questionForForm:questionModal:modal-body" ></f:ajax>
                 </h:commandButton>
+
             </h:panelGroup>
 
         </h:form>
