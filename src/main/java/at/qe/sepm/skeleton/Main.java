@@ -59,10 +59,12 @@ public class Main extends SpringBootServletInitializer {
     @Bean
     CommandLineRunner init(StorageService storageService,
                            CSVImportService csvImportService,
-                           @Value("${storage.questionsets.csv.location}") String location) {
+                           @Value("${storage.questionsets.csv.location}") String location,
+                           @Value("${storage.questionsets.csv.autoload}") String autoload) {
         return (args) -> {
             storageService.init();
-            csvImportService.init(location);
+            if (autoload.equals("true"))
+                csvImportService.init(location);
         };
     }
 
