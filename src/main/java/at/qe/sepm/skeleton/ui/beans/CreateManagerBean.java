@@ -62,7 +62,7 @@ public class CreateManagerBean implements Serializable {
         } else if (password != null && validationBean.isValidPassword(password, repeatPassword) && validationBean.isValidEmail(manager.getEmail())) {
             managerService.saveNewManager(manager, passwordBean.encodePassword(password));
             logger.info("Created and saved a new manager: " + manager.toString());
-            //sendRegistrationEmail();
+            sendRegistrationEmail();
             redirectRegistration();
         }
     }
@@ -109,7 +109,8 @@ public class CreateManagerBean implements Serializable {
                         "I am so proud, I am so honored, I am so EXCITED to be here right now—and, hey, let me tell you something: that each and every one of YOU, has the opportunity to become, like those amazing people that we know here FROM VIETNAM! HEY HEY, MY PEOPLE HERE FROM VIETNAM, making so much money that they can probably have a real hard time counting it!\n\n\n" +
                         "AHAHAHAHAHAh!\n\n\n" +
                         "So GUYS, let me tell you: I LOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOVE QUIZ CON EEEEEEECT\n\n\n" +
-                        "http://www.quizconnect.rocks");
+                        "Your credentials:" + manager.getEmail() + " and the password you registered with\n\n" +
+                        "http://quizconnect.rocks:8080");
 
     }
 

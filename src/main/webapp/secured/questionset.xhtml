@@ -59,7 +59,7 @@
                 <h:commandButton type="button" styleClass="btn btn-secondary"
                                  action="/secured/overview.xhtml?faces-redirect=true" value="Back">
                     <f:ajax execute="@this" render="@none"/>
-                </h:commandButton><!-- todo @jspies remove / delete todo -->
+                </h:commandButton>
 
                 <h:commandButton type="button" styleClass="btn btn-primary" id="addQuestionSet"
                                  disabled="#{!questionSetBean.validQuestionSet()}" rendered="#{not questionSetBean.bEditSet and not questionSetBean.questionSetSaved}" action="#{questionSetBean.saveNewQuestionSet}" value="Save and add question"
