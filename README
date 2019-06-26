@@ -1,22 +1,21 @@
-SEPM-SKEL: Skeleton Project for SEPM
+`/\  __ \   /\ \/\ \   /\ \   /\___  \   /\  ___\   /\  __ \   /\ "-.\ \   /\ "-.\ \   /\  ___\   /\  ___\   /\__  _\
+\ \ \/\_\  \ \ \_\ \  \ \ \  \/_/  /__  \ \ \____  \ \ \/\ \  \ \ \-.  \  \ \ \-.  \  \ \  __\   \ \ \____  \/_/\ \/ 
+ \ \___\_\  \ \_____\  \ \_\   /\_____\  \ \_____\  \ \_____\  \ \_\\"\_\  \ \_\\"\_\  \ \_____\  \ \_____\    \ \_\ 
+  \/___/_/   \/_____/   \/_/   \/_____/   \/_____/   \/_____/   \/_/ \/_/   \/_/ \/_/   \/_____/   \/_____/     \/_/ `
 
-This project provides a starting point for development of projects during
-the course "Softwareentwicklung und Projektmanagement" (SEPM). It is a simple
-web application offering nearly no "real" functionality. The main purpose is to
-help you getting started quickly by providing a suitable starting point.
 
-It utilizes Spring Boot and is configured as maven web application project with:
- - all relevant Spring Framework features enabled
- - embedded Tomcat with support for JSF2
- - embedded H2 in-memory database (including H2 console)
- - support for PrimeFaces
- - basic functionality for user management and web security
+# Info
+  
+When running using "mvn spring-boot:run", access "localhost:8080" and click the "Get Started" button (or scroll down, I'm not your superior).
+You can then log in using any of these pre-configured accounts:
 
-Just execute  "mvn spring-boot:run" to start the skeleton project and connect to
-http://localhost:8080/ to access the skeleton web application. You may login
-with "admin" and "passwd".
+`Username    Password    Role
+user1       pw1         MANAGER
+user2       pw1         MANAGER
+user3       pw1         PLAYER
+user4       pw1         PLAYER
+user5       pw1         PLAYER
+user6       pw1         PLAYER
+user7       pw1         PLAYER`
 
-Feel free to play around and reuse the whole or parts of this skeleton project
-for your own work.
-
-Please see the folder 'Documentation' for more information on the project.
+Any further procedures should be fairly intuitive.
