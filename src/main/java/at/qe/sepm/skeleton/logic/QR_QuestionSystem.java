@@ -211,7 +211,7 @@ class QR_QuestionSystem
 	}
 	
 	/**
-	 * Adds count number of Questions as missing (= to be distributed on next call).
+	 * Adds count number of Questions as missing (= to be distributed on _next call).
 	 *
 	 * @param count
 	 * 		Number of Questions to add as missing.
@@ -369,7 +369,8 @@ class QR_QuestionSystem
 		
 		List<Player> waPlayers = new ArrayList<>();
 		Player p;
-		for (int i = 0; i < 5; i++)
+		//limit wrong answers to playerAnswerSlots-1 to always keep room for at least the right answers
+		for (int i = 0; i < 5 && i < playerAnswerSlots-1; i++)
 		{
 			String qString = null;
 			if (i == 0)

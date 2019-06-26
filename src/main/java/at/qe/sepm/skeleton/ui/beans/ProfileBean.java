@@ -25,45 +25,52 @@ public class ProfileBean implements Serializable {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     private PlayerService playerService;
-
+    private SessionInfoBean sessionInfoBean;
+    private boolean isHome = false;
     private Player player;
     private List<Player> recentlyPlayedWith;
 
     @Autowired
-    public ProfileBean(PlayerService playerService){
+    public ProfileBean(PlayerService playerService, SessionInfoBean sessionInfoBean){
         this.playerService = playerService;
         this.recentlyPlayedWith = new ArrayList<>();
-    }
-
-    public int getId(){
-        return 0;
-    }
-
-    public void setId(int id) {
-        this.player = playerService.getPlayerById(id);
     }
 
     public Player getPlayer() {
         return player;
     }
-
+    
     /**
      * Sets the {@link Player} and loads the recently played with {@link Player}s
+     *
      * @param player
+     * 		Player to be set.
      */
     public void setPlayer(Player player) {
-        if(playerService.getPlayerById(player.getId()) == null){
+        this.player = playerService.getPlayerById(player.getId());
+        if(this.player == null && isHome){
+            this.player = playerService.getPlayerByUsername(sessionInfoBean.getCurrentUserName());
+            this.isHome = false;
+        }
+        if(this.player == null){
             try {
                 FacesContext.getCurrentInstance().getExternalContext().redirect("/players/all.xhtml?faces-redirect=true");
+                return;
             } catch (IOException e){
                 log.warn("Failed to redirect");
+                return;
             }
         }
-        this.player = player;
-        List<String> userNames = player.getPlayedWithLast();
+        List<String> userNames = this.player.getPlayedWithLast();
         this.recentlyPlayedWith = userNames != null && userNames.size() > 0 ? userNames.stream()
                 .map(u -> playerService.getPlayerByUsername(u))
+                .filter(p -> p != null)
                 .collect(Collectors.toList()) : new ArrayList<>();
+        // update the recently played with size, if one of the players was deleted
+        if(userNames != null && userNames.size() != recentlyPlayedWith.size()){
+            this.player._setPlayedWithLast(recentlyPlayedWith);
+            this.player = playerService.savePlayer(this.player);
+        }
     }
 
     public List<Player> getRecentlyPlayedWith() {
@@ -72,5 +79,9 @@ public class ProfileBean implements Serializable {
 
     public void setRecentlyPlayedWith(List<Player> recentlyPlayedWith) {
         this.recentlyPlayedWith = recentlyPlayedWith;
+    }
+
+    public void setHome(boolean home) {
+        isHome = home;
     }
 }

@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  * are locally updated if the {@link User} adds/removes a {@link Player}.
  */
 @Controller
-@Scope("session")
+@Scope("view")
 public class AllPlayersBean implements Serializable {
 
     private PlayerService playerService;
@@ -37,7 +37,7 @@ public class AllPlayersBean implements Serializable {
     public AllPlayersBean(PlayerService playerService, SessionInfoBean sessionInfoBean){
         this.playerService = playerService;
         this.user = sessionInfoBean.getCurrentUser();
-        this.paginator = new ScrollPaginator<>(getAllPlayers(), 12); // 12 is about the number fitting into one viewport
+        this.paginator = null;
     }
 
     /**
@@ -55,18 +55,16 @@ public class AllPlayersBean implements Serializable {
      * Any mutation of {@link this#allPlayers} or {@link this#allByManager} must call this method to update the {@link ScrollPaginator}.
      */
     private void filterAndUpdatePlayers(){
-        paginator.updateList((onlyByManager && isManager() ? getAllByManager() : getAllPlayers()).stream() // TODO .parallel()
-                .filter(player -> player.getUser().getUsername().toLowerCase().contains(searchPhrase.toLowerCase())) // || player.getId().toString().toLowerCase().contains(searchPhrase.toLowerCase()))
+        getPaginator().updateList((onlyByManager && isManager() ? getAllByManager() : getAllPlayers()).stream().parallel()
+                .filter(player -> player.getUser().getUsername().toLowerCase().contains(searchPhrase.toLowerCase()))
                 .collect(Collectors.toList()));
     }
-
+    
     /**
-     * Returns all {@link Player}s by the currently logged in {@link at.qe.sepm.skeleton.model.Manager} or {@link null}
-     * if the current {@link User} is no {@link at.qe.sepm.skeleton.model.Manager}. Fetches from the Database if necessary.
-     *
-     * @return
+     * @return All {@link Player}s by the currently logged in {@link at.qe.sepm.skeleton.model.Manager} or {@link null}
+     * 		if the current {@link User} is no {@link at.qe.sepm.skeleton.model.Manager}. Fetches from the Database if necessary.
      */
-    private List<Player> getAllByManager(){
+    public List<Player> getAllByManager(){
         if(isManager() && allByManager == null){
             allByManager = playerService.getPlayersOfManager(user.getManager());
         }
@@ -74,40 +72,45 @@ public class AllPlayersBean implements Serializable {
     }
 
     /**
+     * Since lazy loading getters are used internally
+     */
+    public void refresh(){
+        this.allByManager = null;
+        this.allPlayers = null;
+        filterAndUpdatePlayers();
+    }
+
+    /**
      * Returns true if the current {@link User} is a {@link at.qe.sepm.skeleton.model.Manager}
      *
-     * @return
+     * @return True if the current {@link User} is a {@link at.qe.sepm.skeleton.model.Manager}
      */
     public boolean isManager(){
         return user.getManager() != null;
     }
-
+    
     /**
-     * Returns true if the current {@link User} is allowed to edit the {@link Player}
-     *
      * @param p
-     * @return
+     * 		Player to be potentially edited.
+     * @return True if the current {@link User} is allowed to edit the {@link Player}
      */
     public boolean isEditable(Player p){
         return (user.getPlayer() != null && user.getPlayer().equals(p)) || isDeletable(p);
     }
-
+    
     /**
-     * Returns true if the current {@link User} is allowed to delete the {@link Player}
-     *
      * @param p
-     * @return
+     * 		Player to be potentially deleted.
+     * @return True if the current {@link User} is allowed to delete the {@link Player}
      */
     public boolean isDeletable(Player p){
         return isManager() && getAllByManager().contains(p);
     }
 
     /**
-     * Returns all {@link Player}s . Fetches from the Database if necessary.
-     *
-     * @return
+     * @return All {@link Player}s . Fetches from the Database if necessary.
      */
-    private List<Player> getAllPlayers(){
+    public List<Player> getAllPlayers(){
         if(allPlayers == null){
             allPlayers = new ArrayList<>(playerService.getAllPlayers());
         }
@@ -119,7 +122,7 @@ public class AllPlayersBean implements Serializable {
     }
 
     public void setSearchPhrase(String searchPhrase) {
-        this.searchPhrase = searchPhrase;
+        this.searchPhrase = searchPhrase.trim();
     }
 
     public boolean isOnlyByManager() {
@@ -132,7 +135,10 @@ public class AllPlayersBean implements Serializable {
     }
 
     /**
-     * Adds a {@link Player} to the list of {@link Player}s
+     * Adds a {@link Player} to the list of {@link Player}.
+     *
+     * There is no check for duplicates since the method is only called when a new player is added, and the
+     * additional O(number of all players) runtime is simply not necessary.
      *
      * @param p {@link Player} to add
      */
@@ -169,11 +175,25 @@ public class AllPlayersBean implements Serializable {
         filterAndUpdatePlayers();
     }
 
+    /**
+     * Lazily initializes the paginator or returns the existing paginator;
+     *
+     * @return
+     *      A {@link ScrollPaginator} of all filtered Players.
+     */
     public ScrollPaginator<Player> getPaginator() {
+        if(paginator == null){
+            this.paginator = new ScrollPaginator<>(getAllPlayers(), 20); // about the number of players fitting into one viewport
+        }
         return paginator;
     }
 
     public void setPaginator(ScrollPaginator<Player> paginator) {
         this.paginator = paginator;
     }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
 }

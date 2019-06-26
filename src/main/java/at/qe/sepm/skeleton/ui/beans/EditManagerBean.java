@@ -11,18 +11,18 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.PostConstruct;
+import javax.faces.event.AjaxBehaviorEvent;
 
+import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Bean for editing a {@link at.qe.sepm.skeleton.model.Manager}.
+ */
 @Controller
 @Scope("view")
-
-public class EditManagerBean {
-
-    /**
-     * Changes a {@link Player}s password if the new password is valid
-     */
+public class EditManagerBean implements Serializable {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -30,79 +30,45 @@ public class EditManagerBean {
     private UserService userService;
 
     @Autowired
-    private ManagerService managerService;
-
-    @Autowired
     private PasswordBean passwordBean;
 
     @Autowired
     private SessionInfoBean sessionInfoBean;
 
+    @Autowired
+    private ValidationBean validationBean;
+
+    @Autowired
+    private MessageBean messageBean;
 
     private User user;
-    private String email;
     private String password;
     private String repeatPassword;
 
 
     @PostConstruct
     private void init() {
-        user = sessionInfoBean.getCurrentUser();
+        user = userService.loadUser(sessionInfoBean.getCurrentUser().getUsername());
     }
-
+    
+    /**
+     * Changes the password of the Manager if the current password is valid and clears all fields.
+     */
     public void changePassword() {
-        if (user != null && isPasswordValid()) {
+        if (user != null && validationBean.isValidPassword(password, repeatPassword)) {
             user.setPassword(passwordBean.encodePassword(password));
-            userService.saveUser(user);
+            this.user = userService.saveUser(user);
+            logger.info(user.getUsername() + " changed password");
+            messageBean.alertInformation("Success", "Saved new password");
+            messageBean.updateComponent("messages");
+        } else {
+            messageBean.alertError("Error", "Couldn't save new password - please try again");
+            messageBean.updateComponent("messages");
         }
-
-        user = null;
         password = null;
         repeatPassword = null;
     }
 
-    public void changeEmail() {
-        if (user != null && isEmailValid()) {
-            user.getManager().setEmail(email);
-            managerService.saveManager(user.getManager());
-            logger.info("Manager with ID " + user.getManager().getId() + " changed e-mail to " + user.getManager().getEmail());
-        }
-    }
-
-
-    public boolean isEmailValid() {
-        if (email != null) {
-
-            //OWASP Validation Regex Repository
-            String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\." +
-                    "[a-zA-Z0-9_+&*-]+)*@" +
-                    "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
-                    "A-Z]{2,7}$";
-            Pattern pat = Pattern.compile(emailRegex);
-            return pat.matcher(email).matches();
-        }
-        return false;
-    }
-
-    /**
-     * Returns true if the new password is valid
-     *
-     * @return
-     */
-    public boolean isPasswordValid() {
-        return password != null && password.length() >= 3 && repeatPassword != null && repeatPassword.equals(password);
-    }
-
-    public String getEmail() {
-        if (email == null) {
-            email = user.getManager().getEmail();
-        }
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
 
     public String getPassword() {
         return password;

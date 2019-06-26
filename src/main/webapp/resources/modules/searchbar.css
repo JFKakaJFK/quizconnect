@@ -1,0 +1,29 @@
+.searchbar {
+    display: flex;
+    flex-wrap: wrap;
+    padding-bottom: var(--default-spacing);
+}
+
+.searchbar .searchbar-search {
+    flex: 1;
+    min-width: 120px;
+    height: initial;
+    padding: .5rem 1rem;
+}
+
+.searchbar .searchbar-action {
+    margin: 0 0 0 1rem;
+}
+
+@media only screen and (max-width: 560px) {
+
+    .searchbar .searchbar-action,
+    .searchbar .searchbar-search {
+        width: 100%;
+        margin: 0;
+    }
+
+    .searchbar :not(:first-child) {
+        margin-top: 1rem;
+    }
+}

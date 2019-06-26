@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileSystemUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -134,6 +135,7 @@ public class FileSystemStorageService implements StorageService {
             Files.createDirectories(root.resolve(pathPrefix));
 
             filePath = imageService.resizeImage(tempFile, root.resolve(pathPrefix), size, size, type);
+            if(filePath == null) return null;
         } catch (IOException e){
             log.error("Failed to store uploaded file in temporary directory");
             return null;
@@ -204,5 +206,15 @@ public class FileSystemStorageService implements StorageService {
         } catch (IOException e){
             log.error("Could not delete avatar " + answer);
         }
+    }
+
+    /**
+     * Deletes all answers of the {@link at.qe.sepm.skeleton.model.QuestionSet}.
+     * @param managerId
+     * @param questionSetId
+     */
+    @Override
+    public void deleteAllAnswersOfQuestionSet(String managerId, String questionSetId) {
+        FileSystemUtils.deleteRecursively(answers.resolve(managerId + "/" + questionSetId).toFile());
     }
 }

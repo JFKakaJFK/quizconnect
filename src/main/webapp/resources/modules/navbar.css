@@ -1,0 +1,55 @@
+.navbar {
+    background: var(--navbar-background);
+    height: var(--navbar-height);
+    position: relative;
+    box-shadow: var(--default-box-shadow);
+}
+
+.navbar-burger svg {
+    width: 2rem;
+    height: 2rem;
+    cursor: pointer;
+}
+
+.navbar #title {
+    text-transform: capitalize;
+}
+
+.navbar-logo svg {
+    transition: transform 0.25s ease-in-out;
+}
+
+.navbar-logo svg:hover {
+    transform: scale(1.1);
+}
+
+.navbar-logo svg .cls-2 {
+    animation: circle 5s linear infinite forwards;
+}
+.navbar-logo svg .cls-3 {
+    animation: clockHand 1s linear infinite forwards;
+}
+
+.navbar-logo svg .cls-2,
+.navbar-logo svg .cls-3 {
+    transform-origin: 50% 50%;
+    will-change: transform;
+    animation-play-state:  paused; /* needs to be set after animation */
+}
+
+.navbar-logo:hover svg .cls-2,
+.navbar-logo:hover svg .cls-3 {
+    animation-play-state: running;
+}
+
+@keyframes clockHand {
+    100% {
+        transform: rotate(1turn);
+    }
+}
+
+@keyframes circle {
+    100% {
+        transform: rotate(1turn);
+    }
+}

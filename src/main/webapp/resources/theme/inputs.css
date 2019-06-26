@@ -1,0 +1,135 @@
+.form-control {
+    background-color:  var(--input-background);
+    color: var(--input-color);
+}
+
+input.error,
+input:invalid {
+    border-color: var(--error);
+}
+
+input.form-control {
+    border-radius: 5rem;
+    background: var(--input-background);
+    box-shadow: 0 0 0 1000px var(--input-background) inset;
+    transition: all .25s ease-in-out, background-color 5000s ease-in-out 0s;
+    border: 2px solid var(--input-border-color);
+    -webkit-text-fill-color: var(--input-color);
+    color: var(--input-color);
+}
+
+input.form-control,
+input:-internal-autofill-selected,
+input:-webkit-autofill {
+    border-radius: 5rem;
+    background: var(--input-background);
+    box-shadow: 0 0 0 1000px var(--input-background) inset;
+    transition: all .25s ease-in-out, background-color 5000s ease-in-out 0s;
+    border: 2px solid var(--input-border-color);
+    -webkit-text-fill-color: var(--input-color);
+    color: var(--input-color);
+}
+
+input:focus.form-control,
+input:focus:-internal-autofill-selected,
+input:focus:-webkit-autofill {
+    background: var(--input-focus-background);
+    box-shadow: 0 0 0 1000px var(--input-focus-background) inset;
+    -webkit-text-fill-color: var(--input-focus-color);
+    color: var(--input-focus-color);
+    border: 2px solid var(--input-focus-border-color);
+    transition: all .25s ease-in-out;
+}
+
+input:focus.form-control {
+    background: var(--input-focus-background);
+    box-shadow: 0 0 0 1000px var(--input-focus-background) inset;
+    -webkit-text-fill-color: var(--input-focus-color);
+    color: var(--input-focus-color);
+    border: 2px solid var(--input-focus-border-color);
+    transition: all .25s ease-in-out;
+}
+
+textarea.form-control {
+    border-radius: var(--default-border-radius);
+    background: var(--input-background);
+    box-shadow: 0 0 0 1000px var(--input-background) inset;
+    transition: all .25s ease-in-out, background-color 5000s ease-in-out 0s;
+    border: 2px solid var(--input-border-color);
+    -webkit-text-fill-color: var(--input-color);
+    color: var(--input-color);
+}
+
+textarea.form-control:focus {
+    background: var(--input-focus-background);
+    box-shadow: 0 0 0 1000px var(--input-focus-background) inset;
+    -webkit-text-fill-color: var(--input-focus-color);
+    color: var(--input-focus-color);
+    border: 2px solid var(--input-focus-border-color);
+    transition: all .25s ease-in-out;
+}
+
+select.form-control,
+select.form-control:focus {
+    background: var(--input-background);
+    color: var(--input-color);
+    border: 0;
+}
+
+select option {
+    background: var(--input-background);
+    color: var(--input-color);
+    border: 0;
+    outline: 0;
+}
+
+select option:checked {
+    var(--input-focus-background)
+}
+
+.form-group.required label:not(.btn):after  {
+    content:" *";
+    color: var(--error);
+}
+
+.form-group:last-child {
+    margin-bottom: 0;
+}
+
+span.error {
+    color: var(--error);
+}
+
+meter {
+    /* Reset the default appearance */
+    -moz-appearance: none;
+    appearance: none;
+    margin: var(--default-padding) auto;
+    width: 100%;
+    height: 1rem;
+    /* Applicable only to Firefox */
+    background: none;
+    background: linear-gradient(90deg, rgba(229,93,93,0.15) 25%, rgba(255,191,115,0.15) 50%, rgba(93,229,154,0.15) 75%, rgba(9,189,90,0.15) 100%);
+    /*background: none;
+    background-color: rgba(0,0,0,0.1);*/
+}
+meter::-webkit-meter-bar {
+    background: none;
+    background: linear-gradient(90deg, rgba(229,93,93,0.15) 25%, rgba(255,191,115,0.15) 50%, rgba(93,229,154,0.15) 75%, rgba(9,189,90,0.15) 100%);
+}
+
+meter[value="1"]::-webkit-meter-optimum-value { background: var(--error); box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; border-right: 2px solid #FFFFFF;}
+meter[value="2"]::-webkit-meter-optimum-value { background: var(--warning); box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; border-right: 2px solid #FFFFFF;}
+meter[value="3"]::-webkit-meter-optimum-value { background: var(--info); box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; border-right: 2px solid #FFFFFF;}
+meter[value="4"]::-webkit-meter-optimum-value { background: var(--success);}
+meter[value="1"]::-moz-meter-bar { background: var(--error); box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; border-right: 2px solid #FFFFFF;}
+meter[value="2"]::-moz-meter-bar { background: var(--warning); box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; border-right: 2px solid #FFFFFF;}
+meter[value="3"]::-moz-meter-bar { background: var(--info); box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; border-right: 2px solid #FFFFFF;}
+meter[value="4"]::-moz-meter-bar { background: var(--success); }
+
+[data-theme-name="outrun"] input,
+[data-theme-name="outrun"] input:focus,
+[data-theme-name="outrun"] textarea,
+[data-theme-name="outrun"] textarea:focus {
+    box-shadow: var(--default-box-shadow);
+}

@@ -21,7 +21,7 @@ public class PlayerJSON {
         this.username = p.getUser().getUsername();
         this.ready = false;
         String path = p.getAvatarPath();
-        this.avatar = path == null || !path.matches(".*/.*\\.(png|jpg)") // TODO
+        this.avatar = path == null || !path.matches(".*/.*\\.(png|jpg)")
                 ? "https://avatars.dicebear.com/v2/gridy/" + username + ".svg" : "/" + pathPrefix + path;
 
     }

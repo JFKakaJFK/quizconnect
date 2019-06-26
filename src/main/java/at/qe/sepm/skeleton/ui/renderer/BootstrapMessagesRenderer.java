@@ -114,48 +114,74 @@ public class BootstrapMessagesRenderer extends MessagesRenderer {
         } else if (FacesMessage.SEVERITY_WARN.equals(severity)) {
             alertSeverityClass = "alert-warning";
         } else if (FacesMessage.SEVERITY_ERROR.equals(severity)) {
-            alertSeverityClass = "alert-danger";
+            alertSeverityClass = "alert-error";
         } else if (FacesMessage.SEVERITY_FATAL.equals(severity)) {
-            alertSeverityClass = "alert-danger";
+            alertSeverityClass = "alert-fatal";
         }
 
-        writer.startElement("div", null);
-        writer.writeAttribute("class", "alert " + alertSeverityClass, "alert " + alertSeverityClass);
-        writer.writeAttribute("role", "alert", "alert");
-        writer.startElement("a", uiMessages);
-        writer.writeAttribute("class", "close", "class");
-        writer.writeAttribute("data-dismiss", "alert", "data-dismiss");
-        writer.writeAttribute("href", "#", "href");
-        writer.write("&times;");
-        writer.endElement("a");
 
-        writer.startElement("ul", null);
+        writer.startElement("div", uiMessages);
+        writer.writeAttribute("class", "alert-container", "alert-container");
 
         for (FacesMessage msg : messages){
             String summary = msg.getSummary() != null ? msg.getSummary() : "";
             String detail = msg.getDetail() != null ? msg.getDetail() : summary;
 
-            writer.startElement("li", uiMessages);
+            writer.startElement("div", null); //start individual container div
+            writer.writeAttribute("class", "alert " + alertSeverityClass + " fade show", "alert " + alertSeverityClass + " fade show");
+            writer.writeAttribute("role", "alert", "alert");
 
-            writer.startElement("div", null);
-            writer.writeAttribute("class",
-                    "glyphicon glyphicon-exclamation-sign", "glyphicon glyphicon-exclamation-sign");
-            writer.endElement("div");
-            writer.startElement("div", null);
+            writer.startElement("div", null); //start icon-div
+            writer.writeAttribute("class", "alert-icon", "alert-icon");
+            switch (alertSeverityClass) {
+
+                case ("alert-info"):
+                    writer.write("<i data-feather=\"check\" class=\"lg\"></i>");
+                    break;
+                case ("alert-warning"):
+                    writer.write("<i data-feather=\"alert-circle\" class=\"lg\"></i>");
+                    System.out.println("warning");
+                    break;
+                case ("alert-error"):
+                    writer.write("<i data-feather=\"slash\" class=\"lg\"></i>");
+                    System.out.println("error");
+                    break;
+                case ("alert-fatal"):
+                    writer.write("<i data-feather=\"zap\" class=\"lg\"></i>");
+                    System.out.println("fatal");
+                    break;
+            }
+            writer.endElement("div"); //end icon-div
+
+            writer.startElement("div", null); //start content-div
+            writer.writeAttribute("class", "alert-content", "alert-content");
             if (uiMessages.isShowSummary()) {
-                writer.startElement("strong", uiMessages);
+                writer.startElement("p", uiMessages); //start paragraph for summary
+                writer.writeAttribute("class", "alert-summary", "alert-summary");
                 writer.writeText(summary, uiMessages, null);
-                writer.endElement("strong");
+                writer.endElement("p"); //end paragraph for summary
             }
 
             if (uiMessages.isShowDetail()) {
+                writer.startElement("p", uiMessages);
+                writer.writeAttribute("class", "alert-text", "alert-text");
                 writer.writeText(" " + detail, null);
+                writer.endElement("p");
             }
-            writer.endElement("div");
-            writer.endElement("li");
+            writer.endElement("div"); //end content-div
+
+            writer.write("<button type=\"button\" class=\"alert-close\" data-dismiss=\"alert\" aria-label=\"Close\">\n" +
+                    "    <span aria-hidden=\"true\"><i data-feather=\"x\"></i></span>\n" +
+                    "  </button>");
+            writer.endElement("div"); //end  individual container div
             msg.rendered();
         }
-        writer.endElement("ul");
-        writer.endElement("div");
+
+        writer.endElement("div"); //end of alert-container
+        writer.write("    <script type=\"text/javascript\">\n" +
+                "            setTimeout(function () {\n" +
+                "                $(\".alert-close\").click();\n" +
+                "            }, 5000);\n" +
+                "    </script>");
     }
 }

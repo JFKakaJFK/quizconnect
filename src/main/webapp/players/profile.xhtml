@@ -4,116 +4,212 @@
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
                 xmlns:qc="http://java.sun.com/jsf/composite/quizconnect"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
                 template="/WEB-INF/templates/main.xhtml">
+
+    <ui:define name="title">#{profileBean.player.user.equals(sessionInfoBean.currentUser) ? 'Home' : 'Profile'}</ui:define>
+
     <ui:define name="site-specific-css">
-        <link rel="stylesheet" href="../resources/css/profile.css" />
+        <link rel="stylesheet" type="text/css" href="../resources/profile.css" />
+        <script type="text/javascript" src="../resources/quizconnect/js/QCUpload.js"></script>
     </ui:define>
 
     <ui:define name ="content">
 
         <h:form id="form">
-            <h:commandLink action="all?faces-redirect=true" styleClass="back-btn">
-                <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M5.41 11H21a1 1 0 0 1 0 2H5.41l5.3 5.3a1 1 0 0 1-1.42 1.4l-7-7a1 1 0 0 1 0-1.4l7-7a1 1 0 0 1 1.42 1.4L5.4 11z"/></svg>All Players
-            </h:commandLink>
 
+            <!-- error handling if player is null -->
             <h:panelGroup layout="block" styleClass="container" rendered="#{profileBean.player == null}">
-                <h1 class="display-4">No player found</h1>
-                <h:commandButton styleClass="btn btn-primary" action="all?faces-redirect=true" value="All Players"/>
+                <div class="text-center">
+                    <p>No player found</p>
+                    <h:commandButton styleClass="btn btn-primary" action="all?faces-redirect=true" value="All Players"/>
+                </div>
             </h:panelGroup>
 
-            <h:panelGroup id="player" layout="block" rendered="#{profileBean.player != null}" styleClass="profile-grid">
+            <ui:fragment rendered="#{profileBean.player != null}">
 
-                <h:panelGroup layout="block" id="avatar" styleClass="avatar">
-                    <qc:playerbox player="#{profileBean.player}" online="#{randomOnlineTestBean.online}" rank="Beginner">
+                <h:panelGroup id="player" layout="block" styleClass="profile-grid">
 
-                        <h:commandLink p:class="ml-2" p:data-toggle="modal" p:data-target="#deletePlayer"
-                                       rendered="#{allPlayersBean.isDeletable(profileBean.player)}">
-                            <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M8 6V4c0-1.1.9-2 2-2h4a2 2 0 0 1 2 2v2h5a1 1 0 0 1 0 2h-1v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8H3a1 1 0 1 1 0-2h5zM6 8v12h12V8H6zm8-2V4h-4v2h4zm-4 4a1 1 0 0 1 1 1v6a1 1 0 0 1-2 0v-6a1 1 0 0 1 1-1zm4 0a1 1 0 0 1 1 1v6a1 1 0 0 1-2 0v-6a1 1 0 0 1 1-1z"/></svg>                                    <f:ajax execute="@form" render="@none" />
-                            <f:ajax execute="@this" render="@none"/>
-                            <f:setPropertyActionListener value="#{profileBean.player}" target="#{playerDetailController.player}"/>
+                    <div class="box player-box-info">
+                        <div class="box-actions">
+                            <h:commandLink rendered="#{profileBean.player.user.equals(sessionInfoBean.currentUser)}"
+                                           styleClass="box-action icon" p:data-toggle="modal" p:data-target="#changeAvatar"
+                                           p:data-backdrop="static">
+                                <i data-feather="image"></i>
+                                <f:ajax execute="@this" render=":changeAvatarForm:changeAvatar:body :changeAvatarForm:changeAvatar:footer" />
+                            </h:commandLink>
+
+                            <h:commandLink styleClass="box-action icon" p:data-toggle="modal" p:data-target="#editPlayer"
+                                           rendered="#{allPlayersBean.isEditable(profileBean.player)}">
+                                <i data-feather="edit-3"></i>
+                                <f:ajax execute="@this" render=":editForm:editPlayer:footer :editForm:editPlayer:inputs"/>
+                                <f:setPropertyActionListener value="#{profileBean.player}" target="#{playerDetailController.player}"/>
+                            </h:commandLink>
+
+                            <h:commandLink styleClass="box-action icon" p:data-toggle="modal" p:data-target="#deletePlayer"
+                                           rendered="#{allPlayersBean.isDeletable(profileBean.player)}">
+                                <i data-feather="trash"></i>
+                                <f:ajax execute="@this" render="@none"/>
+                                <f:setPropertyActionListener value="#{profileBean.player}" target="#{playerDetailController.player}"/>
+                            </h:commandLink>
+                        </div>
+
+                        <h:panelGroup layout="block" id="avatar" class="player-box-icon">
+                            <h:graphicImage value="#{avatarBean.getAvatar(profileBean.player)}" alt="avatar" />
+                        </h:panelGroup>
+                        <span class="player-box-name">#{profileBean.player.user.username}</span>
+
+                        <span class="player-box-rank">#{profileBean.player.playerRank}</span>
+
+                    </div>
+
+                    <ui:fragment rendered="#{statUtil.getGamesPlayed(profileBean.player) == 0}">
+                        <div class="box not-played">
+                            No stats available. #{sessionInfoBean.currentUser.equals(profileBean.player.user) ? 'Play a game to see your stats.' : 'This user has not played yet.'}
+                        </div>
+                    </ui:fragment>
+
+                    <ui:fragment rendered="#{statUtil.getGamesPlayed(profileBean.player) != 0}">
+                        <div class="box profile-stat-box">
+                            <qc:stat value="#{profileBean.player.highScore}" label="highscore" />
+                            <qc:stat value="#{profileBean.player.lastGameScores[9]}" label="score of last game" />
+                            <qc:stat value="#{statUtil.msToString(profileBean.player.playTime)}" label="time played" />
+                            <qc:stat value="#{profileBean.player.totalScore}" label="total score" />
+                        </div>
+                    </ui:fragment>
+
+                    <h:panelGroup layout="block" styleClass="box profile-actions" rendered="#{profileBean.player.user.equals(sessionInfoBean.currentUser)}">
+                        <h:commandLink styleClass="btn btn-primary" action="/quizroom/createRoom?faces-redirect=true" value="Create Game">
+                            <f:ajax execute="@this" render="@none" />
                         </h:commandLink>
 
-                        <h:commandLink p:class="ml-2" p:data-toggle="modal" p:data-target="#editPlayer"
-                                       rendered="#{allPlayersBean.isEditable(profileBean.player)}">
-                            <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M9 4.58V4c0-1.1.9-2 2-2h2a2 2 0 0 1 2 2v.58a8 8 0 0 1 1.92 1.11l.5-.29a2 2 0 0 1 2.74.73l1 1.74a2 2 0 0 1-.73 2.73l-.5.29a8.06 8.06 0 0 1 0 2.22l.5.3a2 2 0 0 1 .73 2.72l-1 1.74a2 2 0 0 1-2.73.73l-.5-.3A8 8 0 0 1 15 19.43V20a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-.58a8 8 0 0 1-1.92-1.11l-.5.29a2 2 0 0 1-2.74-.73l-1-1.74a2 2 0 0 1 .73-2.73l.5-.29a8.06 8.06 0 0 1 0-2.22l-.5-.3a2 2 0 0 1-.73-2.72l1-1.74a2 2 0 0 1 2.73-.73l.5.3A8 8 0 0 1 9 4.57zM7.88 7.64l-.54.51-1.77-1.02-1 1.74 1.76 1.01-.17.73a6.02 6.02 0 0 0 0 2.78l.17.73-1.76 1.01 1 1.74 1.77-1.02.54.51a6 6 0 0 0 2.4 1.4l.72.2V20h2v-2.04l.71-.2a6 6 0 0 0 2.41-1.4l.54-.51 1.77 1.02 1-1.74-1.76-1.01.17-.73a6.02 6.02 0 0 0 0-2.78l-.17-.73 1.76-1.01-1-1.74-1.77 1.02-.54-.51a6 6 0 0 0-2.4-1.4l-.72-.2V4h-2v2.04l-.71.2a6 6 0 0 0-2.41 1.4zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0-2a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/></svg>                                    <f:ajax execute="@form" render="@none" />
-                            <f:ajax execute="@this" render="@none"/>
-                            <f:setPropertyActionListener value="#{profileBean.player}" target="#{playerDetailController.player}"/>
-                        </h:commandLink>
+                        <a class="btn btn-primary" href="/quizroom/index.html">Join Game</a>
+                    </h:panelGroup>
 
-                    </qc:playerbox>
+                    <ui:fragment rendered="#{statUtil.getGamesPlayed(profileBean.player) != 0}">
+                        <div class="box profile-stat-box profile-stat-line">
+                            <qc:stat value="#{statUtil.roundPercent(profileBean.player.playerAccuracy)}" label="accuracy" />
+                            <qc:stat value="#{profileBean.player.totalAnswers}" label="questions answered" />
+                            <qc:stat value="#{profileBean.player.correctAnswersCount}" label="correct answers" />
+                            <qc:stat value="#{profileBean.player.totalAnswers - profileBean.player.correctAnswersCount}" label="wrong answers" />
+                        </div>
+
+                        <div class="box chart">
+                            <h5>Last Scores</h5>
+                            <div id="area" ></div>
+                        </div>
+                        <div class="box chart">
+                            <h5>Played QuestionSets</h5>
+                            <div id="donut"></div>
+                        </div>
+                    </ui:fragment>
+
                 </h:panelGroup>
 
-                <ui:fragment rendered="#{statUtil.getGamesPlayed(profileBean.player) == 0}">
-                    <div class="box">
-                        No stats available. #{sessionInfoBean.currentUser.equals(profileBean.player.user) ? 'Play a game to see your stats.' : 'This user has not played yet.'}
-                    </div>
-                </ui:fragment>
-                <ui:fragment rendered="#{statUtil.getGamesPlayed(profileBean.player) != 0}">
-                    <qc:mainstats player="#{profileBean.player}"/>
+                <!-- recently played with players -->
+                <h:panelGroup layout="block" rendered="#{not empty profileBean.recentlyPlayedWith}" styleClass="collection-header">
+                    <h5>#{profileBean.player.user.equals(sessionInfoBean.currentUser) ? 'You' : sessionInfoBean.currentUser.username} recently played with</h5>
+                </h:panelGroup>
+                <h:panelGroup layout="block" styleClass="collection">
+                    <ui:repeat value="#{profileBean.recentlyPlayedWith}" var="player">
+                        <qc:playerbox player="#{player}">
+                            <h:commandLink action="profile?faces-redirect=true" styleClass="ml-2">
+                                <i data-feather="info"></i>
+                                <f:ajax execute="@this" render="@none"/>
+                                <f:setPropertyActionListener value="#{player}" target="#{profileBean.player}"/>
+                            </h:commandLink>
+                        </qc:playerbox>
+                    </ui:repeat>
+                </h:panelGroup>
 
-                    <h:panelGroup layout="block" id="qs-stats" styleClass="qs-stats box">
-                        <!-- TODO -->
-                        <qc:stat value="#{profileBean.player.totalScore}" label="total score" />
-                        <qc:stat value="#{profileBean.player.correctAnswersCount}" label="correct answers" />
-                        <qc:stat value="#{profileBean.player.totalAnswers - profileBean.player.correctAnswersCount}" label="wrong answers" />
-                        <qc:stat value="#{profileBean.player.lastGameScores[9]}" label="score of last game" />
-                    </h:panelGroup>
-
-                    <h:panelGroup layout="block" id="qs-chart" styleClass="qs-chart box">
-                        <div id="line">This player has not played yet.</div>
-                        <div id="pie"></div>
-                    </h:panelGroup>
-                </ui:fragment>
-
-            </h:panelGroup>
-
-            <h:panelGroup layout="block" styleClass="players px-3">
-                <ui:repeat value="#{profileBean.recentlyPlayedWith}" var="player">
-                    <qc:playerbox player="#{player}" online="#{randomOnlineTestBean.online}">
-                        <h:commandLink action="profile?faces-redirect=true" styleClass="ml-2">
-                            <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-9a1 1 0 0 1 1 1v4a1 1 0 0 1-2 0v-4a1 1 0 0 1 1-1zm0-4a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
-                            <f:ajax execute="@this" render="@none"/>
-                            <f:setPropertyActionListener value="#{player}" target="#{profileBean.player}"/>
-                        </h:commandLink>
-                    </qc:playerbox>
-                </ui:repeat>
-            </h:panelGroup>
-
-            <qc:modal id="deletePlayer"
-                      target="deletePlayer"
-                      title="Delete Player"
-                      confirm="Delete Player"
-                      abort="Cancel"
-                      confirmAction="#{playerDetailController.deletePlayer}"
-                      update="@this">
-                Are you sure? This cannot be undone.
-            </qc:modal>
-
-            <qc:modal id="editPlayer"
-                      target="editPlayer"
-                      title="Edit Password"
-                      confirm="Edit Password"
-                      abort="Cancel"
-                      bodyId="body" footerId="footer"
-                      confirmAction="#{playerDetailController.changePassword}"
-                      disableConfirm="#{!playerDetailController.passwordValid}"
-                      update="@this">
-                <h:inputSecret p:placeholder="New password" value="#{playerDetailController.password}" p:autocomplete="new-password" styleClass="form-control">
-                    <f:ajax event="keyup" execute="@this" render=":form:editPlayer:footer"/>
-                </h:inputSecret>
-                <h:inputSecret p:placeholder="Repeat new password" value="#{playerDetailController.repeatPassword}" p:autocomplete="new-password" styleClass="form-control">
-                    <f:ajax event="keyup" execute="@this" render=":form:editPlayer:footer"/>
-                </h:inputSecret>
-            </qc:modal>
-
+            </ui:fragment>
         </h:form>
+    </ui:define>
 
+    <ui:define name="modals">
+            <ui:fragment rendered="#{profileBean.player != null}">
+                <!-- MODAL ACTIONS -->
+
+                <h:form id="deleteForm">
+                    <qc:modal id="deletePlayer"
+                              target="deletePlayer"
+                              title="Delete Player"
+                              confirm="Delete Player"
+                              confirmButton="btn btn-danger"
+                              abort="Cancel"
+                              confirmAction="#{playerDetailController.deletePlayer}"
+                              update="@this">
+                        Are you sure? This cannot be undone.
+                    </qc:modal>
+                </h:form>
+
+                <h:form id="editForm">
+                    <qc:modal id="editPlayer"
+                              target="editPlayer"
+                              title="Edit Password"
+                              confirm="Edit Password"
+                              abort="Cancel"
+                              bodyId="body" footerId="footer"
+                              confirmAction="#{playerDetailController.changePassword}"
+                              disableConfirm="#{!validationBean.isValidPassword(playerDetailController.password, playerDetailController.repeatPassword)}"
+                              update="@this :editForm:editPlayer:inputs">
+
+
+                        <h:panelGroup layout="block" styleClass="form-group required" id="inputs">
+                            <label for="new_password">New password</label>
+                            <h:inputSecret p:data-js-new-password="" p:placeholder="New password" name="new_password" id="new_password" p:id="new_password" value="#{playerDetailController.password}" p:autocomplete="new-password" styleClass="form-control">
+                                <f:ajax event="keyup" execute="@this" render="footer"/>
+                            </h:inputSecret>
+
+                            <label for="repeat_new_password" class="mt-3">Repeat new password</label>
+                            <h:inputSecret p:placeholder="Repeat new password" name="repeat_new_password" id="repeat_new_password" p:id="repeat_new_password" value="#{playerDetailController.repeatPassword}" p:autocomplete="new-password" styleClass="form-control">
+                                <f:ajax event="keyup" execute="@this" render="footer"/>
+                            </h:inputSecret>
+                        </h:panelGroup>
+
+                        <meter data-js-meter="" max="4" class="meter" id="password-strength-meter"></meter>
+
+                        <h:panelGroup layout="block" styleClass="box" p:data-js-strength=""/>
+                    </qc:modal>
+                </h:form>
+
+
+                <h:form id="changeAvatarForm" enctype="multipart/formdata">
+                <qc:modal id="changeAvatar"
+                          target="changeAvatar"
+                          title="Change Avatar"
+                          closeAction="#{changeAvatarBean.abort}"
+                          abortAction="#{changeAvatarBean.abort}"
+                          confirmAction="#{changeAvatarBean.saveAvatar}"
+                          update="@this :form:avatar :changeAvatarForm:changeAvatar:body :changeAvatarForm:changeAvatar:footer"
+                          bodyId="body"
+                          footerId="footer"
+                          rendered="#{profileBean.player.user.equals(sessionInfoBean.currentUser)}"
+                          disableConfirm="#{changeAvatarBean.disabled}">
+                    <div jsf:id="preview" class="preview">
+                        <h:graphicImage p:id="preview" value="#{avatarBean.getAvatar((changeAvatarBean.filename == null ? profileBean.player.avatarPath : changeAvatarBean.filename), profileBean.player.user.username)}" alt="avatar" />
+                    </div>
+
+                    <qc:upload target="#{changeAvatarBean.file}"
+                               listener="#{changeAvatarBean.handleFileUpload}"
+                               accept="image/*" update=":changeAvatarForm:changeAvatar:body :changeAvatarForm:changeAvatar:footer"
+                               text="Upload Avatar" />
+                </qc:modal>
+                </h:form>
+            </ui:fragment>
     </ui:define>
 
     <ui:define name="site-specific-javascript">
         <ui:fragment rendered="#{statUtil.getGamesPlayed(profileBean.player) != 0}">
             <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-            <script type="text/javascript" src="/resources/js/profile/stats.js"></script>
+            <script type="text/javascript" src="/resources/pages/profile/stats.js"></script>
+            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"/>
+            <script type="text/javascript" src="validatePassword.js"/>
+            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.4.2/zxcvbn.js"/>
+            <script type="text/javascript" src="../resources/util/passwordhelp.js"/>
+            <script type="text/javascript">
+              pwhelp('#editPlayer');
+            </script>
         </ui:fragment>
     </ui:define>
 </ui:composition>

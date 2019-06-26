@@ -54,19 +54,9 @@ public class QR_Question
 		return type;
 	}
 	
-	public void setType(QuestionType type)
-	{
-		this.type = type;
-	}
-	
 	public String getQuestionString()
 	{
 		return questionString;
-	}
-	
-	public void setQuestionString(String questionString)
-	{
-		this.questionString = questionString;
 	}
 	
 	public String getRightAnswerString()
@@ -74,19 +64,9 @@ public class QR_Question
 		return rightAnswerString;
 	}
 	
-	public void setRightAnswerString(String rightAnswerString)
-	{
-		this.rightAnswerString = rightAnswerString;
-	}
-	
 	public String getWrongAnswerString_1()
 	{
 		return wrongAnswerString_1;
-	}
-	
-	public void setWrongAnswerString_1(String wrongAnswerString_1)
-	{
-		this.wrongAnswerString_1 = wrongAnswerString_1;
 	}
 	
 	public String getWrongAnswerString_2()
@@ -94,19 +74,9 @@ public class QR_Question
 		return wrongAnswerString_2;
 	}
 	
-	public void setWrongAnswerString_2(String wrongAnswerString_2)
-	{
-		this.wrongAnswerString_2 = wrongAnswerString_2;
-	}
-	
 	public String getWrongAnswerString_3()
 	{
 		return wrongAnswerString_3;
-	}
-	
-	public void setWrongAnswerString_3(String wrongAnswerString_3)
-	{
-		this.wrongAnswerString_3 = wrongAnswerString_3;
 	}
 	
 	public String getWrongAnswerString_4()
@@ -114,19 +84,9 @@ public class QR_Question
 		return wrongAnswerString_4;
 	}
 	
-	public void setWrongAnswerString_4(String wrongAnswerString_4)
-	{
-		this.wrongAnswerString_4 = wrongAnswerString_4;
-	}
-	
 	public String getWrongAnswerString_5()
 	{
 		return wrongAnswerString_5;
-	}
-	
-	public void setWrongAnswerString_5(String wrongAnswerString_5)
-	{
-		this.wrongAnswerString_5 = wrongAnswerString_5;
 	}
 	
 	@Override

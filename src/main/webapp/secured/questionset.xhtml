@@ -1,0 +1,359 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough" xmlns:qc="http://java.sun.com/jsf/composite/quizconnect"
+                template="/WEB-INF/templates/main.xhtml">
+
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{questionSetBean.onPageLoad()}"/>
+    </f:metadata>
+
+    <ui:define name="title">Create set</ui:define>
+
+    <ui:define name="site-specific-css">
+        <script type="text/javascript" src="../resources/quizconnect/js/QCUpload.js"></script>
+        <link rel="stylesheet" type="text/css" href="questionset.css" />
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="questionSetForm">
+            <div class="row">
+                <div class="col-6">
+                    <div class="form-group required">
+                        <label for="setName">Set name</label>
+                        <h:inputText type="text" styleClass="form-control" value="#{questionSetBean.questionSet.name}"
+                                     name="setName" id="setName" pt:placeholder="Music theory" pt:pattern="[\s\S]*\S[\s\S]*" pt:autocomplete="off"
+                                     pt:required="true" pt:maxlength="100">
+                        <f:ajax event="keyup" execute="@this" render="addQuestionSet addQuestion editQuestionset"/>
+                        </h:inputText>
+                    </div>
+                </div>
+
+                <div class="col-6 justify-content-center">
+                    <label class="row px-0 mx-0 justify-content-center" for="difficulty">Select difficulty</label>
+                    <div class="row px-0 mx-0 justify-content-center">
+                        <h:commandButton id="difficulty" styleClass="btn btn-secondary" value="#{capitalizeConverter.capitalize(questionSetBean.questionSet.difficulty)}" action="#{questionSetBean.toggleDifficulty()}">
+                            <f:ajax execute="@this" render="@this"></f:ajax>
+                        </h:commandButton>
+
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+                <label for="setDesc">Description</label>
+                <h:inputTextarea type="text" styleClass="form-control"
+                                 value="#{questionSetBean.questionSet.description}"
+                                 name="setDesc" id="setDesc" pt:placeholder="e.g. 'Music questions for class 3A"
+                                 pt:autocomplete="off" pt:maxlength="300"/>
+            </div>
+
+            <h:panelGroup id="button-actions" layout="block" styleClass="mb-5 qset-actions">
+                <h:commandButton type="button" styleClass="btn btn-secondary"
+                                 action="/secured/overview.xhtml?faces-redirect=true" value="Back">
+                    <f:ajax execute="@this" render="@none"/>
+                </h:commandButton>
+
+                <h:commandButton type="button" styleClass="btn btn-primary" id="addQuestionSet"
+                                 disabled="#{!questionSetBean.validQuestionSet()}" rendered="#{not questionSetBean.bEditSet and not questionSetBean.questionSetSaved}" action="#{questionSetBean.saveNewQuestionSet}" value="Save and add question"
+                                 pt:data-toggle="modal" pt:data-target="#questionModal">
+                    <f:ajax execute="@form" render="@form"></f:ajax>
+                </h:commandButton>
+
+                <h:commandButton type="button" styleClass="btn btn-primary" id="editQuestionSet"
+                                 disabled="#{!questionSetBean.validQuestionSet()}" rendered="#{questionSetBean.bEditSet and not questionSetBean.questionSetSaved}" action="#{questionSetBean.saveEditedQuestionset()}" value="Save changes">
+                    <f:ajax execute="@form" render="@form"></f:ajax>
+                </h:commandButton>
+
+                <h:commandButton type="button" styleClass="btn btn-primary" id="addQuestion"
+                                 rendered="#{(questionSetBean.bEditSet) or (not questionSetBean.bEditSet and questionSetBean.questionSetSaved)}" value="Add question"
+                                 pt:data-toggle="modal" pt:data-target="#questionModal">
+                    <f:actionListener binding="#{questionSetBean.initQuestion()}"></f:actionListener>
+                    <f:actionListener binding="#{questionSetBean.setbEditQuestion(false)}"/>
+                    <f:ajax execute="@this" render=":questionForForm:questionModal:modal-header :questionForForm:questionModal:modal-body" ></f:ajax>
+                </h:commandButton>
+
+            </h:panelGroup>
+
+        </h:form>
+
+        <h:form id="deleteQuestionForm">
+            <h:panelGroup id="questions" layout="block">
+            <h:panelGroup styleClass="collection" layout="block" id="questionCollection">
+                <ui:repeat value="#{questionSetBean.questionsDisplay}" var="question">
+                    <qc:questionbox question="#{question}">
+
+                        <h:commandLink styleClass="box-action" pt:data-toggle="modal" pt:data-target="#infoQuestion">
+                            <i data-feather="info"></i>
+                            <f:ajax execute="@this" render=":infoQuestionForm:infoQuestion:modal-body"/>
+                            <f:setPropertyActionListener value="#{question}" target="#{questionSetBean.questionForDetails}"/>
+                        </h:commandLink>
+
+                        <h:commandLink styleClass="box-action" pt:data-toggle="modal" pt:data-target="#questionModal">
+                            <i data-feather="edit-3"></i>
+                            <f:ajax execute="@this" render=":questionForForm:questionModal:modal-header :questionForForm:questionModal:modal-body :questionForForm:questionModal:modal-footer"/>
+                            <f:setPropertyActionListener value="#{question}" target="#{questionSetBean.editQuestion}"/>
+                        </h:commandLink>
+
+                        <h:commandLink styleClass="box-action" pt:data-toggle="modal" pt:data-target="#deleteQuestion">
+                            <i data-feather="trash"></i>
+                            <f:ajax execute="@this" render="@form"/>
+                            <f:setPropertyActionListener value="#{question}" target="#{questionSetBean.questionToDelete}"/>
+                        </h:commandLink>
+
+                    </qc:questionbox>
+                </ui:repeat>
+            </h:panelGroup>
+
+            <qc:collectionEmpty collection="#{questionSetBean.questionsDisplay}" text="No questions found"/>
+            </h:panelGroup>
+
+            <h:commandButton styleClass="jsf-hide js-f-jsf">
+                <f:ajax execute="@this" render="@form"/>
+            </h:commandButton>
+        </h:form>
+
+    </ui:define>
+
+    <ui:define name="modals">
+
+        <h:form >
+            <qc:modal id="deleteQuestion"
+                      target="deleteQuestion"
+                      title="Delete Question"
+                      confirm="Delete Question"
+                      confirmButton="btn btn-danger"
+                      abort="Cancel"
+                      confirmAction="#{questionSetBean.deleteQuestion}"
+                      update="deleteQuestionForm">
+                Are you sure? This cannot be undone.
+            </qc:modal>
+        </h:form>
+
+        <h:form id="questionForForm" enctype="multipart/formdata">
+            <qc:modal target="questionModal" id="questionModal" closable="false"
+                      title="#{questionSetBean.bEditQuestion?'Edit question':'New question'}"
+                      abort="Cancel"
+                      confirm="#{questionSetBean.bEditQuestion?'Save':'Add'}"
+                      confirmAction="#{questionSetBean.saveNewQuestion}"
+                      abortAction="#{questionSetBean.abort()}"
+                      executeOnAbort="#{questionSetBean.bEditQuestion?'@none' : '@form'}"
+                      update=":deleteQuestionForm:questions :questionSetForm:addQuestionSet" ajax="false">
+
+                <div class="row">
+                    <ui:repeat id="items" value="#{questionSetBean.types}" var="item">
+                        <div class="form-check form-check-inline w-50 mx-0 px-0 my-3 justify-content-center">
+                            <input type="radio" class="form-check-input" jsf:id="item"
+                                   pt:name="#{hiddenItem.clientId}"
+                                   value="#{item}"
+                                   pt:checked="#{item eq questionSetBean.question.type ? 'checked' : null}">
+                                <f:ajax event="click" render="questionForForm:questionModal:modal-body"/>
+                            </input>
+                            <h:outputLabel styleClass="form-check-label"
+                                           value="#{capitalizeConverter.capitalize(item)}"/>
+                        </div>
+
+                    </ui:repeat>
+
+                    <h:inputHidden id="selectedItem" binding="#{hiddenItem}"
+                                   value="#{questionSetBean.question.type}"
+                                   rendered="#{facesContext.currentPhaseId.ordinal ne 6}" valueChangeListener="#{questionSetBean.typeChangeListener()}"/>
+                </div>
+
+                <div class="form-group required">
+                    <label for="question">Question</label>
+                    <h:inputText type="text" styleClass="form-control"
+                                 value="#{questionSetBean.question.questionString}"
+                                 name="question" id="question" pt:autocomplete="off" pt:required="true"
+                                 pt:pattern="[\s\S]*\S[\s\S]*"/>
+                </div>
+
+                <div class="form-group required box">
+                    <label for="corrAnswer">Correct answer</label>
+                    <h:inputText type="text" styleClass="form-control"
+                                 value="#{questionSetBean.question.rightAnswerString}"
+                                 rendered="#{questionSetBean.question.type == 'text'}"
+                                 name="corrAnswer" id="corrAnswer" pt:autocomplete="off" pt:required="true"
+                                 pt:pattern="[\s\S]*\S[\s\S]*" pt:maxlength="200"/>
+
+                    <h:panelGroup layout="block" id="rightAnswerString" styleClass="preview-overview"
+                                  rendered="#{questionSetBean.question.type == 'picture'}">
+                        <h:graphicImage pt:id="preview"
+                                        value="#{answerPictureBean.getAnswers((questionSetBean.filename == null ? questionSetBean.question.rightAnswerString : questionSetBean.filename))}"
+                                        rendered="#{not empty questionSetBean.question.rightAnswerString}"
+                                        alt="Question picture"/>
+                    </h:panelGroup>
+
+                    <qc:upload target="#{questionSetBean.file}"
+                               listenerString="#{questionSetBean.handleFileUpload('rightAnswerString', questionSetBean.question, questionSetBean.questionSet.id.toString())}"
+                               listener="#{questionSetBean.none}"
+                               accept="image/*"
+                               text="Upload"
+                               rendered="#{questionSetBean.question.type == 'picture'}"
+                               required="true"
+                               update="questionForForm:questionModal:rightAnswerString"
+                               buttonStyle="btn-secondary mt-1"
+                    />
+                </div>
+
+                <div class="form-group required box">
+                    <label for="wrongAnswer1">Wrong answer #1</label>
+                    <h:inputText type="text" styleClass="form-control"
+                                 value="#{questionSetBean.question.wrongAnswerString_1}" name="wrongAnswer1"
+                                 rendered="#{questionSetBean.question.type == 'text'}"
+                                 pt:required="true" id="wrongAnswer1" pt:autocomplete="off"
+                                 pt:pattern="[\s\S]*\S[\s\S]*" pt:maxlength="200"/>
+
+                    <h:panelGroup layout="block" id="wrongAnswer1Pic" styleClass="preview-overview"
+                                  rendered="#{questionSetBean.question.type == 'picture'}">
+                        <h:graphicImage pt:id="preview"
+                                        rendered="#{not empty questionSetBean.question.wrongAnswerString_1}"
+                                        value="#{answerPictureBean.getAnswers((questionSetBean.filename == null ? questionSetBean.question.wrongAnswerString_1 : questionSetBean.filename))}"
+                                        alt="Question picture"/>
+                    </h:panelGroup>
+
+                    <qc:upload target="#{questionSetBean.file}"
+                               listenerString="#{questionSetBean.handleFileUpload('wrongAnswerString_1', questionSetBean.question, questionSetBean.questionSet.id.toString())}"
+                               listener="#{questionSetBean.none}"
+                               accept="image/*"
+                               text="Upload"
+                               rendered="#{questionSetBean.question.type == 'picture'}"
+                               required="true"
+                               buttonStyle="btn-secondary mt-1"
+                               update="questionForForm:questionModal:wrongAnswer1Pic"
+                    />
+
+                </div>
+
+                <div class="form-group box">
+                    <label for="wrongAnswer2">Wrong answer #2</label>
+                    <h:inputText type="text" styleClass="form-control"
+                                 value="#{questionSetBean.question.wrongAnswerString_2}" name="wrongAnswer2"
+                                 rendered="#{questionSetBean.question.type == 'text'}"
+                                 id="wrongAnswer2" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*" pt:maxlength="200"/>
+
+                    <h:panelGroup layout="block" id="wrongAnswer2Pic" styleClass="preview-overview"
+                                  rendered="#{questionSetBean.question.type == 'picture'}">
+                        <h:graphicImage pt:id="preview"
+                                        rendered="#{not empty questionSetBean.question.wrongAnswerString_2}"
+                                        value="#{answerPictureBean.getAnswers((questionSetBean.filename == null ? questionSetBean.question.wrongAnswerString_2 : questionSetBean.filename))}"
+                                        alt="Question picture"/>
+                    </h:panelGroup>
+
+                    <qc:upload target="#{questionSetBean.file}"
+                               listenerString="#{questionSetBean.handleFileUpload('wrongAnswerString_2', questionSetBean.question, questionSetBean.questionSet.id.toString())}"
+                               listener="#{questionSetBean.none}"
+                               accept="image/*"
+                               text="Upload"
+                               buttonStyle="btn-secondary mt-1"
+                               rendered="#{questionSetBean.question.type == 'picture'}"
+                               update="questionForForm:questionModal:wrongAnswer2Pic"
+                    />
+
+                </div>
+
+                <div class="form-group box">
+                    <label for="wrongAnswer3">Wrong answer #3</label>
+                    <h:inputText type="text" styleClass="form-control"
+                                 value="#{questionSetBean.question.wrongAnswerString_3}" name="wrongAnswer3"
+                                 rendered="#{questionSetBean.question.type == 'text'}"
+                                 id="wrongAnswer3" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*" pt:maxlength="200"/>
+
+                    <h:panelGroup layout="block" id="wrongAnswer3Pic" styleClass="preview-overview"
+                                  rendered="#{questionSetBean.question.type == 'picture'}">
+                        <h:graphicImage pt:id="preview"
+                                        rendered="#{not empty questionSetBean.question.wrongAnswerString_3}"
+                                        value="#{answerPictureBean.getAnswers((questionSetBean.filename == null ? questionSetBean.question.wrongAnswerString_3 : questionSetBean.filename))}"
+                                        alt="Question picture"/>
+                    </h:panelGroup>
+
+                    <qc:upload target="#{questionSetBean.file}"
+                               listenerString="#{questionSetBean.handleFileUpload('wrongAnswerString_3', questionSetBean.question, questionSetBean.questionSet.id.toString())}"
+                               listener="#{questionSetBean.none}"
+                               accept="image/*"
+                               buttonStyle="btn-secondary mt-1"
+                               text="Upload"
+                               rendered="#{questionSetBean.question.type == 'picture'}"
+                               update="questionForForm:questionModal:wrongAnswer3Pic"
+                    />
+
+                </div>
+
+                <div class="form-group box">
+                    <label for="wrongAnswer4">Wrong answer #4</label>
+                    <h:inputText type="text" styleClass="form-control"
+                                 value="#{questionSetBean.question.wrongAnswerString_4}" name="wrongAnswer4"
+                                 rendered="#{questionSetBean.question.type == 'text'}"
+                                 id="wrongAnswer4" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*" pt:maxlength="200"/>
+
+                    <h:panelGroup layout="block" id="wrongAnswer4Pic" styleClass="preview-overview"
+                                  rendered="#{questionSetBean.question.type == 'picture'}">
+                        <h:graphicImage pt:id="preview"
+                                        rendered="#{not empty questionSetBean.question.wrongAnswerString_4}"
+                                        value="#{answerPictureBean.getAnswers((questionSetBean.filename == null ? questionSetBean.question.wrongAnswerString_4 : questionSetBean.filename))}"
+                                        alt="Question picture"/>
+                    </h:panelGroup>
+
+                    <qc:upload target="#{questionSetBean.file}"
+                               listenerString="#{questionSetBean.handleFileUpload('wrongAnswerString_4', questionSetBean.question, questionSetBean.questionSet.id.toString())}"
+                               listener="#{questionSetBean.none}"
+                               accept="image/*"
+                               buttonStyle="btn-secondary mt-1"
+                               text="Upload"
+                               rendered="#{questionSetBean.question.type == 'picture'}"
+                               update="questionForForm:questionModal:wrongAnswer4Pic"
+                    />
+
+                </div>
+
+                <div class="form-group box">
+                    <label for="wrongAnswer5">Wrong answer #5</label>
+                    <h:inputText type="text" styleClass="form-control"
+                                 value="#{questionSetBean.question.wrongAnswerString_5}" name="wrongAnswer5"
+                                 rendered="#{questionSetBean.question.type == 'text'}"
+                                 id="wrongAnswer5" pt:autocomplete="off" pt:pattern="[\s\S]*\S[\s\S]*" pt:maxlength="200"/>
+
+                    <h:panelGroup layout="block" id="wrongAnswer5Pic" styleClass="preview-overview"
+                                  rendered="#{questionSetBean.question.type == 'picture'}">
+                        <h:graphicImage pt:id="preview"
+                                        rendered="#{not empty questionSetBean.question.wrongAnswerString_5}"
+                                        value="#{answerPictureBean.getAnswers((questionSetBean.filename == null ? questionSetBean.question.wrongAnswerString_5 : questionSetBean.filename))}"
+                                        alt="Question picture"/>
+                    </h:panelGroup>
+
+                    <qc:upload target="#{questionSetBean.file}"
+                               listenerString="#{questionSetBean.handleFileUpload('wrongAnswerString_5', questionSetBean.question, questionSetBean.questionSet.id.toString())}"
+                               listener="#{questionSetBean.none}"
+                               accept="image/*"
+                               buttonStyle="btn-secondary mt-1"
+                               text="Upload"
+                               rendered="#{questionSetBean.question.type == 'picture'}"
+                               update="questionForForm:questionModal:wrongAnswer5Pic"
+                    />
+
+                </div>
+            </qc:modal>
+        </h:form>
+
+        <h:form id="infoQuestionForm">
+            <qc:modal id="infoQuestion" target="infoQuestion" title="Details" abort="Close" showConfirm="false">
+                <h:panelGroup layout="block" styleClass="box question-info-box #{questionSetBean.questionForDetails.type eq 'picture' ? 'picture' : ''}" rendered="#{not empty questionSetBean.questionForDetails}">
+                    <qc:questiondetail value="#{questionSetBean.questionForDetails.questionString}" label="question" type="#{questionSetBean.questionForDetails.type}" isQuestion="true"/>
+                    <qc:questiondetail value="#{questionSetBean.questionForDetails.rightAnswerString}" label="Correct answer" type="#{questionSetBean.questionForDetails.type}"/>
+                    <qc:questiondetail value="#{empty questionSetBean.questionForDetails.wrongAnswerString_1 ? '-' : questionSetBean.questionForDetails.wrongAnswerString_1}" label="Wrong answer #1" type="#{questionSetBean.questionForDetails.type}"/>
+                    <qc:questiondetail value="#{empty questionSetBean.questionForDetails.wrongAnswerString_2 ? '-' : questionSetBean.questionForDetails.wrongAnswerString_2}" label="Wrong answer #2" type="#{questionSetBean.questionForDetails.type}" rendered="#{not empty questionSetBean.questionForDetails.wrongAnswerString_2}"/>
+                    <qc:questiondetail value="#{empty questionSetBean.questionForDetails.wrongAnswerString_3 ? '-' : questionSetBean.questionForDetails.wrongAnswerString_3}" label="Wrong answer #3" type="#{questionSetBean.questionForDetails.type}" rendered="#{not empty questionSetBean.questionForDetails.wrongAnswerString_3}"/>
+                    <qc:questiondetail value="#{empty questionSetBean.questionForDetails.wrongAnswerString_4 ? '-' : questionSetBean.questionForDetails.wrongAnswerString_4}" label="Wrong answer #4" type="#{questionSetBean.questionForDetails.type}" rendered="#{not empty questionSetBean.questionForDetails.wrongAnswerString_4}"/>
+                    <qc:questiondetail value="#{empty questionSetBean.questionForDetails.wrongAnswerString_5 ? '-' : questionSetBean.questionForDetails.wrongAnswerString_5}" label="Wrong answer #5" type="#{questionSetBean.questionForDetails.type}" rendered="#{not empty questionSetBean.questionForDetails.wrongAnswerString_5}"/>
+                </h:panelGroup>
+            </qc:modal>
+        </h:form>
+    </ui:define>
+</ui:composition>

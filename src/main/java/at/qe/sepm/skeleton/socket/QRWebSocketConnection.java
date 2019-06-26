@@ -1,9 +1,6 @@
 package at.qe.sepm.skeleton.socket;
 
-import at.qe.sepm.skeleton.logic.ActiveQuestion;
-import at.qe.sepm.skeleton.logic.IPlayerAction;
-import at.qe.sepm.skeleton.logic.IRoomAction;
-import at.qe.sepm.skeleton.logic.QuizRoom;
+import at.qe.sepm.skeleton.logic.*;
 import at.qe.sepm.skeleton.model.Player;
 import at.qe.sepm.skeleton.socket.events.*;
 import org.slf4j.Logger;
@@ -39,7 +36,6 @@ public class QRWebSocketConnection implements IRoomAction {
 
     private HashMap<Integer, IPlayerAction> rooms; // all active QuizRooms
     private HashMap<Integer, HashMap<Integer, Player>> players; // all active Players, by QuizRoom
-
     private HashMap<Integer, List<ChatMessageJSON>> chatMessages; // the chat history of each QuizRoom
 
     @Value("${qr.ws.server}")
@@ -69,6 +65,7 @@ public class QRWebSocketConnection implements IRoomAction {
     private final String PLAYER_LEAVE = "onPlayerLeave";
     private final String GAME_START = "onGameStart";
     private final String GAME_END = "onGameEnd";
+    private final String ALL_READY = "onAllReady";
     private final String JOKER_USE = "onJokerUse";
     private final String SCORE_CHANGE = "onScoreChange";
     private final String TIMER_SYNC = "onTimerSync";
@@ -76,6 +73,19 @@ public class QRWebSocketConnection implements IRoomAction {
     private final String KICK = "onKick";
     private final String ASSIGN_QUESTION = "assignQuestion";
     private final String REMOVE_QUESTION = "removeQuestion";
+
+    /**
+     * Implementation of the {@link IRoomAction} method, broadcasts the all ready event, starting the countdown until the game starts.
+     *
+     * @param pin
+     *            Pin of the QuizRoom making the call.
+     */
+    @Override
+    public void onAllReady(int pin) {
+        SocketEvent event = new GenericSocketEvent(ALL_READY);
+        broadcast(event, pin);
+        log.debug("Game " + pin + ": all players are ready");
+    }
 
     /**
      * Implementation of the {@link IRoomAction} method, broadcasts new ready player to all players in room.
@@ -166,6 +176,7 @@ public class QRWebSocketConnection implements IRoomAction {
         SocketEvent event = new PlayerLeaveEvent(p, reason);
         event.setEvent(PLAYER_LEAVE);
         broadcast(event, pin);
+        players.get(pin).remove(p.getId());
         log.debug("Game " + pin + ": player " + p.getId() + " left");
     }
 
@@ -220,7 +231,7 @@ public class QRWebSocketConnection implements IRoomAction {
         SocketEvent event = new TimerSyncEvent(q, remaining);
         event.setEvent(TIMER_SYNC);
         broadcast(event, pin);
-        log.debug("Game " + pin + ": time remaining of question " + q.question.getId() + " is " + remaining + "ms");
+        //log.debug("Game " + pin + ": time remaining of question " + q.question.getId() + " is " + remaining + "ms");
     }
 
     /**
@@ -236,6 +247,7 @@ public class QRWebSocketConnection implements IRoomAction {
         SocketEvent event = new PlayerKickEvent(p);
         event.setEvent(KICK);
         broadcast(event, pin);
+        players.get(pin).remove(p.getId());
         log.debug("Game " + pin + ": player " + p.getId() + " was kicked");
     }
 
@@ -318,10 +330,18 @@ public class QRWebSocketConnection implements IRoomAction {
             }
         }
 
+        GameMode mode = qr.getRoomMode();
+        List<String> sets;
+        if(mode.equals(GameMode.mathgod)){
+            sets = new ArrayList<>(1);
+            sets.add("Mathgod");
+        } else {
+            sets = qr.getRoomQuestionSets();
+        }
         SocketEvent event = new RoomInfoEvent(pin,
                 qr.getRoomDifficulty().name(),
-                qr.getRoomMode().name(),
-                qr.getRoomQuestionSets(),
+                mode.name(),
+                sets,
                 qr.getRoomScore(),
                 qr.getAlivePingTimeStep(),
                 qr.getNumberOfJokers(),

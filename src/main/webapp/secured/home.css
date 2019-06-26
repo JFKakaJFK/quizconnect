@@ -1,0 +1,69 @@
+.grid-container {
+    width: 100%;
+    display: grid;
+    height: calc(100vh - var(--navbar-height) - 2* var(--default-padding));
+    grid-template-columns:  1fr;
+    grid-auto-columns: 1fr;
+    grid-gap: var(--default-spacing);
+    font-size: 1.5em;
+    text-align: center;
+}
+
+@media only screen and (min-width: 768px) {
+    .grid-container {
+        grid-gap: var(--default-spacing);
+        grid-template-rows: 1fr 1fr;
+        grid-template-columns: 1fr 1fr;
+        font-size: 2em;
+    }
+}
+
+
+
+.box:not(#no-hover){
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.box:not(#no-hover) img {
+    display: inline-block;
+    visibility: visible;
+    opacity: 1;
+    max-height: 80%;
+    max-width: 80%;
+    -webkit-transition: visibility 0.5s, opacity 0.5s;
+    -moz-transition: visibility 0.5s, opacity 0.5s;
+    -ms-transition: visibility 0.5s, opacity 0.5s;
+    -o-transition: visibility 0.5s, opacity 0.5s;
+    transition: visibility 0.5s, opacity 0.5s;
+
+}
+
+.box:not(#no-hover) span {
+    visibility: hidden;
+    opacity: 0;
+    -webkit-transition: visibility 0.5s, opacity 0.5s;
+    -moz-transition: visibility 0.5s, opacity 0.5s;
+    -ms-transition: visibility 0.5s, opacity 0.5s;
+    -o-transition: visibility 0.5s, opacity 0.5s;
+    transition: visibility 0.5s, opacity 0.5s;
+    position: absolute;
+    display: inline-block;
+    font-family: var(--default-font);
+    color: var(--default-font-color);
+    font-size: 2em;
+
+}
+.box:hover:not(#no-hover) span {
+    visibility: visible;
+    opacity: 1;
+}
+
+.box:hover:not(#no-hover) img {
+    visibility: hidden;
+    opacity: 0;
+}

@@ -57,7 +57,7 @@ public class Player implements Persistable<Integer>
 	private Map<Integer, Integer> qSetPlayCounts;
 	
 	/**
-	 * List of Players that were in the same game that this Player last played. May be null or empty.
+	 * List of Players that were in the same game that this Player last played. May be null or _empty.
 	 */
 	@ElementCollection(fetch = FetchType.EAGER)
 	private Set<String> playedWithLast;
@@ -380,7 +380,6 @@ public class Player implements Persistable<Integer>
 		this.avatarPath = avatarPath;
 	}
 
-	@Deprecated // TODO remove deprecated
 	public Manager getCreator()
 	{
 		return creator;

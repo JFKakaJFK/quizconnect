@@ -171,15 +171,6 @@ public class QuestionSetService
 	 */
 	public void deleteQuestionSet(QuestionSet questionSet)
 	{
-		Set<Question> questions = new HashSet<>(questionSet.getQuestions());
-		for (Question q : questions)
-		{
-			// TODO if type is file, delete all files
-			if (q.getType() == QuestionType.picture)
-			{
-				//...
-			}
-		}
 		questionSetRepository.delete(questionSet);
 		log.info("Deleted QuestionSet " + questionSet.getId());
 	}

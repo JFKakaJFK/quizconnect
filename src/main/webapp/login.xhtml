@@ -5,16 +5,26 @@
       xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core">
 
 <h:head>
-    <title>Login</title>
+    <title>Login | QuizConnect&trade;</title>
     <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/resources/favicon/apple-touch-icon.png"/>
+    <link rel="icon" type="image/png" sizes="32x32" href="/resources/favicon/favicon-32x32.png"/>
+    <link rel="icon" type="image/png" sizes="16x16" href="/resources/favicon/favicon-16x16.png"/>
+    <link rel="manifest" href="/resources/favicon/site.webmanifest"/>
+    <link rel="mask-icon" href="/resources/favicon/safari-pinned-tab.svg" color="#5bbad5"/>
+    <link rel="shortcut icon" href="/resources/favicon/favicon.ico"/>
+    <meta name="msapplication-TileColor" content="#da532c"/>
+    <meta name="msapplication-config" content="/resources/favicon/browserconfig.xml"/>
+    <meta name="theme-color" content="#191919"/>
 
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"/>
 
     <!-- Optional theme -->
-    <link rel="stylesheet" type="text/css" href="resources/css/main.css"/>
-    <link rel="stylesheet" type="text/css" href="resources/css/login.css"/>
+    <link rel="stylesheet" type="text/css" href="resources/login.css"/>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
@@ -24,14 +34,14 @@
     <script type="text/javascript" src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"/>
 </h:head>
 
-<h:body>
+<h:body  styleClass="center-page-content">
     <f:event listener="#{loginRedirectController.redirect}" type="preRenderView" />
 
     <script type="text/javascript">
         window.onload = function () {
             if (window.location.href.indexOf('registration=success') > -1) {
                 document.getElementById('success_banner')
-                    .innerHTML = '<img src="/resources/img/undraw_confirmed.png" alt="Successful registration" width="100%"/>';
+                    .innerHTML = '<img src="/resources/pages/login/undraw_confirmed.png" alt="Successful registration" class="welcome-image"/>';
             }
         }
     </script>
@@ -47,38 +57,44 @@
         }
     </script>
 
-    <div class="container-fluid" id="success_banner">
-    </div>
-
-
-    <div class="container pt-5 reduced-mobile-padding">
-        <div class="row py-3">
-            <div class="col-lg">
-                <h1 class="display-4 text-center">QuizConnect</h1>
-            </div>
-        </div>
-    </div>
-
     <form action="#{request.contextPath}/login" method="post">
-        <div class="container-fluid mt-5 reduced-mobile-margin" id="responsive-formgroup">
+        <div id="success_banner">
+        </div>
+
+        <div class="container" id="responsive-formgroup">
+            <div class="row py-3">
+                <div class="col-lg">
+                    <h1 class="display-4 text-center">QuizConnect&trade;</h1>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <ui:fragment rendered="#{param['error'] ne null}">
+                        <p id="error">Username or Password invalid</p>
+                    </ui:fragment>
+                </div>
+            </div>
             <div class="form-group">
                 <label for="username">E-Mail or username</label>
                 <input type="text" class="form-control" id="username" name="username" placeholder="john.doe@mail.com / user1234"/>
             </div>
 
             <div class="form-group">
-                <label for="password">Passwort</label>
+                <label for="password">Password</label>
                 <input type="password" class="form-control" id="password" name="password" placeholder="******"/>
             </div>
 
-            <div class="row py-5 pb-md-5">
+            <div class="row py-3">
                 <div class="col text-center">
-                    <button type="submit" id="submit" class="btn btn-block btn-primary btn-lg">Sign In</button>
+                    <button type="submit" id="submit" class="btn btn-primary">Sign In</button>
                 </div>
             </div>
             <ui:fragment rendered="#{param['error'] ne null}">
                 <script type="text/javascript">
-                    $('#password').effect('shake');
+                    const element =  document.querySelector('#password');
+                    element.classList.add('animated', 'shake');
+                    const text =  document.querySelector('#error');
+                    text.classList.add('animated', 'pulse');
                 </script>
 
             </ui:fragment>

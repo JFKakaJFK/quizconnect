@@ -1,13 +1,86 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:qc="http://java.sun.com/jsf/composite/quizconnect"
+                xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
                 template="/WEB-INF/templates/main.xhtml">
-    <ui:define name ="content">
 
-        <div class="text-center py-3">
-            <a class="btn btn-primary btn-lg" href="/players/all.xhtml">Players</a>
+    <ui:define name="title">Home</ui:define>
 
-            <a class="btn btn-primary btn-lg" href="/secured/questionSet.xhtml">QuestionSets</a>
+    <ui:define name="site-specific-css">
+        <link rel="stylesheet" type="text/css" href="home.css"/>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form>
+        <div class="grid-container">
+
+            <div class="box" id="sets" onclick='location.href ="overview.xhtml";'>
+                <img src="questions.svg"></img>
+                <span>Question sets</span>
+            </div>
+
+            <div class="box" id="players" onclick='location.href ="../players/all.xhtml";'>
+                <img src="players.svg"></img>
+                <span>Players</span>
+            </div>
+
+
+                <h:commandLink styleClass="box" p:data-toggle="modal" p:data-target="#editPassword">
+                    <img src="password.svg"></img>
+                    <span>Change password</span>
+                    <f:ajax execute="@this" render=":passwordForm:editPassword:footer :passwordForm:editPassword:inputs" />
+                </h:commandLink>
+
+
+            <div class="box" id="logout" onclick='location.href ="/logout";'>
+                <img src="logout.svg"></img>
+                <span>Log out</span>
+            </div>
+
         </div>
+    </h:form>
 
+    </ui:define>
+
+    <ui:define name="modals">
+        <h:form id="passwordForm">
+            <qc:modal id="editPassword"
+                      target="editPassword"
+                      title="Edit Password"
+                      confirm="Edit Password"
+                      abort="Cancel"
+                      bodyId="body" footerId="footer"
+                      confirmAction="#{editManagerBean.changePassword}"
+                      disableConfirm="#{!validationBean.isValidPassword(editManagerBean.password, editManagerBean.repeatPassword)}"
+                      update=":passwordForm:editPassword:inputs :passwordForm:editPassword:footer">
+                <h:panelGroup layout="block" styleClass="form-group required" id="inputs">
+                    <label for="new_password">New password</label>
+                    <h:inputSecret p:data-js-new-password="" p:placeholder="New password" name="new_password" id="new_password" p:id="new_password" value="#{editManagerBean.password}" p:autocomplete="new-password" styleClass="form-control">
+                        <f:ajax event="keyup" execute="@this" render="footer"/>
+                    </h:inputSecret>
+
+                    <label for="repeat_new_password" class="mt-3">Repeat new password</label>
+                    <h:inputSecret p:placeholder="Repeat new password" name="repeat_new_password" id="repeat_new_password" p:id="repeat_new_password" value="#{editManagerBean.repeatPassword}" p:autocomplete="new-password" styleClass="form-control">
+                        <f:ajax event="keyup" execute="@this" render="footer"/>
+                    </h:inputSecret>
+                </h:panelGroup>
+
+                <meter data-js-meter="" max="4" class="meter" ></meter>
+
+                <h:panelGroup layout="block" styleClass="box" p:id="no-hover" p:data-js-strength=""/>
+            </qc:modal>
+        </h:form>
+    </ui:define>
+
+    <ui:define name="site-specific-javascript">
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"/>
+        <script type="text/javascript" src="../resources/util/validatePassword.js"/>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.4.2/zxcvbn.js"/>
+        <script type="text/javascript" src="../resources/util/passwordhelp.js"/>
+        <script type="text/javascript">
+            pwhelp('#editPassword');
+        </script>
     </ui:define>
 </ui:composition>

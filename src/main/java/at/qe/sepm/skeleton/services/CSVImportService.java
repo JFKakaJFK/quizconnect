@@ -17,6 +17,18 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
+/**
+ * This Service is responsible for uploading, parsing and saving CSV-Files into the DB
+ * Important is the Format of the CSV:
+ * Every Line consists of at least a QuestionString a RightAnswerString as well as a WrongAnswerString (in this order
+ * all separated by a ","). Optionally up to four more WrongAnswerStrings can be added. The last String must not end
+ * with a ","!
+ *
+ * To be a valid QuestionSet, the CSV has to contain at least 15 Questions
+ *
+ * The CSV must be named -NameOfTheSet- + 1 (if it is an easy Set) or 2 (if it is a hard Set).csv
+ * e.g. music2.csv, history1.csv
+ */
 @Service
 public class CSVImportService {
 
@@ -42,6 +54,11 @@ public class CSVImportService {
         this.managerService = managerService;
     }
 
+    /**
+     * This function gets the location as parameter and starts up all other functions to import the CSV
+     * @param location
+     * @throws NoSuchElementException
+     */
     public void init(String location) throws NoSuchElementException {
         Path CSVLocation = Paths.get(location);
         manager = getAuthorManagerFromDB();
@@ -189,7 +206,7 @@ public class CSVImportService {
     }
 
     /**
-     * This way of changing the name of QSet is ugly and has to replaced
+     * This way of changing the name of QSet is ugly but does the Job
      * @param string
      * @return
      */

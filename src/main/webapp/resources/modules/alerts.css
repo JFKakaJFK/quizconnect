@@ -1,0 +1,130 @@
+.alert-container {
+    display: grid;
+    grid-auto-rows: 1fr;
+    padding: var(--default-spacing);
+    grid-gap: var(--default-spacing);
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 0;
+    z-index: 1060;
+    pointer-events: none;
+    width: 400px;
+    max-width: 100vw;
+}
+
+/* Custom */
+.alert {
+    --alert-border-radius: 4px;
+
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-auto-rows: 1fr;
+    grid-gap: var(--default-spacing);
+    grid-template-areas:
+        "icon content close"
+    ;
+    box-shadow: var(--default-box-shadow);
+    padding: var(--default-padding);
+    background-color: var(--background-lighter);
+    border-radius: var(--alert-border-radius);
+    border: 0;
+    opacity: 1;
+    margin: 0;
+}
+
+@media only screen and (min-width: 560px) {
+    .alert {
+        min-height: 100px;
+    }
+}
+
+.alert-svg{
+    color: inherit;
+    fill: currentColor;
+}
+
+.alert:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    border-radius: var(--alert-border-radius) 0 0 var(--alert-border-radius);
+}
+
+.alert-icon{
+    grid-area: icon;
+    align-self: center;
+    justify-self: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--default-font-color);
+}
+
+.alert-content {
+    grid-area: content;
+    color: var(--default-font-color);
+}
+
+.alert-summary {
+    color: inherit;
+    font-weight: 400;
+    margin: 0 0 calc(var(--default-padding) / 2);
+    line-height: 1;
+}
+
+.alert-text{
+    font-weight: var(--default-font-weight);
+    color: inherit;
+    margin: 0;
+    line-height: 1;
+}
+
+.alert-close {
+    grid-area: close;
+    align-self: start;
+    text-shadow: none;
+    border: 0;
+    background: transparent;
+    padding: 0;
+    line-height: 1;
+    pointer-events: all;
+}
+
+.alert-close:hover {
+    cursor: pointer;
+}
+
+.alert-close svg {
+    color: var(--default-font-color);
+}
+
+.alert-close:hover svg {
+    color: var(--default-active-color);
+}
+
+.alert-info:before,
+.alert-info .alert-icon{
+    background:var(--info);
+}
+
+.alert-warning:before,
+.alert-warning .alert-icon {
+    background: var(--warning);
+}
+
+.alert-error:before,
+.alert-error .alert-icon {
+    background: var(--error);
+}
+
+.alert-fatal:before,
+.alert-fatal .alert-icon {
+    background: var(--danger);
+}

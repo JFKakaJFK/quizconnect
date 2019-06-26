@@ -148,11 +148,6 @@ public class QuestionService
 	 */
 	public void deleteQuestion(Question question)
 	{
-		// TODO if type is file, delete all files
-		if (question.getType() == QuestionType.picture)
-		{
-			//...
-		}
 		questionRepository.delete(question);
 		log.info("Deleted Question " + question.getId());
 	}

@@ -28,7 +28,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        // TODO check why these 2 are set, if only for H2, remove
         http.csrf().disable();
         http.headers().frameOptions().disable(); // needed for H2 console
 
@@ -43,8 +42,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 //Permit access only for some roles
                 .antMatchers("/secured/**")
 				.hasAnyAuthority("MANAGER")
-                .antMatchers("/player/**")
-                .hasAnyAuthority("PLAYER")
                 .antMatchers("/players/**")
                 .hasAnyAuthority("PLAYER", "MANAGER")
                 .antMatchers("/login/**")
@@ -60,7 +57,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginPage("/login.xhtml")
                 .loginProcessingUrl("/login")
                 .defaultSuccessUrl("/login/redirect.xhtml")
-                .failureUrl("/login.xhtml?error"); // TODO show error message
+                .failureUrl("/login.xhtml?error");
 
         http.exceptionHandling().accessDeniedPage("/error/402.xhtml");
 

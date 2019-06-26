@@ -2,17 +2,20 @@
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:qc="http://java.sun.com/jsf/composite/quizconnect"
                 template="/WEB-INF/templates/main.xhtml">
+
+    <ui:define name="title">Error 404</ui:define>
+
     <ui:define name="site-specific-css">
-        <link type="text/css" rel="stylesheet" href="/resources/css/errors.css"/>
+        <link type="text/css" rel="stylesheet" href="/resources/pages/error/errors.css"/>
     </ui:define>
 
     <ui:define name ="content">
         <div id="particles-js"></div>
-        <qc:error code="404" message="not found"/>
+        <qc:error code="404" message="Not found"/>
     </ui:define>
 
     <ui:define name="site-specific-javascript">
         <script src="http://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-        <script src="/resources/js/error/main.js"></script>
+        <script src="/resources/pages/error/main.js"></script>
     </ui:define>
 </ui:composition>
