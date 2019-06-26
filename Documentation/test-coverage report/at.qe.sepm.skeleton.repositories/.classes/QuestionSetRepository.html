@@ -1,0 +1,74 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: QuestionSetRepository</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">at.qe.sepm.skeleton.repositories</a> ]
+</div>
+
+<h1>Coverage Summary for Class: QuestionSetRepository (at.qe.sepm.skeleton.repositories)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">QuestionSetRepository</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package at.qe.sepm.skeleton.repositories;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.List;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;import at.qe.sepm.skeleton.model.Manager;
+<i>6</i>&nbsp;import at.qe.sepm.skeleton.model.Question;
+<i>7</i>&nbsp;import at.qe.sepm.skeleton.model.QuestionSet;
+<i>8</i>&nbsp;import at.qe.sepm.skeleton.model.QuestionSetDifficulty;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;/**
+<i>11</i>&nbsp; * Repository for managing {@link QuestionSet} entities.
+<i>12</i>&nbsp; * 
+<i>13</i>&nbsp; * @author Lorenz_Smidt
+<i>14</i>&nbsp; *
+<i>15</i>&nbsp; */
+<i>16</i>&nbsp;public interface QuestionSetRepository extends AbstractRepository&lt;QuestionSet, Integer&gt;
+<i>17</i>&nbsp;{
+<i>18</i>&nbsp;	List&lt;QuestionSet&gt; findByDifficulty(QuestionSetDifficulty difficulty);
+<i>19</i>&nbsp;	
+<i>20</i>&nbsp;	List&lt;QuestionSet&gt; findByNameContaining(String name);
+<i>21</i>&nbsp;	
+<i>22</i>&nbsp;	// replaces Manager.createdQuestionSets lazy loading
+<i>23</i>&nbsp;	List&lt;QuestionSet&gt; findByAuthor(Manager manager);
+<i>24</i>&nbsp;	
+<i>25</i>&nbsp;	// replaces Question.questionSet lazy loading
+<i>26</i>&nbsp;	QuestionSet findByQuestions(Question question);
+<i>27</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-06-26 10:09</div>
+</div>
+</body>
+</html>

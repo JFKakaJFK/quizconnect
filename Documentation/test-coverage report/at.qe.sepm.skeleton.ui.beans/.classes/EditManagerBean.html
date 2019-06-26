@@ -1,0 +1,171 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: EditManagerBean</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">at.qe.sepm.skeleton.ui.beans</a> ]
+</div>
+
+<h1>Coverage Summary for Class: EditManagerBean (at.qe.sepm.skeleton.ui.beans)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">EditManagerBean</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 21)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package at.qe.sepm.skeleton.ui.beans;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import at.qe.sepm.skeleton.model.Player;
+<i>4</i>&nbsp;import at.qe.sepm.skeleton.model.User;
+<i>5</i>&nbsp;import at.qe.sepm.skeleton.services.ManagerService;
+<i>6</i>&nbsp;import at.qe.sepm.skeleton.services.UserService;
+<i>7</i>&nbsp;import org.slf4j.Logger;
+<i>8</i>&nbsp;import org.slf4j.LoggerFactory;
+<i>9</i>&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+<i>10</i>&nbsp;import org.springframework.context.annotation.Scope;
+<i>11</i>&nbsp;import org.springframework.stereotype.Controller;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;import javax.annotation.PostConstruct;
+<i>14</i>&nbsp;import javax.faces.event.AjaxBehaviorEvent;
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;import java.io.Serializable;
+<i>17</i>&nbsp;import java.util.regex.Matcher;
+<i>18</i>&nbsp;import java.util.regex.Pattern;
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;/**
+<i>21</i>&nbsp; * Bean for editing a {@link at.qe.sepm.skeleton.model.Manager}.
+<i>22</i>&nbsp; */
+<i>23</i>&nbsp;@Controller
+<i>24</i>&nbsp;@Scope(&quot;view&quot;)
+<b class="nc"><i>25</i>&nbsp;public class EditManagerBean implements Serializable {</b>
+<i>26</i>&nbsp;
+<b class="nc"><i>27</i>&nbsp;    private Logger logger = LoggerFactory.getLogger(this.getClass());</b>
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;    @Autowired
+<i>30</i>&nbsp;    private UserService userService;
+<i>31</i>&nbsp;
+<i>32</i>&nbsp;    @Autowired
+<i>33</i>&nbsp;    private PasswordBean passwordBean;
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;    @Autowired
+<i>36</i>&nbsp;    private SessionInfoBean sessionInfoBean;
+<i>37</i>&nbsp;
+<i>38</i>&nbsp;    @Autowired
+<i>39</i>&nbsp;    private ValidationBean validationBean;
+<i>40</i>&nbsp;
+<i>41</i>&nbsp;    @Autowired
+<i>42</i>&nbsp;    private MessageBean messageBean;
+<i>43</i>&nbsp;
+<i>44</i>&nbsp;    private User user;
+<i>45</i>&nbsp;    private String password;
+<i>46</i>&nbsp;    private String repeatPassword;
+<i>47</i>&nbsp;
+<i>48</i>&nbsp;
+<i>49</i>&nbsp;    @PostConstruct
+<i>50</i>&nbsp;    private void init() {
+<b class="nc"><i>51</i>&nbsp;        user = userService.loadUser(sessionInfoBean.getCurrentUser().getUsername());</b>
+<b class="nc"><i>52</i>&nbsp;    }</b>
+<i>53</i>&nbsp;    
+<i>54</i>&nbsp;    /**
+<i>55</i>&nbsp;     * Changes the password of the Manager if the current password is valid and clears all fields.
+<i>56</i>&nbsp;     */
+<i>57</i>&nbsp;    public void changePassword() {
+<b class="nc"><i>58</i>&nbsp;        if (user != null &amp;&amp; validationBean.isValidPassword(password, repeatPassword)) {</b>
+<b class="nc"><i>59</i>&nbsp;            user.setPassword(passwordBean.encodePassword(password));</b>
+<b class="nc"><i>60</i>&nbsp;            this.user = userService.saveUser(user);</b>
+<b class="nc"><i>61</i>&nbsp;            logger.info(user.getUsername() + &quot; changed password&quot;);</b>
+<b class="nc"><i>62</i>&nbsp;            messageBean.alertInformation(&quot;Success&quot;, &quot;Saved new password&quot;);</b>
+<b class="nc"><i>63</i>&nbsp;            messageBean.updateComponent(&quot;messages&quot;);</b>
+<i>64</i>&nbsp;        } else {
+<b class="nc"><i>65</i>&nbsp;            messageBean.alertError(&quot;Error&quot;, &quot;Couldn&#39;t save new password - please try again&quot;);</b>
+<b class="nc"><i>66</i>&nbsp;            messageBean.updateComponent(&quot;messages&quot;);</b>
+<i>67</i>&nbsp;        }
+<b class="nc"><i>68</i>&nbsp;        password = null;</b>
+<b class="nc"><i>69</i>&nbsp;        repeatPassword = null;</b>
+<b class="nc"><i>70</i>&nbsp;    }</b>
+<i>71</i>&nbsp;
+<i>72</i>&nbsp;
+<i>73</i>&nbsp;    public String getPassword() {
+<b class="nc"><i>74</i>&nbsp;        return password;</b>
+<i>75</i>&nbsp;    }
+<i>76</i>&nbsp;
+<i>77</i>&nbsp;    public void setPassword(String password) {
+<b class="nc"><i>78</i>&nbsp;        this.password = password;</b>
+<b class="nc"><i>79</i>&nbsp;    }</b>
+<i>80</i>&nbsp;
+<i>81</i>&nbsp;    public String getRepeatPassword() {
+<b class="nc"><i>82</i>&nbsp;        return repeatPassword;</b>
+<i>83</i>&nbsp;    }
+<i>84</i>&nbsp;
+<i>85</i>&nbsp;    public void setRepeatPassword(String repeatPassword) {
+<b class="nc"><i>86</i>&nbsp;        this.repeatPassword = repeatPassword;</b>
+<b class="nc"><i>87</i>&nbsp;    }</b>
+<i>88</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-06-26 10:09</div>
+</div>
+</body>
+</html>

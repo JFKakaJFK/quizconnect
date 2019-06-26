@@ -1,0 +1,229 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ImageAPIController</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">at.qe.sepm.skeleton.ui.controllers</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ImageAPIController (at.qe.sepm.skeleton.ui.controllers)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ImageAPIController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/ 6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    78,6%
+  </span>
+  <span class="absValue">
+    (33/ 42)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package at.qe.sepm.skeleton.ui.controllers;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import at.qe.sepm.skeleton.services.StorageService;
+<i>4</i>&nbsp;import org.apache.commons.io.IOUtils;
+<i>5</i>&nbsp;import org.slf4j.Logger;
+<i>6</i>&nbsp;import org.slf4j.LoggerFactory;
+<i>7</i>&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+<i>8</i>&nbsp;import org.springframework.beans.factory.annotation.Value;
+<i>9</i>&nbsp;import org.springframework.stereotype.Controller;
+<i>10</i>&nbsp;import org.springframework.web.bind.annotation.PathVariable;
+<i>11</i>&nbsp;import org.springframework.web.bind.annotation.RequestMapping;
+<i>12</i>&nbsp;import org.springframework.web.bind.annotation.RequestMethod;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;import javax.servlet.http.HttpServletResponse;
+<i>15</i>&nbsp;import java.io.*;
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;/**
+<i>19</i>&nbsp; * This controller responds to requests to the avatar &amp; answer endpoints and responds either
+<i>20</i>&nbsp; * with the sought image or a default file.
+<i>21</i>&nbsp; *
+<i>22</i>&nbsp; *
+<i>23</i>&nbsp; * @author Johannes Koch
+<i>24</i>&nbsp; */
+<i>25</i>&nbsp;@Controller
+<i>26</i>&nbsp;@RequestMapping
+<i>27</i>&nbsp;public class ImageAPIController {
+<i>28</i>&nbsp;
+<b class="fc"><i>29</i>&nbsp;    private static final Logger log = LoggerFactory.getLogger(ImageAPIController.class);</b>
+<i>30</i>&nbsp;    private StorageService storageService;
+<i>31</i>&nbsp;    @Value(&quot;${storage.avatars.default}&quot;)
+<i>32</i>&nbsp;    private String defaultAvatar;
+<i>33</i>&nbsp;    @Value(&quot;${storage.answers.default}&quot;)
+<i>34</i>&nbsp;    private String defaultAnswer;
+<i>35</i>&nbsp;
+<i>36</i>&nbsp;    @Autowired
+<b class="fc"><i>37</i>&nbsp;    public ImageAPIController(StorageService storageService){</b>
+<b class="fc"><i>38</i>&nbsp;        this.storageService = storageService;</b>
+<b class="fc"><i>39</i>&nbsp;    }</b>
+<i>40</i>&nbsp;
+<i>41</i>&nbsp;    /**
+<i>42</i>&nbsp;     * Catches GET requests for the player avatars and returns corresponding file or default
+<i>43</i>&nbsp;     *
+<i>44</i>&nbsp;     * @param response
+<i>45</i>&nbsp;     *          The response responding to the incoming request.
+<i>46</i>&nbsp;     * @param manager
+<i>47</i>&nbsp;     *          ManagerId, part of the request path.
+<i>48</i>&nbsp;     * @param file
+<i>49</i>&nbsp;     *          Filename, part of the request path.
+<i>50</i>&nbsp;     * @param ext
+<i>51</i>&nbsp;     *          File extension, part of the request path.
+<i>52</i>&nbsp;     */
+<i>53</i>&nbsp;    @RequestMapping(value = &quot;/avatars/{manager}/{file}.{ext}&quot;, method = RequestMethod.GET)
+<i>54</i>&nbsp;    public void getAvatar(HttpServletResponse response, @PathVariable String manager, @PathVariable String file, @PathVariable String ext){
+<b class="fc"><i>55</i>&nbsp;        if(!(ext.toLowerCase().equals(&quot;png&quot;) || ext.toLowerCase().equals(&quot;jpg&quot;))){</b>
+<b class="fc"><i>56</i>&nbsp;            log.error(&quot;Request for thumbnail is not well-formed: no image extension&quot;);</b>
+<b class="fc"><i>57</i>&nbsp;            sendError(response,400, &quot;Invalid extension. Allowed: (png|jpg)&quot;);</b>
+<b class="fc"><i>58</i>&nbsp;            return;</b>
+<i>59</i>&nbsp;        }
+<i>60</i>&nbsp;
+<b class="fc"><i>61</i>&nbsp;        File img = storageService.loadAvatar(manager + &quot;/&quot; + file + &quot;.&quot; + ext).toFile();</b>
+<i>62</i>&nbsp;
+<b class="fc"><i>63</i>&nbsp;        if(!img.exists()){</b>
+<b class="nc"><i>64</i>&nbsp;            log.warn(&quot;Could not serve avatars/&quot; + manager + &quot;/&quot; + file + &quot;.&quot; + ext + &quot;, serving default&quot;);</b>
+<b class="nc"><i>65</i>&nbsp;            img = storageService.loadAvatar(defaultAvatar).toFile();</b>
+<i>66</i>&nbsp;        }
+<i>67</i>&nbsp;
+<b class="fc"><i>68</i>&nbsp;        sendResponse(response, img, ext);</b>
+<b class="fc"><i>69</i>&nbsp;    }</b>
+<i>70</i>&nbsp;
+<i>71</i>&nbsp;    /**
+<i>72</i>&nbsp;     * Catches GET requests for the answer images and returns corresponding file or default
+<i>73</i>&nbsp;     *
+<i>74</i>&nbsp;     * @param response
+<i>75</i>&nbsp;     *          The response responding to the incoming request.
+<i>76</i>&nbsp;     * @param manager
+<i>77</i>&nbsp;     *          ManagerId, part of the request path.
+<i>78</i>&nbsp;     * @param questionSet
+<i>79</i>&nbsp;     *          QuestionSetId, part of the request path.
+<i>80</i>&nbsp;     * @param file
+<i>81</i>&nbsp;     *          Filename, part of the request path.
+<i>82</i>&nbsp;     * @param ext
+<i>83</i>&nbsp;     *          File extension, part of the request path.
+<i>84</i>&nbsp;     */
+<i>85</i>&nbsp;    @RequestMapping(value = &quot;/answers/{manager}/{questionSet}/{file}.{ext}&quot;, method = RequestMethod.GET)
+<i>86</i>&nbsp;    public void getAnswer(HttpServletResponse response, @PathVariable String manager, @PathVariable String questionSet, @PathVariable String file, @PathVariable String ext){
+<b class="fc"><i>87</i>&nbsp;        if(!(ext.toLowerCase().equals(&quot;png&quot;) || ext.toLowerCase().equals(&quot;jpg&quot;))){</b>
+<b class="fc"><i>88</i>&nbsp;            log.error(&quot;Request for thumbnail is not well-formed: no image extension&quot;);</b>
+<b class="fc"><i>89</i>&nbsp;            sendError(response,400, &quot;Invalid extension. Allowed: (png|jpg|jpeg)&quot;);</b>
+<b class="fc"><i>90</i>&nbsp;            return;</b>
+<i>91</i>&nbsp;        }
+<i>92</i>&nbsp;
+<b class="fc"><i>93</i>&nbsp;        File img = storageService.loadAnswer(manager + &quot;/&quot; + questionSet + &quot;/&quot; + file + &quot;.&quot; + ext).toFile();</b>
+<i>94</i>&nbsp;
+<b class="fc"><i>95</i>&nbsp;        if(!img.exists()){</b>
+<b class="nc"><i>96</i>&nbsp;            log.warn(&quot;Could not serve answers/&quot; + manager + &quot;/&quot; + questionSet + &quot;/&quot; + file + &quot;.&quot; + ext + &quot;, serving default&quot;);</b>
+<b class="nc"><i>97</i>&nbsp;            img = storageService.loadAnswer(defaultAnswer).toFile();</b>
+<i>98</i>&nbsp;        }
+<i>99</i>&nbsp;
+<b class="fc"><i>100</i>&nbsp;        sendResponse(response, img, ext);</b>
+<b class="fc"><i>101</i>&nbsp;    }</b>
+<i>102</i>&nbsp;
+<i>103</i>&nbsp;    /**
+<i>104</i>&nbsp;     * Sets some http response headers and then sends the file to the requesting user
+<i>105</i>&nbsp;     *
+<i>106</i>&nbsp;     * @param response
+<i>107</i>&nbsp;     *          The response responding to the incoming request.
+<i>108</i>&nbsp;     * @param file
+<i>109</i>&nbsp;     *          File to send.
+<i>110</i>&nbsp;     * @param type
+<i>111</i>&nbsp;     *          The type of the file.
+<i>112</i>&nbsp;     */
+<i>113</i>&nbsp;    private void sendResponse(HttpServletResponse response, File file, String type){
+<b class="fc"><i>114</i>&nbsp;        response.setHeader(&quot;cache-control&quot;, &quot;max-age=31104000&quot;);</b>
+<b class="fc"><i>115</i>&nbsp;        response.setContentType(&quot;image/&quot; + type);</b>
+<b class="fc"><i>116</i>&nbsp;        response.setContentLengthLong(file.length());</b>
+<b class="fc"><i>117</i>&nbsp;        response.setDateHeader(&quot;Expires&quot;, System.currentTimeMillis() + 604800000L); // expires in a week</b>
+<i>118</i>&nbsp;
+<b class="fc"><i>119</i>&nbsp;        try(InputStream is = new FileInputStream(file); OutputStream os = response.getOutputStream()) {</b>
+<b class="fc"><i>120</i>&nbsp;            IOUtils.copy(is, os);</b>
+<b class="fc"><i>121</i>&nbsp;            response.flushBuffer();</b>
+<b class="fc"><i>122</i>&nbsp;        } catch (IOException e){</b>
+<b class="nc"><i>123</i>&nbsp;            log.error(&quot;Could not serve &quot; + file.getName());</b>
+<b class="nc"><i>124</i>&nbsp;            response.reset();</b>
+<b class="nc"><i>125</i>&nbsp;            sendError(response, 500, &quot;Could not serve file&quot;);</b>
+<b class="fc"><i>126</i>&nbsp;        }</b>
+<b class="fc"><i>127</i>&nbsp;    }</b>
+<i>128</i>&nbsp;
+<i>129</i>&nbsp;    /**
+<i>130</i>&nbsp;     * Sends an error
+<i>131</i>&nbsp;     *
+<i>132</i>&nbsp;     * @param response
+<i>133</i>&nbsp;     *          The response responding to the incoming request.
+<i>134</i>&nbsp;     * @param status
+<i>135</i>&nbsp;     *          The HTTP status code of the error.
+<i>136</i>&nbsp;     * @param message
+<i>137</i>&nbsp;     *          A descriptive error message.
+<i>138</i>&nbsp;     */
+<i>139</i>&nbsp;    private void sendError(HttpServletResponse response, int status, String message){
+<i>140</i>&nbsp;        try {
+<b class="fc"><i>141</i>&nbsp;            response.sendError(status, message);</b>
+<b class="nc"><i>142</i>&nbsp;        } catch (IOException e){</b>
+<b class="nc"><i>143</i>&nbsp;            log.error(&quot;Could not send HTTP &quot; + status + &quot;: &quot; + message);</b>
+<b class="fc"><i>144</i>&nbsp;        }</b>
+<b class="fc"><i>145</i>&nbsp;    }</b>
+<i>146</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-06-26 10:09</div>
+</div>
+</body>
+</html>

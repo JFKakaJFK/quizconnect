@@ -1,0 +1,179 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: JoinGameController</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">at.qe.sepm.skeleton.ui.controllers</a> ]
+</div>
+
+<h1>Coverage Summary for Class: JoinGameController (at.qe.sepm.skeleton.ui.controllers)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">JoinGameController</td>
+<td class="coverageStat">
+  <span class="percent">
+    33,3%
+  </span>
+  <span class="absValue">
+    (1/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    3,3%
+  </span>
+  <span class="absValue">
+    (1/ 30)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">JoinGameController$$EnhancerBySpringCGLIB$$865f3af2</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    33,3%
+  </span>
+  <span class="absValue">
+    (1/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    3,3%
+  </span>
+  <span class="absValue">
+    (1/ 30)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package at.qe.sepm.skeleton.ui.controllers;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import at.qe.sepm.skeleton.logic.IPlayerAction;
+<i>4</i>&nbsp;import at.qe.sepm.skeleton.logic.QuizRoomManager;
+<i>5</i>&nbsp;import at.qe.sepm.skeleton.model.Player;
+<i>6</i>&nbsp;import at.qe.sepm.skeleton.services.PlayerService;
+<i>7</i>&nbsp;import at.qe.sepm.skeleton.socket.QRWebSocketConnection;
+<i>8</i>&nbsp;import at.qe.sepm.skeleton.ui.beans.SessionInfoBean;
+<i>9</i>&nbsp;import org.slf4j.Logger;
+<i>10</i>&nbsp;import org.slf4j.LoggerFactory;
+<i>11</i>&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+<i>12</i>&nbsp;import org.springframework.http.HttpStatus;
+<i>13</i>&nbsp;import org.springframework.http.ResponseEntity;
+<i>14</i>&nbsp;import org.springframework.stereotype.Controller;
+<i>15</i>&nbsp;import org.springframework.web.bind.annotation.PathVariable;
+<i>16</i>&nbsp;import org.springframework.web.bind.annotation.RequestMapping;
+<i>17</i>&nbsp;import org.springframework.web.bind.annotation.RequestMethod;
+<i>18</i>&nbsp;import org.springframework.web.bind.annotation.ResponseBody;
+<i>19</i>&nbsp;import org.springframework.web.context.annotation.RequestScope;
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;/**
+<i>22</i>&nbsp; * A controller for joining a QuizRoom
+<i>23</i>&nbsp; */
+<b class="fc"><i>24</i>&nbsp;@Controller</b>
+<i>25</i>&nbsp;@RequestScope
+<i>26</i>&nbsp;@RequestMapping
+<i>27</i>&nbsp;public class JoinGameController {
+<i>28</i>&nbsp;
+<b class="nc"><i>29</i>&nbsp;    private Logger logger = LoggerFactory.getLogger(this.getClass());</b>
+<i>30</i>&nbsp;    private SessionInfoBean sessionInfoBean;
+<i>31</i>&nbsp;    private PlayerService playerService;
+<i>32</i>&nbsp;    private QuizRoomManager quizRoomManager;
+<i>33</i>&nbsp;    private QRWebSocketConnection qrWebSocketConnection;
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;    @Autowired
+<i>36</i>&nbsp;    public JoinGameController(SessionInfoBean sessionInfoBean,
+<i>37</i>&nbsp;                              QuizRoomManager quizRoomManager,
+<i>38</i>&nbsp;                              PlayerService playerService,
+<b class="nc"><i>39</i>&nbsp;                              QRWebSocketConnection qrWebSocketConnection){</b>
+<b class="nc"><i>40</i>&nbsp;        assert sessionInfoBean != null;</b>
+<b class="nc"><i>41</i>&nbsp;        assert quizRoomManager != null;</b>
+<b class="nc"><i>42</i>&nbsp;        assert qrWebSocketConnection != null;</b>
+<b class="nc"><i>43</i>&nbsp;        assert playerService != null;</b>
+<b class="nc"><i>44</i>&nbsp;        this.sessionInfoBean = sessionInfoBean;</b>
+<b class="nc"><i>45</i>&nbsp;        this.quizRoomManager = quizRoomManager;</b>
+<b class="nc"><i>46</i>&nbsp;        this.playerService = playerService;</b>
+<b class="nc"><i>47</i>&nbsp;        this.qrWebSocketConnection = qrWebSocketConnection;</b>
+<b class="nc"><i>48</i>&nbsp;    }</b>
+<i>49</i>&nbsp;
+<i>50</i>&nbsp;    /**
+<i>51</i>&nbsp;     * Handles requests to the join endpoint and tries to join the QuizRoom if it exists.
+<i>52</i>&nbsp;     *
+<i>53</i>&nbsp;     * @param pin
+<i>54</i>&nbsp;     *          The pin of the QuizRoom.
+<i>55</i>&nbsp;     * @return
+<i>56</i>&nbsp;     *          Error message or Player id of the Player who joined the QuizRoom.
+<i>57</i>&nbsp;     */
+<i>58</i>&nbsp;    @RequestMapping(value = &quot;/qr/join/{pin}&quot;, method = RequestMethod.POST)
+<i>59</i>&nbsp;    @ResponseBody
+<i>60</i>&nbsp;    public ResponseEntity joinRoom(@PathVariable String pin){
+<b class="nc"><i>61</i>&nbsp;        if(!sessionInfoBean.isLoggedIn()){</b>
+<b class="nc"><i>62</i>&nbsp;            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);</b>
+<i>63</i>&nbsp;        }
+<b class="nc"><i>64</i>&nbsp;        if(!sessionInfoBean.hasRole(&quot;PLAYER&quot;)){</b>
+<b class="nc"><i>65</i>&nbsp;            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);</b>
+<i>66</i>&nbsp;        }
+<b class="nc"><i>67</i>&nbsp;        int PIN = Integer.valueOf(pin);</b>
+<b class="nc"><i>68</i>&nbsp;        Player p  = playerService.getPlayerById(sessionInfoBean.getCurrentUser().getPlayer().getId());</b>
+<b class="nc"><i>69</i>&nbsp;        if(quizRoomManager.doesRoomExist(PIN)){</b>
+<b class="nc"><i>70</i>&nbsp;            if(qrWebSocketConnection.isPlayerInGame(PIN, p)){</b>
+<b class="nc"><i>71</i>&nbsp;                logger.debug(&quot;Player &quot; + p.getUser().getUsername() + &quot; rejoined room &quot; + pin);</b>
+<b class="nc"><i>72</i>&nbsp;                return ResponseEntity.ok(&quot;{\&quot;playerId\&quot;:&quot; + p.getId() + &quot;,\&quot;highScore\&quot;:&quot; + p.getHighScore() + &quot;}&quot;);</b>
+<i>73</i>&nbsp;            }
+<i>74</i>&nbsp;            IPlayerAction qr;
+<i>75</i>&nbsp;            try{
+<b class="nc"><i>76</i>&nbsp;                qr = quizRoomManager.joinRoom(PIN, p);</b>
+<b class="nc"><i>77</i>&nbsp;            } catch (IllegalArgumentException e){</b>
+<b class="nc"><i>78</i>&nbsp;                return ResponseEntity.ok(&quot;{\&quot;error\&quot;:\&quot;room is full\&quot;}&quot;);</b>
+<b class="nc"><i>79</i>&nbsp;            }</b>
+<b class="nc"><i>80</i>&nbsp;            qrWebSocketConnection.addGame(PIN, qr, p);</b>
+<b class="nc"><i>81</i>&nbsp;            logger.debug(&quot;Player &quot; + p.getUser().getUsername() + &quot; joined room &quot; + pin);</b>
+<b class="nc"><i>82</i>&nbsp;            return ResponseEntity.ok(&quot;{\&quot;playerId\&quot;:&quot; + p.getId() + &quot;,\&quot;highScore\&quot;:&quot; + p.getHighScore() + &quot;}&quot;);</b>
+<i>83</i>&nbsp;        }
+<b class="nc"><i>84</i>&nbsp;        return ResponseEntity.ok(&quot;{\&quot;error\&quot;:\&quot;room does not exist\&quot;}&quot;);</b>
+<i>85</i>&nbsp;    }
+<i>86</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-06-26 10:09</div>
+</div>
+</body>
+</html>

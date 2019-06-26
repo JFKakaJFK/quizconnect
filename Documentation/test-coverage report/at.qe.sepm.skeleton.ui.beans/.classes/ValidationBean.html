@@ -1,0 +1,215 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ValidationBean</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">at.qe.sepm.skeleton.ui.beans</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ValidationBean (at.qe.sepm.skeleton.ui.beans)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ValidationBean</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 34)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package at.qe.sepm.skeleton.ui.beans;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import org.slf4j.Logger;
+<i>4</i>&nbsp;import org.slf4j.LoggerFactory;
+<i>5</i>&nbsp;import org.springframework.context.annotation.Scope;
+<i>6</i>&nbsp;import org.springframework.stereotype.Component;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import java.io.Serializable;
+<i>9</i>&nbsp;import java.util.regex.Pattern;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;/**
+<i>12</i>&nbsp; * Bean for validating different kinds of inputs.
+<i>13</i>&nbsp; */
+<i>14</i>&nbsp;@Component
+<i>15</i>&nbsp;@Scope(&quot;view&quot;)
+<b class="nc"><i>16</i>&nbsp;public class ValidationBean implements Serializable {</b>
+<b class="nc"><i>17</i>&nbsp;    private final Logger logger = LoggerFactory.getLogger(this.getClass());</b>
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;    /**
+<i>20</i>&nbsp;     * Validates an email.
+<i>21</i>&nbsp;     *
+<i>22</i>&nbsp;     * @param email
+<i>23</i>&nbsp;     * 		String to check.
+<i>24</i>&nbsp;     * @return &lt;code&gt;true&lt;/code&gt; if string contains a valid e-mail address
+<i>25</i>&nbsp;     */
+<i>26</i>&nbsp;    public boolean isValidEmail(String email) {
+<b class="nc"><i>27</i>&nbsp;        if (email != null) {</b>
+<b class="nc"><i>28</i>&nbsp;            String emailRegex = &quot;^[a-zA-Z0-9_+&amp;*-]+(?:\\.&quot; +</b>
+<i>29</i>&nbsp;                    &quot;[a-zA-Z0-9_+&amp;*-]+)*@&quot; +
+<i>30</i>&nbsp;                    &quot;(?:[a-zA-Z0-9-]+\\.)+[a-z&quot; +
+<i>31</i>&nbsp;                    &quot;A-Z]{2,7}$&quot;;
+<b class="nc"><i>32</i>&nbsp;            Pattern pat = Pattern.compile(emailRegex);</b>
+<b class="nc"><i>33</i>&nbsp;            return pat.matcher(email).matches();</b>
+<i>34</i>&nbsp;        }
+<b class="nc"><i>35</i>&nbsp;        return false;</b>
+<i>36</i>&nbsp;    }
+<i>37</i>&nbsp;    
+<i>38</i>&nbsp;    /**
+<i>39</i>&nbsp;     * Validates a number.
+<i>40</i>&nbsp;     *
+<i>41</i>&nbsp;     * @param numerics
+<i>42</i>&nbsp;     * 		String to check.
+<i>43</i>&nbsp;     * @return &lt;code&gt;true&lt;/code&gt; if string only contains digits 0-9
+<i>44</i>&nbsp;     */
+<i>45</i>&nbsp;    public boolean isValidPositiveNumber(String numerics) {
+<b class="nc"><i>46</i>&nbsp;        if (numerics != null) {</b>
+<b class="nc"><i>47</i>&nbsp;            String numericsRegex = &quot;^\\d+$&quot;;</b>
+<b class="nc"><i>48</i>&nbsp;            Pattern pat = Pattern.compile(numericsRegex);</b>
+<b class="nc"><i>49</i>&nbsp;            return pat.matcher(numerics).matches();</b>
+<i>50</i>&nbsp;        }
+<b class="nc"><i>51</i>&nbsp;        return false;</b>
+<i>52</i>&nbsp;    }
+<i>53</i>&nbsp;    
+<i>54</i>&nbsp;    /**
+<i>55</i>&nbsp;     * Validates text using a regular expression
+<i>56</i>&nbsp;     *
+<i>57</i>&nbsp;     * @param safetext
+<i>58</i>&nbsp;     * 		String to check.
+<i>59</i>&nbsp;     * @return &lt;code&gt;true&lt;/code&gt; if string only contains lowercase letters, uppercase letters or digits.
+<i>60</i>&nbsp;     */
+<i>61</i>&nbsp;    public boolean isValidText (String safetext) {
+<b class="nc"><i>62</i>&nbsp;        if (safetext != null) {</b>
+<b class="nc"><i>63</i>&nbsp;            String safetextRegex = &quot;^[a-zA-Z0-9 .,;-_€@$äÄöÖüÜ!?#&amp;=]+$&quot;;</b>
+<b class="nc"><i>64</i>&nbsp;            Pattern pat = Pattern.compile(safetextRegex);</b>
+<b class="nc"><i>65</i>&nbsp;            return pat.matcher(safetext).matches();</b>
+<i>66</i>&nbsp;        }
+<b class="nc"><i>67</i>&nbsp;        return false;</b>
+<i>68</i>&nbsp;    }
+<i>69</i>&nbsp;
+<i>70</i>&nbsp;    /**
+<i>71</i>&nbsp;     * Validates text using a regular expression and checks for maximal length.
+<i>72</i>&nbsp;     *
+<i>73</i>&nbsp;     * @param safetext
+<i>74</i>&nbsp;     * 		String to check.
+<i>75</i>&nbsp;     * @param maxlength
+<i>76</i>&nbsp;     *      Maximal length.
+<i>77</i>&nbsp;     * @return &lt;code&gt;true&lt;/code&gt; if string only contains lowercase letters, uppercase letters or digits.
+<i>78</i>&nbsp;     */
+<i>79</i>&nbsp;    public boolean isValidText (String safetext, int maxlength) {
+<b class="nc"><i>80</i>&nbsp;        return isValidText(safetext) &amp;&amp; safetext.length() &lt;= maxlength;</b>
+<i>81</i>&nbsp;    }
+<i>82</i>&nbsp;
+<i>83</i>&nbsp;    /** Validates passwords using a regular expression
+<i>84</i>&nbsp;     *
+<i>85</i>&nbsp;     * @param password
+<i>86</i>&nbsp;     * @return &lt;code&gt;true&lt;/code&gt; if string has more than 5 characters
+<i>87</i>&nbsp;     */
+<i>88</i>&nbsp;    public boolean isValidPassword (String password) {
+<b class="nc"><i>89</i>&nbsp;        if (password != null) {</b>
+<i>90</i>&nbsp;            //String passwordRegex = &quot;^(?=.*[0-9]+.*)(?=.*[a-zA-Z]+.*)[\\p{L}\\p{N}\\p{P}]{6,}$&quot;;
+<b class="nc"><i>91</i>&nbsp;            String passwordRegex = &quot;^.{5,}$&quot;; //if someone wants to set a password consisting of 5 spaces, that&#39;s fine</b>
+<b class="nc"><i>92</i>&nbsp;            Pattern pat = Pattern.compile(passwordRegex);</b>
+<b class="nc"><i>93</i>&nbsp;            return pat.matcher(password).matches();</b>
+<i>94</i>&nbsp;        }
+<b class="nc"><i>95</i>&nbsp;        return false;</b>
+<i>96</i>&nbsp;    }
+<i>97</i>&nbsp;
+<i>98</i>&nbsp;
+<i>99</i>&nbsp;    /** Checks if two passwords are equal
+<i>100</i>&nbsp;     *
+<i>101</i>&nbsp;     * @param password
+<i>102</i>&nbsp;     * @return &lt;code&gt;true&lt;/code&gt; if string has more than 5 characters
+<i>103</i>&nbsp;     */
+<i>104</i>&nbsp;    public boolean isValidPassword (String password, String repeatPassword) {
+<b class="nc"><i>105</i>&nbsp;        if (password != null) {</b>
+<b class="nc"><i>106</i>&nbsp;            String passwordRegex = &quot;^.{5,}$&quot;; //if someone wants to set a password consisting of 5 spaces, that&#39;s fine</b>
+<b class="nc"><i>107</i>&nbsp;            Pattern pat = Pattern.compile(passwordRegex);</b>
+<b class="nc"><i>108</i>&nbsp;            if (repeatPassword != null &amp;&amp; pat.matcher(password).matches()) {</b>
+<b class="nc"><i>109</i>&nbsp;                return password.equals(repeatPassword);</b>
+<i>110</i>&nbsp;            }
+<i>111</i>&nbsp;        }
+<b class="nc"><i>112</i>&nbsp;        return false;</b>
+<i>113</i>&nbsp;    }
+<i>114</i>&nbsp;
+<i>115</i>&nbsp;    /**
+<i>116</i>&nbsp;     * Returns true if the extension of the filename is a supported image.
+<i>117</i>&nbsp;     *
+<i>118</i>&nbsp;     * @param pictureString
+<i>119</i>&nbsp;     *      Filename of a potential image.
+<i>120</i>&nbsp;     * @param maxlength
+<i>121</i>&nbsp;     *      Maximal length of filename.
+<i>122</i>&nbsp;     * @return &lt;code&gt;true&lt;/code&gt; if the extension of the filename is a supported image.
+<i>123</i>&nbsp;     */
+<i>124</i>&nbsp;    public boolean isValidPictureString (String pictureString, int maxlength) {
+<b class="nc"><i>125</i>&nbsp;        if (pictureString != null &amp;&amp; pictureString.length() &lt;= maxlength) {</b>
+<b class="nc"><i>126</i>&nbsp;            String passwordRegex = &quot;^\\d+\\/\\d+\\/.*\\.(?:(png|jpg))$&quot;;</b>
+<b class="nc"><i>127</i>&nbsp;            Pattern pat = Pattern.compile(passwordRegex);</b>
+<b class="nc"><i>128</i>&nbsp;            return pat.matcher(pictureString).matches();</b>
+<i>129</i>&nbsp;        }
+<b class="nc"><i>130</i>&nbsp;        return false;</b>
+<i>131</i>&nbsp;    }
+<i>132</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-06-26 10:09</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,138 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: MailSenderService</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">at.qe.sepm.skeleton.services</a> ]
+</div>
+
+<h1>Coverage Summary for Class: MailSenderService (at.qe.sepm.skeleton.services)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MailSenderService</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 13)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package at.qe.sepm.skeleton.services;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import org.slf4j.Logger;
+<i>4</i>&nbsp;import org.slf4j.LoggerFactory;
+<i>5</i>&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+<i>6</i>&nbsp;import org.springframework.context.annotation.Scope;
+<i>7</i>&nbsp;import org.springframework.mail.MailSender;
+<i>8</i>&nbsp;import org.springframework.mail.SimpleMailMessage;
+<i>9</i>&nbsp;import org.springframework.stereotype.Component;
+<i>10</i>&nbsp;import org.springframework.stereotype.Service;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;import java.util.concurrent.ExecutorService;
+<i>13</i>&nbsp;import java.util.concurrent.Executors;
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;/**
+<i>16</i>&nbsp; * Service for sending emails
+<i>17</i>&nbsp; *
+<i>18</i>&nbsp; * @author Johannes Spies
+<i>19</i>&nbsp; */
+<i>20</i>&nbsp;@Component
+<i>21</i>&nbsp;@Scope(&quot;application&quot;)
+<i>22</i>&nbsp;public class MailSenderService {
+<i>23</i>&nbsp;
+<b class="nc"><i>24</i>&nbsp;    private final Logger logger = LoggerFactory.getLogger(this.getClass());</b>
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;    private MailSender mailSender;
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;    @Autowired
+<b class="nc"><i>29</i>&nbsp;    public MailSenderService(MailSender mailSender) {</b>
+<b class="nc"><i>30</i>&nbsp;        this.mailSender = mailSender;</b>
+<b class="nc"><i>31</i>&nbsp;    }</b>
+<i>32</i>&nbsp;    
+<i>33</i>&nbsp;    /**
+<i>34</i>&nbsp;     * Creates a mail object an sends an email to the given address
+<i>35</i>&nbsp;     *
+<i>36</i>&nbsp;     * @param address
+<i>37</i>&nbsp;     * 		Address of the recipient of the email.
+<i>38</i>&nbsp;     * @param subject
+<i>39</i>&nbsp;     * 		Subject of the email.
+<i>40</i>&nbsp;     * @param content
+<i>41</i>&nbsp;     * 		Content of the email.
+<i>42</i>&nbsp;     */
+<i>43</i>&nbsp;    public void sendUserMail(String address, String subject, String content) {
+<b class="nc"><i>44</i>&nbsp;        SimpleMailMessage mail = new SimpleMailMessage();</b>
+<b class="nc"><i>45</i>&nbsp;        mail.setFrom(&quot;Quizconnect &lt;mail@quizconnect.rocks&gt;&quot;);</b>
+<b class="nc"><i>46</i>&nbsp;        mail.setTo(address);</b>
+<b class="nc"><i>47</i>&nbsp;        mail.setSubject(subject);</b>
+<b class="nc"><i>48</i>&nbsp;        mail.setText(content);</b>
+<b class="nc"><i>49</i>&nbsp;        logger.info(&quot;sending user mail&quot;);</b>
+<i>50</i>&nbsp;
+<b class="nc"><i>51</i>&nbsp;        ExecutorService executor = Executors.newWorkStealingPool();</b>
+<b class="nc"><i>52</i>&nbsp;        executor.execute(() -&gt; mailSender.send(mail));</b>
+<b class="nc"><i>53</i>&nbsp;    }</b>
+<i>54</i>&nbsp;
+<i>55</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-06-26 10:09</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,98 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: AbstractRepository</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">at.qe.sepm.skeleton.repositories</a> ]
+</div>
+
+<h1>Coverage Summary for Class: AbstractRepository (at.qe.sepm.skeleton.repositories)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">AbstractRepository</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package at.qe.sepm.skeleton.repositories;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.Serializable;
+<i>4</i>&nbsp;import java.util.List;
+<i>5</i>&nbsp;import org.springframework.data.repository.NoRepositoryBean;
+<i>6</i>&nbsp;import org.springframework.data.repository.Repository;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;/**
+<i>9</i>&nbsp; * Common base repository for all other repositories. Provides basic methods for
+<i>10</i>&nbsp; * loading, saving and removing entities.
+<i>11</i>&nbsp; *
+<i>12</i>&nbsp; * @param &lt;T&gt; The domain type this repository manages.
+<i>13</i>&nbsp; * @param &lt;ID&gt; The type of the id of the entity this repository manages.
+<i>14</i>&nbsp; */
+<i>15</i>&nbsp;@NoRepositoryBean
+<i>16</i>&nbsp;public interface AbstractRepository&lt;T, ID extends Serializable&gt; extends Repository&lt;T, ID&gt; {
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;    /**
+<i>19</i>&nbsp;     * Deletes an entity.
+<i>20</i>&nbsp;     *
+<i>21</i>&nbsp;     * @param entity The entity to be deleted.
+<i>22</i>&nbsp;     * @throws IllegalArgumentException If the given entity is (@literal null}.
+<i>23</i>&nbsp;     */
+<i>24</i>&nbsp;    void delete(T entity);
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;    /**
+<i>27</i>&nbsp;     * Returns all instances of the type.
+<i>28</i>&nbsp;     *
+<i>29</i>&nbsp;     * @return All entities.
+<i>30</i>&nbsp;     */
+<i>31</i>&nbsp;    List&lt;T&gt; findAll();
+<i>32</i>&nbsp;
+<i>33</i>&nbsp;    /**
+<i>34</i>&nbsp;     * Retrieves an entity by its id.
+<i>35</i>&nbsp;     *
+<i>36</i>&nbsp;     * @param id must not be {@literal null}.
+<i>37</i>&nbsp;     * @return The entity with the given id or {@literal null} if none found.
+<i>38</i>&nbsp;     * @throws IllegalArgumentException If {@code id} is {@literal null}.
+<i>39</i>&nbsp;     */
+<i>40</i>&nbsp;    T findOne(ID id);
+<i>41</i>&nbsp;
+<i>42</i>&nbsp;    /**
+<i>43</i>&nbsp;     * Saves a given entity. Use the returned instance for further operations as
+<i>44</i>&nbsp;     * the save operation might have changed the entity instance completely.
+<i>45</i>&nbsp;     *
+<i>46</i>&nbsp;     * @param &lt;S&gt; The actual domain type if the entity.
+<i>47</i>&nbsp;     * @param entity The entity to be saved or updated.
+<i>48</i>&nbsp;     * @return The saved entity.
+<i>49</i>&nbsp;     */
+<i>50</i>&nbsp;    &lt;S extends T&gt; S save(S entity);
+<i>51</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-06-26 10:09</div>
+</div>
+</body>
+</html>

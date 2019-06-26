@@ -1,0 +1,177 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: AssignQuestionEvent</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">at.qe.sepm.skeleton.socket.events</a> ]
+</div>
+
+<h1>Coverage Summary for Class: AssignQuestionEvent (at.qe.sepm.skeleton.socket.events)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AssignQuestionEvent</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (14/ 14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    74,4%
+  </span>
+  <span class="absValue">
+    (29/ 39)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package at.qe.sepm.skeleton.socket.events;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.ArrayList;
+<i>4</i>&nbsp;import java.util.List;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import at.qe.sepm.skeleton.logic.ActiveQuestion;
+<i>7</i>&nbsp;import at.qe.sepm.skeleton.logic.QR_Question;
+<i>8</i>&nbsp;import at.qe.sepm.skeleton.model.QuestionType;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;/**
+<i>11</i>&nbsp; * Class for JSON representation of the &#39;assignQuestion&#39; QuizRoom event.
+<i>12</i>&nbsp; */
+<i>13</i>&nbsp;public class AssignQuestionEvent extends SocketEvent {
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;    private int questionId;
+<i>16</i>&nbsp;    private QuestionType type;
+<i>17</i>&nbsp;    private String question;
+<i>18</i>&nbsp;    private int playerId;
+<i>19</i>&nbsp;    private long timeRemaining;
+<i>20</i>&nbsp;    private List&lt;AnswerJSON&gt; answers;
+<i>21</i>&nbsp;
+<b class="fc"><i>22</i>&nbsp;    public AssignQuestionEvent(){}</b>
+<i>23</i>&nbsp;
+<b class="fc"><i>24</i>&nbsp;    public AssignQuestionEvent(ActiveQuestion aq){</b>
+<b class="fc"><i>25</i>&nbsp;		QR_Question q = aq.question;</b>
+<b class="fc"><i>26</i>&nbsp;        this.questionId = q.getId();</b>
+<b class="fc"><i>27</i>&nbsp;        this.type = q.getType();</b>
+<b class="fc"><i>28</i>&nbsp;        this.question = q.getQuestionString();</b>
+<b class="fc"><i>29</i>&nbsp;        this.playerId = aq.playerQuestion.getId();</b>
+<b class="fc"><i>30</i>&nbsp;        this.timeRemaining = aq.timeRemaining;</b>
+<b class="fc"><i>31</i>&nbsp;        this.answers = new ArrayList&lt;&gt;();</b>
+<i>32</i>&nbsp;
+<b class="fc"><i>33</i>&nbsp;        answers.add(new AnswerJSON(0, q.getRightAnswerString(), aq.playerAnswer.getId()));</b>
+<b class="fc"><i>34</i>&nbsp;        if(aq.playersWrongAnswers == null || aq.playersWrongAnswers.size() == 0) return;</b>
+<b class="nc"><i>35</i>&nbsp;        answers.add(new AnswerJSON(1, q.getWrongAnswerString_1(), aq.playersWrongAnswers.get(0).getId()));</b>
+<b class="nc"><i>36</i>&nbsp;        if(aq.playersWrongAnswers.size() == 1) return;</b>
+<b class="nc"><i>37</i>&nbsp;        answers.add(new AnswerJSON(2, q.getWrongAnswerString_2(), aq.playersWrongAnswers.get(1).getId()));</b>
+<b class="nc"><i>38</i>&nbsp;        if(aq.playersWrongAnswers.size() == 2) return;</b>
+<b class="nc"><i>39</i>&nbsp;        answers.add(new AnswerJSON(3, q.getWrongAnswerString_3(), aq.playersWrongAnswers.get(2).getId()));</b>
+<b class="nc"><i>40</i>&nbsp;        if(aq.playersWrongAnswers.size() == 3) return;</b>
+<b class="nc"><i>41</i>&nbsp;        answers.add(new AnswerJSON(4, q.getWrongAnswerString_4(), aq.playersWrongAnswers.get(3).getId()));</b>
+<b class="nc"><i>42</i>&nbsp;        if(aq.playersWrongAnswers.size() == 4) return;</b>
+<b class="nc"><i>43</i>&nbsp;        answers.add(new AnswerJSON(5, q.getWrongAnswerString_5(), aq.playersWrongAnswers.get(4).getId()));</b>
+<i>44</i>&nbsp;
+<b class="nc"><i>45</i>&nbsp;    }</b>
+<i>46</i>&nbsp;
+<i>47</i>&nbsp;    public int getQuestionId() {
+<b class="fc"><i>48</i>&nbsp;        return questionId;</b>
+<i>49</i>&nbsp;    }
+<i>50</i>&nbsp;
+<i>51</i>&nbsp;    public void setQuestionId(int questionId) {
+<b class="fc"><i>52</i>&nbsp;        this.questionId = questionId;</b>
+<b class="fc"><i>53</i>&nbsp;    }</b>
+<i>54</i>&nbsp;
+<i>55</i>&nbsp;    public QuestionType getType() {
+<b class="fc"><i>56</i>&nbsp;        return type;</b>
+<i>57</i>&nbsp;    }
+<i>58</i>&nbsp;
+<i>59</i>&nbsp;    public void setType(QuestionType type) {
+<b class="fc"><i>60</i>&nbsp;        this.type = type;</b>
+<b class="fc"><i>61</i>&nbsp;    }</b>
+<i>62</i>&nbsp;
+<i>63</i>&nbsp;    public String getQuestion() {
+<b class="fc"><i>64</i>&nbsp;        return question;</b>
+<i>65</i>&nbsp;    }
+<i>66</i>&nbsp;
+<i>67</i>&nbsp;    public void setQuestion(String question) {
+<b class="fc"><i>68</i>&nbsp;        this.question = question;</b>
+<b class="fc"><i>69</i>&nbsp;    }</b>
+<i>70</i>&nbsp;
+<i>71</i>&nbsp;    public int getPlayerId() {
+<b class="fc"><i>72</i>&nbsp;        return playerId;</b>
+<i>73</i>&nbsp;    }
+<i>74</i>&nbsp;
+<i>75</i>&nbsp;    public void setPlayerId(int playerId) {
+<b class="fc"><i>76</i>&nbsp;        this.playerId = playerId;</b>
+<b class="fc"><i>77</i>&nbsp;    }</b>
+<i>78</i>&nbsp;
+<i>79</i>&nbsp;    public long getTimeRemaining() {
+<b class="fc"><i>80</i>&nbsp;        return timeRemaining;</b>
+<i>81</i>&nbsp;    }
+<i>82</i>&nbsp;
+<i>83</i>&nbsp;    public void setTimeRemaining(long timeRemaining) {
+<b class="fc"><i>84</i>&nbsp;        this.timeRemaining = timeRemaining;</b>
+<b class="fc"><i>85</i>&nbsp;    }</b>
+<i>86</i>&nbsp;
+<i>87</i>&nbsp;    public List&lt;AnswerJSON&gt; getAnswers() {
+<b class="fc"><i>88</i>&nbsp;        return answers;</b>
+<i>89</i>&nbsp;    }
+<i>90</i>&nbsp;
+<i>91</i>&nbsp;    public void setAnswers(List&lt;AnswerJSON&gt; answers) {
+<b class="fc"><i>92</i>&nbsp;        this.answers = answers;</b>
+<b class="fc"><i>93</i>&nbsp;    }</b>
+<i>94</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-06-26 10:09</div>
+</div>
+</body>
+</html>

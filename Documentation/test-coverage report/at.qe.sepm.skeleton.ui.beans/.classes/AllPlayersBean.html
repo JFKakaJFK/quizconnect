@@ -1,0 +1,282 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: AllPlayersBean</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">at.qe.sepm.skeleton.ui.beans</a> ]
+</div>
+
+<h1>Coverage Summary for Class: AllPlayersBean (at.qe.sepm.skeleton.ui.beans)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AllPlayersBean</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 18)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 55)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package at.qe.sepm.skeleton.ui.beans;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import at.qe.sepm.skeleton.model.Player;
+<i>4</i>&nbsp;import at.qe.sepm.skeleton.model.User;
+<i>5</i>&nbsp;import at.qe.sepm.skeleton.services.PlayerService;
+<i>6</i>&nbsp;import at.qe.sepm.skeleton.utils.ScrollPaginator;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+<i>9</i>&nbsp;import org.springframework.context.annotation.Scope;
+<i>10</i>&nbsp;import org.springframework.stereotype.Controller;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;import javax.faces.event.AjaxBehaviorEvent;
+<i>13</i>&nbsp;import java.io.Serializable;
+<i>14</i>&nbsp;import java.util.ArrayList;
+<i>15</i>&nbsp;import java.util.List;
+<i>16</i>&nbsp;import java.util.stream.Collectors;
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;/**
+<i>19</i>&nbsp; * Bean that shows all players for the {@link Player} overview.
+<i>20</i>&nbsp; * For each online user, the users are loaded only once per session and
+<i>21</i>&nbsp; * are locally updated if the {@link User} adds/removes a {@link Player}.
+<i>22</i>&nbsp; */
+<i>23</i>&nbsp;@Controller
+<i>24</i>&nbsp;@Scope(&quot;view&quot;)
+<i>25</i>&nbsp;public class AllPlayersBean implements Serializable {
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;    private PlayerService playerService;
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;    private List&lt;Player&gt; allPlayers;
+<i>30</i>&nbsp;    private List&lt;Player&gt; allByManager;
+<b class="nc"><i>31</i>&nbsp;    private String searchPhrase = &quot;&quot;;</b>
+<i>32</i>&nbsp;    private User user;
+<i>33</i>&nbsp;    private boolean onlyByManager;
+<i>34</i>&nbsp;    private ScrollPaginator&lt;Player&gt; paginator;
+<i>35</i>&nbsp;
+<i>36</i>&nbsp;    @Autowired
+<b class="nc"><i>37</i>&nbsp;    public AllPlayersBean(PlayerService playerService, SessionInfoBean sessionInfoBean){</b>
+<b class="nc"><i>38</i>&nbsp;        this.playerService = playerService;</b>
+<b class="nc"><i>39</i>&nbsp;        this.user = sessionInfoBean.getCurrentUser();</b>
+<b class="nc"><i>40</i>&nbsp;        this.paginator = null;</b>
+<b class="nc"><i>41</i>&nbsp;    }</b>
+<i>42</i>&nbsp;
+<i>43</i>&nbsp;    /**
+<i>44</i>&nbsp;     * Updates the currently shown players by filtering accoriding to user input
+<i>45</i>&nbsp;     *
+<i>46</i>&nbsp;     * @param event
+<i>47</i>&nbsp;     */
+<i>48</i>&nbsp;    public void handleSearch(AjaxBehaviorEvent event){
+<b class="nc"><i>49</i>&nbsp;        filterAndUpdatePlayers();</b>
+<b class="nc"><i>50</i>&nbsp;    }</b>
+<i>51</i>&nbsp;
+<i>52</i>&nbsp;    /**
+<i>53</i>&nbsp;     * Filters the {@link Player}s using {@link this#searchPhrase} and updates {@link this#paginator}.
+<i>54</i>&nbsp;     *
+<i>55</i>&nbsp;     * Any mutation of {@link this#allPlayers} or {@link this#allByManager} must call this method to update the {@link ScrollPaginator}.
+<i>56</i>&nbsp;     */
+<i>57</i>&nbsp;    private void filterAndUpdatePlayers(){
+<b class="nc"><i>58</i>&nbsp;        getPaginator().updateList((onlyByManager &amp;&amp; isManager() ? getAllByManager() : getAllPlayers()).stream().parallel()</b>
+<b class="nc"><i>59</i>&nbsp;                .filter(player -&gt; player.getUser().getUsername().toLowerCase().contains(searchPhrase.toLowerCase()))</b>
+<b class="nc"><i>60</i>&nbsp;                .collect(Collectors.toList()));</b>
+<b class="nc"><i>61</i>&nbsp;    }</b>
+<i>62</i>&nbsp;    
+<i>63</i>&nbsp;    /**
+<i>64</i>&nbsp;     * @return All {@link Player}s by the currently logged in {@link at.qe.sepm.skeleton.model.Manager} or {@link null}
+<i>65</i>&nbsp;     * 		if the current {@link User} is no {@link at.qe.sepm.skeleton.model.Manager}. Fetches from the Database if necessary.
+<i>66</i>&nbsp;     */
+<i>67</i>&nbsp;    public List&lt;Player&gt; getAllByManager(){
+<b class="nc"><i>68</i>&nbsp;        if(isManager() &amp;&amp; allByManager == null){</b>
+<b class="nc"><i>69</i>&nbsp;            allByManager = playerService.getPlayersOfManager(user.getManager());</b>
+<i>70</i>&nbsp;        }
+<b class="nc"><i>71</i>&nbsp;        return allByManager;</b>
+<i>72</i>&nbsp;    }
+<i>73</i>&nbsp;
+<i>74</i>&nbsp;    /**
+<i>75</i>&nbsp;     * Since lazy loading getters are used internally
+<i>76</i>&nbsp;     */
+<i>77</i>&nbsp;    public void refresh(){
+<b class="nc"><i>78</i>&nbsp;        this.allByManager = null;</b>
+<b class="nc"><i>79</i>&nbsp;        this.allPlayers = null;</b>
+<b class="nc"><i>80</i>&nbsp;        filterAndUpdatePlayers();</b>
+<b class="nc"><i>81</i>&nbsp;    }</b>
+<i>82</i>&nbsp;
+<i>83</i>&nbsp;    /**
+<i>84</i>&nbsp;     * Returns true if the current {@link User} is a {@link at.qe.sepm.skeleton.model.Manager}
+<i>85</i>&nbsp;     *
+<i>86</i>&nbsp;     * @return True if the current {@link User} is a {@link at.qe.sepm.skeleton.model.Manager}
+<i>87</i>&nbsp;     */
+<i>88</i>&nbsp;    public boolean isManager(){
+<b class="nc"><i>89</i>&nbsp;        return user.getManager() != null;</b>
+<i>90</i>&nbsp;    }
+<i>91</i>&nbsp;    
+<i>92</i>&nbsp;    /**
+<i>93</i>&nbsp;     * @param p
+<i>94</i>&nbsp;     * 		Player to be potentially edited.
+<i>95</i>&nbsp;     * @return True if the current {@link User} is allowed to edit the {@link Player}
+<i>96</i>&nbsp;     */
+<i>97</i>&nbsp;    public boolean isEditable(Player p){
+<b class="nc"><i>98</i>&nbsp;        return (user.getPlayer() != null &amp;&amp; user.getPlayer().equals(p)) || isDeletable(p);</b>
+<i>99</i>&nbsp;    }
+<i>100</i>&nbsp;    
+<i>101</i>&nbsp;    /**
+<i>102</i>&nbsp;     * @param p
+<i>103</i>&nbsp;     * 		Player to be potentially deleted.
+<i>104</i>&nbsp;     * @return True if the current {@link User} is allowed to delete the {@link Player}
+<i>105</i>&nbsp;     */
+<i>106</i>&nbsp;    public boolean isDeletable(Player p){
+<b class="nc"><i>107</i>&nbsp;        return isManager() &amp;&amp; getAllByManager().contains(p);</b>
+<i>108</i>&nbsp;    }
+<i>109</i>&nbsp;
+<i>110</i>&nbsp;    /**
+<i>111</i>&nbsp;     * @return All {@link Player}s . Fetches from the Database if necessary.
+<i>112</i>&nbsp;     */
+<i>113</i>&nbsp;    public List&lt;Player&gt; getAllPlayers(){
+<b class="nc"><i>114</i>&nbsp;        if(allPlayers == null){</b>
+<b class="nc"><i>115</i>&nbsp;            allPlayers = new ArrayList&lt;&gt;(playerService.getAllPlayers());</b>
+<i>116</i>&nbsp;        }
+<b class="nc"><i>117</i>&nbsp;        return allPlayers;</b>
+<i>118</i>&nbsp;    }
+<i>119</i>&nbsp;
+<i>120</i>&nbsp;    public String getSearchPhrase() {
+<b class="nc"><i>121</i>&nbsp;        return searchPhrase;</b>
+<i>122</i>&nbsp;    }
+<i>123</i>&nbsp;
+<i>124</i>&nbsp;    public void setSearchPhrase(String searchPhrase) {
+<b class="nc"><i>125</i>&nbsp;        this.searchPhrase = searchPhrase.trim();</b>
+<b class="nc"><i>126</i>&nbsp;    }</b>
+<i>127</i>&nbsp;
+<i>128</i>&nbsp;    public boolean isOnlyByManager() {
+<b class="nc"><i>129</i>&nbsp;        return onlyByManager;</b>
+<i>130</i>&nbsp;    }
+<i>131</i>&nbsp;
+<i>132</i>&nbsp;    public void setOnlyByManager(boolean onlyByManager) {
+<b class="nc"><i>133</i>&nbsp;        this.onlyByManager = onlyByManager;</b>
+<b class="nc"><i>134</i>&nbsp;        filterAndUpdatePlayers();</b>
+<b class="nc"><i>135</i>&nbsp;    }</b>
+<i>136</i>&nbsp;
+<i>137</i>&nbsp;    /**
+<i>138</i>&nbsp;     * Adds a {@link Player} to the list of {@link Player}.
+<i>139</i>&nbsp;     *
+<i>140</i>&nbsp;     * There is no check for duplicates since the method is only called when a new player is added, and the
+<i>141</i>&nbsp;     * additional O(number of all players) runtime is simply not necessary.
+<i>142</i>&nbsp;     *
+<i>143</i>&nbsp;     * @param p {@link Player} to add
+<i>144</i>&nbsp;     */
+<i>145</i>&nbsp;    public void addPlayer(Player p){
+<b class="nc"><i>146</i>&nbsp;        if(allPlayers == null){</b>
+<b class="nc"><i>147</i>&nbsp;            this.allPlayers = new ArrayList&lt;&gt;(playerService.getAllPlayers());</b>
+<i>148</i>&nbsp;        } else {
+<b class="nc"><i>149</i>&nbsp;            allPlayers.add(p);</b>
+<i>150</i>&nbsp;        }
+<b class="nc"><i>151</i>&nbsp;        if(allByManager == null){</b>
+<b class="nc"><i>152</i>&nbsp;            this.allByManager = playerService.getPlayersOfManager(user.getManager());</b>
+<i>153</i>&nbsp;        } else {
+<b class="nc"><i>154</i>&nbsp;            allByManager.add(p);</b>
+<i>155</i>&nbsp;        }
+<b class="nc"><i>156</i>&nbsp;        filterAndUpdatePlayers();</b>
+<b class="nc"><i>157</i>&nbsp;    }</b>
+<i>158</i>&nbsp;
+<i>159</i>&nbsp;    /**
+<i>160</i>&nbsp;     * Removes a {@link Player} from the list of {@link Player}s
+<i>161</i>&nbsp;     *
+<i>162</i>&nbsp;     * @param p {@link Player} to remove
+<i>163</i>&nbsp;     */
+<i>164</i>&nbsp;    public void removePlayer(Player p){
+<b class="nc"><i>165</i>&nbsp;        if(allPlayers == null){</b>
+<b class="nc"><i>166</i>&nbsp;            this.allPlayers = new ArrayList&lt;&gt;(playerService.getAllPlayers());</b>
+<i>167</i>&nbsp;        } else {
+<b class="nc"><i>168</i>&nbsp;            allPlayers.remove(p);</b>
+<i>169</i>&nbsp;        }
+<b class="nc"><i>170</i>&nbsp;        if(allByManager == null){</b>
+<b class="nc"><i>171</i>&nbsp;            this.allByManager = playerService.getPlayersOfManager(user.getManager());</b>
+<i>172</i>&nbsp;        } else {
+<b class="nc"><i>173</i>&nbsp;            allByManager.remove(p);</b>
+<i>174</i>&nbsp;        }
+<b class="nc"><i>175</i>&nbsp;        filterAndUpdatePlayers();</b>
+<b class="nc"><i>176</i>&nbsp;    }</b>
+<i>177</i>&nbsp;
+<i>178</i>&nbsp;    /**
+<i>179</i>&nbsp;     * Lazily initializes the paginator or returns the existing paginator;
+<i>180</i>&nbsp;     *
+<i>181</i>&nbsp;     * @return
+<i>182</i>&nbsp;     *      A {@link ScrollPaginator} of all filtered Players.
+<i>183</i>&nbsp;     */
+<i>184</i>&nbsp;    public ScrollPaginator&lt;Player&gt; getPaginator() {
+<b class="nc"><i>185</i>&nbsp;        if(paginator == null){</b>
+<b class="nc"><i>186</i>&nbsp;            this.paginator = new ScrollPaginator&lt;&gt;(getAllPlayers(), 20); // about the number of players fitting into one viewport</b>
+<i>187</i>&nbsp;        }
+<b class="nc"><i>188</i>&nbsp;        return paginator;</b>
+<i>189</i>&nbsp;    }
+<i>190</i>&nbsp;
+<i>191</i>&nbsp;    public void setPaginator(ScrollPaginator&lt;Player&gt; paginator) {
+<b class="nc"><i>192</i>&nbsp;        this.paginator = paginator;</b>
+<b class="nc"><i>193</i>&nbsp;    }</b>
+<i>194</i>&nbsp;
+<i>195</i>&nbsp;    public void setUser(User user) {
+<b class="nc"><i>196</i>&nbsp;        this.user = user;</b>
+<b class="nc"><i>197</i>&nbsp;    }</b>
+<i>198</i>&nbsp;
+<i>199</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-06-26 10:09</div>
+</div>
+</body>
+</html>

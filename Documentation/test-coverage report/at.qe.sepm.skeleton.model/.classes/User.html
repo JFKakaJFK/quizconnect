@@ -1,0 +1,250 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: User</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">at.qe.sepm.skeleton.model</a> ]
+</div>
+
+<h1>Coverage Summary for Class: User (at.qe.sepm.skeleton.model)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">User</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (18/ 18)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    94,9%
+  </span>
+  <span class="absValue">
+    (37/ 39)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">User$$DynamicSubclass$840095827</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (18/ 18)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    94,9%
+  </span>
+  <span class="absValue">
+    (37/ 39)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package at.qe.sepm.skeleton.model;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.Date;
+<i>4</i>&nbsp;import java.util.Objects;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import javax.persistence.CascadeType;
+<i>7</i>&nbsp;import javax.persistence.Column;
+<i>8</i>&nbsp;import javax.persistence.Entity;
+<i>9</i>&nbsp;import javax.persistence.EnumType;
+<i>10</i>&nbsp;import javax.persistence.Enumerated;
+<i>11</i>&nbsp;import javax.persistence.FetchType;
+<i>12</i>&nbsp;import javax.persistence.Id;
+<i>13</i>&nbsp;import javax.persistence.OneToOne;
+<i>14</i>&nbsp;import javax.persistence.Temporal;
+<i>15</i>&nbsp;import javax.persistence.TemporalType;
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;import org.springframework.data.domain.Persistable;
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;/**
+<i>20</i>&nbsp; * Entity representing users. Users must have either an associated Player or Manager. User role gets set automatically upon assigning a Manager or Player to the User.
+<i>21</i>&nbsp; */
+<i>22</i>&nbsp;@Entity
+<b class="fc"><i>23</i>&nbsp;public class User implements Persistable&lt;String&gt; {</b>
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;    private static final long serialVersionUID = 1L;
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;    @Id
+<i>28</i>&nbsp;    @Column(length = 100)
+<i>29</i>&nbsp;    private String username;
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;    @Column(nullable = false)
+<i>32</i>&nbsp;    @Temporal(TemporalType.TIMESTAMP)
+<i>33</i>&nbsp;    private Date createDate;
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;    private String password;
+<i>36</i>&nbsp;	
+<i>37</i>&nbsp;	private boolean enabled;
+<i>38</i>&nbsp;	
+<i>39</i>&nbsp;	@OneToOne(mappedBy = &quot;user&quot;, fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+<i>40</i>&nbsp;	private Player player;
+<i>41</i>&nbsp;	
+<i>42</i>&nbsp;	@OneToOne(mappedBy = &quot;user&quot;, fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+<i>43</i>&nbsp;	private Manager manager;
+<i>44</i>&nbsp;
+<i>45</i>&nbsp;	@Enumerated(EnumType.STRING)
+<i>46</i>&nbsp;	private UserRole role;
+<i>47</i>&nbsp;
+<i>48</i>&nbsp;    public String getUsername() {
+<b class="fc"><i>49</i>&nbsp;        return username;</b>
+<i>50</i>&nbsp;    }
+<i>51</i>&nbsp;
+<i>52</i>&nbsp;    public void setUsername(String username) {
+<b class="fc"><i>53</i>&nbsp;        this.username = username;</b>
+<b class="fc"><i>54</i>&nbsp;    }</b>
+<i>55</i>&nbsp;
+<i>56</i>&nbsp;    public String getPassword() {
+<b class="fc"><i>57</i>&nbsp;        return password;</b>
+<i>58</i>&nbsp;    }
+<i>59</i>&nbsp;
+<i>60</i>&nbsp;    public void setPassword(String password) {
+<b class="fc"><i>61</i>&nbsp;        this.password = password;</b>
+<b class="fc"><i>62</i>&nbsp;    }</b>
+<i>63</i>&nbsp;	
+<i>64</i>&nbsp;	public boolean isEnabled()
+<i>65</i>&nbsp;	{
+<b class="fc"><i>66</i>&nbsp;		return enabled;</b>
+<i>67</i>&nbsp;	}
+<i>68</i>&nbsp;
+<i>69</i>&nbsp;	public void setEnabled(boolean enabled)
+<i>70</i>&nbsp;	{
+<b class="fc"><i>71</i>&nbsp;		this.enabled = enabled;</b>
+<b class="fc"><i>72</i>&nbsp;	}</b>
+<i>73</i>&nbsp;	
+<i>74</i>&nbsp;	public Date getCreateDate()
+<i>75</i>&nbsp;	{
+<b class="fc"><i>76</i>&nbsp;        return createDate;</b>
+<i>77</i>&nbsp;    }
+<i>78</i>&nbsp;
+<i>79</i>&nbsp;    public void setCreateDate(Date createDate) {
+<b class="fc"><i>80</i>&nbsp;        this.createDate = createDate;</b>
+<b class="fc"><i>81</i>&nbsp;    }</b>
+<i>82</i>&nbsp;
+<i>83</i>&nbsp;	public Player getPlayer()
+<i>84</i>&nbsp;	{
+<b class="fc"><i>85</i>&nbsp;		return player;</b>
+<i>86</i>&nbsp;	}
+<i>87</i>&nbsp;	
+<i>88</i>&nbsp;	/**
+<i>89</i>&nbsp;	 * Called automatically upon creation of a new {@link Player}. Should not be called manually!
+<i>90</i>&nbsp;	 */
+<i>91</i>&nbsp;	public void setPlayer(Player player)
+<i>92</i>&nbsp;	{
+<b class="fc"><i>93</i>&nbsp;		if (this.manager != null)</b>
+<b class="nc"><i>94</i>&nbsp;			throw new IllegalArgumentException(&quot;Cannot set Player with Manager already set!&quot;);</b>
+<b class="fc"><i>95</i>&nbsp;		this.player = player;</b>
+<b class="fc"><i>96</i>&nbsp;		this.role = UserRole.PLAYER;</b>
+<b class="fc"><i>97</i>&nbsp;	}</b>
+<i>98</i>&nbsp;	
+<i>99</i>&nbsp;	public Manager getManager()
+<i>100</i>&nbsp;	{
+<b class="fc"><i>101</i>&nbsp;		return manager;</b>
+<i>102</i>&nbsp;	}
+<i>103</i>&nbsp;	
+<i>104</i>&nbsp;	/**
+<i>105</i>&nbsp;	 * Called automatically upon creation of a new {@link Manager}. Should not be called manually!
+<i>106</i>&nbsp;	 */
+<i>107</i>&nbsp;	public void setManager(Manager manager)
+<i>108</i>&nbsp;	{
+<b class="fc"><i>109</i>&nbsp;		if (this.player != null)</b>
+<b class="nc"><i>110</i>&nbsp;			throw new IllegalArgumentException(&quot;Cannot set Manager with Player already set!&quot;);</b>
+<b class="fc"><i>111</i>&nbsp;		this.manager = manager;</b>
+<b class="fc"><i>112</i>&nbsp;		this.role = UserRole.MANAGER;</b>
+<b class="fc"><i>113</i>&nbsp;	}</b>
+<i>114</i>&nbsp;
+<i>115</i>&nbsp;	public UserRole getRole()
+<i>116</i>&nbsp;	{
+<b class="fc"><i>117</i>&nbsp;		return role;</b>
+<i>118</i>&nbsp;	}
+<i>119</i>&nbsp;
+<i>120</i>&nbsp;	@Override
+<i>121</i>&nbsp;    public int hashCode() {
+<b class="fc"><i>122</i>&nbsp;        int hash = 7;</b>
+<b class="fc"><i>123</i>&nbsp;        hash = 59 * hash + Objects.hashCode(this.username);</b>
+<b class="fc"><i>124</i>&nbsp;        return hash;</b>
+<i>125</i>&nbsp;    }
+<i>126</i>&nbsp;
+<i>127</i>&nbsp;    @Override
+<i>128</i>&nbsp;    public boolean equals(Object obj) {
+<b class="fc"><i>129</i>&nbsp;        if (obj == null) {</b>
+<b class="fc"><i>130</i>&nbsp;            return false;</b>
+<i>131</i>&nbsp;        }
+<b class="fc"><i>132</i>&nbsp;        if (!(obj instanceof User)) {</b>
+<b class="fc"><i>133</i>&nbsp;            return false;</b>
+<i>134</i>&nbsp;        }
+<b class="fc"><i>135</i>&nbsp;        final User other = (User) obj;</b>
+<b class="fc"><i>136</i>&nbsp;        if (!Objects.equals(this.username, other.username)) {</b>
+<b class="fc"><i>137</i>&nbsp;            return false;</b>
+<i>138</i>&nbsp;        }
+<b class="fc"><i>139</i>&nbsp;        return true;</b>
+<i>140</i>&nbsp;    }
+<i>141</i>&nbsp;
+<i>142</i>&nbsp;    //@Override
+<i>143</i>&nbsp;    //public String toString() {
+<i>144</i>&nbsp;    //    return &quot;at.qe.sepm.skeleton.model.User[ id=&quot; + username + &quot; ]&quot;;
+<i>145</i>&nbsp;    //}
+<i>146</i>&nbsp;
+<i>147</i>&nbsp;    @Override
+<i>148</i>&nbsp;    public String getId() {
+<b class="fc"><i>149</i>&nbsp;		return username;</b>
+<i>150</i>&nbsp;    }
+<i>151</i>&nbsp;
+<i>152</i>&nbsp;    @Override
+<i>153</i>&nbsp;    public boolean isNew() {
+<b class="fc"><i>154</i>&nbsp;        return (null == createDate);</b>
+<i>155</i>&nbsp;    }
+<i>156</i>&nbsp;
+<i>157</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-06-26 10:09</div>
+</div>
+</body>
+</html>

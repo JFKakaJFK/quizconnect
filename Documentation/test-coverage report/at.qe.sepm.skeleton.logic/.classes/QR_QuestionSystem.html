@@ -1,0 +1,679 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: QR_QuestionSystem</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">at.qe.sepm.skeleton.logic</a> ]
+</div>
+
+<h1>Coverage Summary for Class: QR_QuestionSystem (at.qe.sepm.skeleton.logic)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">QR_QuestionSystem</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    15,8%
+  </span>
+  <span class="absValue">
+    (3/ 19)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    22,4%
+  </span>
+  <span class="absValue">
+    (55/ 246)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package at.qe.sepm.skeleton.logic;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import at.qe.sepm.skeleton.model.Player;
+<i>4</i>&nbsp;import at.qe.sepm.skeleton.model.Question;
+<i>5</i>&nbsp;import at.qe.sepm.skeleton.model.QuestionSet;
+<i>6</i>&nbsp;import at.qe.sepm.skeleton.model.QuestionSetDifficulty;
+<i>7</i>&nbsp;import org.slf4j.Logger;
+<i>8</i>&nbsp;import org.slf4j.LoggerFactory;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;import java.util.*;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;/**
+<i>13</i>&nbsp; * System for any Question management of a {@link QuizRoom}. Each QR has one of these systems during runtime. Handles Question loading / generation, distribution, and removal.
+<i>14</i>&nbsp; * 
+<i>15</i>&nbsp; * @author Lorenz_Smidt
+<i>16</i>&nbsp; *
+<i>17</i>&nbsp; */
+<i>18</i>&nbsp;class QR_QuestionSystem
+<i>19</i>&nbsp;{
+<b class="fc"><i>20</i>&nbsp;	private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());</b>
+<i>21</i>&nbsp;	
+<b class="fc"><i>22</i>&nbsp;	private final int playerAnswerSlots = 6; // number of answers a Player can have at most</b>
+<b class="fc"><i>23</i>&nbsp;	private final int maxQuestions = 30; // maximum number of questions until game ends</b>
+<b class="fc"><i>24</i>&nbsp;	private final boolean skipDuplicateQuestions = true; // if true skips loading all Questions with questions / answers matching other Questions.</b>
+<i>25</i>&nbsp;	
+<i>26</i>&nbsp;	private QuizRoom quizRoom; // static reference to associated QuizRoom
+<i>27</i>&nbsp;	
+<i>28</i>&nbsp;	private volatile List&lt;QR_Question&gt; questionsPoolEasy; // list of all unused easy questions
+<i>29</i>&nbsp;	private volatile List&lt;QR_Question&gt; questionsPoolHard; // list of all unused hard questions
+<i>30</i>&nbsp;	private volatile int completedQuestions; // total number of answered questions
+<i>31</i>&nbsp;	private volatile int missingQuestions; // number of players without questions (used for hot-joining the room)
+<i>32</i>&nbsp;
+<i>33</i>&nbsp;	private volatile List&lt;ActiveQuestion&gt; activeQuestions; // list of currently active questions
+<i>34</i>&nbsp;	private volatile HashMap&lt;Integer, ActiveQuestion&gt; activeByQuestionId; // map for finding active questions by the qid;
+<i>35</i>&nbsp;	private volatile HashMap&lt;Player, ActiveQuestion&gt; playerQuestions; // map for storing assigned questions of players
+<i>36</i>&nbsp;	private volatile HashMap&lt;Player, List&lt;ActiveQuestion&gt;&gt; playerAnswers; // map for storing assigned answers of players, both right and wrong
+<i>37</i>&nbsp;	private volatile boolean isJokerTimeout; // true while joker timeout is going on (= time between joker call and distribution of new questions)
+<i>38</i>&nbsp;	
+<i>39</i>&nbsp;	/**
+<i>40</i>&nbsp;	 * Creates and initializes a new QR_QuestionSystem.
+<i>41</i>&nbsp;	 * 
+<i>42</i>&nbsp;	 * @param quizRoom
+<i>43</i>&nbsp;	 *            QuizRoom to be associated with this QuestionService.
+<i>44</i>&nbsp;	 * @param gameMode
+<i>45</i>&nbsp;	 *            GameMode for this QuestionService to operate in.
+<i>46</i>&nbsp;	 * @param questionSets
+<i>47</i>&nbsp;	 *            List of QuestionSets for the Questions to be loaded form. May be ignored depending on gamemode.
+<i>48</i>&nbsp;	 */
+<i>49</i>&nbsp;	protected QR_QuestionSystem(QuizRoom quizRoom, GameMode gameMode, List&lt;QuestionSet&gt; questionSets)
+<b class="fc"><i>50</i>&nbsp;	{</b>
+<b class="fc"><i>51</i>&nbsp;		this.quizRoom = quizRoom;</b>
+<i>52</i>&nbsp;		
+<b class="fc"><i>53</i>&nbsp;		completedQuestions = 0;</b>
+<b class="fc"><i>54</i>&nbsp;		missingQuestions = 0;</b>
+<b class="fc"><i>55</i>&nbsp;		activeQuestions = new LinkedList&lt;&gt;();</b>
+<b class="fc"><i>56</i>&nbsp;		activeByQuestionId = new HashMap&lt;&gt;();</b>
+<b class="fc"><i>57</i>&nbsp;		playerQuestions = new HashMap&lt;&gt;();</b>
+<b class="fc"><i>58</i>&nbsp;		playerAnswers = new HashMap&lt;&gt;();</b>
+<b class="fc"><i>59</i>&nbsp;		isJokerTimeout = false;</b>
+<i>60</i>&nbsp;
+<b class="fc"><i>61</i>&nbsp;		loadQuestions(gameMode, questionSets);</b>
+<b class="fc"><i>62</i>&nbsp;	}</b>
+<i>63</i>&nbsp;	
+<i>64</i>&nbsp;	/**
+<i>65</i>&nbsp;	 * Called on QuizRoom creation; Loads / generates all Questions to be used into the respective pools.
+<i>66</i>&nbsp;	 *
+<i>67</i>&nbsp;	 * @param gameMode
+<i>68</i>&nbsp;	 * 		GameMode of the QuizRoom. Controls how / what Questions are loaded.
+<i>69</i>&nbsp;	 * @param questionSets
+<i>70</i>&nbsp;	 * 		List of QuestionSets to load Questions from if needed.
+<i>71</i>&nbsp;	 */
+<i>72</i>&nbsp;	private void loadQuestions(GameMode gameMode, List&lt;QuestionSet&gt; questionSets)
+<i>73</i>&nbsp;	{
+<b class="fc"><i>74</i>&nbsp;		questionsPoolEasy = new LinkedList&lt;&gt;();</b>
+<b class="fc"><i>75</i>&nbsp;		questionsPoolHard = new LinkedList&lt;&gt;();</b>
+<i>76</i>&nbsp;		
+<b class="fc"><i>77</i>&nbsp;		if (gameMode == GameMode.normal || gameMode == GameMode.reverse)</b>
+<i>78</i>&nbsp;		{
+<i>79</i>&nbsp;			// Normal game mode, load all Questions from the QuestionSets, remove duplicate questions / answers, put in appropriate pools depending on difficulty.
+<i>80</i>&nbsp;			
+<b class="fc"><i>81</i>&nbsp;			Set&lt;String&gt; questionStrings = new HashSet&lt;&gt;();</b>
+<b class="fc"><i>82</i>&nbsp;			Set&lt;String&gt; rightAnswers = new HashSet&lt;&gt;();</b>
+<b class="fc"><i>83</i>&nbsp;			int nextID = 1;</b>
+<b class="fc"><i>84</i>&nbsp;			int skipped = 0;</b>
+<b class="fc"><i>85</i>&nbsp;			for (QuestionSet qSet : questionSets)</b>
+<i>86</i>&nbsp;			{
+<b class="fc"><i>87</i>&nbsp;				for (Question q : qSet.getQuestions())</b>
+<i>88</i>&nbsp;				{
+<b class="fc"><i>89</i>&nbsp;					String questionString = q.getQuestionString().toLowerCase().trim();</b>
+<b class="fc"><i>90</i>&nbsp;					String rightAnswer = q.getRightAnswerString().toLowerCase().trim();</b>
+<b class="fc"><i>91</i>&nbsp;					String wrongAnswer1 = (q.getWrongAnswerString_1() != null) ? q.getWrongAnswerString_1().toLowerCase().trim() : null;</b>
+<b class="fc"><i>92</i>&nbsp;					String wrongAnswer2 = (q.getWrongAnswerString_2() != null) ? q.getWrongAnswerString_2().toLowerCase().trim() : null;</b>
+<b class="fc"><i>93</i>&nbsp;					String wrongAnswer3 = (q.getWrongAnswerString_3() != null) ? q.getWrongAnswerString_3().toLowerCase().trim() : null;</b>
+<b class="fc"><i>94</i>&nbsp;					String wrongAnswer4 = (q.getWrongAnswerString_4() != null) ? q.getWrongAnswerString_4().toLowerCase().trim() : null;</b>
+<b class="fc"><i>95</i>&nbsp;					String wrongAnswer5 = (q.getWrongAnswerString_5() != null) ? q.getWrongAnswerString_5().toLowerCase().trim() : null;</b>
+<i>96</i>&nbsp;					
+<b class="fc"><i>97</i>&nbsp;					if (skipDuplicateQuestions &amp;&amp;</b>
+<b class="fc"><i>98</i>&nbsp;							(questionStrings.contains(questionString) || rightAnswers.contains(rightAnswer) || (wrongAnswer1 != null &amp;&amp; rightAnswers.contains(wrongAnswer1)) ||</b>
+<b class="fc"><i>99</i>&nbsp;									(wrongAnswer2 != null &amp;&amp; rightAnswers.contains(wrongAnswer2)) || (wrongAnswer3 != null &amp;&amp; rightAnswers.contains(wrongAnswer3)) ||</b>
+<b class="fc"><i>100</i>&nbsp;									(wrongAnswer4 != null &amp;&amp; rightAnswers.contains(wrongAnswer4)) || (wrongAnswer5 != null &amp;&amp; rightAnswers.contains(wrongAnswer5))))</b>
+<i>101</i>&nbsp;					{
+<b class="nc"><i>102</i>&nbsp;						skipped++;</b>
+<b class="nc"><i>103</i>&nbsp;						continue;</b>
+<i>104</i>&nbsp;					}
+<b class="fc"><i>105</i>&nbsp;					questionStrings.add(questionString);</b>
+<b class="fc"><i>106</i>&nbsp;					rightAnswers.add(rightAnswer);</b>
+<i>107</i>&nbsp;					
+<i>108</i>&nbsp;					QR_Question nQ;
+<b class="fc"><i>109</i>&nbsp;					if (gameMode == GameMode.normal)</b>
+<i>110</i>&nbsp;					{
+<b class="fc"><i>111</i>&nbsp;						nQ = new QR_Question(nextID++, q.getType(), q.getQuestionString(), q.getRightAnswerString(), q.getWrongAnswerString_1(),</b>
+<b class="fc"><i>112</i>&nbsp;								q.getWrongAnswerString_2(), q.getWrongAnswerString_3(), q.getWrongAnswerString_4(), q.getWrongAnswerString_5());</b>
+<i>113</i>&nbsp;					}
+<i>114</i>&nbsp;					else
+<i>115</i>&nbsp;					{
+<b class="nc"><i>116</i>&nbsp;						nQ = new QR_Question(nextID++, q.getType(), q.getRightAnswerString(), q.getQuestionString(), q.getWrongAnswerString_1(),</b>
+<b class="nc"><i>117</i>&nbsp;								q.getWrongAnswerString_2(), q.getWrongAnswerString_3(), q.getWrongAnswerString_4(), q.getWrongAnswerString_5());</b>
+<i>118</i>&nbsp;					}
+<i>119</i>&nbsp;					
+<b class="fc"><i>120</i>&nbsp;					if (qSet.getDifficulty() == QuestionSetDifficulty.easy)</b>
+<b class="fc"><i>121</i>&nbsp;						questionsPoolEasy.add(nQ);</b>
+<b class="nc"><i>122</i>&nbsp;					else if (qSet.getDifficulty() == QuestionSetDifficulty.hard)</b>
+<b class="nc"><i>123</i>&nbsp;						questionsPoolHard.add(nQ);</b>
+<b class="fc"><i>124</i>&nbsp;				}</b>
+<b class="fc"><i>125</i>&nbsp;			}</b>
+<b class="fc"><i>126</i>&nbsp;			LOGGER.debug(&quot;### INFO ### QuizRoom skipped &quot; + skipped + &quot; Question on load due to duplicate questions / answers.&quot;);</b>
+<b class="fc"><i>127</i>&nbsp;		}</b>
+<b class="fc"><i>128</i>&nbsp;		else if (gameMode == GameMode.mathgod)</b>
+<i>129</i>&nbsp;		{
+<i>130</i>&nbsp;			// generate questions for mathgod gamemode
+<b class="fc"><i>131</i>&nbsp;			MathGenerator generator = new MathGenerator();</b>
+<b class="fc"><i>132</i>&nbsp;			questionsPoolEasy = generator.generateQuestions(QuestionSetDifficulty.easy, 2*maxQuestions, 1);</b>
+<b class="fc"><i>133</i>&nbsp;			questionsPoolHard = generator.generateQuestions(QuestionSetDifficulty.hard, 2*maxQuestions, 2 * maxQuestions);</b>
+<i>134</i>&nbsp;		}
+<i>135</i>&nbsp;		
+<b class="fc"><i>136</i>&nbsp;		LOGGER.debug(&quot;### INFO ### QuizRoom loaded &quot; + questionsPoolEasy.size() + &quot; easy Questions and &quot; + questionsPoolHard.size() + &quot; hard Questions.&quot;);</b>
+<b class="fc"><i>137</i>&nbsp;	}</b>
+<i>138</i>&nbsp;	
+<i>139</i>&nbsp;	/**
+<i>140</i>&nbsp;	 * Called from QuizRoom when a new Player joins; Creates all needed data structures.
+<i>141</i>&nbsp;	 * 
+<i>142</i>&nbsp;	 * @param player
+<i>143</i>&nbsp;	 *            Player to be added.
+<i>144</i>&nbsp;	 */
+<i>145</i>&nbsp;	protected synchronized void addPlayer(Player player)
+<i>146</i>&nbsp;	{
+<b class="fc"><i>147</i>&nbsp;		playerQuestions.put(player, null);</b>
+<b class="fc"><i>148</i>&nbsp;		playerAnswers.put(player, new LinkedList&lt;&gt;());</b>
+<b class="fc"><i>149</i>&nbsp;	}</b>
+<i>150</i>&nbsp;	
+<i>151</i>&nbsp;	/**
+<i>152</i>&nbsp;	 * Called from QuizRoom when a Player leaves; Removes all player data structures and re-distributes questions if necessary.
+<i>153</i>&nbsp;	 * 
+<i>154</i>&nbsp;	 * @param player
+<i>155</i>&nbsp;	 *            Player to be removed.
+<i>156</i>&nbsp;	 */
+<i>157</i>&nbsp;	protected synchronized void removePlayer(Player player)
+<i>158</i>&nbsp;	{
+<i>159</i>&nbsp;		// remove ActiveQuestion with question at player
+<b class="nc"><i>160</i>&nbsp;		if (playerQuestions.containsKey(player))</b>
+<i>161</i>&nbsp;		{
+<b class="nc"><i>162</i>&nbsp;			removeQuestion(playerQuestions.get(player));</b>
+<i>163</i>&nbsp;		}
+<i>164</i>&nbsp;		
+<i>165</i>&nbsp;		// redistribute questions with right answer at player, modify activeQuestions with wrong answers at player
+<b class="nc"><i>166</i>&nbsp;		int redistCount = 0;</b>
+<b class="nc"><i>167</i>&nbsp;		List&lt;ActiveQuestion&gt; AQs = new ArrayList&lt;&gt;(playerAnswers.get(player)); // copy into own list</b>
+<b class="nc"><i>168</i>&nbsp;		for (ActiveQuestion activeQuestion : AQs)</b>
+<i>169</i>&nbsp;		{
+<i>170</i>&nbsp;			// is AQ already removed?
+<b class="nc"><i>171</i>&nbsp;			if (!activeByQuestionId.containsKey(activeQuestion.question.getId()))</b>
+<b class="nc"><i>172</i>&nbsp;				continue;</b>
+<i>173</i>&nbsp;			
+<b class="nc"><i>174</i>&nbsp;			if (activeQuestion.playerAnswer == player)</b>
+<i>175</i>&nbsp;			{
+<i>176</i>&nbsp;				// return question to appropriate pool and remove from current play
+<b class="nc"><i>177</i>&nbsp;				if (activeQuestion.questionDifficulty == QuestionSetDifficulty.easy)</b>
+<i>178</i>&nbsp;				{
+<b class="nc"><i>179</i>&nbsp;					questionsPoolEasy.add(activeQuestion.question);</b>
+<i>180</i>&nbsp;				}
+<i>181</i>&nbsp;				else
+<i>182</i>&nbsp;				{
+<b class="nc"><i>183</i>&nbsp;					questionsPoolHard.add(activeQuestion.question);</b>
+<i>184</i>&nbsp;				}
+<b class="nc"><i>185</i>&nbsp;				removeQuestion(activeQuestion);</b>
+<b class="nc"><i>186</i>&nbsp;				redistCount++;</b>
+<i>187</i>&nbsp;			}
+<b class="nc"><i>188</i>&nbsp;			else if (activeQuestion.playersWrongAnswers.contains(player))</b>
+<i>189</i>&nbsp;			{
+<i>190</i>&nbsp;				// remove all instances of player (player may have multiple wrong answers of AQ)
+<b class="nc"><i>191</i>&nbsp;				while (activeQuestion.playersWrongAnswers.contains(player))</b>
+<b class="nc"><i>192</i>&nbsp;					activeQuestion.playersWrongAnswers.remove(player);</b>
+<i>193</i>&nbsp;			}
+<i>194</i>&nbsp;			else
+<i>195</i>&nbsp;			{
+<b class="nc"><i>196</i>&nbsp;				LOGGER.error(</b>
+<i>197</i>&nbsp;						&quot;Illegal state for ActiveQuestion detected - playerAnswers has AQ registered but AQ does not player as playerAnswer or playersWrongAnswers!&quot;);
+<i>198</i>&nbsp;			}
+<b class="nc"><i>199</i>&nbsp;		}</b>
+<i>200</i>&nbsp;		
+<i>201</i>&nbsp;		// redistribute questions after 0.5sec delay
+<b class="nc"><i>202</i>&nbsp;		final int rC = redistCount;</b>
+<b class="nc"><i>203</i>&nbsp;		quizRoom.addDelayedAction(new DelayedAction((new Date().getTime()) + 500, () -&gt; {</b>
+<b class="nc"><i>204</i>&nbsp;			if (rC &gt; 1)</b>
+<b class="nc"><i>205</i>&nbsp;				addMissingQuestions(rC - 1);</b>
+<b class="nc"><i>206</i>&nbsp;			distributeQuestion();</b>
+<b class="nc"><i>207</i>&nbsp;		}));</b>
+<i>208</i>&nbsp;		
+<b class="nc"><i>209</i>&nbsp;		playerQuestions.remove(player);</b>
+<b class="nc"><i>210</i>&nbsp;		playerAnswers.remove(player);</b>
+<b class="nc"><i>211</i>&nbsp;	}</b>
+<i>212</i>&nbsp;	
+<i>213</i>&nbsp;	/**
+<i>214</i>&nbsp;	 * Adds count number of Questions as missing (= to be distributed on _next call).
+<i>215</i>&nbsp;	 *
+<i>216</i>&nbsp;	 * @param count
+<i>217</i>&nbsp;	 * 		Number of Questions to add as missing.
+<i>218</i>&nbsp;	 */
+<i>219</i>&nbsp;	protected synchronized void addMissingQuestions(int count)
+<i>220</i>&nbsp;	{
+<b class="nc"><i>221</i>&nbsp;		missingQuestions += count;</b>
+<b class="nc"><i>222</i>&nbsp;	}</b>
+<i>223</i>&nbsp;	
+<i>224</i>&nbsp;	/**
+<i>225</i>&nbsp;	 * Sets the total number of missing Questions.
+<i>226</i>&nbsp;	 *
+<i>227</i>&nbsp;	 * @param count
+<i>228</i>&nbsp;	 * 		Number of total Questions to set as missing.
+<i>229</i>&nbsp;	 */
+<i>230</i>&nbsp;	protected void setMissingQuestions(int count)
+<i>231</i>&nbsp;	{
+<b class="nc"><i>232</i>&nbsp;		missingQuestions = count;</b>
+<b class="nc"><i>233</i>&nbsp;	}</b>
+<i>234</i>&nbsp;	
+<i>235</i>&nbsp;	/**
+<i>236</i>&nbsp;	 * Adds count number of completed Questions to be counted.
+<i>237</i>&nbsp;	 *
+<i>238</i>&nbsp;	 * @param count
+<i>239</i>&nbsp;	 * 		Number of Questions to add as completed.
+<i>240</i>&nbsp;	 */
+<i>241</i>&nbsp;	protected synchronized void addCompletedQuestions(int count)
+<i>242</i>&nbsp;	{
+<b class="nc"><i>243</i>&nbsp;		completedQuestions += count;</b>
+<b class="nc"><i>244</i>&nbsp;	}</b>
+<i>245</i>&nbsp;	
+<i>246</i>&nbsp;	/**
+<i>247</i>&nbsp;	 * Called every frameUpdate from QuizRoom, reduces remaining time and checks for all ActiveQuestions if time has run out. Removes a Question from all Players associated if time has run out.
+<i>248</i>&nbsp;	 * 
+<i>249</i>&nbsp;	 * @param deltaTime
+<i>250</i>&nbsp;	 *            Time in ms since last call to this function.
+<i>251</i>&nbsp;	 */
+<i>252</i>&nbsp;	protected synchronized void checkQuestionTimes(long deltaTime)
+<i>253</i>&nbsp;	{
+<b class="nc"><i>254</i>&nbsp;		int missing = 0;</b>
+<b class="nc"><i>255</i>&nbsp;		for (int i = activeQuestions.size() - 1; i &gt;= 0; i--)</b>
+<i>256</i>&nbsp;		{
+<b class="nc"><i>257</i>&nbsp;			activeQuestions.get(i).timeRemaining -= deltaTime;</b>
+<b class="nc"><i>258</i>&nbsp;			if (activeQuestions.get(i).timeRemaining &lt;= 0)</b>
+<i>259</i>&nbsp;			{ // question time elapsed, remove
+<b class="nc"><i>260</i>&nbsp;				quizRoom.changeScore(activeQuestions.get(i).questionDifficulty == QuestionSetDifficulty.easy ? 4 : 5, 0);</b>
+<i>261</i>&nbsp;				
+<b class="nc"><i>262</i>&nbsp;				removeQuestion(activeQuestions.get(i));</b>
+<b class="nc"><i>263</i>&nbsp;				missing++;</b>
+<i>264</i>&nbsp;			}
+<i>265</i>&nbsp;		}
+<i>266</i>&nbsp;		
+<b class="nc"><i>267</i>&nbsp;		if (missing &gt; 0)</b>
+<i>268</i>&nbsp;		{
+<b class="nc"><i>269</i>&nbsp;			missingQuestions += missing - 1;</b>
+<b class="nc"><i>270</i>&nbsp;			distributeQuestion();</b>
+<i>271</i>&nbsp;		}
+<b class="nc"><i>272</i>&nbsp;	}</b>
+<i>273</i>&nbsp;	
+<i>274</i>&nbsp;	/**
+<i>275</i>&nbsp;	 * Called every timerSyncTimeStep, calls the onTimerSync event on all Players, sending the current remaining time on the Question timer.
+<i>276</i>&nbsp;	 * 
+<i>277</i>&nbsp;	 * @param playerInterface
+<i>278</i>&nbsp;	 *            IRoomAction interface to be used for the event calls.
+<i>279</i>&nbsp;	 * @param pin
+<i>280</i>&nbsp;	 *            Pin of the QuizRoom.
+<i>281</i>&nbsp;	 */
+<i>282</i>&nbsp;	protected synchronized void synchronizeTimers(IRoomAction playerInterface, int pin)
+<i>283</i>&nbsp;	{
+<b class="nc"><i>284</i>&nbsp;		for (ActiveQuestion activeQuestion : activeQuestions)</b>
+<i>285</i>&nbsp;		{
+<b class="nc"><i>286</i>&nbsp;			playerInterface.onTimerSync(pin, activeQuestion.playerQuestion, activeQuestion, activeQuestion.timeRemaining);</b>
+<b class="nc"><i>287</i>&nbsp;		}</b>
+<b class="nc"><i>288</i>&nbsp;	}</b>
+<i>289</i>&nbsp;	
+<i>290</i>&nbsp;	/**
+<i>291</i>&nbsp;	 * Takes a random unused question and assigns it to players with open slots. Question selection is dependent on room difficulty and available questions. Processes missing Questions on call.
+<i>292</i>&nbsp;	 */
+<i>293</i>&nbsp;	protected synchronized void distributeQuestion()
+<i>294</i>&nbsp;	{
+<b class="nc"><i>295</i>&nbsp;		if (isJokerTimeout)</b>
+<i>296</i>&nbsp;		{
+<b class="nc"><i>297</i>&nbsp;			LOGGER.debug(&quot;### INFO ### distributeQuestion call while in joker timeout, ignoring.&quot;);</b>
+<b class="nc"><i>298</i>&nbsp;			return;</b>
+<i>299</i>&nbsp;		}
+<i>300</i>&nbsp;		
+<b class="nc"><i>301</i>&nbsp;		_distributeQuestion();</b>
+<b class="nc"><i>302</i>&nbsp;		while (missingQuestions &gt; 0)</b>
+<i>303</i>&nbsp;		{
+<b class="nc"><i>304</i>&nbsp;			_distributeQuestion();</b>
+<b class="nc"><i>305</i>&nbsp;			missingQuestions--;</b>
+<i>306</i>&nbsp;		}
+<i>307</i>&nbsp;		
+<b class="nc"><i>308</i>&nbsp;		missingQuestions = 0; // fix any negative number</b>
+<b class="nc"><i>309</i>&nbsp;	}</b>
+<i>310</i>&nbsp;	
+<i>311</i>&nbsp;	/**
+<i>312</i>&nbsp;	 * INTERNAL ONLY! Called by distributeQuestion to distribute an individual Question.
+<i>313</i>&nbsp;	 */
+<i>314</i>&nbsp;	private synchronized void _distributeQuestion()
+<i>315</i>&nbsp;	{
+<b class="nc"><i>316</i>&nbsp;		if (quizRoom.wfpMode)</b>
+<i>317</i>&nbsp;		{ // game has ended (or somehow in call in wfp mode), ignore call
+<b class="nc"><i>318</i>&nbsp;			return;</b>
+<i>319</i>&nbsp;		}
+<i>320</i>&nbsp;		
+<i>321</i>&nbsp;		// check if too many questions in play
+<b class="nc"><i>322</i>&nbsp;		if (activeByQuestionId.keySet().size() &gt;= quizRoom.players.size())</b>
+<i>323</i>&nbsp;		{
+<b class="nc"><i>324</i>&nbsp;			LOGGER.error(&quot;### WARNING ### [QR &quot; + quizRoom.pin + &quot;] distributing more questions than Players in game, skipping call.&quot;);</b>
+<b class="nc"><i>325</i>&nbsp;			return;</b>
+<i>326</i>&nbsp;		}
+<i>327</i>&nbsp;		
+<b class="nc"><i>328</i>&nbsp;		AbstractMap.SimpleEntry&lt;QR_Question, QuestionSetDifficulty&gt; pair = selectQuestion();</b>
+<b class="nc"><i>329</i>&nbsp;		if (pair == null)</b>
+<i>330</i>&nbsp;		{ // close when no more Questions available or if maximum number of Questions answered.
+<b class="nc"><i>331</i>&nbsp;			quizRoom.onRoomClose();</b>
+<b class="nc"><i>332</i>&nbsp;			return;</b>
+<i>333</i>&nbsp;		}
+<i>334</i>&nbsp;		
+<b class="nc"><i>335</i>&nbsp;		QR_Question question = pair.getKey();</b>
+<i>336</i>&nbsp;		
+<b class="nc"><i>337</i>&nbsp;		List&lt;Player&gt; questionFreePlayers = new ArrayList&lt;&gt;(); // players with no questions</b>
+<b class="nc"><i>338</i>&nbsp;		List&lt;Player&gt; answerFreePlayers = new ArrayList&lt;&gt;(); // players with open answer slots (multiple slots open = multiple times in list)</b>
+<b class="nc"><i>339</i>&nbsp;		for (Player player : quizRoom.players)</b>
+<i>340</i>&nbsp;		{
+<b class="nc"><i>341</i>&nbsp;			if (playerQuestions.get(player) == null)</b>
+<i>342</i>&nbsp;			{
+<b class="nc"><i>343</i>&nbsp;				questionFreePlayers.add(player);</b>
+<i>344</i>&nbsp;			}
+<b class="nc"><i>345</i>&nbsp;			if (playerAnswers.get(player).size() &lt; playerAnswerSlots)</b>
+<i>346</i>&nbsp;			{
+<b class="nc"><i>347</i>&nbsp;				for (int i = 0; i &lt; (playerAnswerSlots - playerAnswers.get(player).size()); i++)</b>
+<b class="nc"><i>348</i>&nbsp;					answerFreePlayers.add(player);</b>
+<i>349</i>&nbsp;			}
+<b class="nc"><i>350</i>&nbsp;		}</b>
+<i>351</i>&nbsp;		
+<b class="nc"><i>352</i>&nbsp;		if (questionFreePlayers.size() == 0 || answerFreePlayers.size() == 0)</b>
+<i>353</i>&nbsp;		{
+<b class="nc"><i>354</i>&nbsp;			LOGGER.error(&quot;### ERROR ### [QR &quot; + quizRoom.pin + &quot;] no question / answer free players available in distributeQuestion! (&quot;</b>
+<b class="nc"><i>355</i>&nbsp;					+ questionFreePlayers.size()</b>
+<b class="nc"><i>356</i>&nbsp;					+ &quot;|&quot; + answerFreePlayers.size() + &quot;)&quot;);</b>
+<b class="nc"><i>357</i>&nbsp;			return;</b>
+<i>358</i>&nbsp;		}
+<i>359</i>&nbsp;		
+<b class="nc"><i>360</i>&nbsp;		Random random = new Random();</b>
+<i>361</i>&nbsp;		// question assignment
+<b class="nc"><i>362</i>&nbsp;		int qIndex = random.nextInt(questionFreePlayers.size());</b>
+<b class="nc"><i>363</i>&nbsp;		Player qPlayer = questionFreePlayers.get(qIndex);</b>
+<i>364</i>&nbsp;		
+<i>365</i>&nbsp;		// answers assignment (depending on number of right + wrong answers already assigned to players)
+<b class="nc"><i>366</i>&nbsp;		int raIndex = random.nextInt(answerFreePlayers.size());</b>
+<b class="nc"><i>367</i>&nbsp;		Player raPlayer = answerFreePlayers.get(raIndex);</b>
+<b class="nc"><i>368</i>&nbsp;		answerFreePlayers.remove(raIndex);</b>
+<i>369</i>&nbsp;		
+<b class="nc"><i>370</i>&nbsp;		List&lt;Player&gt; waPlayers = new ArrayList&lt;&gt;();</b>
+<i>371</i>&nbsp;		Player p;
+<i>372</i>&nbsp;		//limit wrong answers to playerAnswerSlots-1 to always keep room for at least the right answers
+<b class="nc"><i>373</i>&nbsp;		for (int i = 0; i &lt; 5 &amp;&amp; i &lt; playerAnswerSlots-1; i++)</b>
+<i>374</i>&nbsp;		{
+<b class="nc"><i>375</i>&nbsp;			String qString = null;</b>
+<b class="nc"><i>376</i>&nbsp;			if (i == 0)</b>
+<b class="nc"><i>377</i>&nbsp;				qString = question.getWrongAnswerString_1();</b>
+<b class="nc"><i>378</i>&nbsp;			else if (i == 1)</b>
+<b class="nc"><i>379</i>&nbsp;				qString = question.getWrongAnswerString_2();</b>
+<b class="nc"><i>380</i>&nbsp;			else if (i == 2)</b>
+<b class="nc"><i>381</i>&nbsp;				qString = question.getWrongAnswerString_3();</b>
+<b class="nc"><i>382</i>&nbsp;			else if (i == 3)</b>
+<b class="nc"><i>383</i>&nbsp;				qString = question.getWrongAnswerString_4();</b>
+<b class="nc"><i>384</i>&nbsp;			else if (i == 4)</b>
+<b class="nc"><i>385</i>&nbsp;				qString = question.getWrongAnswerString_5();</b>
+<i>386</i>&nbsp;			
+<b class="nc"><i>387</i>&nbsp;			if (answerFreePlayers.size() &gt; 0 &amp;&amp; qString != null &amp;&amp; !qString.equals(&quot;&quot;))</b>
+<i>388</i>&nbsp;			{
+<b class="nc"><i>389</i>&nbsp;				int index = random.nextInt(answerFreePlayers.size());</b>
+<b class="nc"><i>390</i>&nbsp;				p = answerFreePlayers.get(index);</b>
+<b class="nc"><i>391</i>&nbsp;				answerFreePlayers.remove(index);</b>
+<b class="nc"><i>392</i>&nbsp;				waPlayers.add(p);</b>
+<i>393</i>&nbsp;			}
+<i>394</i>&nbsp;			else
+<i>395</i>&nbsp;				break;
+<i>396</i>&nbsp;		}
+<i>397</i>&nbsp;		
+<b class="nc"><i>398</i>&nbsp;		long qTime = computeQuestionTime(pair.getValue());</b>
+<i>399</i>&nbsp;		
+<b class="nc"><i>400</i>&nbsp;		ActiveQuestion newActive = new ActiveQuestion(question, pair.getValue(), qPlayer, raPlayer, waPlayers, qTime);</b>
+<i>401</i>&nbsp;		
+<b class="nc"><i>402</i>&nbsp;		activeQuestions.add(newActive);</b>
+<b class="nc"><i>403</i>&nbsp;		activeByQuestionId.put(question.getId(), newActive);</b>
+<i>404</i>&nbsp;		
+<b class="nc"><i>405</i>&nbsp;		playerQuestions.put(qPlayer, newActive);</b>
+<i>406</i>&nbsp;		
+<b class="nc"><i>407</i>&nbsp;		playerAnswers.get(raPlayer).add(newActive);</b>
+<i>408</i>&nbsp;		
+<b class="nc"><i>409</i>&nbsp;		for (Player waPlayer : waPlayers)</b>
+<i>410</i>&nbsp;		{
+<b class="nc"><i>411</i>&nbsp;			playerAnswers.get(waPlayer).add(newActive);</b>
+<b class="nc"><i>412</i>&nbsp;		}</b>
+<i>413</i>&nbsp;		
+<i>414</i>&nbsp;		// event call
+<b class="nc"><i>415</i>&nbsp;		quizRoom.playerInterface.assignQuestion(quizRoom.pin, newActive);</b>
+<b class="nc"><i>416</i>&nbsp;	}</b>
+<i>417</i>&nbsp;	
+<i>418</i>&nbsp;	/**
+<i>419</i>&nbsp;	 * @return A Question (+ its difficulty) at random from either the easy or the hard pool (depending on emptiness / difficulty) or null if game end reached.
+<i>420</i>&nbsp;	 */
+<i>421</i>&nbsp;	private AbstractMap.SimpleEntry&lt;QR_Question, QuestionSetDifficulty&gt; selectQuestion()
+<i>422</i>&nbsp;	{
+<b class="nc"><i>423</i>&nbsp;		Random random = new Random();</b>
+<b class="nc"><i>424</i>&nbsp;		int bound = quizRoom.difficulty == RoomDifficulty.easy ? 90 : 10; //chance to get easy question if both available</b>
+<i>425</i>&nbsp;		
+<i>426</i>&nbsp;		boolean easy;
+<b class="nc"><i>427</i>&nbsp;		if ((completedQuestions &gt;= maxQuestions) || (questionsPoolEasy.size() == 0 &amp;&amp; questionsPoolHard.size() == 0))</b>
+<i>428</i>&nbsp;		{ // game complete state reached
+<b class="nc"><i>429</i>&nbsp;			return null;</b>
+<i>430</i>&nbsp;		}
+<b class="nc"><i>431</i>&nbsp;		else if (questionsPoolEasy.size() == 0)</b>
+<i>432</i>&nbsp;		{ // have to select hard one
+<b class="nc"><i>433</i>&nbsp;			easy = false;</b>
+<i>434</i>&nbsp;		}
+<b class="nc"><i>435</i>&nbsp;		else if (questionsPoolHard.size() == 0)</b>
+<i>436</i>&nbsp;		{ // have to select easy one
+<b class="nc"><i>437</i>&nbsp;			easy = true;</b>
+<i>438</i>&nbsp;		}
+<b class="nc"><i>439</i>&nbsp;		else if (random.nextInt(100) &lt; bound)</b>
+<i>440</i>&nbsp;		{ // select easy question
+<b class="nc"><i>441</i>&nbsp;			easy = true;</b>
+<i>442</i>&nbsp;		}
+<i>443</i>&nbsp;		else
+<i>444</i>&nbsp;		{ // select hard question
+<b class="nc"><i>445</i>&nbsp;			easy = false;</b>
+<i>446</i>&nbsp;		}
+<i>447</i>&nbsp;		
+<i>448</i>&nbsp;		QR_Question question;
+<b class="nc"><i>449</i>&nbsp;		if (easy)</b>
+<i>450</i>&nbsp;		{
+<b class="nc"><i>451</i>&nbsp;			int index = random.nextInt(questionsPoolEasy.size());</b>
+<b class="nc"><i>452</i>&nbsp;			question = questionsPoolEasy.get(index);</b>
+<b class="nc"><i>453</i>&nbsp;			questionsPoolEasy.remove(index);</b>
+<b class="nc"><i>454</i>&nbsp;		}</b>
+<i>455</i>&nbsp;		else
+<i>456</i>&nbsp;		{
+<b class="nc"><i>457</i>&nbsp;			int index = random.nextInt(questionsPoolHard.size());</b>
+<b class="nc"><i>458</i>&nbsp;			question = questionsPoolHard.get(index);</b>
+<b class="nc"><i>459</i>&nbsp;			questionsPoolHard.remove(index);</b>
+<i>460</i>&nbsp;		}
+<i>461</i>&nbsp;		
+<b class="nc"><i>462</i>&nbsp;		return new AbstractMap.SimpleEntry&lt;QR_Question, QuestionSetDifficulty&gt;(question, easy ? QuestionSetDifficulty.easy : QuestionSetDifficulty.hard);</b>
+<i>463</i>&nbsp;	}
+<i>464</i>&nbsp;	
+<i>465</i>&nbsp;	/**
+<i>466</i>&nbsp;	 * Computes the answer time for a question based on the room difficulty, question difficulty, player count, completed questions count, and some constants.
+<i>467</i>&nbsp;	 * 
+<i>468</i>&nbsp;	 * @param questionDifficulty
+<i>469</i>&nbsp;	 *            The difficulty of the Question to have a time computed.
+<i>470</i>&nbsp;	 * 
+<i>471</i>&nbsp;	 * @return The time in ms for the Question to be answered.
+<i>472</i>&nbsp;	 */
+<i>473</i>&nbsp;	private long computeQuestionTime(QuestionSetDifficulty questionDifficulty)
+<i>474</i>&nbsp;	{
+<b class="nc"><i>475</i>&nbsp;		long playerBonus = 5000; // ms added for each player in the room</b>
+<b class="nc"><i>476</i>&nbsp;		double scaleFactor = 0.3; // factor affecting time reduction towards end of game</b>
+<i>477</i>&nbsp;		
+<i>478</i>&nbsp;		long base;
+<b class="nc"><i>479</i>&nbsp;		if (quizRoom.difficulty == RoomDifficulty.easy)</b>
+<i>480</i>&nbsp;		{
+<b class="nc"><i>481</i>&nbsp;			if (questionDifficulty == QuestionSetDifficulty.easy)</b>
+<b class="nc"><i>482</i>&nbsp;				base = 30000;</b>
+<i>483</i>&nbsp;			else
+<b class="nc"><i>484</i>&nbsp;				base = 45000;</b>
+<i>485</i>&nbsp;		}
+<i>486</i>&nbsp;		else
+<i>487</i>&nbsp;		{
+<b class="nc"><i>488</i>&nbsp;			if (questionDifficulty == QuestionSetDifficulty.easy)</b>
+<b class="nc"><i>489</i>&nbsp;				base = 20000;</b>
+<i>490</i>&nbsp;			else
+<b class="nc"><i>491</i>&nbsp;				base = 30000;</b>
+<i>492</i>&nbsp;		}
+<i>493</i>&nbsp;		
+<b class="nc"><i>494</i>&nbsp;		return (long) (base - (((completedQuestions / (double) maxQuestions) * scaleFactor) * base) + (quizRoom.players.size() * playerBonus));</b>
+<i>495</i>&nbsp;	}
+<i>496</i>&nbsp;	
+<i>497</i>&nbsp;	/**
+<i>498</i>&nbsp;	 * Removes the ActiveQuestion from all Players involved (question + answers).
+<i>499</i>&nbsp;	 * 
+<i>500</i>&nbsp;	 * @param q
+<i>501</i>&nbsp;	 *            ActiveQuestion to be removed from play.
+<i>502</i>&nbsp;	 */
+<i>503</i>&nbsp;	protected synchronized void removeQuestion(ActiveQuestion q)
+<i>504</i>&nbsp;	{
+<b class="nc"><i>505</i>&nbsp;		if (q == null)</b>
+<b class="nc"><i>506</i>&nbsp;			return;</b>
+<i>507</i>&nbsp;		
+<i>508</i>&nbsp;		// remove question
+<b class="nc"><i>509</i>&nbsp;		playerQuestions.put(q.playerQuestion, null);</b>
+<i>510</i>&nbsp;		
+<i>511</i>&nbsp;		// remove right answer
+<b class="nc"><i>512</i>&nbsp;		List&lt;ActiveQuestion&gt; qs = playerAnswers.get(q.playerAnswer);</b>
+<b class="nc"><i>513</i>&nbsp;		qs.remove(q);</b>
+<b class="nc"><i>514</i>&nbsp;		playerAnswers.put(q.playerAnswer, qs);</b>
+<i>515</i>&nbsp;		
+<i>516</i>&nbsp;		// remove wrong answers
+<b class="nc"><i>517</i>&nbsp;		for (Player player : q.playersWrongAnswers)</b>
+<i>518</i>&nbsp;		{
+<b class="nc"><i>519</i>&nbsp;			qs = playerAnswers.get(player);</b>
+<b class="nc"><i>520</i>&nbsp;			qs.remove(q);</b>
+<b class="nc"><i>521</i>&nbsp;			playerAnswers.put(player, qs);</b>
+<b class="nc"><i>522</i>&nbsp;		}</b>
+<i>523</i>&nbsp;		
+<b class="nc"><i>524</i>&nbsp;		activeQuestions.remove(q);</b>
+<b class="nc"><i>525</i>&nbsp;		activeByQuestionId.remove(q.question.getId());</b>
+<i>526</i>&nbsp;		
+<i>527</i>&nbsp;		// event call
+<b class="nc"><i>528</i>&nbsp;		quizRoom.playerInterface.removeQuestion(quizRoom.pin, q);</b>
+<b class="nc"><i>529</i>&nbsp;	}</b>
+<i>530</i>&nbsp;	
+<i>531</i>&nbsp;	/**
+<i>532</i>&nbsp;	 * @param questionId
+<i>533</i>&nbsp;	 *            Runtime id of a QR_Question.
+<i>534</i>&nbsp;	 * @return An ActiveQuestion by the runtime QR_Question id. Returns null if none was found (=QR_Question is not currently active).
+<i>535</i>&nbsp;	 */
+<i>536</i>&nbsp;	protected ActiveQuestion getActiveQuestionById(int questionId)
+<i>537</i>&nbsp;	{
+<b class="nc"><i>538</i>&nbsp;		if (!activeByQuestionId.containsKey(questionId))</b>
+<b class="nc"><i>539</i>&nbsp;			return null;</b>
+<b class="nc"><i>540</i>&nbsp;		return activeByQuestionId.get(questionId);</b>
+<i>541</i>&nbsp;	}
+<i>542</i>&nbsp;	
+<i>543</i>&nbsp;	/**
+<i>544</i>&nbsp;	 * Called when a player answers a question. Called from QuizRoom.
+<i>545</i>&nbsp;	 * 
+<i>546</i>&nbsp;	 * @param player
+<i>547</i>&nbsp;	 *            Player making the answer call.
+<i>548</i>&nbsp;	 * @param questionId
+<i>549</i>&nbsp;	 *            Runtime id of the question to be answered.
+<i>550</i>&nbsp;	 */
+<i>551</i>&nbsp;	protected synchronized void answerQuestion(Player player, int questionId) throws IllegalStateException
+<i>552</i>&nbsp;	{
+<b class="nc"><i>553</i>&nbsp;		if (!activeByQuestionId.containsKey(questionId))</b>
+<i>554</i>&nbsp;		{
+<b class="nc"><i>555</i>&nbsp;			LOGGER.debug(</b>
+<b class="nc"><i>556</i>&nbsp;					&quot;### WARNING ### [QR &quot; + quizRoom.pin + &quot;] Answer Question call from Player &quot; + player.getId() + &quot; on already removed ActiveQuestion (qid: &quot;</b>
+<i>557</i>&nbsp;					+ questionId + &quot;)&quot;);
+<b class="nc"><i>558</i>&nbsp;			throw new IllegalStateException();</b>
+<i>559</i>&nbsp;		}
+<i>560</i>&nbsp;		
+<b class="nc"><i>561</i>&nbsp;		ActiveQuestion q = activeByQuestionId.get(questionId);</b>
+<b class="nc"><i>562</i>&nbsp;		if (!playerAnswers.get(player).contains(q))</b>
+<i>563</i>&nbsp;		{
+<b class="nc"><i>564</i>&nbsp;			LOGGER.debug(&quot;### WARNING ### [QR &quot; + quizRoom.pin + &quot;] Answer Question call from Player &quot; + player.getId()</b>
+<i>565</i>&nbsp;					+ &quot; Question not assigned to Player! (qid: &quot; + questionId + &quot;)&quot;);
+<b class="nc"><i>566</i>&nbsp;			throw new IllegalStateException();</b>
+<i>567</i>&nbsp;		}
+<i>568</i>&nbsp;		
+<b class="nc"><i>569</i>&nbsp;		removeQuestion(q);</b>
+<i>570</i>&nbsp;		
+<b class="nc"><i>571</i>&nbsp;		distributeQuestion();</b>
+<b class="nc"><i>572</i>&nbsp;	}</b>
+<i>573</i>&nbsp;	
+<i>574</i>&nbsp;	/**
+<i>575</i>&nbsp;	 * Gets called from QuizRoom when a Player successfully uses a joker. Removes all current Questions and (after a short delay) distributes new ones.
+<i>576</i>&nbsp;	 */
+<i>577</i>&nbsp;	protected synchronized void useJoker()
+<i>578</i>&nbsp;	{
+<b class="nc"><i>579</i>&nbsp;		for (int i = activeQuestions.size() - 1; i &gt;= 0; i--)</b>
+<i>580</i>&nbsp;		{
+<b class="nc"><i>581</i>&nbsp;			ActiveQuestion aq = activeQuestions.get(i);</b>
+<b class="nc"><i>582</i>&nbsp;			removeQuestion(aq);</b>
+<i>583</i>&nbsp;		}
+<i>584</i>&nbsp;		
+<i>585</i>&nbsp;		// prevent delayed calls to distribute questions before joker timeout has finished
+<b class="nc"><i>586</i>&nbsp;		isJokerTimeout = true;</b>
+<i>587</i>&nbsp;		
+<i>588</i>&nbsp;		// wait 1 second, then assign new questions to all players
+<b class="nc"><i>589</i>&nbsp;		quizRoom.addDelayedAction(new DelayedAction((new Date().getTime()) + 1000, () -&gt; {</b>
+<b class="nc"><i>590</i>&nbsp;			isJokerTimeout = false;</b>
+<b class="nc"><i>591</i>&nbsp;			missingQuestions = quizRoom.players.size() - 1;</b>
+<b class="nc"><i>592</i>&nbsp;			distributeQuestion();</b>
+<b class="nc"><i>593</i>&nbsp;		}));</b>
+<b class="nc"><i>594</i>&nbsp;	}</b>
+<i>595</i>&nbsp;	
+<i>596</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-06-26 10:09</div>
+</div>
+</body>
+</html>

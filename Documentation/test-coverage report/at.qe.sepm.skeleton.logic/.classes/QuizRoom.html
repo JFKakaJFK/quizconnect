@@ -1,0 +1,805 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: QuizRoom</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">at.qe.sepm.skeleton.logic</a> ]
+</div>
+
+<h1>Coverage Summary for Class: QuizRoom (at.qe.sepm.skeleton.logic)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">QuizRoom</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    31,2%
+  </span>
+  <span class="absValue">
+    (10/ 32)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    31,2%
+  </span>
+  <span class="absValue">
+    (89/ 285)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package at.qe.sepm.skeleton.logic;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.ArrayList;
+<i>4</i>&nbsp;import java.util.Date;
+<i>5</i>&nbsp;import java.util.HashMap;
+<i>6</i>&nbsp;import java.util.LinkedList;
+<i>7</i>&nbsp;import java.util.List;
+<i>8</i>&nbsp;import java.util.function.Consumer;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;import org.slf4j.Logger;
+<i>11</i>&nbsp;import org.slf4j.LoggerFactory;
+<i>12</i>&nbsp;import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;import at.qe.sepm.skeleton.model.Player;
+<i>15</i>&nbsp;import at.qe.sepm.skeleton.model.QuestionSet;
+<i>16</i>&nbsp;import at.qe.sepm.skeleton.model.QuestionSetDifficulty;
+<i>17</i>&nbsp;import at.qe.sepm.skeleton.services.PlayerService;
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;/**
+<i>20</i>&nbsp; * Class representing a QuizRoom containing all major logic required. For illustrations on how this class works please see the &#39;Documentation&#39; folder.
+<i>21</i>&nbsp; *
+<i>22</i>&nbsp; * @author Lorenz_Smidt
+<i>23</i>&nbsp; *
+<i>24</i>&nbsp; */
+<i>25</i>&nbsp;public class QuizRoom implements IPlayerAction
+<i>26</i>&nbsp;{
+<b class="fc"><i>27</i>&nbsp;	private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());</b>
+<i>28</i>&nbsp;	
+<i>29</i>&nbsp;	// all times in ms
+<b class="fc"><i>30</i>&nbsp;	private final long frameTimeStep = 50; // time between FramUpdate calls</b>
+<b class="fc"><i>31</i>&nbsp;	private final long activityTimeStep = 500; // time between player activity checks</b>
+<b class="fc"><i>32</i>&nbsp;	private final long activityDuration = 60000; // time until an activity ping invalidates</b>
+<b class="fc"><i>33</i>&nbsp;	private final long timeoutDuration = 10000; // time until player gets kicked after no activity</b>
+<b class="fc"><i>34</i>&nbsp;	private final long aliveTimeStep = 500; // time between alive ping checks</b>
+<b class="fc"><i>35</i>&nbsp;	private final long aliveDuration = 5000; // maximum time between alive pings</b>
+<b class="fc"><i>36</i>&nbsp;	private final long timerSyncTimeStep = 1000; // time between timer sync calls to players</b>
+<b class="fc"><i>37</i>&nbsp;	private final long roomStartDelay = 5000; // time between all Players ready and game start</b>
+<i>38</i>&nbsp;	
+<b class="fc"><i>39</i>&nbsp;	private final int defaultNumberJokers = 1; // number of jokers to start with</b>
+<i>40</i>&nbsp;	
+<i>41</i>&nbsp;	// constants while QR exists
+<i>42</i>&nbsp;	protected int pin;
+<i>43</i>&nbsp;	private int maxPlayers;
+<i>44</i>&nbsp;	private QuizRoomManager manager;
+<i>45</i>&nbsp;	protected RoomDifficulty difficulty;
+<i>46</i>&nbsp;	private GameMode gameMode;
+<i>47</i>&nbsp;	private Timer timerFrameUpdate;
+<i>48</i>&nbsp;	private QR_QuestionSystem questionSystem;
+<i>49</i>&nbsp;	
+<i>50</i>&nbsp;	private volatile long activityCheckTime; // ms since last activity check
+<i>51</i>&nbsp;	private volatile long aliveCheckTime; // ms since last alive check
+<i>52</i>&nbsp;	private volatile long timerSyncTime; // ms since last timer sync
+<i>53</i>&nbsp;	
+<i>54</i>&nbsp;	private List&lt;QuestionSet&gt; questionSets;
+<i>55</i>&nbsp;	private volatile HashMap&lt;Player, Integer&gt; correctlyAnsweredQuestions; // map for storing number of correctly answered Questions per player
+<i>56</i>&nbsp;	private volatile HashMap&lt;Player, Integer&gt; totalAnsweredQuestions; // map for storing total number of Questions answered per player
+<i>57</i>&nbsp;	private volatile long gameStartTime; // time stamp of game start, used for play time calculation
+<i>58</i>&nbsp;	
+<i>59</i>&nbsp;	protected volatile List&lt;Player&gt; players; // players in the room
+<i>60</i>&nbsp;	protected IRoomAction playerInterface; // interface for all players
+<i>61</i>&nbsp;	private volatile List&lt;DelayedAction&gt; delayQueue; // queue of delayed actions
+<i>62</i>&nbsp;	
+<i>63</i>&nbsp;	private volatile int score; // current room score
+<i>64</i>&nbsp;	private volatile int numReshuffleJokers; // number of jokers available
+<i>65</i>&nbsp;	private volatile HashMap&lt;Player, Long&gt; playerActivityTimestamps; // map for storing activity time stamps of players
+<i>66</i>&nbsp;	private volatile HashMap&lt;Player, Long&gt; playerAlivePingTimestamps; // map for storing alive ping time stamps of players
+<i>67</i>&nbsp;	private volatile List&lt;Player&gt; inactivePlayers; // list of players marked as inactive and to be kicked soon
+<i>68</i>&nbsp;	
+<i>69</i>&nbsp;	private volatile List&lt;Player&gt; readyPlayers; // list of players who declared themselves ready
+<i>70</i>&nbsp;	protected volatile boolean wfpMode; // true if the room is in &#39;waiting for players&#39; mode
+<i>71</i>&nbsp;	private volatile boolean gameOver; // true if the game is finished
+<i>72</i>&nbsp;	
+<i>73</i>&nbsp;	/**
+<i>74</i>&nbsp;	 * Initializes a new QR.
+<i>75</i>&nbsp;	 *
+<i>76</i>&nbsp;	 * @param scheduler
+<i>77</i>&nbsp;	 *            ThreadPoolTaskScheduler for scheduling Timers.
+<i>78</i>&nbsp;	 * @param manager
+<i>79</i>&nbsp;	 *            Reference to QuizRoomManager for notifying on room close.
+<i>80</i>&nbsp;	 * @param pin
+<i>81</i>&nbsp;	 *            Pin of the QuizRoom.
+<i>82</i>&nbsp;	 * @param maxPlayers
+<i>83</i>&nbsp;	 *            Maximum number of players.
+<i>84</i>&nbsp;	 * @param difficulty
+<i>85</i>&nbsp;	 *            Difficulty of the room.
+<i>86</i>&nbsp;	 * @param gameMode
+<i>87</i>&nbsp;	 *            Game mode of the room.
+<i>88</i>&nbsp;	 * @param qSets
+<i>89</i>&nbsp;	 *            QuestionSets to be used by the room.
+<i>90</i>&nbsp;	 */
+<i>91</i>&nbsp;	public QuizRoom(ThreadPoolTaskScheduler scheduler, QuizRoomManager manager, int pin, int maxPlayers, RoomDifficulty difficulty, GameMode gameMode,
+<i>92</i>&nbsp;			List&lt;QuestionSet&gt; qSets, IRoomAction roomAction)
+<b class="fc"><i>93</i>&nbsp;	{</b>
+<b class="fc"><i>94</i>&nbsp;		LOGGER.debug(&quot;### INFO ### QuizRoom [&quot; + pin + &quot;] started. (room difficulty &quot; + difficulty + &quot;; maxPlayers: &quot; + maxPlayers + &quot;)&quot;);</b>
+<b class="fc"><i>95</i>&nbsp;		this.pin = pin;</b>
+<b class="fc"><i>96</i>&nbsp;		this.manager = manager;</b>
+<b class="fc"><i>97</i>&nbsp;		this.maxPlayers = maxPlayers;</b>
+<b class="fc"><i>98</i>&nbsp;		this.difficulty = difficulty;</b>
+<b class="fc"><i>99</i>&nbsp;		this.gameMode = gameMode;</b>
+<i>100</i>&nbsp;		
+<b class="fc"><i>101</i>&nbsp;		players = new LinkedList&lt;&gt;();</b>
+<b class="fc"><i>102</i>&nbsp;		playerInterface = roomAction;</b>
+<b class="fc"><i>103</i>&nbsp;		delayQueue = new LinkedList&lt;&gt;();</b>
+<b class="fc"><i>104</i>&nbsp;		this.questionSets = qSets;</b>
+<i>105</i>&nbsp;		
+<b class="fc"><i>106</i>&nbsp;		activityCheckTime = 0;</b>
+<b class="fc"><i>107</i>&nbsp;		aliveCheckTime = 0;</b>
+<b class="fc"><i>108</i>&nbsp;		timerSyncTime = 0;</b>
+<b class="fc"><i>109</i>&nbsp;		gameStartTime = 0;</b>
+<i>110</i>&nbsp;		
+<b class="fc"><i>111</i>&nbsp;		numReshuffleJokers = defaultNumberJokers;</b>
+<b class="fc"><i>112</i>&nbsp;		correctlyAnsweredQuestions = new HashMap&lt;&gt;();</b>
+<b class="fc"><i>113</i>&nbsp;		totalAnsweredQuestions = new HashMap&lt;&gt;();</b>
+<b class="fc"><i>114</i>&nbsp;		score = 0;</b>
+<i>115</i>&nbsp;		
+<b class="fc"><i>116</i>&nbsp;		playerActivityTimestamps = new HashMap&lt;&gt;();</b>
+<b class="fc"><i>117</i>&nbsp;		playerAlivePingTimestamps = new HashMap&lt;&gt;();</b>
+<b class="fc"><i>118</i>&nbsp;		inactivePlayers = new LinkedList&lt;&gt;();</b>
+<i>119</i>&nbsp;		
+<b class="fc"><i>120</i>&nbsp;		readyPlayers = new LinkedList&lt;&gt;();</b>
+<b class="fc"><i>121</i>&nbsp;		wfpMode = true;</b>
+<b class="fc"><i>122</i>&nbsp;		gameOver = false;</b>
+<i>123</i>&nbsp;		
+<i>124</i>&nbsp;		// create and start frame timer
+<b class="fc"><i>125</i>&nbsp;		timerFrameUpdate = new Timer(scheduler, this::onFrameUpdate, frameTimeStep);</b>
+<i>126</i>&nbsp;		
+<i>127</i>&nbsp;		//create Question system
+<b class="fc"><i>128</i>&nbsp;		questionSystem = new QR_QuestionSystem(this, gameMode, qSets);</b>
+<b class="fc"><i>129</i>&nbsp;	}</b>
+<i>130</i>&nbsp;	
+<i>131</i>&nbsp;	/**
+<i>132</i>&nbsp;	 * Gets called once every frameTimeStep ms by timerFrameUpdate.
+<i>133</i>&nbsp;	 *
+<i>134</i>&nbsp;	 * @param deltaTime
+<i>135</i>&nbsp;	 * 		Time since last call in ms.
+<i>136</i>&nbsp;	 */
+<i>137</i>&nbsp;	private synchronized void onFrameUpdate(long deltaTime)
+<i>138</i>&nbsp;	{
+<b class="fc"><i>139</i>&nbsp;		if (gameOver)</b>
+<b class="nc"><i>140</i>&nbsp;			return;</b>
+<i>141</i>&nbsp;		
+<b class="fc"><i>142</i>&nbsp;		if (deltaTime &gt; 2 * frameTimeStep)</b>
+<i>143</i>&nbsp;		{
+<b class="nc"><i>144</i>&nbsp;			LOGGER.debug(&quot;### WARNING ### large delay in frameUpdate call of QR [&quot; + pin + &quot;] (&quot; + deltaTime + &quot;ms)&quot;);</b>
+<i>145</i>&nbsp;		}
+<i>146</i>&nbsp;		
+<b class="fc"><i>147</i>&nbsp;		checkDelayQueue();</b>
+<i>148</i>&nbsp;		
+<b class="fc"><i>149</i>&nbsp;		aliveCheckTime += deltaTime;</b>
+<b class="fc"><i>150</i>&nbsp;		if (aliveCheckTime &gt;= aliveTimeStep)</b>
+<i>151</i>&nbsp;		{
+<b class="fc"><i>152</i>&nbsp;			checkPlayerAlivePings();</b>
+<b class="fc"><i>153</i>&nbsp;			aliveCheckTime = 0;</b>
+<i>154</i>&nbsp;		}
+<i>155</i>&nbsp;		
+<b class="fc"><i>156</i>&nbsp;		if (!wfpMode &amp;&amp; gameStartTime != 0) // disable during wfp mode / game start countdown</b>
+<i>157</i>&nbsp;		{
+<b class="nc"><i>158</i>&nbsp;			activityCheckTime += deltaTime;</b>
+<b class="nc"><i>159</i>&nbsp;			if (activityCheckTime &gt;= activityTimeStep)</b>
+<i>160</i>&nbsp;			{
+<b class="nc"><i>161</i>&nbsp;				checkPlayerActivity();</b>
+<b class="nc"><i>162</i>&nbsp;				activityCheckTime = 0;</b>
+<i>163</i>&nbsp;			}
+<i>164</i>&nbsp;			
+<b class="nc"><i>165</i>&nbsp;			timerSyncTime += deltaTime;</b>
+<b class="nc"><i>166</i>&nbsp;			if (timerSyncTime &gt;= timerSyncTimeStep)</b>
+<i>167</i>&nbsp;			{
+<b class="nc"><i>168</i>&nbsp;				questionSystem.synchronizeTimers(playerInterface, pin);</b>
+<b class="nc"><i>169</i>&nbsp;				timerSyncTime = 0;</b>
+<i>170</i>&nbsp;			}
+<i>171</i>&nbsp;			
+<b class="nc"><i>172</i>&nbsp;			questionSystem.checkQuestionTimes(deltaTime);</b>
+<i>173</i>&nbsp;		}
+<i>174</i>&nbsp;		
+<b class="fc"><i>175</i>&nbsp;	}</b>
+<i>176</i>&nbsp;	
+<i>177</i>&nbsp;	/**
+<i>178</i>&nbsp;	 * Executes function f on the Player interface for the QuizRoom.
+<i>179</i>&nbsp;	 *
+<i>180</i>&nbsp;	 * @param f
+<i>181</i>&nbsp;	 *            Function to be executed on all Players.
+<i>182</i>&nbsp;	 */
+<i>183</i>&nbsp;	private synchronized void eventCall(Consumer&lt;IRoomAction&gt; f)
+<i>184</i>&nbsp;	{
+<b class="fc"><i>185</i>&nbsp;		f.accept(playerInterface);</b>
+<i>186</i>&nbsp;		/*
+<i>187</i>&nbsp;		 * for (IRoomAction action : playerInterfaces.values()) { f.accept(action); }
+<i>188</i>&nbsp;		 */
+<b class="fc"><i>189</i>&nbsp;	}</b>
+<i>190</i>&nbsp;	
+<i>191</i>&nbsp;	/**
+<i>192</i>&nbsp;	 * Adds the action to the queue to be executed at execTime.
+<i>193</i>&nbsp;	 *
+<i>194</i>&nbsp;	 * @param action Action to be executed after a delay.
+<i>195</i>&nbsp;	 */
+<i>196</i>&nbsp;	protected synchronized void addDelayedAction(DelayedAction action) throws IllegalArgumentException
+<i>197</i>&nbsp;	{
+<b class="nc"><i>198</i>&nbsp;		if (gameOver)</b>
+<b class="nc"><i>199</i>&nbsp;			return;</b>
+<i>200</i>&nbsp;		
+<b class="nc"><i>201</i>&nbsp;		if (action == null || action.action == null)</b>
+<b class="nc"><i>202</i>&nbsp;			throw new IllegalArgumentException(&quot;DelayAction is invalid!&quot;);</b>
+<i>203</i>&nbsp;		
+<b class="nc"><i>204</i>&nbsp;		for (int i = 0; i &lt; delayQueue.size(); i++)</b>
+<i>205</i>&nbsp;		{
+<b class="nc"><i>206</i>&nbsp;			if (delayQueue.get(i).execTime &gt; action.execTime)</b>
+<i>207</i>&nbsp;			{
+<b class="nc"><i>208</i>&nbsp;				delayQueue.add(i, action);</b>
+<b class="nc"><i>209</i>&nbsp;				return;</b>
+<i>210</i>&nbsp;			}
+<i>211</i>&nbsp;		}
+<b class="nc"><i>212</i>&nbsp;		delayQueue.add(action);</b>
+<b class="nc"><i>213</i>&nbsp;	}</b>
+<i>214</i>&nbsp;	
+<i>215</i>&nbsp;	/**
+<i>216</i>&nbsp;	 * Called every frameUpdate, executes delayed action at around the right time (max. execTime + frameTimeStep).
+<i>217</i>&nbsp;	 */
+<i>218</i>&nbsp;	private synchronized void checkDelayQueue()
+<i>219</i>&nbsp;	{
+<b class="fc"><i>220</i>&nbsp;		if (gameOver)</b>
+<b class="nc"><i>221</i>&nbsp;			return;</b>
+<i>222</i>&nbsp;		
+<b class="fc"><i>223</i>&nbsp;		long now = new Date().getTime() + 10; // offset by 10ms to make up for &#39;just missed&#39; calls</b>
+<b class="fc"><i>224</i>&nbsp;		while (delayQueue.size() &gt; 0 &amp;&amp; delayQueue.get(0).execTime &lt;= now)</b>
+<i>225</i>&nbsp;		{
+<b class="nc"><i>226</i>&nbsp;			DelayedAction a = delayQueue.get(0);</b>
+<b class="nc"><i>227</i>&nbsp;			delayQueue.remove(0);</b>
+<b class="nc"><i>228</i>&nbsp;			a.action.run();</b>
+<b class="nc"><i>229</i>&nbsp;		}</b>
+<b class="fc"><i>230</i>&nbsp;	}</b>
+<i>231</i>&nbsp;
+<i>232</i>&nbsp;	
+<i>233</i>&nbsp;	/**
+<i>234</i>&nbsp;	 * Called every activityTimeStep ms, checks for each Player if the last activity time stamp is more than activityDuration ms ago.
+<i>235</i>&nbsp;	 */
+<i>236</i>&nbsp;	private synchronized void checkPlayerActivity()
+<i>237</i>&nbsp;	{
+<b class="nc"><i>238</i>&nbsp;		if (gameOver)</b>
+<b class="nc"><i>239</i>&nbsp;			return;</b>
+<i>240</i>&nbsp;		
+<b class="nc"><i>241</i>&nbsp;		long tooLong = (new Date().getTime()) - activityDuration;</b>
+<b class="nc"><i>242</i>&nbsp;		for (Player player : players)</b>
+<i>243</i>&nbsp;		{
+<b class="nc"><i>244</i>&nbsp;			if (playerActivityTimestamps.get(player) &lt; tooLong &amp;&amp; !inactivePlayers.contains(player))</b>
+<i>245</i>&nbsp;			{
+<b class="nc"><i>246</i>&nbsp;				inactivePlayers.add(player);</b>
+<b class="nc"><i>247</i>&nbsp;				playerInterface.onTimeoutStart(pin, player, timeoutDuration);</b>
+<b class="nc"><i>248</i>&nbsp;				addDelayedAction(new DelayedAction((new Date().getTime()) + timeoutDuration, () -&gt; kickPlayerIfNoActivity(player)));</b>
+<i>249</i>&nbsp;			}
+<b class="nc"><i>250</i>&nbsp;		}</b>
+<b class="nc"><i>251</i>&nbsp;	}</b>
+<i>252</i>&nbsp;	
+<i>253</i>&nbsp;	/**
+<i>254</i>&nbsp;	 * Called delayed if an activity check fails on a player. If still no activity / timeout cancel detected kick player
+<i>255</i>&nbsp;	 *
+<i>256</i>&nbsp;	 * @param player Player to be checked if still no activity registered.
+<i>257</i>&nbsp;	 */
+<i>258</i>&nbsp;	private synchronized void kickPlayerIfNoActivity(Player player)
+<i>259</i>&nbsp;	{
+<b class="nc"><i>260</i>&nbsp;		long tooLong = (new Date().getTime()) - activityDuration;</b>
+<b class="nc"><i>261</i>&nbsp;		if (playerActivityTimestamps.containsKey(player) &amp;&amp; playerActivityTimestamps.get(player) &lt; tooLong)</b>
+<i>262</i>&nbsp;		{
+<b class="nc"><i>263</i>&nbsp;			playerInterface.onKick(pin, player);</b>
+<b class="nc"><i>264</i>&nbsp;			removePlayer(player, &quot;kicked for AFK&quot;);</b>
+<i>265</i>&nbsp;		}
+<i>266</i>&nbsp;		
+<b class="nc"><i>267</i>&nbsp;		inactivePlayers.remove(player);</b>
+<b class="nc"><i>268</i>&nbsp;	}</b>
+<i>269</i>&nbsp;	
+<i>270</i>&nbsp;	/**
+<i>271</i>&nbsp;	 * Called every aliveTimeStep ms, checks for each Player if the last alive ping is more than aliveDuration ms ago. Removes the player if no activity is detected.
+<i>272</i>&nbsp;	 */
+<i>273</i>&nbsp;	private synchronized void checkPlayerAlivePings()
+<i>274</i>&nbsp;	{
+<b class="fc"><i>275</i>&nbsp;		if (gameOver)</b>
+<b class="nc"><i>276</i>&nbsp;			return;</b>
+<i>277</i>&nbsp;		
+<b class="fc"><i>278</i>&nbsp;		long tooLong = (new Date().getTime()) - aliveDuration;</b>
+<b class="fc"><i>279</i>&nbsp;		for (int i = players.size() - 1; i &gt;= 0; i--)</b>
+<i>280</i>&nbsp;		{
+<b class="nc"><i>281</i>&nbsp;			Player player = players.get(i);</b>
+<b class="nc"><i>282</i>&nbsp;			if (playerAlivePingTimestamps.get(player) &lt; tooLong)</b>
+<i>283</i>&nbsp;			{
+<b class="nc"><i>284</i>&nbsp;				removePlayer(player, &quot;disconnected&quot;);</b>
+<i>285</i>&nbsp;			}
+<i>286</i>&nbsp;		}
+<b class="fc"><i>287</i>&nbsp;	}</b>
+<i>288</i>&nbsp;
+<i>289</i>&nbsp;	/**
+<i>290</i>&nbsp;	 * Called by the {@link QuizRoomManager} if a Player tries to join the QuizRoom.
+<i>291</i>&nbsp;	 *
+<i>292</i>&nbsp;	 * @param player
+<i>293</i>&nbsp;	 *            Player to join the room.
+<i>294</i>&nbsp;	 */
+<i>295</i>&nbsp;	protected synchronized void addPlayer(Player player)
+<i>296</i>&nbsp;	{
+<b class="fc"><i>297</i>&nbsp;		if (players.contains(player))</b>
+<i>298</i>&nbsp;		{
+<b class="nc"><i>299</i>&nbsp;			throw new IllegalArgumentException(&quot;Player already in QuizRoom&quot;);</b>
+<i>300</i>&nbsp;		}
+<b class="fc"><i>301</i>&nbsp;		if (players.size() == maxPlayers)</b>
+<i>302</i>&nbsp;		{
+<b class="nc"><i>303</i>&nbsp;			throw new IllegalArgumentException(&quot;QuizRoom already full! (&quot; + players.size() + &quot;/&quot; + maxPlayers + &quot;)&quot;);</b>
+<i>304</i>&nbsp;		}
+<i>305</i>&nbsp;		
+<b class="fc"><i>306</i>&nbsp;		players.add(player);</b>
+<i>307</i>&nbsp;		
+<b class="fc"><i>308</i>&nbsp;		questionSystem.addPlayer(player);</b>
+<i>309</i>&nbsp;		
+<b class="fc"><i>310</i>&nbsp;		correctlyAnsweredQuestions.put(player, 0);</b>
+<b class="fc"><i>311</i>&nbsp;		totalAnsweredQuestions.put(player, 0);</b>
+<b class="fc"><i>312</i>&nbsp;		playerAlivePingTimestamps.put(player, new Date().getTime());</b>
+<i>313</i>&nbsp;		
+<b class="fc"><i>314</i>&nbsp;		eventCall(x -&gt; x.onPlayerJoin(pin, player));</b>
+<i>315</i>&nbsp;		
+<i>316</i>&nbsp;		// hot-join
+<b class="fc"><i>317</i>&nbsp;		if (!wfpMode)</b>
+<i>318</i>&nbsp;		{
+<b class="nc"><i>319</i>&nbsp;			long now = new Date().getTime();</b>
+<b class="nc"><i>320</i>&nbsp;			playerActivityTimestamps.put(player, now);</b>
+<b class="nc"><i>321</i>&nbsp;			playerAlivePingTimestamps.put(player, now);</b>
+<i>322</i>&nbsp;
+<i>323</i>&nbsp;			// add additional question to distribute on _next call
+<b class="nc"><i>324</i>&nbsp;			questionSystem.addMissingQuestions(1);</b>
+<i>325</i>&nbsp;		}
+<b class="fc"><i>326</i>&nbsp;	}</b>
+<i>327</i>&nbsp;	
+<i>328</i>&nbsp;	/**
+<i>329</i>&nbsp;	 * Removes a Player from the QuizRoom. May be called due to Player leaving, or afk kick. Makes the onPlayerLeave event call.
+<i>330</i>&nbsp;	 *
+<i>331</i>&nbsp;	 * @param player
+<i>332</i>&nbsp;	 *            Player to be removed.
+<i>333</i>&nbsp;	 * @param reason
+<i>334</i>&nbsp;	 *            Reason for the removal (e.g. &#39;left&#39;, &#39;kicked&#39;, &#39;disconnected&#39;)
+<i>335</i>&nbsp;	 */
+<i>336</i>&nbsp;	private synchronized void removePlayer(Player player, String reason)
+<i>337</i>&nbsp;	{
+<b class="fc"><i>338</i>&nbsp;		eventCall(x -&gt; x.onPlayerLeave(pin, player, reason));</b>
+<i>339</i>&nbsp;		
+<i>340</i>&nbsp;		// remove QuizRoom if no more players in room
+<b class="fc"><i>341</i>&nbsp;		if (players.size() == 1)</b>
+<i>342</i>&nbsp;		{
+<b class="fc"><i>343</i>&nbsp;			players.remove(player);</b>
+<b class="fc"><i>344</i>&nbsp;			onRoomClose();</b>
+<b class="fc"><i>345</i>&nbsp;			return;</b>
+<i>346</i>&nbsp;		}
+<b class="nc"><i>347</i>&nbsp;		else if (!wfpMode &amp;&amp; players.size() == 2) // not lobby and only one player left</b>
+<i>348</i>&nbsp;		{
+<b class="nc"><i>349</i>&nbsp;			players.remove(player);</b>
+<b class="nc"><i>350</i>&nbsp;			players.remove(0);</b>
+<b class="nc"><i>351</i>&nbsp;			onRoomClose();</b>
+<b class="nc"><i>352</i>&nbsp;			return;</b>
+<i>353</i>&nbsp;		}
+<i>354</i>&nbsp;		
+<b class="nc"><i>355</i>&nbsp;		questionSystem.removePlayer(player);</b>
+<b class="nc"><i>356</i>&nbsp;		players.remove(player);</b>
+<i>357</i>&nbsp;		
+<i>358</i>&nbsp;		//remove player data structures
+<b class="nc"><i>359</i>&nbsp;		playerActivityTimestamps.remove(player);</b>
+<b class="nc"><i>360</i>&nbsp;		playerAlivePingTimestamps.remove(player);</b>
+<b class="nc"><i>361</i>&nbsp;		correctlyAnsweredQuestions.remove(player);</b>
+<b class="nc"><i>362</i>&nbsp;		totalAnsweredQuestions.remove(player);</b>
+<i>363</i>&nbsp;		
+<b class="nc"><i>364</i>&nbsp;		if (wfpMode)</b>
+<i>365</i>&nbsp;		{
+<b class="nc"><i>366</i>&nbsp;			readyPlayers.remove(player);</b>
+<b class="nc"><i>367</i>&nbsp;			checkIfAllReady();</b>
+<i>368</i>&nbsp;		}
+<b class="nc"><i>369</i>&nbsp;	}</b>
+<i>370</i>&nbsp;	
+<i>371</i>&nbsp;	/**
+<i>372</i>&nbsp;	 * Called roomStartDelay ms after all Players have readied up. Starts the onGameStart event call and distributes the initial questions to the players.
+<i>373</i>&nbsp;	 */
+<i>374</i>&nbsp;	private void onGameStart()
+<i>375</i>&nbsp;	{
+<b class="nc"><i>376</i>&nbsp;		readyPlayers = null;</b>
+<i>377</i>&nbsp;		
+<b class="nc"><i>378</i>&nbsp;		gameStartTime = new Date().getTime();</b>
+<i>379</i>&nbsp;		
+<b class="nc"><i>380</i>&nbsp;		eventCall(x -&gt; x.onGameStart(pin));</b>
+<i>381</i>&nbsp;		
+<b class="nc"><i>382</i>&nbsp;		questionSystem.setMissingQuestions(players.size() - 1);</b>
+<b class="nc"><i>383</i>&nbsp;		questionSystem.distributeQuestion();</b>
+<b class="nc"><i>384</i>&nbsp;	}</b>
+<i>385</i>&nbsp;	
+<i>386</i>&nbsp;	/**
+<i>387</i>&nbsp;	 * Called just before the room is closed. Cleans up the class.
+<i>388</i>&nbsp;	 */
+<i>389</i>&nbsp;	protected void onRoomClose()
+<i>390</i>&nbsp;	{
+<b class="fc"><i>391</i>&nbsp;		eventCall(x -&gt; x.onGameEnd(pin));</b>
+<i>392</i>&nbsp;		
+<b class="fc"><i>393</i>&nbsp;		wfpMode = true; // prevent processing of any frameUpdate calls on any runtime structures</b>
+<b class="fc"><i>394</i>&nbsp;		gameOver = true;</b>
+<i>395</i>&nbsp;		
+<b class="fc"><i>396</i>&nbsp;		timerFrameUpdate.stop();</b>
+<b class="fc"><i>397</i>&nbsp;		delayQueue.clear();</b>
+<i>398</i>&nbsp;		
+<b class="fc"><i>399</i>&nbsp;		updatePlayerStats();</b>
+<b class="fc"><i>400</i>&nbsp;		manager.removeRoom(pin); //de-register QuizRoom with QRManger</b>
+<i>401</i>&nbsp;		
+<b class="fc"><i>402</i>&nbsp;		LOGGER.debug(&quot;QuizRoom [&quot; + pin + &quot;] closed after &quot; + timerFrameUpdate.getElapsedTime() + &quot; ms.&quot;);</b>
+<b class="fc"><i>403</i>&nbsp;	}</b>
+<i>404</i>&nbsp;	
+<i>405</i>&nbsp;	/**
+<i>406</i>&nbsp;	 * Updates the statistics of all Players currently in the Room with the tracked values. Called at the end of a game.
+<i>407</i>&nbsp;	 */
+<i>408</i>&nbsp;	private void updatePlayerStats()
+<i>409</i>&nbsp;	{
+<b class="fc"><i>410</i>&nbsp;		PlayerService playerService = manager.getPlayerService();</b>
+<b class="fc"><i>411</i>&nbsp;		long endTime = new Date().getTime();</b>
+<b class="fc"><i>412</i>&nbsp;		long gameTime = endTime - gameStartTime;</b>
+<b class="fc"><i>413</i>&nbsp;		for (Player player : players)</b>
+<i>414</i>&nbsp;		{
+<b class="nc"><i>415</i>&nbsp;			player.addToTotalScore(score);</b>
+<b class="nc"><i>416</i>&nbsp;			player.addPlayTime(gameTime);</b>
+<b class="nc"><i>417</i>&nbsp;			player._setPlayedWithLast(players);</b>
+<b class="nc"><i>418</i>&nbsp;			player.addGameScore(endTime, score);</b>
+<i>419</i>&nbsp;			
+<b class="nc"><i>420</i>&nbsp;			if (gameMode != GameMode.mathgod)</b>
+<b class="nc"><i>421</i>&nbsp;				player.addPlayToQSets(questionSets);</b>
+<i>422</i>&nbsp;			
+<b class="nc"><i>423</i>&nbsp;			if (!correctlyAnsweredQuestions.containsKey(player))</b>
+<b class="nc"><i>424</i>&nbsp;				LOGGER.error(&quot;### ERROR ### Missing correct answers entry for Player (id &quot; + player.getId() + &quot;)!&quot;);</b>
+<i>425</i>&nbsp;			else
+<b class="nc"><i>426</i>&nbsp;				player.AddCorrectAnswers(correctlyAnsweredQuestions.get(player));</b>
+<i>427</i>&nbsp;			
+<b class="nc"><i>428</i>&nbsp;			if (!totalAnsweredQuestions.containsKey(player))</b>
+<b class="nc"><i>429</i>&nbsp;				LOGGER.error(&quot;### ERROR ### Missing total answers entry for Player (id &quot; + player.getId() + &quot;)!&quot;);</b>
+<i>430</i>&nbsp;			else
+<b class="nc"><i>431</i>&nbsp;				player.addTotalAnswers(totalAnsweredQuestions.get(player));</b>
+<i>432</i>&nbsp;			
+<b class="nc"><i>433</i>&nbsp;			if (score &gt; player.getHighScore())</b>
+<b class="nc"><i>434</i>&nbsp;				player.setHighScore(score);</b>
+<i>435</i>&nbsp;			
+<b class="nc"><i>436</i>&nbsp;			playerService.savePlayer(player);</b>
+<b class="nc"><i>437</i>&nbsp;		}</b>
+<b class="fc"><i>438</i>&nbsp;	}</b>
+<i>439</i>&nbsp;
+<i>440</i>&nbsp;    /**
+<i>441</i>&nbsp;     * Changes the score of the room according to the change code.
+<i>442</i>&nbsp;     *
+<i>443</i>&nbsp;     * @param code
+<i>444</i>&nbsp;     *            ChangeCode; Codes: 0 = wrong answer easy, 1 = wrong answer hard, 2 = right answer easy, 3 = right answer hard, 4 = timeout easy, 5 = timeout hard.
+<i>445</i>&nbsp;     * @param timeRemaining
+<i>446</i>&nbsp;     *            Time remaining on the Question
+<i>447</i>&nbsp;     */
+<i>448</i>&nbsp;    protected synchronized void changeScore(int code, long timeRemaining)
+<i>449</i>&nbsp;    {
+<b class="nc"><i>450</i>&nbsp;	    int mathGodBonus = 10;</b>
+<b class="nc"><i>451</i>&nbsp;	    questionSystem.addCompletedQuestions(1);</b>
+<b class="nc"><i>452</i>&nbsp;	    switch (code)</b>
+<i>453</i>&nbsp;	    {
+<i>454</i>&nbsp;		    case 0:
+<b class="nc"><i>455</i>&nbsp;			    score -= (difficulty == RoomDifficulty.easy ? 60 : 85);</b>
+<b class="nc"><i>456</i>&nbsp;			    break;</b>
+<i>457</i>&nbsp;		    case 1:
+<b class="nc"><i>458</i>&nbsp;			    score -= (difficulty == RoomDifficulty.easy ? 85 : 110);</b>
+<b class="nc"><i>459</i>&nbsp;			    break;</b>
+<i>460</i>&nbsp;		    case 2:
+<b class="nc"><i>461</i>&nbsp;			    score += (difficulty == RoomDifficulty.easy ? 100 : 125) + (int) (timeRemaining / 1000);</b>
+<b class="nc"><i>462</i>&nbsp;			    if (gameMode == GameMode.mathgod)</b>
+<b class="nc"><i>463</i>&nbsp;				    score += mathGodBonus;</b>
+<i>464</i>&nbsp;			    break;
+<i>465</i>&nbsp;		    case 3:
+<b class="nc"><i>466</i>&nbsp;			    score += (difficulty == RoomDifficulty.easy ? 125 : 150) + (int) (timeRemaining / 1000);</b>
+<b class="nc"><i>467</i>&nbsp;			    if (gameMode == GameMode.mathgod)</b>
+<b class="nc"><i>468</i>&nbsp;				    score += 2 * mathGodBonus;</b>
+<i>469</i>&nbsp;			    break;
+<i>470</i>&nbsp;		    case 4:
+<b class="nc"><i>471</i>&nbsp;			    score -= (difficulty == RoomDifficulty.easy ? 50 : 75);</b>
+<b class="nc"><i>472</i>&nbsp;			    break;</b>
+<i>473</i>&nbsp;		    case 5:
+<b class="nc"><i>474</i>&nbsp;			    score -= (difficulty == RoomDifficulty.easy ? 75 : 100);</b>
+<i>475</i>&nbsp;			    break;
+<i>476</i>&nbsp;        }
+<i>477</i>&nbsp;        
+<b class="nc"><i>478</i>&nbsp;        eventCall(x -&gt; x.onScoreChange(pin, score));</b>
+<b class="nc"><i>479</i>&nbsp;    }</b>
+<i>480</i>&nbsp;	
+<i>481</i>&nbsp;	/*
+<i>482</i>&nbsp;	* ### IPlayerAction interface implementations. For documentation on the individual functions please see the interface definition. ###
+<i>483</i>&nbsp;	*/
+<i>484</i>&nbsp;	
+<i>485</i>&nbsp;	@Override
+<i>486</i>&nbsp;	public int getRoomPin()
+<i>487</i>&nbsp;	{
+<b class="nc"><i>488</i>&nbsp;		return pin;</b>
+<i>489</i>&nbsp;	}
+<i>490</i>&nbsp;	
+<i>491</i>&nbsp;	@Override
+<i>492</i>&nbsp;	public synchronized List&lt;Player&gt; getRoomPlayers()
+<i>493</i>&nbsp;	{
+<b class="nc"><i>494</i>&nbsp;		List&lt;Player&gt; ps = new ArrayList&lt;&gt;(players.size());</b>
+<b class="nc"><i>495</i>&nbsp;		ps.addAll(players);</b>
+<b class="nc"><i>496</i>&nbsp;		return ps;</b>
+<i>497</i>&nbsp;	}
+<i>498</i>&nbsp;	
+<i>499</i>&nbsp;	@Override
+<i>500</i>&nbsp;	public int getRoomPlayerCount()
+<i>501</i>&nbsp;	{
+<b class="nc"><i>502</i>&nbsp;		return players.size();</b>
+<i>503</i>&nbsp;	}
+<i>504</i>&nbsp;	
+<i>505</i>&nbsp;	@Override
+<i>506</i>&nbsp;	public RoomDifficulty getRoomDifficulty()
+<i>507</i>&nbsp;	{
+<b class="nc"><i>508</i>&nbsp;		return difficulty;</b>
+<i>509</i>&nbsp;	}
+<i>510</i>&nbsp;	
+<i>511</i>&nbsp;	@Override
+<i>512</i>&nbsp;	public GameMode getRoomMode()
+<i>513</i>&nbsp;	{
+<b class="nc"><i>514</i>&nbsp;		return gameMode;</b>
+<i>515</i>&nbsp;	}
+<i>516</i>&nbsp;	
+<i>517</i>&nbsp;	@Override
+<i>518</i>&nbsp;	public synchronized List&lt;String&gt; getRoomQuestionSets()
+<i>519</i>&nbsp;	{
+<b class="nc"><i>520</i>&nbsp;		if (gameMode == GameMode.mathgod)</b>
+<b class="nc"><i>521</i>&nbsp;			return null;</b>
+<i>522</i>&nbsp;		
+<b class="nc"><i>523</i>&nbsp;		List&lt;String&gt; QStrings = new ArrayList&lt;&gt;(questionSets.size());</b>
+<b class="nc"><i>524</i>&nbsp;		for (QuestionSet questionSet : questionSets)</b>
+<i>525</i>&nbsp;		{
+<b class="nc"><i>526</i>&nbsp;			QStrings.add(questionSet.getName());</b>
+<b class="nc"><i>527</i>&nbsp;		}</b>
+<b class="nc"><i>528</i>&nbsp;		return QStrings;</b>
+<i>529</i>&nbsp;	}
+<i>530</i>&nbsp;	
+<i>531</i>&nbsp;	@Override
+<i>532</i>&nbsp;	public int getRoomScore()
+<i>533</i>&nbsp;	{
+<b class="nc"><i>534</i>&nbsp;		return score;</b>
+<i>535</i>&nbsp;	}
+<i>536</i>&nbsp;	
+<i>537</i>&nbsp;	@Override
+<i>538</i>&nbsp;	public synchronized List&lt;Player&gt; getRoomReadyPlayers()
+<i>539</i>&nbsp;	{
+<b class="nc"><i>540</i>&nbsp;		if (!wfpMode)</b>
+<b class="nc"><i>541</i>&nbsp;			return null;</b>
+<i>542</i>&nbsp;		
+<b class="nc"><i>543</i>&nbsp;		List&lt;Player&gt; ps = new ArrayList&lt;&gt;(readyPlayers.size());</b>
+<b class="nc"><i>544</i>&nbsp;        ps.addAll(readyPlayers);</b>
+<b class="nc"><i>545</i>&nbsp;		return ps;</b>
+<i>546</i>&nbsp;	}
+<i>547</i>&nbsp;	
+<i>548</i>&nbsp;	@Override
+<i>549</i>&nbsp;	public long getAlivePingTimeStep()
+<i>550</i>&nbsp;	{
+<b class="nc"><i>551</i>&nbsp;		return aliveTimeStep;</b>
+<i>552</i>&nbsp;	}
+<i>553</i>&nbsp;	
+<i>554</i>&nbsp;	@Override
+<i>555</i>&nbsp;	public boolean isRoomInWaitingMode()
+<i>556</i>&nbsp;	{
+<b class="nc"><i>557</i>&nbsp;		return wfpMode;</b>
+<i>558</i>&nbsp;	}
+<i>559</i>&nbsp;	
+<i>560</i>&nbsp;	@Override
+<i>561</i>&nbsp;	public synchronized void readyUp(Player p)
+<i>562</i>&nbsp;	{
+<b class="nc"><i>563</i>&nbsp;		if (!wfpMode)</b>
+<b class="nc"><i>564</i>&nbsp;			return;</b>
+<i>565</i>&nbsp;		
+<i>566</i>&nbsp;		// player already ready?
+<b class="nc"><i>567</i>&nbsp;		if (readyPlayers.contains(p))</b>
+<b class="nc"><i>568</i>&nbsp;			return;</b>
+<i>569</i>&nbsp;		
+<b class="nc"><i>570</i>&nbsp;		readyPlayers.add(p);</b>
+<i>571</i>&nbsp;		
+<b class="nc"><i>572</i>&nbsp;		eventCall(x -&gt; x.onReadyUp(pin, p, readyPlayers.size()));</b>
+<i>573</i>&nbsp;		
+<i>574</i>&nbsp;		// are all players ready?
+<b class="nc"><i>575</i>&nbsp;		checkIfAllReady();</b>
+<b class="nc"><i>576</i>&nbsp;	}</b>
+<i>577</i>&nbsp;	
+<i>578</i>&nbsp;	/**
+<i>579</i>&nbsp;	 * Called when QR is in WFP mode and any player readies up or leaves.
+<i>580</i>&nbsp;	 */
+<i>581</i>&nbsp;	private synchronized void checkIfAllReady()
+<i>582</i>&nbsp;	{
+<b class="nc"><i>583</i>&nbsp;		if (!wfpMode)</b>
+<b class="nc"><i>584</i>&nbsp;			return;</b>
+<i>585</i>&nbsp;		
+<i>586</i>&nbsp;		//check if all players ready; prevent start with &lt;2 players
+<b class="nc"><i>587</i>&nbsp;		if (players.size() &gt;= 2 &amp;&amp; readyPlayers.size() == players.size())</b>
+<i>588</i>&nbsp;		{
+<b class="nc"><i>589</i>&nbsp;			long now = new Date().getTime() + roomStartDelay;</b>
+<b class="nc"><i>590</i>&nbsp;			for (Player player : players)</b>
+<i>591</i>&nbsp;			{
+<i>592</i>&nbsp;				// initialize time stamps
+<b class="nc"><i>593</i>&nbsp;				playerActivityTimestamps.put(player, now);</b>
+<b class="nc"><i>594</i>&nbsp;			}</b>
+<i>595</i>&nbsp;			
+<b class="nc"><i>596</i>&nbsp;			wfpMode = false;</b>
+<b class="nc"><i>597</i>&nbsp;			eventCall(x -&gt; x.onAllReady(pin));</b>
+<b class="nc"><i>598</i>&nbsp;			addDelayedAction(new DelayedAction((new Date().getTime()) + roomStartDelay, this::onGameStart));</b>
+<i>599</i>&nbsp;		}
+<b class="nc"><i>600</i>&nbsp;	}</b>
+<i>601</i>&nbsp;	
+<i>602</i>&nbsp;	@Override
+<i>603</i>&nbsp;	public void answerQuestion(Player p, int questionId, int index)
+<i>604</i>&nbsp;	{
+<b class="nc"><i>605</i>&nbsp;		if (wfpMode || gameOver)</b>
+<i>606</i>&nbsp;		{
+<b class="nc"><i>607</i>&nbsp;			return;</b>
+<i>608</i>&nbsp;		}
+<i>609</i>&nbsp;		
+<b class="nc"><i>610</i>&nbsp;		if (!playerActivityTimestamps.containsKey(p))</b>
+<i>611</i>&nbsp;		{
+<b class="nc"><i>612</i>&nbsp;			LOGGER.error(&quot;### ERROR ### [QR &quot; + pin + &quot;] Illegal call to answerQuestion! Player is not in QuizRoom! (id: &quot; + p.getId() + &quot;)&quot;);</b>
+<b class="nc"><i>613</i>&nbsp;			return;</b>
+<i>614</i>&nbsp;		}
+<i>615</i>&nbsp;		
+<b class="nc"><i>616</i>&nbsp;		ActiveQuestion q = questionSystem.getActiveQuestionById(questionId);</b>
+<i>617</i>&nbsp;		try
+<i>618</i>&nbsp;		{
+<b class="nc"><i>619</i>&nbsp;			questionSystem.answerQuestion(p, questionId);</b>
+<i>620</i>&nbsp;		}
+<b class="nc"><i>621</i>&nbsp;		catch (IllegalStateException e)</b>
+<i>622</i>&nbsp;		{
+<b class="nc"><i>623</i>&nbsp;			return;</b>
+<b class="nc"><i>624</i>&nbsp;		}</b>
+<i>625</i>&nbsp;		
+<i>626</i>&nbsp;		// register player activity
+<b class="nc"><i>627</i>&nbsp;		playerActivityTimestamps.put(p, new Date().getTime());</b>
+<i>628</i>&nbsp;		
+<i>629</i>&nbsp;		// check if right answer
+<b class="nc"><i>630</i>&nbsp;		if (index == 0)</b>
+<i>631</i>&nbsp;		{
+<b class="nc"><i>632</i>&nbsp;			changeScore(q.questionDifficulty == QuestionSetDifficulty.easy ? 2 : 3, q.timeRemaining);</b>
+<i>633</i>&nbsp;			
+<b class="nc"><i>634</i>&nbsp;			if (!correctlyAnsweredQuestions.containsKey(p))</b>
+<b class="nc"><i>635</i>&nbsp;				LOGGER.error(&quot;### ERROR ### Missing correctly answered entry for Player (id &quot; + p.getId() + &quot;)!&quot;);</b>
+<i>636</i>&nbsp;			else
+<b class="nc"><i>637</i>&nbsp;				correctlyAnsweredQuestions.put(p, correctlyAnsweredQuestions.get(p) + 1);</b>
+<i>638</i>&nbsp;		}
+<i>639</i>&nbsp;		else
+<i>640</i>&nbsp;		{
+<b class="nc"><i>641</i>&nbsp;			changeScore(q.questionDifficulty == QuestionSetDifficulty.easy ? 0 : 1, q.timeRemaining);</b>
+<i>642</i>&nbsp;		}
+<i>643</i>&nbsp;		
+<b class="nc"><i>644</i>&nbsp;		if (!totalAnsweredQuestions.containsKey(p))</b>
+<b class="nc"><i>645</i>&nbsp;			LOGGER.error(&quot;### ERROR ### Missing total answered entry for Player (id &quot; + p.getId() + &quot;)!&quot;);</b>
+<i>646</i>&nbsp;		else
+<b class="nc"><i>647</i>&nbsp;			totalAnsweredQuestions.put(p, totalAnsweredQuestions.get(p) + 1);</b>
+<i>648</i>&nbsp;		
+<b class="nc"><i>649</i>&nbsp;	}</b>
+<i>650</i>&nbsp;	
+<i>651</i>&nbsp;	
+<i>652</i>&nbsp;	@Override
+<i>653</i>&nbsp;	public synchronized void useJoker(Player p)
+<i>654</i>&nbsp;	{
+<b class="nc"><i>655</i>&nbsp;		if (numReshuffleJokers &lt;= 0) // ignore if no jokers remaining</b>
+<i>656</i>&nbsp;		{
+<b class="nc"><i>657</i>&nbsp;			return;</b>
+<i>658</i>&nbsp;		}
+<i>659</i>&nbsp;		
+<b class="nc"><i>660</i>&nbsp;		if (!playerActivityTimestamps.containsKey(p))</b>
+<i>661</i>&nbsp;		{
+<b class="nc"><i>662</i>&nbsp;			LOGGER.error(&quot;Illegal call to useJoker! Player is not in QuizRoom! (id: &quot; + p.getId() + &quot;)&quot;);</b>
+<b class="nc"><i>663</i>&nbsp;			return;</b>
+<i>664</i>&nbsp;		}
+<i>665</i>&nbsp;		
+<i>666</i>&nbsp;		// register player activity
+<b class="nc"><i>667</i>&nbsp;		playerActivityTimestamps.put(p, new Date().getTime());</b>
+<i>668</i>&nbsp;		
+<b class="nc"><i>669</i>&nbsp;		numReshuffleJokers--;</b>
+<b class="nc"><i>670</i>&nbsp;		eventCall(x -&gt; x.onJokerUse(pin, numReshuffleJokers));</b>
+<i>671</i>&nbsp;		
+<b class="nc"><i>672</i>&nbsp;		questionSystem.useJoker();</b>
+<b class="nc"><i>673</i>&nbsp;	}</b>
+<i>674</i>&nbsp;	
+<i>675</i>&nbsp;	@Override
+<i>676</i>&nbsp;	public synchronized void cancelTimeout(Player p)
+<i>677</i>&nbsp;	{
+<b class="nc"><i>678</i>&nbsp;		if (!playerActivityTimestamps.containsKey(p))</b>
+<i>679</i>&nbsp;		{
+<b class="nc"><i>680</i>&nbsp;			LOGGER.error(&quot;### ERROR ### [QR &quot; + pin + &quot;] Illegal call to cancelTimeout! Player is not in QuizRoom! (id: &quot; + p.getId() + &quot;)&quot;);</b>
+<b class="nc"><i>681</i>&nbsp;			return;</b>
+<i>682</i>&nbsp;		}
+<i>683</i>&nbsp;		
+<b class="nc"><i>684</i>&nbsp;		long tooLong = (new Date().getTime()) - activityDuration;</b>
+<b class="nc"><i>685</i>&nbsp;		if (playerActivityTimestamps.get(p) &lt; tooLong)</b>
+<b class="nc"><i>686</i>&nbsp;			playerActivityTimestamps.put(p, new Date().getTime());</b>
+<b class="nc"><i>687</i>&nbsp;	}</b>
+<i>688</i>&nbsp;	
+<i>689</i>&nbsp;	@Override
+<i>690</i>&nbsp;	public synchronized void leaveRoom(Player p)
+<i>691</i>&nbsp;	{
+<b class="fc"><i>692</i>&nbsp;		if (!players.contains(p))</b>
+<i>693</i>&nbsp;		{
+<b class="nc"><i>694</i>&nbsp;			LOGGER.error(&quot;### ERROR ### [QR &quot; + pin + &quot;] Illegal call to leaveRoom! Player is not in QuizRoom! (id: &quot; + p.getId() + &quot;)&quot;);</b>
+<b class="nc"><i>695</i>&nbsp;			return;</b>
+<i>696</i>&nbsp;		}
+<i>697</i>&nbsp;		
+<b class="fc"><i>698</i>&nbsp;		removePlayer(p, &quot;left&quot;);</b>
+<b class="fc"><i>699</i>&nbsp;	}</b>
+<i>700</i>&nbsp;	
+<i>701</i>&nbsp;	@Override
+<i>702</i>&nbsp;	public synchronized void sendAlivePing(Player p)
+<i>703</i>&nbsp;	{
+<b class="nc"><i>704</i>&nbsp;		if (gameOver)</b>
+<b class="nc"><i>705</i>&nbsp;			return;</b>
+<i>706</i>&nbsp;		
+<b class="nc"><i>707</i>&nbsp;		if (!playerAlivePingTimestamps.containsKey(p))</b>
+<i>708</i>&nbsp;		{
+<b class="nc"><i>709</i>&nbsp;			LOGGER.error(&quot;### ERROR ### [QR &quot; + pin + &quot;] Illegal call to sendAlivePing! Player is not in QuizRoom! (id: &quot; + p.getId() + &quot;)&quot;);</b>
+<b class="nc"><i>710</i>&nbsp;			return;</b>
+<i>711</i>&nbsp;		}
+<i>712</i>&nbsp;		
+<b class="nc"><i>713</i>&nbsp;		playerAlivePingTimestamps.put(p, new Date().getTime());</b>
+<b class="nc"><i>714</i>&nbsp;	}</b>
+<i>715</i>&nbsp;	
+<i>716</i>&nbsp;	@Override
+<i>717</i>&nbsp;	public int getNumberOfJokers()
+<i>718</i>&nbsp;	{
+<b class="nc"><i>719</i>&nbsp;		return numReshuffleJokers;</b>
+<i>720</i>&nbsp;	}
+<i>721</i>&nbsp;	
+<i>722</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-06-26 10:09</div>
+</div>
+</body>
+</html>

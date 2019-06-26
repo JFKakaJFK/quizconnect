@@ -1,0 +1,121 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ThreadConfig</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">at.qe.sepm.skeleton.configs</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ThreadConfig (at.qe.sepm.skeleton.configs)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ThreadConfig</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/ 5)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">ThreadConfig$$EnhancerBySpringCGLIB$$cf2530aa</td>
+  </tr>
+  <tr>
+    <td class="name">ThreadConfig$$EnhancerBySpringCGLIB$$cf2530aa$$FastClassBySpringCGLIB$$a3c2ce72</td>
+  </tr>
+  <tr>
+    <td class="name">ThreadConfig$$FastClassBySpringCGLIB$$a147212a</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/ 5)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package at.qe.sepm.skeleton.configs;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import org.springframework.context.annotation.Bean;
+<i>4</i>&nbsp;import org.springframework.context.annotation.Configuration;
+<i>5</i>&nbsp;import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;/**
+<i>8</i>&nbsp; * Class that holds all configuration for the threads
+<i>9</i>&nbsp; */
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;@Configuration
+<b class="fc"><i>12</i>&nbsp;public class ThreadConfig</b>
+<i>13</i>&nbsp;{
+<i>14</i>&nbsp;	@Bean
+<i>15</i>&nbsp;	public ThreadPoolTaskScheduler threadPoolTaskScheduler()
+<i>16</i>&nbsp;	{
+<b class="fc"><i>17</i>&nbsp;		ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();</b>
+<b class="fc"><i>18</i>&nbsp;		threadPoolTaskScheduler.setPoolSize(5);</b>
+<b class="fc"><i>19</i>&nbsp;		threadPoolTaskScheduler.setThreadNamePrefix(&quot;ThreadPoolTaskScheduler&quot;);</b>
+<b class="fc"><i>20</i>&nbsp;		return threadPoolTaskScheduler;</b>
+<i>21</i>&nbsp;	}
+<i>22</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-06-26 10:09</div>
+</div>
+</body>
+</html>

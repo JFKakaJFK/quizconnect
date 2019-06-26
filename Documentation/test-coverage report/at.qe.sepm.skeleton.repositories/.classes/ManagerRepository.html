@@ -1,0 +1,65 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ManagerRepository</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">at.qe.sepm.skeleton.repositories</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ManagerRepository (at.qe.sepm.skeleton.repositories)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">ManagerRepository</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package at.qe.sepm.skeleton.repositories;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import at.qe.sepm.skeleton.model.Manager;
+<i>4</i>&nbsp;import at.qe.sepm.skeleton.model.Player;
+<i>5</i>&nbsp;import at.qe.sepm.skeleton.model.QuestionSet;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;/**
+<i>8</i>&nbsp; * Repository for managing {@link Manager} entities.
+<i>9</i>&nbsp; * 
+<i>10</i>&nbsp; * @author Lorenz_Smidt
+<i>11</i>&nbsp; *
+<i>12</i>&nbsp; */
+<i>13</i>&nbsp;public interface ManagerRepository extends AbstractRepository&lt;Manager, Integer&gt;
+<i>14</i>&nbsp;{
+<i>15</i>&nbsp;	Manager findByCreatedPlayers(Player player);
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;	Manager findByCreatedQuestionSets(QuestionSet questionSet);
+<i>18</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-06-26 10:09</div>
+</div>
+</body>
+</html>

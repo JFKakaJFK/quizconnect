@@ -1,0 +1,118 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: PlayerLeaveEvent</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">at.qe.sepm.skeleton.socket.events</a> ]
+</div>
+
+<h1>Coverage Summary for Class: PlayerLeaveEvent (at.qe.sepm.skeleton.socket.events)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PlayerLeaveEvent</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/ 6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (11/ 11)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package at.qe.sepm.skeleton.socket.events;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import at.qe.sepm.skeleton.model.Player;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;/**
+<i>6</i>&nbsp; * Class for JSON representation of the &#39;onPlayerLeave&#39; QuizRoom event.
+<i>7</i>&nbsp; */
+<i>8</i>&nbsp;public class PlayerLeaveEvent extends SocketEvent {
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;    private int playerId;
+<i>11</i>&nbsp;    private String reason;
+<i>12</i>&nbsp;
+<b class="fc"><i>13</i>&nbsp;    public PlayerLeaveEvent(){}</b>
+<i>14</i>&nbsp;
+<b class="fc"><i>15</i>&nbsp;    public PlayerLeaveEvent(Player p, String reason){</b>
+<b class="fc"><i>16</i>&nbsp;        this.playerId = p.getId();</b>
+<b class="fc"><i>17</i>&nbsp;        this.reason = reason;</b>
+<b class="fc"><i>18</i>&nbsp;    }</b>
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;    public int getPlayerId() {
+<b class="fc"><i>21</i>&nbsp;        return playerId;</b>
+<i>22</i>&nbsp;    }
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;    public void setPlayerId(int playerId) {
+<b class="fc"><i>25</i>&nbsp;        this.playerId = playerId;</b>
+<b class="fc"><i>26</i>&nbsp;    }</b>
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;    public String getReason() {
+<b class="fc"><i>29</i>&nbsp;        return reason;</b>
+<i>30</i>&nbsp;    }
+<i>31</i>&nbsp;
+<i>32</i>&nbsp;    public void setReason(String reason) {
+<b class="fc"><i>33</i>&nbsp;        this.reason = reason;</b>
+<b class="fc"><i>34</i>&nbsp;    }</b>
+<i>35</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-06-26 10:09</div>
+</div>
+</body>
+</html>

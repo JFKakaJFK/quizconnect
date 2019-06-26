@@ -1,0 +1,170 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ProfileBean</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">at.qe.sepm.skeleton.ui.beans</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ProfileBean (at.qe.sepm.skeleton.ui.beans)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ProfileBean</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (3/ 6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    54,8%
+  </span>
+  <span class="absValue">
+    (17/ 31)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package at.qe.sepm.skeleton.ui.beans;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import at.qe.sepm.skeleton.model.Player;
+<i>4</i>&nbsp;import at.qe.sepm.skeleton.services.*;
+<i>5</i>&nbsp;import org.slf4j.Logger;
+<i>6</i>&nbsp;import org.slf4j.LoggerFactory;
+<i>7</i>&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+<i>8</i>&nbsp;import org.springframework.context.annotation.Scope;
+<i>9</i>&nbsp;import org.springframework.stereotype.Controller;
+<i>10</i>&nbsp;import javax.faces.context.FacesContext;
+<i>11</i>&nbsp;import java.io.IOException;
+<i>12</i>&nbsp;import java.io.Serializable;
+<i>13</i>&nbsp;import java.util.ArrayList;
+<i>14</i>&nbsp;import java.util.List;
+<i>15</i>&nbsp;import java.util.stream.Collectors;
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;/**
+<i>19</i>&nbsp; * Bean for {@link Player} profiles
+<i>20</i>&nbsp; */
+<i>21</i>&nbsp;@Controller
+<i>22</i>&nbsp;@Scope(&quot;session&quot;)
+<i>23</i>&nbsp;public class ProfileBean implements Serializable {
+<i>24</i>&nbsp;
+<b class="fc"><i>25</i>&nbsp;    private Logger log = LoggerFactory.getLogger(this.getClass());</b>
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;    private PlayerService playerService;
+<i>28</i>&nbsp;    private SessionInfoBean sessionInfoBean;
+<b class="fc"><i>29</i>&nbsp;    private boolean isHome = false;</b>
+<i>30</i>&nbsp;    private Player player;
+<i>31</i>&nbsp;    private List&lt;Player&gt; recentlyPlayedWith;
+<i>32</i>&nbsp;
+<i>33</i>&nbsp;    @Autowired
+<b class="fc"><i>34</i>&nbsp;    public ProfileBean(PlayerService playerService, SessionInfoBean sessionInfoBean){</b>
+<b class="fc"><i>35</i>&nbsp;        this.playerService = playerService;</b>
+<b class="fc"><i>36</i>&nbsp;        this.recentlyPlayedWith = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i>37</i>&nbsp;    }</b>
+<i>38</i>&nbsp;
+<i>39</i>&nbsp;    public Player getPlayer() {
+<b class="fc"><i>40</i>&nbsp;        return player;</b>
+<i>41</i>&nbsp;    }
+<i>42</i>&nbsp;    
+<i>43</i>&nbsp;    /**
+<i>44</i>&nbsp;     * Sets the {@link Player} and loads the recently played with {@link Player}s
+<i>45</i>&nbsp;     *
+<i>46</i>&nbsp;     * @param player
+<i>47</i>&nbsp;     * 		Player to be set.
+<i>48</i>&nbsp;     */
+<i>49</i>&nbsp;    public void setPlayer(Player player) {
+<b class="fc"><i>50</i>&nbsp;        this.player = playerService.getPlayerById(player.getId());</b>
+<b class="fc"><i>51</i>&nbsp;        if(this.player == null &amp;&amp; isHome){</b>
+<b class="nc"><i>52</i>&nbsp;            this.player = playerService.getPlayerByUsername(sessionInfoBean.getCurrentUserName());</b>
+<b class="nc"><i>53</i>&nbsp;            this.isHome = false;</b>
+<i>54</i>&nbsp;        }
+<b class="fc"><i>55</i>&nbsp;        if(this.player == null){</b>
+<i>56</i>&nbsp;            try {
+<b class="nc"><i>57</i>&nbsp;                FacesContext.getCurrentInstance().getExternalContext().redirect(&quot;/players/all.xhtml?faces-redirect=true&quot;);</b>
+<b class="nc"><i>58</i>&nbsp;                return;</b>
+<b class="nc"><i>59</i>&nbsp;            } catch (IOException e){</b>
+<b class="nc"><i>60</i>&nbsp;                log.warn(&quot;Failed to redirect&quot;);</b>
+<b class="nc"><i>61</i>&nbsp;                return;</b>
+<i>62</i>&nbsp;            }
+<i>63</i>&nbsp;        }
+<b class="fc"><i>64</i>&nbsp;        List&lt;String&gt; userNames = this.player.getPlayedWithLast();</b>
+<b class="fc"><i>65</i>&nbsp;        this.recentlyPlayedWith = userNames != null &amp;&amp; userNames.size() &gt; 0 ? userNames.stream()</b>
+<b class="fc"><i>66</i>&nbsp;                .map(u -&gt; playerService.getPlayerByUsername(u))</b>
+<b class="fc"><i>67</i>&nbsp;                .filter(p -&gt; p != null)</b>
+<b class="fc"><i>68</i>&nbsp;                .collect(Collectors.toList()) : new ArrayList&lt;&gt;();</b>
+<i>69</i>&nbsp;        // update the recently played with size, if one of the players was deleted
+<b class="fc"><i>70</i>&nbsp;        if(userNames != null &amp;&amp; userNames.size() != recentlyPlayedWith.size()){</b>
+<b class="nc"><i>71</i>&nbsp;            this.player._setPlayedWithLast(recentlyPlayedWith);</b>
+<b class="nc"><i>72</i>&nbsp;            this.player = playerService.savePlayer(this.player);</b>
+<i>73</i>&nbsp;        }
+<b class="fc"><i>74</i>&nbsp;    }</b>
+<i>75</i>&nbsp;
+<i>76</i>&nbsp;    public List&lt;Player&gt; getRecentlyPlayedWith() {
+<b class="nc"><i>77</i>&nbsp;        return recentlyPlayedWith;</b>
+<i>78</i>&nbsp;    }
+<i>79</i>&nbsp;
+<i>80</i>&nbsp;    public void setRecentlyPlayedWith(List&lt;Player&gt; recentlyPlayedWith) {
+<b class="nc"><i>81</i>&nbsp;        this.recentlyPlayedWith = recentlyPlayedWith;</b>
+<b class="nc"><i>82</i>&nbsp;    }</b>
+<i>83</i>&nbsp;
+<i>84</i>&nbsp;    public void setHome(boolean home) {
+<b class="nc"><i>85</i>&nbsp;        isHome = home;</b>
+<b class="nc"><i>86</i>&nbsp;    }</b>
+<i>87</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-06-26 10:09</div>
+</div>
+</body>
+</html>

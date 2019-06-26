@@ -1,0 +1,134 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ScrollPart</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">at.qe.sepm.skeleton.utils</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ScrollPart (at.qe.sepm.skeleton.utils)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ScrollPart</td>
+<td class="coverageStat">
+  <span class="percent">
+    80%
+  </span>
+  <span class="absValue">
+    (4/ 5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    81,8%
+  </span>
+  <span class="absValue">
+    (9/ 11)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">ScrollPart$$EnhancerByMockitoWithCGLIB$$46e8f889</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    80%
+  </span>
+  <span class="absValue">
+    (4/ 5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    81,8%
+  </span>
+  <span class="absValue">
+    (9/ 11)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package at.qe.sepm.skeleton.utils;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.ArrayList;
+<i>4</i>&nbsp;import java.util.List;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;/**
+<i>7</i>&nbsp; * A Frame for the Items of the {@link ScrollPaginator}.
+<i>8</i>&nbsp; *
+<i>9</i>&nbsp; * This class is a simple wrapper for the {@link List} type, it simply
+<i>10</i>&nbsp; * return either the list items or an _empty list, depending on wheter
+<i>11</i>&nbsp; * {@link this#initialized} is true.
+<i>12</i>&nbsp; *
+<i>13</i>&nbsp; * @param &lt;T&gt;
+<i>14</i>&nbsp; */
+<i>15</i>&nbsp;public class ScrollPart &lt;T&gt; {
+<i>16</i>&nbsp;
+<b class="fc"><i>17</i>&nbsp;    private final List&lt;T&gt; empty = new ArrayList&lt;&gt;(0);</b>
+<i>18</i>&nbsp;    private boolean initialized;
+<i>19</i>&nbsp;    private List&lt;T&gt; items;
+<i>20</i>&nbsp;
+<b class="fc"><i>21</i>&nbsp;    public ScrollPart(List&lt;T&gt; items){</b>
+<b class="fc"><i>22</i>&nbsp;        this.items = items;</b>
+<b class="fc"><i>23</i>&nbsp;        this.initialized = false;</b>
+<b class="fc"><i>24</i>&nbsp;    }</b>
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;    public boolean isInitialized() {
+<b class="fc"><i>27</i>&nbsp;        return initialized;</b>
+<i>28</i>&nbsp;    }
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;    public void setInitialized(boolean initialized) {
+<b class="fc"><i>31</i>&nbsp;        this.initialized = initialized;</b>
+<b class="fc"><i>32</i>&nbsp;    }</b>
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;    public List&lt;T&gt; getItems() {
+<b class="fc"><i>35</i>&nbsp;        return initialized ? items : empty;</b>
+<i>36</i>&nbsp;    }
+<i>37</i>&nbsp;
+<i>38</i>&nbsp;    public void setItems(List&lt;T&gt; items) {
+<b class="nc"><i>39</i>&nbsp;        this.items = items;</b>
+<b class="nc"><i>40</i>&nbsp;    }</b>
+<i>41</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-06-26 10:09</div>
+</div>
+</body>
+</html>

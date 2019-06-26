@@ -1,0 +1,77 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: QuestionRepository</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">at.qe.sepm.skeleton.repositories</a> ]
+</div>
+
+<h1>Coverage Summary for Class: QuestionRepository (at.qe.sepm.skeleton.repositories)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">QuestionRepository</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package at.qe.sepm.skeleton.repositories;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.List;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;import org.springframework.data.jpa.repository.Query;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;import at.qe.sepm.skeleton.model.Question;
+<i>8</i>&nbsp;import at.qe.sepm.skeleton.model.QuestionType;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;/**
+<i>11</i>&nbsp; * Repository for managing {@link Question} entities.
+<i>12</i>&nbsp; * 
+<i>13</i>&nbsp; * @author Lorenz_Smidt
+<i>14</i>&nbsp; *
+<i>15</i>&nbsp; */
+<i>16</i>&nbsp;public interface QuestionRepository extends AbstractRepository&lt;Question, Integer&gt;
+<i>17</i>&nbsp;{
+<i>18</i>&nbsp;	List&lt;Question&gt; findByType(QuestionType type);
+<i>19</i>&nbsp;	
+<i>20</i>&nbsp;	/**
+<i>21</i>&nbsp;	 * Method for finding questions with similar answers (experimental, not yet tested and somewhat unlikely to work)
+<i>22</i>&nbsp;	 * 
+<i>23</i>&nbsp;	 * @param text
+<i>24</i>&nbsp;	 * @return
+<i>25</i>&nbsp;	 */
+<i>26</i>&nbsp;	@Query(&quot;SELECT q FROM Question q WHERE q.rightAnswerString LIKE %?1% OR q.wrongAnswerString_1 LIKE %?1% OR q.wrongAnswerString_2 LIKE %?1% OR q.wrongAnswerString_3 LIKE %?1% OR q.wrongAnswerString_4 LIKE %?1% OR q.wrongAnswerString_5 LIKE %?1% &quot;)
+<i>27</i>&nbsp;	List&lt;Question&gt; findAllByAnswersContaining(String text);
+<i>28</i>&nbsp;	
+<i>29</i>&nbsp;	List&lt;Question&gt; findByQuestionStringContaining(String text);
+<i>30</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-06-26 10:09</div>
+</div>
+</body>
+</html>

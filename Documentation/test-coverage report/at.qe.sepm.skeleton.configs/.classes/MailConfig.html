@@ -1,0 +1,134 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: MailConfig</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">at.qe.sepm.skeleton.configs</a> ]
+</div>
+
+<h1>Coverage Summary for Class: MailConfig (at.qe.sepm.skeleton.configs)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MailConfig</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (13/ 13)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">MailConfig$$EnhancerBySpringCGLIB$$bf093eb7</td>
+  </tr>
+  <tr>
+    <td class="name">MailConfig$$EnhancerBySpringCGLIB$$bf093eb7$$FastClassBySpringCGLIB$$5ca03d76</td>
+  </tr>
+  <tr>
+    <td class="name">MailConfig$$FastClassBySpringCGLIB$$20d19a97</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (13/ 13)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package at.qe.sepm.skeleton.configs;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import org.springframework.context.annotation.Bean;
+<i>4</i>&nbsp;import org.springframework.context.annotation.Configuration;
+<i>5</i>&nbsp;import org.springframework.mail.javamail.JavaMailSender;
+<i>6</i>&nbsp;import org.springframework.mail.javamail.JavaMailSenderImpl;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import java.util.Properties;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;/**
+<i>11</i>&nbsp; * Class that holds all configurations for the MailSending
+<i>12</i>&nbsp; */
+<i>13</i>&nbsp;@Configuration
+<b class="fc"><i>14</i>&nbsp;public class MailConfig {</b>
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;    @Bean
+<i>17</i>&nbsp;    public JavaMailSender javaMailService() {
+<b class="fc"><i>18</i>&nbsp;        JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();</b>
+<i>19</i>&nbsp;
+<b class="fc"><i>20</i>&nbsp;        javaMailSender.setProtocol(&quot;smtp&quot;);</b>
+<b class="fc"><i>21</i>&nbsp;        javaMailSender.setHost(&quot;smtp.privateemail.com&quot;);</b>
+<b class="fc"><i>22</i>&nbsp;        javaMailSender.setPort(587);</b>
+<i>23</i>&nbsp;
+<b class="fc"><i>24</i>&nbsp;        javaMailSender.setUsername(&quot;mail@quizconnect.rocks&quot;);</b>
+<b class="fc"><i>25</i>&nbsp;        javaMailSender.setPassword(&quot;)Fm:49]6gfnvp&quot;);</b>
+<i>26</i>&nbsp;
+<b class="fc"><i>27</i>&nbsp;        Properties props = javaMailSender.getJavaMailProperties();</b>
+<b class="fc"><i>28</i>&nbsp;        props.put(&quot;mail.transport.protocol&quot;, &quot;smtp&quot;);</b>
+<b class="fc"><i>29</i>&nbsp;        props.put(&quot;mail.smtp.auth&quot;, &quot;true&quot;);</b>
+<b class="fc"><i>30</i>&nbsp;        props.put(&quot;mail.smtp.starttls.enable&quot;, &quot;true&quot;);</b>
+<b class="fc"><i>31</i>&nbsp;        props.put(&quot;mail.debug&quot;, &quot;true&quot;);</b>
+<i>32</i>&nbsp;
+<b class="fc"><i>33</i>&nbsp;        return javaMailSender;</b>
+<i>34</i>&nbsp;    }
+<i>35</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-06-26 10:09</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,74 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: UserRepository</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">at.qe.sepm.skeleton.repositories</a> ]
+</div>
+
+<h1>Coverage Summary for Class: UserRepository (at.qe.sepm.skeleton.repositories)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">UserRepository</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package at.qe.sepm.skeleton.repositories;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.List;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;import org.springframework.data.jpa.repository.Query;
+<i>6</i>&nbsp;import org.springframework.data.repository.query.Param;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import at.qe.sepm.skeleton.model.User;
+<i>9</i>&nbsp;import at.qe.sepm.skeleton.model.UserRole;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;/**
+<i>12</i>&nbsp; * Repository for managing {@link User} entities.
+<i>13</i>&nbsp; *
+<i>14</i>&nbsp; * This class is part of the skeleton project provided for students of the
+<i>15</i>&nbsp; * course &quot;Softwaredevelopment and Project Management&quot; offered by the University
+<i>16</i>&nbsp; * of Innsbruck.
+<i>17</i>&nbsp; */
+<i>18</i>&nbsp;public interface UserRepository extends AbstractRepository&lt;User, Long&gt; {
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;    User findFirstByUsername(String username);
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;    List&lt;User&gt; findByUsernameContaining(String username);
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;	@Query(&quot;SELECT u FROM User u WHERE :role = u.role&quot;)
+<i>25</i>&nbsp;    List&lt;User&gt; findByRole(@Param(&quot;role&quot;) UserRole role);
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-06-26 10:09</div>
+</div>
+</body>
+</html>

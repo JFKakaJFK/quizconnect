@@ -1,0 +1,178 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: IPlayerAction</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">at.qe.sepm.skeleton.logic</a> ]
+</div>
+
+<h1>Coverage Summary for Class: IPlayerAction (at.qe.sepm.skeleton.logic)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">IPlayerAction</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package at.qe.sepm.skeleton.logic;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.List;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;import at.qe.sepm.skeleton.model.Player;
+<i>6</i>&nbsp;import at.qe.sepm.skeleton.model.QuestionSet;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;/**
+<i>9</i>&nbsp; * Interface for {@link Player} to {@link QuizRoom} communication. Implemented by QuizRoom and provided to each player UI when joining the QuizRoom.
+<i>10</i>&nbsp; * 
+<i>11</i>&nbsp; * @author Lorenz_Smidt
+<i>12</i>&nbsp; *
+<i>13</i>&nbsp; */
+<i>14</i>&nbsp;public interface IPlayerAction
+<i>15</i>&nbsp;{
+<i>16</i>&nbsp;	
+<i>17</i>&nbsp;	/**
+<i>18</i>&nbsp;	 * @return The pin of the QuizRoom.
+<i>19</i>&nbsp;	 */
+<i>20</i>&nbsp;	public int getRoomPin();
+<i>21</i>&nbsp;	
+<i>22</i>&nbsp;	/**
+<i>23</i>&nbsp;	 * @return A list of all {@link Player}s in the QuizRoom. Creates a copy each time. Use getRoomPlayerCount if you only need the number of players! Synchronized across Players.
+<i>24</i>&nbsp;	 */
+<i>25</i>&nbsp;	public List&lt;Player&gt; getRoomPlayers();
+<i>26</i>&nbsp;	
+<i>27</i>&nbsp;	/**
+<i>28</i>&nbsp;	 * @return The number of {@link Player}s in the QuizRoom.
+<i>29</i>&nbsp;	 */
+<i>30</i>&nbsp;	public int getRoomPlayerCount();
+<i>31</i>&nbsp;	
+<i>32</i>&nbsp;	/**
+<i>33</i>&nbsp;	 * @return The Difficulty of the QuizRoom.
+<i>34</i>&nbsp;	 */
+<i>35</i>&nbsp;	public RoomDifficulty getRoomDifficulty();
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;	/**
+<i>38</i>&nbsp;	 * @return The GameMode of the QuizRoom.
+<i>39</i>&nbsp;	 */
+<i>40</i>&nbsp;	public GameMode getRoomMode();
+<i>41</i>&nbsp;
+<i>42</i>&nbsp;	/**
+<i>43</i>&nbsp;	 * @return A list of names of all {@link QuestionSet}s used in the QuizRoom. Creates a copy each time. Synchronized across Players.
+<i>44</i>&nbsp;	 */
+<i>45</i>&nbsp;	public List&lt;String&gt; getRoomQuestionSets();
+<i>46</i>&nbsp;	
+<i>47</i>&nbsp;	/**
+<i>48</i>&nbsp;	 * @return The current score of the QuizRoom. Avoid using, use the IRoomAction.onScoreChange() events instead to update score!
+<i>49</i>&nbsp;	 */
+<i>50</i>&nbsp;	public int getRoomScore();
+<i>51</i>&nbsp;	
+<i>52</i>&nbsp;	/**
+<i>53</i>&nbsp;	 * @return A list of all ready {@link Players} in the QuizRoom. Only works during &#39;waiting for players&#39; stage. Creates a copy each time. Synchronized across Players.
+<i>54</i>&nbsp;	 */
+<i>55</i>&nbsp;	public List&lt;Player&gt; getRoomReadyPlayers();
+<i>56</i>&nbsp;	
+<i>57</i>&nbsp;	/**
+<i>58</i>&nbsp;	 * @return The expected time between alive pings in ms.
+<i>59</i>&nbsp;	 */
+<i>60</i>&nbsp;	public long getAlivePingTimeStep();
+<i>61</i>&nbsp;	
+<i>62</i>&nbsp;	/**
+<i>63</i>&nbsp;	 * @return The number of Jokers remaining in the QR.
+<i>64</i>&nbsp;	 */
+<i>65</i>&nbsp;	public int getNumberOfJokers();
+<i>66</i>&nbsp;	
+<i>67</i>&nbsp;	/**
+<i>68</i>&nbsp;	 * @return True if the {@link QuizRoom} is in &#39;waiting for players&#39; mode, false if game is currently ongoing.
+<i>69</i>&nbsp;	 */
+<i>70</i>&nbsp;	public boolean isRoomInWaitingMode();
+<i>71</i>&nbsp;
+<i>72</i>&nbsp;	/*
+<i>73</i>&nbsp;	 * ### ALL FUNCTIONS BENEATH THIS POINT MUST PROVIDE A REFERENCE TO THE PLAYER WHO MAKES THE CALL! NECESSARY TO DIFFERENTIATE PLAYERS IN THE QUIZROOM. ###
+<i>74</i>&nbsp;	 */
+<i>75</i>&nbsp;	
+<i>76</i>&nbsp;	/**
+<i>77</i>&nbsp;	 * Marks the {@link Player} as ready. Ready status can&#39;t be revoked after calling this. Only works during &#39;waiting for players&#39; stage. Synchronized across Players.
+<i>78</i>&nbsp;	 * 
+<i>79</i>&nbsp;	 * @param p
+<i>80</i>&nbsp;	 *            The Player making the call.
+<i>81</i>&nbsp;	 */
+<i>82</i>&nbsp;	public void readyUp(Player p);
+<i>83</i>&nbsp;	
+<i>84</i>&nbsp;	/**
+<i>85</i>&nbsp;	 * Called when the {@link Player} chooses the index&#39;th answer of {@link Question} with id questionId. Player has to have the Question currently assigned. Counts as activity. Synchronized across
+<i>86</i>&nbsp;	 * Players.
+<i>87</i>&nbsp;	 * 
+<i>88</i>&nbsp;	 * @param p
+<i>89</i>&nbsp;	 *            The Player making the call.
+<i>90</i>&nbsp;	 * @param questionId
+<i>91</i>&nbsp;	 *            The id of the Question to be answered.
+<i>92</i>&nbsp;	 * @param index
+<i>93</i>&nbsp;	 *            Index of the Answer to be used. (e.g. 0 = right answer, 1 = wrong answer 1, 2 = wrong answer 2, ...); see {@link IRoomAction}.assignAnswer for more info.
+<i>94</i>&nbsp;	 */
+<i>95</i>&nbsp;	public void answerQuestion(Player p, int questionId, int index);
+<i>96</i>&nbsp;	
+<i>97</i>&nbsp;	/**
+<i>98</i>&nbsp;	 * Called when the {@link Player} chooses to use a Joker. Only works if a Joker is still available. Counts as activity. Synchronized across Players.
+<i>99</i>&nbsp;	 * 
+<i>100</i>&nbsp;	 * @param p
+<i>101</i>&nbsp;	 *            The Player making the call.
+<i>102</i>&nbsp;	 */
+<i>103</i>&nbsp;	public void useJoker(Player p);
+<i>104</i>&nbsp;	
+<i>105</i>&nbsp;	/**
+<i>106</i>&nbsp;	 * Called if the {@link Player} terminates the AFK timeout. If this is not called before timeoutTime (provided in the event call) runs out the Player will get kicked (see {@link IRoomAction}.onKick
+<i>107</i>&nbsp;	 * for more info). Only works if the Player is currently in AFK timeout. Does not work as an activity ping!
+<i>108</i>&nbsp;	 * 
+<i>109</i>&nbsp;	 * @param p
+<i>110</i>&nbsp;	 *            The Player making the call.
+<i>111</i>&nbsp;	 */
+<i>112</i>&nbsp;	public void cancelTimeout(Player p);
+<i>113</i>&nbsp;	
+<i>114</i>&nbsp;	/**
+<i>115</i>&nbsp;	 * Called if the {@link Player} leaves the QuizRoom naturally (i.e. not kicked). No more calls from this Player to the QuizRoom are permitted after calling this. Synchronized across Players.
+<i>116</i>&nbsp;	 * 
+<i>117</i>&nbsp;	 * @param p
+<i>118</i>&nbsp;	 *            The Player making the call.
+<i>119</i>&nbsp;	 */
+<i>120</i>&nbsp;	public void leaveRoom(Player p);
+<i>121</i>&nbsp;
+<i>122</i>&nbsp;	/**
+<i>123</i>&nbsp;	 * Called by the {@link Player} client to signal the QuizRoom that the Player is still connected. If no pings are received for some time the Player will be registered as disconnected. Does not count
+<i>124</i>&nbsp;	 * as activity!
+<i>125</i>&nbsp;	 * 
+<i>126</i>&nbsp;	 * @param p
+<i>127</i>&nbsp;	 *            The Player making the call.
+<i>128</i>&nbsp;	 */
+<i>129</i>&nbsp;	public void sendAlivePing(Player p);
+<i>130</i>&nbsp;
+<i>131</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-06-26 10:09</div>
+</div>
+</body>
+</html>

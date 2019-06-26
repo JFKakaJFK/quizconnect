@@ -1,0 +1,194 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: IRoomAction</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">at.qe.sepm.skeleton.logic</a> ]
+</div>
+
+<h1>Coverage Summary for Class: IRoomAction (at.qe.sepm.skeleton.logic)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">IRoomAction</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package at.qe.sepm.skeleton.logic;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import at.qe.sepm.skeleton.model.Player;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;/**
+<i>6</i>&nbsp; * Interface for {@link QuizRoom} to {@link Player} communication. Must be implemented by the Player UI and provided to the QuizRoom when joining (done through the {@link QuizRoomManager}).
+<i>7</i>&nbsp; * 
+<i>8</i>&nbsp; * @author Lorenz_Smidt
+<i>9</i>&nbsp; *
+<i>10</i>&nbsp; */
+<i>11</i>&nbsp;public interface IRoomAction
+<i>12</i>&nbsp;{
+<i>13</i>&nbsp;	/**
+<i>14</i>&nbsp;	 * Called when a Player in the QR readies up.
+<i>15</i>&nbsp;	 * 
+<i>16</i>&nbsp;	 * @param pin
+<i>17</i>&nbsp;	 *            Pin of the QuizRoom making the call.
+<i>18</i>&nbsp;	 * @param p
+<i>19</i>&nbsp;	 *            The Player who declared themselves ready.
+<i>20</i>&nbsp;	 * @param totalReady
+<i>21</i>&nbsp;	 *            Number of Players currently ready.
+<i>22</i>&nbsp;	 */
+<i>23</i>&nbsp;	public void onReadyUp(int pin, Player p, int totalReady);
+<i>24</i>&nbsp;	
+<i>25</i>&nbsp;	/**
+<i>26</i>&nbsp;	 * Called when a Player joins the QR.
+<i>27</i>&nbsp;	 * 
+<i>28</i>&nbsp;	 * @param pin
+<i>29</i>&nbsp;	 *            Pin of the QuizRoom making the call.
+<i>30</i>&nbsp;	 * @param p
+<i>31</i>&nbsp;	 *            The Player who joined.
+<i>32</i>&nbsp;	 */
+<i>33</i>&nbsp;	public void onPlayerJoin(int pin, Player p);
+<i>34</i>&nbsp;	
+<i>35</i>&nbsp;	/**
+<i>36</i>&nbsp;	 * Called when the QR starts (= all players are ready)
+<i>37</i>&nbsp;	 * 
+<i>38</i>&nbsp;	 * @param pin
+<i>39</i>&nbsp;	 *            Pin of the QuizRoom making the call.
+<i>40</i>&nbsp;	 */
+<i>41</i>&nbsp;	public void onGameStart(int pin);
+<i>42</i>&nbsp;	
+<i>43</i>&nbsp;	/**
+<i>44</i>&nbsp;	 * Called when the QR ends. No more calls to the {@link IPlayerAction} interface are allowed after this event.
+<i>45</i>&nbsp;	 * 
+<i>46</i>&nbsp;	 * @param pin
+<i>47</i>&nbsp;	 *            Pin of the QuizRoom making the call.
+<i>48</i>&nbsp;	 */
+<i>49</i>&nbsp;	public void onGameEnd(int pin);
+<i>50</i>&nbsp;	
+<i>51</i>&nbsp;	/**
+<i>52</i>&nbsp;	 * Called when a joker is used in the QR.
+<i>53</i>&nbsp;	 * 
+<i>54</i>&nbsp;	 * @param pin
+<i>55</i>&nbsp;	 *            Pin of the QuizRoom making the call.
+<i>56</i>&nbsp;	 * @param remaining
+<i>57</i>&nbsp;	 *            Number of Jokers remaining.
+<i>58</i>&nbsp;	 */
+<i>59</i>&nbsp;	public void onJokerUse(int pin, int remaining);
+<i>60</i>&nbsp;	
+<i>61</i>&nbsp;	/**
+<i>62</i>&nbsp;	 * Called when a Player leaves the QR either actively or from being kicked.
+<i>63</i>&nbsp;	 * 
+<i>64</i>&nbsp;	 * @param pin
+<i>65</i>&nbsp;	 *            Pin of the QuizRoom making the call.
+<i>66</i>&nbsp;	 * @param p
+<i>67</i>&nbsp;	 *            The Player who left.
+<i>68</i>&nbsp;	 * @param reason
+<i>69</i>&nbsp;	 *            Reason for the Player leaving (e.g. &#39;disconnected&#39;, &#39;kicked&#39;).
+<i>70</i>&nbsp;	 */
+<i>71</i>&nbsp;	public void onPlayerLeave(int pin, Player p, String reason);
+<i>72</i>&nbsp;	
+<i>73</i>&nbsp;	/**
+<i>74</i>&nbsp;	 * Called when the current score of the QR changes.
+<i>75</i>&nbsp;	 * 
+<i>76</i>&nbsp;	 * @param pin
+<i>77</i>&nbsp;	 *            Pin of the QuizRoom making the call.
+<i>78</i>&nbsp;	 * @param newScore
+<i>79</i>&nbsp;	 *            The new score.
+<i>80</i>&nbsp;	 */
+<i>81</i>&nbsp;	public void onScoreChange(int pin, int newScore);
+<i>82</i>&nbsp;	
+<i>83</i>&nbsp;	/**
+<i>84</i>&nbsp;	 * Called every timerSyncTimeStep ms to synchronize the remaining time on the current Player question.
+<i>85</i>&nbsp;	 * 
+<i>86</i>&nbsp;	 * @param pin
+<i>87</i>&nbsp;	 *            Pin of the QuizRoom making the call.
+<i>88</i>&nbsp;	 * @param p
+<i>89</i>&nbsp;	 *            Player the timer synchronized.
+<i>90</i>&nbsp;	 * @param q
+<i>91</i>&nbsp;	 *            Question of the Player to be synchronized.
+<i>92</i>&nbsp;	 * @param currentTime
+<i>93</i>&nbsp;	 *            The time remaining on the current ActiveQuestion in ms.
+<i>94</i>&nbsp;	 */
+<i>95</i>&nbsp;	public void onTimerSync(int pin, Player p, ActiveQuestion q, long currentTime);
+<i>96</i>&nbsp;	
+<i>97</i>&nbsp;	/**
+<i>98</i>&nbsp;	 * Called when the AFK timeout for the Player starts due to missing activity pings.
+<i>99</i>&nbsp;	 * 
+<i>100</i>&nbsp;	 * @param pin
+<i>101</i>&nbsp;	 *            Pin of the QuizRoom making the call.
+<i>102</i>&nbsp;	 * @param p
+<i>103</i>&nbsp;	 *            Player to have the afk timeout start.
+<i>104</i>&nbsp;	 * @param timeoutTime
+<i>105</i>&nbsp;	 *            Time until inactivity kick occurs in ms.
+<i>106</i>&nbsp;	 */
+<i>107</i>&nbsp;	public void onTimeoutStart(int pin, Player p, long timeoutTime);
+<i>108</i>&nbsp;	
+<i>109</i>&nbsp;	/**
+<i>110</i>&nbsp;	 * Called when the Player gets kicked from the QR. No more calls to the {@link IPlayerAction} interface are allowed after this event from the Player.
+<i>111</i>&nbsp;	 * 
+<i>112</i>&nbsp;	 * @param pin
+<i>113</i>&nbsp;	 *            Pin of the QuizRoom making the call.
+<i>114</i>&nbsp;	 * @param p
+<i>115</i>&nbsp;	 *            Player to be kicked.
+<i>116</i>&nbsp;	 */
+<i>117</i>&nbsp;	public void onKick(int pin, Player p);
+<i>118</i>&nbsp;	
+<i>119</i>&nbsp;	/**
+<i>120</i>&nbsp;	 * Called when all Players in the QuizRoom are marked as ready, starting the 5 second countdown until game start.
+<i>121</i>&nbsp;	 *
+<i>122</i>&nbsp;	 * @param pin
+<i>123</i>&nbsp;	 * 		PIn of the QuizRoom making the call.
+<i>124</i>&nbsp;	 */
+<i>125</i>&nbsp;	public void onAllReady(int pin);
+<i>126</i>&nbsp;	
+<i>127</i>&nbsp;	/**
+<i>128</i>&nbsp;	 * Called when the QR assigns a new Question.
+<i>129</i>&nbsp;	 * 
+<i>130</i>&nbsp;	 * @param pin
+<i>131</i>&nbsp;	 *            Pin of the QuizRoom making the call.
+<i>132</i>&nbsp;	 * @param q
+<i>133</i>&nbsp;	 *            The ActiveQuestion assigned.
+<i>134</i>&nbsp;	 */
+<i>135</i>&nbsp;	public void assignQuestion(int pin, ActiveQuestion q);
+<i>136</i>&nbsp;	
+<i>137</i>&nbsp;	/**
+<i>138</i>&nbsp;	 * Called when the QR unassigns the Question. One Player has no active question after this call.
+<i>139</i>&nbsp;	 * 
+<i>140</i>&nbsp;	 * @param pin
+<i>141</i>&nbsp;	 *            Pin of the QuizRoom making the call.
+<i>142</i>&nbsp;	 * @param q
+<i>143</i>&nbsp;	 *            The ActiveQuestion removed from play.
+<i>144</i>&nbsp;	 */
+<i>145</i>&nbsp;	public void removeQuestion(int pin, ActiveQuestion q);
+<i>146</i>&nbsp;	
+<i>147</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-06-26 10:09</div>
+</div>
+</body>
+</html>

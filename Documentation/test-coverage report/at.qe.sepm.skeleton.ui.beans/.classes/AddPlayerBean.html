@@ -1,0 +1,225 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: AddPlayerBean</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">at.qe.sepm.skeleton.ui.beans</a> ]
+</div>
+
+<h1>Coverage Summary for Class: AddPlayerBean (at.qe.sepm.skeleton.ui.beans)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AddPlayerBean</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 64)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package at.qe.sepm.skeleton.ui.beans;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+<i>4</i>&nbsp;import org.springframework.context.annotation.Scope;
+<i>5</i>&nbsp;import org.springframework.stereotype.Controller;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;import at.qe.sepm.skeleton.model.Manager;
+<i>8</i>&nbsp;import at.qe.sepm.skeleton.model.Player;
+<i>9</i>&nbsp;import at.qe.sepm.skeleton.services.PlayerService;
+<i>10</i>&nbsp;import at.qe.sepm.skeleton.services.UserService;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;import java.io.Serializable;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;/**
+<i>15</i>&nbsp; * Bean for the create user interface.
+<i>16</i>&nbsp; */
+<b class="nc"><i>17</i>&nbsp;@Controller</b>
+<i>18</i>&nbsp;@Scope(&quot;view&quot;)
+<i>19</i>&nbsp;public class AddPlayerBean implements Serializable {
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;    private PlayerService playerService;
+<i>22</i>&nbsp;    private UserService userService;
+<i>23</i>&nbsp;    private AllPlayersBean allPlayersBean;
+<i>24</i>&nbsp;    private PasswordBean passwordBean;
+<i>25</i>&nbsp;    private ValidationBean validationBean;
+<i>26</i>&nbsp;    private MessageBean messageBean;
+<i>27</i>&nbsp;    private Manager manager;
+<i>28</i>&nbsp;
+<b class="nc"><i>29</i>&nbsp;    private String username = &quot;&quot;;</b>
+<b class="nc"><i>30</i>&nbsp;    private String password = &quot;&quot;;</b>
+<b class="nc"><i>31</i>&nbsp;    private String repeatPassword = &quot;&quot;;</b>
+<i>32</i>&nbsp;
+<i>33</i>&nbsp;    @Autowired
+<i>34</i>&nbsp;    public AddPlayerBean(PlayerService playerService,
+<i>35</i>&nbsp;                         SessionInfoBean sessionInfoBean,
+<i>36</i>&nbsp;                         UserService userService,
+<i>37</i>&nbsp;                         AllPlayersBean allPlayersBean,
+<i>38</i>&nbsp;                         PasswordBean passwordBean,
+<i>39</i>&nbsp;                         ValidationBean validationBean,
+<b class="nc"><i>40</i>&nbsp;                         MessageBean messageBean){</b>
+<b class="nc"><i>41</i>&nbsp;        assert sessionInfoBean.getCurrentUser().getManager() != null;</b>
+<b class="nc"><i>42</i>&nbsp;        assert userService != null;</b>
+<b class="nc"><i>43</i>&nbsp;        assert playerService != null;</b>
+<b class="nc"><i>44</i>&nbsp;        assert allPlayersBean != null;</b>
+<b class="nc"><i>45</i>&nbsp;        assert passwordBean != null;</b>
+<b class="nc"><i>46</i>&nbsp;        assert validationBean != null;</b>
+<b class="nc"><i>47</i>&nbsp;        assert messageBean != null;</b>
+<b class="nc"><i>48</i>&nbsp;        this.manager = sessionInfoBean.getCurrentUser().getManager();</b>
+<b class="nc"><i>49</i>&nbsp;        this.userService = userService;</b>
+<b class="nc"><i>50</i>&nbsp;        this.playerService = playerService;</b>
+<b class="nc"><i>51</i>&nbsp;        this.allPlayersBean = allPlayersBean;</b>
+<b class="nc"><i>52</i>&nbsp;        this.passwordBean = passwordBean;</b>
+<b class="nc"><i>53</i>&nbsp;        this.validationBean = validationBean;</b>
+<b class="nc"><i>54</i>&nbsp;        this.messageBean = messageBean;</b>
+<b class="nc"><i>55</i>&nbsp;    }</b>
+<i>56</i>&nbsp;    
+<i>57</i>&nbsp;    /**
+<i>58</i>&nbsp;     * Adds a user with the specified username and password to the database if both are valid.
+<i>59</i>&nbsp;     */
+<i>60</i>&nbsp;    public void addUser(){
+<b class="nc"><i>61</i>&nbsp;        if(!validateInput(true)){ return; }</b>
+<b class="nc"><i>62</i>&nbsp;        Player p = new Player();</b>
+<b class="nc"><i>63</i>&nbsp;        p.setAvatarPath(null); // the default avatar is loaded automatically</b>
+<b class="nc"><i>64</i>&nbsp;        p.setCreator(manager);</b>
+<b class="nc"><i>65</i>&nbsp;        p = playerService.saveNewPlayer(p, username, passwordBean.encodePassword(password));</b>
+<b class="nc"><i>66</i>&nbsp;        clear();</b>
+<b class="nc"><i>67</i>&nbsp;        allPlayersBean.addPlayer(p);</b>
+<b class="nc"><i>68</i>&nbsp;        messageBean.alertInformation(&quot;Success&quot;, &quot;Successfully created new player.&quot;);</b>
+<b class="nc"><i>69</i>&nbsp;        messageBean.updateComponent(&quot;messages&quot;);</b>
+<b class="nc"><i>70</i>&nbsp;    }</b>
+<i>71</i>&nbsp;
+<i>72</i>&nbsp;    /**
+<i>73</i>&nbsp;     * @return True if the current username and password are valid, false otherwise.
+<i>74</i>&nbsp;     */
+<i>75</i>&nbsp;    public boolean validateInput(boolean showMessages){
+<b class="nc"><i>76</i>&nbsp;        if(username == null || userService.loadUser(username) != null){</b>
+<b class="nc"><i>77</i>&nbsp;            if(showMessages){</b>
+<b class="nc"><i>78</i>&nbsp;                messageBean.alertError(&quot;Error&quot;, &quot;Username is already taken.&quot;);</b>
+<b class="nc"><i>79</i>&nbsp;                messageBean.updateComponent(&quot;messages&quot;);</b>
+<i>80</i>&nbsp;            }
+<b class="nc"><i>81</i>&nbsp;            return false;</b>
+<i>82</i>&nbsp;        }
+<i>83</i>&nbsp;
+<b class="nc"><i>84</i>&nbsp;        if(username.length() &lt; 3){</b>
+<b class="nc"><i>85</i>&nbsp;            if(showMessages){</b>
+<b class="nc"><i>86</i>&nbsp;                messageBean.alertError(&quot;Error&quot;, &quot;Username is too short (MIN. 3 Letters).&quot;);</b>
+<b class="nc"><i>87</i>&nbsp;                messageBean.updateComponent(&quot;messages&quot;);</b>
+<i>88</i>&nbsp;            }
+<b class="nc"><i>89</i>&nbsp;            return false;</b>
+<i>90</i>&nbsp;        }
+<i>91</i>&nbsp;
+<b class="nc"><i>92</i>&nbsp;        if(!validationBean.isValidText(username, 100)){</b>
+<b class="nc"><i>93</i>&nbsp;            if(showMessages){</b>
+<b class="nc"><i>94</i>&nbsp;                messageBean.alertError(&quot;Error&quot;, &quot;Username invalid.&quot;);</b>
+<b class="nc"><i>95</i>&nbsp;                messageBean.updateComponent(&quot;messages&quot;);</b>
+<i>96</i>&nbsp;            }
+<b class="nc"><i>97</i>&nbsp;            return false;</b>
+<i>98</i>&nbsp;        }
+<i>99</i>&nbsp;
+<b class="nc"><i>100</i>&nbsp;        if(password == null || !validationBean.isValidPassword(password, repeatPassword)){</b>
+<b class="nc"><i>101</i>&nbsp;            if(showMessages){</b>
+<b class="nc"><i>102</i>&nbsp;                messageBean.alertError(&quot;Error&quot;, &quot;Password invalid.&quot;);</b>
+<b class="nc"><i>103</i>&nbsp;                messageBean.updateComponent(&quot;messages&quot;);</b>
+<i>104</i>&nbsp;            }
+<b class="nc"><i>105</i>&nbsp;            return false;</b>
+<i>106</i>&nbsp;        }
+<b class="nc"><i>107</i>&nbsp;        return true;</b>
+<i>108</i>&nbsp;    }
+<i>109</i>&nbsp;    
+<i>110</i>&nbsp;    /**
+<i>111</i>&nbsp;     * Clears the current username and password.
+<i>112</i>&nbsp;     */
+<i>113</i>&nbsp;    public void clear(){
+<b class="nc"><i>114</i>&nbsp;        this.username = &quot;&quot;;</b>
+<b class="nc"><i>115</i>&nbsp;        this.password = &quot;&quot;;</b>
+<b class="nc"><i>116</i>&nbsp;        this.repeatPassword = &quot;&quot;;</b>
+<b class="nc"><i>117</i>&nbsp;    }</b>
+<i>118</i>&nbsp;
+<i>119</i>&nbsp;    public String getUsername() {
+<b class="nc"><i>120</i>&nbsp;        return username;</b>
+<i>121</i>&nbsp;    }
+<i>122</i>&nbsp;
+<i>123</i>&nbsp;    public void setUsername(String username) {
+<b class="nc"><i>124</i>&nbsp;        this.username = username;</b>
+<b class="nc"><i>125</i>&nbsp;    }</b>
+<i>126</i>&nbsp;
+<i>127</i>&nbsp;    public String getPassword() {
+<b class="nc"><i>128</i>&nbsp;        return password;</b>
+<i>129</i>&nbsp;    }
+<i>130</i>&nbsp;
+<i>131</i>&nbsp;    public void setPassword(String password) {
+<b class="nc"><i>132</i>&nbsp;        this.password = password;</b>
+<b class="nc"><i>133</i>&nbsp;    }</b>
+<i>134</i>&nbsp;
+<i>135</i>&nbsp;    public String getRepeatPassword() {
+<b class="nc"><i>136</i>&nbsp;        return repeatPassword;</b>
+<i>137</i>&nbsp;    }
+<i>138</i>&nbsp;
+<i>139</i>&nbsp;    public void setRepeatPassword(String repeatPassword) {
+<b class="nc"><i>140</i>&nbsp;        this.repeatPassword = repeatPassword;</b>
+<b class="nc"><i>141</i>&nbsp;    }</b>
+<i>142</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-06-26 10:09</div>
+</div>
+</body>
+</html>

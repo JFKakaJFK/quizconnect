@@ -1,0 +1,490 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: MathGenerator</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">at.qe.sepm.skeleton.logic</a> ]
+</div>
+
+<h1>Coverage Summary for Class: MathGenerator (at.qe.sepm.skeleton.logic)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MathGenerator</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (15/ 15)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    97,4%
+  </span>
+  <span class="absValue">
+    (151/ 155)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">MathGenerator$numSize</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/ 2)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (17/ 17)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    97,5%
+  </span>
+  <span class="absValue">
+    (153/ 157)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package at.qe.sepm.skeleton.logic;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.HashSet;
+<i>4</i>&nbsp;import java.util.LinkedList;
+<i>5</i>&nbsp;import java.util.List;
+<i>6</i>&nbsp;import java.util.Random;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import at.qe.sepm.skeleton.model.QuestionSetDifficulty;
+<i>9</i>&nbsp;import at.qe.sepm.skeleton.model.QuestionType;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;/**
+<i>12</i>&nbsp; * Class for generating math questions as QR_Questions. Used from QR_QuestionSystem if needed (= if gamemode = mathgod). All answers are guaranteed to be integers. Generates questions based on
+<i>13</i>&nbsp; * templates and random numbers of different average sizes. Please call the help hotline at +43148817-242 for further questions.
+<i>14</i>&nbsp; * 
+<i>15</i>&nbsp; * @author Lorenz_Smidt
+<i>16</i>&nbsp; *
+<i>17</i>&nbsp; */
+<i>18</i>&nbsp;public class MathGenerator
+<i>19</i>&nbsp;{
+<i>20</i>&nbsp;	/**
+<i>21</i>&nbsp;	 * Enum for selection of number size for generation.
+<i>22</i>&nbsp;	 */
+<b class="fc"><i>23</i>&nbsp;	private enum numSize</b>
+<i>24</i>&nbsp;	{
+<b class="fc"><i>25</i>&nbsp;		low, mid, high</b>
+<i>26</i>&nbsp;	}
+<i>27</i>&nbsp;	
+<i>28</i>&nbsp;	private Random random;
+<i>29</i>&nbsp;	
+<i>30</i>&nbsp;	public MathGenerator()
+<b class="fc"><i>31</i>&nbsp;	{</b>
+<b class="fc"><i>32</i>&nbsp;		random = new Random();</b>
+<b class="fc"><i>33</i>&nbsp;	}</b>
+<i>34</i>&nbsp;	
+<i>35</i>&nbsp;	/**
+<i>36</i>&nbsp;	 * Generates count questions of difficulty and returns them in form of a List of QR_Questions.
+<i>37</i>&nbsp;	 * 
+<i>38</i>&nbsp;	 * @param difficulty
+<i>39</i>&nbsp;	 *            Difficulty of the Questions to generate. Determines which templates are to be used.
+<i>40</i>&nbsp;	 * @param count
+<i>41</i>&nbsp;	 *            Number of Questions to generate.
+<i>42</i>&nbsp;	 * @param startId
+<i>43</i>&nbsp;	 *            Runtime id to start at (inclusive). Will generate ids up to startId + count.
+<i>44</i>&nbsp;	 * @return The List of QR_Questions.
+<i>45</i>&nbsp;	 */
+<i>46</i>&nbsp;	public List&lt;QR_Question&gt; generateQuestions(QuestionSetDifficulty difficulty, int count, int startId)
+<i>47</i>&nbsp;	{
+<b class="fc"><i>48</i>&nbsp;		List&lt;QR_Question&gt; questions = new LinkedList&lt;&gt;();</b>
+<b class="fc"><i>49</i>&nbsp;		HashSet&lt;String&gt; qs = new HashSet&lt;&gt;();</b>
+<b class="fc"><i>50</i>&nbsp;		HashSet&lt;String&gt; as = new HashSet&lt;&gt;();</b>
+<b class="fc"><i>51</i>&nbsp;		int id = startId;</b>
+<i>52</i>&nbsp;		
+<b class="fc"><i>53</i>&nbsp;		for (int i = 0; i &lt; count; i++)</b>
+<i>54</i>&nbsp;		{
+<b class="fc"><i>55</i>&nbsp;			QR_Question newQ = null;</b>
+<b class="fc"><i>56</i>&nbsp;			while (newQ == null)</b>
+<i>57</i>&nbsp;			{
+<b class="fc"><i>58</i>&nbsp;				if (difficulty == QuestionSetDifficulty.easy)</b>
+<b class="fc"><i>59</i>&nbsp;					newQ = getEasyQuestion(id);</b>
+<i>60</i>&nbsp;				else
+<b class="fc"><i>61</i>&nbsp;					newQ = getHardQuestion(id);</b>
+<i>62</i>&nbsp;				
+<i>63</i>&nbsp;				// safety checks
+<i>64</i>&nbsp;				// no wrong answers match right answer
+<b class="fc"><i>65</i>&nbsp;				String ra = newQ.getRightAnswerString();</b>
+<b class="fc"><i>66</i>&nbsp;				if (ra.equals(newQ.getWrongAnswerString_1()) || ra.equals(newQ.getWrongAnswerString_2()) || ra.equals(newQ.getWrongAnswerString_3())</b>
+<b class="fc"><i>67</i>&nbsp;						|| ra.equals(newQ.getWrongAnswerString_4()) || ra.equals(newQ.getWrongAnswerString_5()))</b>
+<i>68</i>&nbsp;				{
+<b class="nc"><i>69</i>&nbsp;					newQ = null;</b>
+<b class="nc"><i>70</i>&nbsp;					continue;</b>
+<i>71</i>&nbsp;				}
+<i>72</i>&nbsp;				
+<i>73</i>&nbsp;				// unique to other questions
+<b class="fc"><i>74</i>&nbsp;				if (qs.contains(newQ.getQuestionString()) || as.contains(newQ.getRightAnswerString()) || as.contains(newQ.getWrongAnswerString_1())</b>
+<b class="fc"><i>75</i>&nbsp;						|| as.contains(newQ.getWrongAnswerString_2()) || as.contains(newQ.getWrongAnswerString_3())</b>
+<b class="fc"><i>76</i>&nbsp;						|| as.contains(newQ.getWrongAnswerString_4()) || as.contains(newQ.getWrongAnswerString_5()))</b>
+<i>77</i>&nbsp;				{
+<b class="fc"><i>78</i>&nbsp;					newQ = null;</b>
+<i>79</i>&nbsp;				}
+<i>80</i>&nbsp;				
+<b class="fc"><i>81</i>&nbsp;			}</b>
+<b class="fc"><i>82</i>&nbsp;			questions.add(newQ);</b>
+<b class="fc"><i>83</i>&nbsp;			qs.add(newQ.getQuestionString());</b>
+<b class="fc"><i>84</i>&nbsp;			as.add(newQ.getRightAnswerString());</b>
+<b class="fc"><i>85</i>&nbsp;			id++;</b>
+<i>86</i>&nbsp;		}
+<i>87</i>&nbsp;		
+<b class="fc"><i>88</i>&nbsp;		return questions;</b>
+<i>89</i>&nbsp;	}
+<i>90</i>&nbsp;	
+<i>91</i>&nbsp;	/**
+<i>92</i>&nbsp;	 * Randomly selects a template of easy difficulty and generates a new question using it.
+<i>93</i>&nbsp;	 * 
+<i>94</i>&nbsp;	 * @param id
+<i>95</i>&nbsp;	 *            Runtime id for the new QR_Question to use.
+<i>96</i>&nbsp;	 * @return The newly generated QR_Question.
+<i>97</i>&nbsp;	 */
+<i>98</i>&nbsp;	private QR_Question getEasyQuestion(int id)
+<i>99</i>&nbsp;	{
+<i>100</i>&nbsp;		// randomly select template
+<b class="fc"><i>101</i>&nbsp;		switch (random.nextInt(5))</b>
+<i>102</i>&nbsp;		{
+<i>103</i>&nbsp;		case 0:
+<b class="fc"><i>104</i>&nbsp;			return genEasy_T1(id);</b>
+<i>105</i>&nbsp;		case 1:
+<b class="fc"><i>106</i>&nbsp;			return genEasy_T2(id);</b>
+<i>107</i>&nbsp;		case 2:
+<b class="fc"><i>108</i>&nbsp;			return genEasy_T3(id);</b>
+<i>109</i>&nbsp;		case 3:
+<b class="fc"><i>110</i>&nbsp;			return genEasy_T4(id);</b>
+<i>111</i>&nbsp;		case 4:
+<b class="fc"><i>112</i>&nbsp;			return genEasy_T5(id);</b>
+<i>113</i>&nbsp;		default:
+<b class="nc"><i>114</i>&nbsp;			return genEasy_T1(id);</b>
+<i>115</i>&nbsp;		}
+<i>116</i>&nbsp;	}
+<i>117</i>&nbsp;	
+<i>118</i>&nbsp;	/**
+<i>119</i>&nbsp;	 * Randomly selects a template of hard difficulty and generates a new question using it.
+<i>120</i>&nbsp;	 * 
+<i>121</i>&nbsp;	 * @param id
+<i>122</i>&nbsp;	 *            Runtime id for the new QR_Question to use.
+<i>123</i>&nbsp;	 * @return The newly generated QR_Question.
+<i>124</i>&nbsp;	 */
+<i>125</i>&nbsp;	private QR_Question getHardQuestion(int id)
+<i>126</i>&nbsp;	{
+<i>127</i>&nbsp;		// randomly select template
+<b class="fc"><i>128</i>&nbsp;		switch (random.nextInt(5))</b>
+<i>129</i>&nbsp;		{
+<i>130</i>&nbsp;		case 0:
+<b class="fc"><i>131</i>&nbsp;			return genHard_T1(id);</b>
+<i>132</i>&nbsp;		case 1:
+<b class="fc"><i>133</i>&nbsp;			return genHard_T2(id);</b>
+<i>134</i>&nbsp;		case 2:
+<b class="fc"><i>135</i>&nbsp;			return genHard_T3(id);</b>
+<i>136</i>&nbsp;		case 3:
+<b class="fc"><i>137</i>&nbsp;			return genHard_T4(id);</b>
+<i>138</i>&nbsp;		case 4:
+<b class="fc"><i>139</i>&nbsp;			return genHard_T5(id);</b>
+<i>140</i>&nbsp;		default:
+<b class="nc"><i>141</i>&nbsp;			return genHard_T1(id);</b>
+<i>142</i>&nbsp;		}
+<i>143</i>&nbsp;	}
+<i>144</i>&nbsp;	
+<i>145</i>&nbsp;	/**
+<i>146</i>&nbsp;	 * Generates an easy question based on the template a+b*c=?
+<i>147</i>&nbsp;	 * 
+<i>148</i>&nbsp;	 * @return The generated question.
+<i>149</i>&nbsp;	 */
+<i>150</i>&nbsp;	private QR_Question genEasy_T1(int id)
+<i>151</i>&nbsp;	{
+<b class="fc"><i>152</i>&nbsp;		int[] nums = getNumbers(new numSize[] { numSize.low, numSize.mid, numSize.low });</b>
+<b class="fc"><i>153</i>&nbsp;		String question = nums[0] + &quot; + &quot; + nums[1] + &quot; \\cdot &quot; + nums[2] + &quot; = ?&quot;;</b>
+<b class="fc"><i>154</i>&nbsp;		String answer = &quot;= &quot; + (nums[0] + (nums[1] * nums[2]));</b>
+<b class="fc"><i>155</i>&nbsp;		String wrong1 = &quot;= &quot; + ((nums[0] + nums[1]) * nums[2]);</b>
+<b class="fc"><i>156</i>&nbsp;		String wrong2 = &quot;= &quot; + ((nums[0] * nums[2]) + nums[1]);</b>
+<b class="fc"><i>157</i>&nbsp;		String wrong3 = &quot;= &quot; + (nums[0] + ((nums[1] - 1) * nums[2]));</b>
+<b class="fc"><i>158</i>&nbsp;		String wrong4 = &quot;= &quot; + (nums[0] + (nums[1] * (nums[2] - 1)));</b>
+<b class="fc"><i>159</i>&nbsp;		String wrong5 = &quot;= &quot; + (nums[1] * nums[2]);</b>
+<i>160</i>&nbsp;		
+<b class="fc"><i>161</i>&nbsp;		return new QR_Question(id, QuestionType.math, question, answer, wrong1, wrong2, wrong3, wrong4, wrong5);</b>
+<i>162</i>&nbsp;	}
+<i>163</i>&nbsp;	
+<i>164</i>&nbsp;	/**
+<i>165</i>&nbsp;	 * Generates an easy question based on the template a*b-c*d=?
+<i>166</i>&nbsp;	 * 
+<i>167</i>&nbsp;	 * @return The generated question.
+<i>168</i>&nbsp;	 */
+<i>169</i>&nbsp;	private QR_Question genEasy_T2(int id)
+<i>170</i>&nbsp;	{
+<b class="fc"><i>171</i>&nbsp;		int[] nums = getNumbers(new numSize[] { numSize.low, numSize.mid, numSize.low, numSize.mid });</b>
+<b class="fc"><i>172</i>&nbsp;		String question = nums[0] + &quot; \\cdot &quot; + nums[1] + &quot; - &quot; + nums[2] + &quot; \\cdot &quot; + nums[3] + &quot; = ?&quot;;</b>
+<b class="fc"><i>173</i>&nbsp;		String answer = &quot;= &quot; + ((nums[0] * nums[1]) - (nums[2] * nums[3]));</b>
+<b class="fc"><i>174</i>&nbsp;		String wrong1 = &quot;= &quot; + (nums[0] * (nums[1] - nums[2]) * nums[3]);</b>
+<b class="fc"><i>175</i>&nbsp;		String wrong2 = &quot;= &quot; + ((nums[0] * nums[1]) + (nums[2] * nums[3]));</b>
+<b class="fc"><i>176</i>&nbsp;		String wrong3 = &quot;= &quot; + (((nums[0] - 1) * nums[1]) - (nums[2] * nums[3]));</b>
+<b class="fc"><i>177</i>&nbsp;		String wrong4 = &quot;= &quot; + ((nums[0] * nums[1]) - ((nums[2] - 1) * nums[3]));</b>
+<b class="fc"><i>178</i>&nbsp;		String wrong5 = &quot;= &quot; + ((nums[0] * nums[1]) - (nums[2] * (nums[3] - 1)));</b>
+<i>179</i>&nbsp;		
+<b class="fc"><i>180</i>&nbsp;		return new QR_Question(id, QuestionType.math, question, answer, wrong1, wrong2, wrong3, wrong4, wrong5);</b>
+<i>181</i>&nbsp;	}
+<i>182</i>&nbsp;	
+<i>183</i>&nbsp;	/**
+<i>184</i>&nbsp;	 * Generates an easy question based on the template a-b*c=?
+<i>185</i>&nbsp;	 * 
+<i>186</i>&nbsp;	 * @return The generated question.
+<i>187</i>&nbsp;	 */
+<i>188</i>&nbsp;	private QR_Question genEasy_T3(int id)
+<i>189</i>&nbsp;	{
+<b class="fc"><i>190</i>&nbsp;		int[] nums = getNumbers(new numSize[] { numSize.low, numSize.mid, numSize.low });</b>
+<b class="fc"><i>191</i>&nbsp;		String question = nums[0] + &quot; - &quot; + nums[1] + &quot; \\cdot &quot; + nums[2] + &quot; = ?&quot;;</b>
+<b class="fc"><i>192</i>&nbsp;		String answer = &quot;= &quot; + (nums[0] - (nums[1] * nums[2]));</b>
+<b class="fc"><i>193</i>&nbsp;		String wrong1 = &quot;= &quot; + ((nums[0] - nums[1]) * nums[2]);</b>
+<b class="fc"><i>194</i>&nbsp;		String wrong2 = &quot;= &quot; + ((nums[0] * nums[2]) - nums[1]);</b>
+<b class="fc"><i>195</i>&nbsp;		String wrong3 = &quot;= &quot; + (nums[0] - ((nums[1] - 1) * nums[2]));</b>
+<b class="fc"><i>196</i>&nbsp;		String wrong4 = &quot;= &quot; + (nums[0] - (nums[1] * (nums[2] - 1)));</b>
+<b class="fc"><i>197</i>&nbsp;		String wrong5 = &quot;= &quot; + (nums[1] * (nums[2] + 1));</b>
+<i>198</i>&nbsp;		
+<b class="fc"><i>199</i>&nbsp;		return new QR_Question(id, QuestionType.math, question, answer, wrong1, wrong2, wrong3, wrong4, wrong5);</b>
+<i>200</i>&nbsp;	}
+<i>201</i>&nbsp;	
+<i>202</i>&nbsp;	/**
+<i>203</i>&nbsp;	 * Generates an easy question based on the template a+b-(c-d)=?
+<i>204</i>&nbsp;	 * 
+<i>205</i>&nbsp;	 * @return The generated question.
+<i>206</i>&nbsp;	 */
+<i>207</i>&nbsp;	private QR_Question genEasy_T4(int id)
+<i>208</i>&nbsp;	{
+<b class="fc"><i>209</i>&nbsp;		int[] nums = getNumbers(new numSize[] { numSize.mid, numSize.low, numSize.mid, numSize.mid });</b>
+<b class="fc"><i>210</i>&nbsp;		String question = nums[0] + &quot; + &quot; + nums[1] + &quot; - ( &quot; + nums[2] + &quot; - &quot; + nums[3] + &quot; ) = ?&quot;;</b>
+<b class="fc"><i>211</i>&nbsp;		String answer = &quot;= &quot; + (nums[0] + nums[1] - nums[2] + nums[3]);</b>
+<b class="fc"><i>212</i>&nbsp;		String wrong1 = &quot;= &quot; + (nums[0] + nums[1] - nums[2] - nums[3]);</b>
+<b class="fc"><i>213</i>&nbsp;		String wrong2 = &quot;= &quot; + (nums[0] + nums[1] + nums[2] + nums[3]);</b>
+<b class="fc"><i>214</i>&nbsp;		String wrong3 = &quot;= &quot; + (nums[0] + nums[1] + nums[2] - nums[3]);</b>
+<b class="fc"><i>215</i>&nbsp;		String wrong4 = &quot;= &quot; + (nums[0] + nums[1] - (nums[2] + 1) + nums[3]);</b>
+<b class="fc"><i>216</i>&nbsp;		String wrong5 = &quot;= &quot; + (nums[0] - nums[2] + nums[3]);</b>
+<i>217</i>&nbsp;		
+<b class="fc"><i>218</i>&nbsp;		return new QR_Question(id, QuestionType.math, question, answer, wrong1, wrong2, wrong3, wrong4, wrong5);</b>
+<i>219</i>&nbsp;	}
+<i>220</i>&nbsp;	
+<i>221</i>&nbsp;	/**
+<i>222</i>&nbsp;	 * Generates an easy question based on the template a*(b+c)-d=?
+<i>223</i>&nbsp;	 * 
+<i>224</i>&nbsp;	 * @return The generated question.
+<i>225</i>&nbsp;	 */
+<i>226</i>&nbsp;	private QR_Question genEasy_T5(int id)
+<i>227</i>&nbsp;	{
+<b class="fc"><i>228</i>&nbsp;		int[] nums = getNumbers(new numSize[] { numSize.low, numSize.mid, numSize.low, numSize.mid });</b>
+<b class="fc"><i>229</i>&nbsp;		String question = nums[0] + &quot; \\cdot ( &quot; + nums[1] + &quot; + &quot; + nums[2] + &quot; ) - &quot; + nums[3] + &quot; = ?&quot;;</b>
+<b class="fc"><i>230</i>&nbsp;		String answer = &quot;= &quot; + (nums[0] * (nums[1] + nums[2]) - nums[3]);</b>
+<b class="fc"><i>231</i>&nbsp;		String wrong1 = &quot;= &quot; + (nums[0] * (nums[1] - nums[2]) - nums[3]);</b>
+<b class="fc"><i>232</i>&nbsp;		String wrong2 = &quot;= &quot; + ((nums[0] + 1) * (nums[1] + nums[2]) - nums[3]);</b>
+<b class="fc"><i>233</i>&nbsp;		String wrong3 = &quot;= &quot; + (nums[0] * (nums[1] + nums[2]) + nums[3]);</b>
+<b class="fc"><i>234</i>&nbsp;		String wrong4 = &quot;= &quot; + (nums[0] * (nums[1] + nums[2] - nums[3]));</b>
+<b class="fc"><i>235</i>&nbsp;		String wrong5 = &quot;= &quot; + ((nums[0] - 1) * (nums[1] + nums[2]) - nums[3]);</b>
+<i>236</i>&nbsp;		
+<b class="fc"><i>237</i>&nbsp;		return new QR_Question(id, QuestionType.math, question, answer, wrong1, wrong2, wrong3, wrong4, wrong5);</b>
+<i>238</i>&nbsp;	}
+<i>239</i>&nbsp;	
+<i>240</i>&nbsp;	/**
+<i>241</i>&nbsp;	 * Generates a hard question based on the template sqrt(a+b)*c=?
+<i>242</i>&nbsp;	 * 
+<i>243</i>&nbsp;	 * @return The generated question.
+<i>244</i>&nbsp;	 */
+<i>245</i>&nbsp;	private QR_Question genHard_T1(int id)
+<i>246</i>&nbsp;	{
+<b class="fc"><i>247</i>&nbsp;		int[] nums = getNumbers(new numSize[] { numSize.low, numSize.low, numSize.mid });</b>
+<b class="fc"><i>248</i>&nbsp;		int a = nums[2] * nums[2] - nums[0];</b>
+<b class="fc"><i>249</i>&nbsp;		String question = &quot;\\sqrt{&quot; + a + &quot; + &quot; + nums[0] + &quot;} \\cdot &quot; + nums[1] + &quot; = ?&quot;;</b>
+<b class="fc"><i>250</i>&nbsp;		String answer = &quot;= &quot; + (nums[2] * nums[1]);</b>
+<b class="fc"><i>251</i>&nbsp;		String wrong1 = &quot;= &quot; + (nums[2] * (nums[1] - 1));</b>
+<b class="fc"><i>252</i>&nbsp;		String wrong2 = &quot;= &quot; + (nums[2] * (nums[1] + 1));</b>
+<b class="fc"><i>253</i>&nbsp;		String wrong3 = &quot;= &quot; + ((nums[2] - 1) * nums[1]);</b>
+<b class="fc"><i>254</i>&nbsp;		String wrong4 = &quot;= &quot; + ((nums[2] + 1) * nums[1]);</b>
+<b class="fc"><i>255</i>&nbsp;		String wrong5 = &quot;= &quot; + (nums[2] * nums[1] + 1);</b>
+<i>256</i>&nbsp;		
+<b class="fc"><i>257</i>&nbsp;		return new QR_Question(id, QuestionType.math, question, answer, wrong1, wrong2, wrong3, wrong4, wrong5);</b>
+<i>258</i>&nbsp;	}
+<i>259</i>&nbsp;	
+<i>260</i>&nbsp;	/**
+<i>261</i>&nbsp;	 * Generates a hard question based on the template (a*b)/(c-d)=?
+<i>262</i>&nbsp;	 * 
+<i>263</i>&nbsp;	 * @return The generated question.
+<i>264</i>&nbsp;	 */
+<i>265</i>&nbsp;	private QR_Question genHard_T2(int id)
+<i>266</i>&nbsp;	{
+<b class="fc"><i>267</i>&nbsp;		int[] nums = getNumbers(new numSize[] { numSize.low, numSize.low, numSize.low, numSize.low });</b>
+<b class="fc"><i>268</i>&nbsp;		int a = nums[2] * nums[3];</b>
+<b class="fc"><i>269</i>&nbsp;		int c = nums[0] * nums[2] + nums[1];</b>
+<b class="fc"><i>270</i>&nbsp;		String question = &quot;\\frac{&quot; + a + &quot; \\cdot &quot; + nums[0] + &quot;} {&quot; + c + &quot; - &quot; + nums[1] + &quot;} = ?&quot;;</b>
+<b class="fc"><i>271</i>&nbsp;		String answer = &quot;= &quot; + (nums[3]);</b>
+<b class="fc"><i>272</i>&nbsp;		String wrong1 = &quot;= &quot; + (nums[3] + nums[1]);</b>
+<b class="fc"><i>273</i>&nbsp;		String wrong2 = &quot;= &quot; + (nums[3] * nums[0]);</b>
+<b class="fc"><i>274</i>&nbsp;		String wrong3 = &quot;= &quot; + (nums[3] - 1);</b>
+<b class="fc"><i>275</i>&nbsp;		String wrong4 = &quot;= &quot; + (nums[3] * 2);</b>
+<b class="fc"><i>276</i>&nbsp;		String wrong5 = &quot;= &quot; + (nums[2] * nums[3]);</b>
+<i>277</i>&nbsp;		
+<b class="fc"><i>278</i>&nbsp;		return new QR_Question(id, QuestionType.math, question, answer, wrong1, wrong2, wrong3, wrong4, wrong5);</b>
+<i>279</i>&nbsp;	}
+<i>280</i>&nbsp;	
+<i>281</i>&nbsp;	/**
+<i>282</i>&nbsp;	 * Generates a hard question based on the template (a-b)*c+d=?
+<i>283</i>&nbsp;	 * 
+<i>284</i>&nbsp;	 * @return The generated question.
+<i>285</i>&nbsp;	 */
+<i>286</i>&nbsp;	private QR_Question genHard_T3(int id)
+<i>287</i>&nbsp;	{
+<b class="fc"><i>288</i>&nbsp;		int[] nums = getNumbers(new numSize[] { numSize.high, numSize.mid, numSize.low, numSize.mid });</b>
+<b class="fc"><i>289</i>&nbsp;		String question = &quot;( &quot; + nums[0] + &quot; - &quot; + nums[1] + &quot; ) \\cdot &quot; + nums[2] + &quot; + &quot; + nums[3] + &quot; = ?&quot;;</b>
+<b class="fc"><i>290</i>&nbsp;		String answer = &quot;= &quot; + ((nums[0] - nums[1]) * nums[2] + nums[3]);</b>
+<b class="fc"><i>291</i>&nbsp;		String wrong1 = &quot;= &quot; + ((nums[0] - nums[1]) * nums[2]);</b>
+<b class="fc"><i>292</i>&nbsp;		String wrong2 = &quot;= &quot; + ((nums[0] - nums[1] + 1) * nums[2] + nums[3]);</b>
+<b class="fc"><i>293</i>&nbsp;		String wrong3 = &quot;= &quot; + ((nums[0] - nums[1]) * (nums[2] - 1) + nums[3]);</b>
+<b class="fc"><i>294</i>&nbsp;		String wrong4 = &quot;= &quot; + ((nums[0] + nums[1]) * nums[2] + nums[3]);</b>
+<b class="fc"><i>295</i>&nbsp;		String wrong5 = &quot;= &quot; + ((nums[0]) * nums[2] + nums[3]);</b>
+<i>296</i>&nbsp;		
+<b class="fc"><i>297</i>&nbsp;		return new QR_Question(id, QuestionType.math, question, answer, wrong1, wrong2, wrong3, wrong4, wrong5);</b>
+<i>298</i>&nbsp;	}
+<i>299</i>&nbsp;	
+<i>300</i>&nbsp;	/**
+<i>301</i>&nbsp;	 * Generates a hard question based on the template a*b*c-d=?
+<i>302</i>&nbsp;	 * 
+<i>303</i>&nbsp;	 * @return The generated question.
+<i>304</i>&nbsp;	 */
+<i>305</i>&nbsp;	private QR_Question genHard_T4(int id)
+<i>306</i>&nbsp;	{
+<b class="fc"><i>307</i>&nbsp;		int[] nums = getNumbers(new numSize[] { numSize.low, numSize.mid, numSize.low, numSize.high });</b>
+<b class="fc"><i>308</i>&nbsp;		String question = nums[0] + &quot; \\cdot &quot; + nums[1] + &quot; \\cdot &quot; + nums[2] + &quot; - &quot; + nums[3] + &quot; = ?&quot;;</b>
+<b class="fc"><i>309</i>&nbsp;		String answer = &quot;= &quot; + (nums[0] * nums[1] * nums[2] - nums[3]);</b>
+<b class="fc"><i>310</i>&nbsp;		String wrong1 = &quot;= &quot; + (nums[0] * nums[1] * nums[2]);</b>
+<b class="fc"><i>311</i>&nbsp;		String wrong2 = &quot;= &quot; + (nums[0] * nums[1] - nums[3]);</b>
+<b class="fc"><i>312</i>&nbsp;		String wrong3 = &quot;= &quot; + (nums[0] * (nums[1] + 1) * nums[2] - nums[3]);</b>
+<b class="fc"><i>313</i>&nbsp;		String wrong4 = &quot;= &quot; + (nums[0] * nums[1] * nums[2] - nums[3] - 1);</b>
+<b class="fc"><i>314</i>&nbsp;		String wrong5 = &quot;= &quot; + (nums[1] * nums[2] - nums[3]);</b>
+<i>315</i>&nbsp;		
+<b class="fc"><i>316</i>&nbsp;		return new QR_Question(id, QuestionType.math, question, answer, wrong1, wrong2, wrong3, wrong4, wrong5);</b>
+<i>317</i>&nbsp;	}
+<i>318</i>&nbsp;	
+<i>319</i>&nbsp;	/**
+<i>320</i>&nbsp;	 * Generates a hard question based on the template (a+b)/c=?
+<i>321</i>&nbsp;	 * 
+<i>322</i>&nbsp;	 * @return The generated question.
+<i>323</i>&nbsp;	 */
+<i>324</i>&nbsp;	private QR_Question genHard_T5(int id)
+<i>325</i>&nbsp;	{
+<b class="fc"><i>326</i>&nbsp;		int[] nums = getNumbers(new numSize[] { numSize.low, numSize.low, numSize.low });</b>
+<b class="fc"><i>327</i>&nbsp;		int a = nums[1] * nums[2] - nums[0];</b>
+<b class="fc"><i>328</i>&nbsp;		String question = &quot;\\frac{&quot; + a + &quot; + &quot; + nums[0] + &quot;} {&quot; + nums[1] + &quot;} = ?&quot;;</b>
+<b class="fc"><i>329</i>&nbsp;		String answer = &quot;= &quot; + (nums[2]);</b>
+<b class="fc"><i>330</i>&nbsp;		String wrong1 = &quot;= &quot; + (nums[2] + nums[0]);</b>
+<b class="fc"><i>331</i>&nbsp;		String wrong2 = &quot;= &quot; + (a - nums[2]);</b>
+<b class="fc"><i>332</i>&nbsp;		String wrong3 = &quot;= &quot; + (nums[2] - nums[1]);</b>
+<b class="fc"><i>333</i>&nbsp;		String wrong4 = &quot;= &quot; + (nums[2] + 3);</b>
+<b class="fc"><i>334</i>&nbsp;		String wrong5 = &quot;= &quot; + (nums[2] * 2);</b>
+<i>335</i>&nbsp;		
+<b class="fc"><i>336</i>&nbsp;		return new QR_Question(id, QuestionType.math, question, answer, wrong1, wrong2, wrong3, wrong4, wrong5);</b>
+<i>337</i>&nbsp;	}
+<i>338</i>&nbsp;	
+<i>339</i>&nbsp;	/**
+<i>340</i>&nbsp;	 * Generates mutually unique numbers with certain sizes as defined by the sizes array.
+<i>341</i>&nbsp;	 * 
+<i>342</i>&nbsp;	 * @param sizes
+<i>343</i>&nbsp;	 *            Definitions for the sizes (and count) of numbers to generate.
+<i>344</i>&nbsp;	 * @return An array of mutually unique numbers of the given sizes.
+<i>345</i>&nbsp;	 */
+<i>346</i>&nbsp;	private int[] getNumbers(numSize[] sizes)
+<i>347</i>&nbsp;	{
+<i>348</i>&nbsp;		// range definitions for number sizes
+<b class="fc"><i>349</i>&nbsp;		int low_l = 3;</b>
+<b class="fc"><i>350</i>&nbsp;		int low_h = 8;</b>
+<b class="fc"><i>351</i>&nbsp;		int mid_l = 8;</b>
+<b class="fc"><i>352</i>&nbsp;		int mid_h = 25;</b>
+<b class="fc"><i>353</i>&nbsp;		int high_l = 25;</b>
+<b class="fc"><i>354</i>&nbsp;		int high_h = 99;</b>
+<i>355</i>&nbsp;		
+<b class="fc"><i>356</i>&nbsp;		HashSet&lt;Integer&gt; temp = new HashSet&lt;&gt;();</b>
+<b class="fc"><i>357</i>&nbsp;		int[] out = new int[sizes.length];</b>
+<b class="fc"><i>358</i>&nbsp;		for (int i = 0; i &lt; sizes.length; i++)</b>
+<i>359</i>&nbsp;		{
+<b class="fc"><i>360</i>&nbsp;			int next = 0;</b>
+<b class="fc"><i>361</i>&nbsp;			while (next == 0 || temp.contains(next))</b>
+<i>362</i>&nbsp;			{
+<b class="fc"><i>363</i>&nbsp;				if (sizes[i] == numSize.low)</b>
+<i>364</i>&nbsp;				{
+<b class="fc"><i>365</i>&nbsp;					next = random.nextInt(low_h) + low_l;</b>
+<i>366</i>&nbsp;				}
+<b class="fc"><i>367</i>&nbsp;				else if (sizes[i] == numSize.mid)</b>
+<i>368</i>&nbsp;				{
+<b class="fc"><i>369</i>&nbsp;					next = random.nextInt(mid_h) + mid_l;</b>
+<i>370</i>&nbsp;				}
+<i>371</i>&nbsp;				else
+<i>372</i>&nbsp;				{
+<b class="fc"><i>373</i>&nbsp;					next = random.nextInt(high_h) + high_l;</b>
+<i>374</i>&nbsp;				}
+<i>375</i>&nbsp;			}
+<b class="fc"><i>376</i>&nbsp;			temp.add(next);</b>
+<b class="fc"><i>377</i>&nbsp;			out[i] = next;</b>
+<i>378</i>&nbsp;		}
+<b class="fc"><i>379</i>&nbsp;		return out;</b>
+<i>380</i>&nbsp;	}
+<i>381</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-06-26 10:09</div>
+</div>
+</body>
+</html>

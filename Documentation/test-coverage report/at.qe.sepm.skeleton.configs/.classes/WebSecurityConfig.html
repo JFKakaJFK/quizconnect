@@ -1,0 +1,169 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: WebSecurityConfig</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">at.qe.sepm.skeleton.configs</a> ]
+</div>
+
+<h1>Coverage Summary for Class: WebSecurityConfig (at.qe.sepm.skeleton.configs)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">WebSecurityConfig</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (35/ 35)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">WebSecurityConfig$$EnhancerBySpringCGLIB$$e3d3f5d8</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (35/ 35)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package at.qe.sepm.skeleton.configs;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import javax.sql.DataSource;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+<i>6</i>&nbsp;import org.springframework.context.annotation.Configuration;
+<i>7</i>&nbsp;import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+<i>8</i>&nbsp;import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+<i>9</i>&nbsp;import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+<i>10</i>&nbsp;import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+<i>11</i>&nbsp;import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+<i>12</i>&nbsp;import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;/**
+<i>15</i>&nbsp; * Spring configuration for web security.
+<i>16</i>&nbsp; *
+<i>17</i>&nbsp; * This class is part of the skeleton project provided for students of the
+<i>18</i>&nbsp; * course &quot;Softwaredevelopment and Project Management&quot; offered by the University
+<i>19</i>&nbsp; * of Innsbruck.
+<i>20</i>&nbsp; */
+<i>21</i>&nbsp;@Configuration
+<i>22</i>&nbsp;@EnableWebSecurity()
+<b class="fc"><i>23</i>&nbsp;public class WebSecurityConfig extends WebSecurityConfigurerAdapter {</b>
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;    @Autowired
+<i>26</i>&nbsp;    DataSource dataSource;
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;    @Override
+<i>29</i>&nbsp;    protected void configure(HttpSecurity http) throws Exception {
+<i>30</i>&nbsp;
+<b class="fc"><i>31</i>&nbsp;        http.csrf().disable();</b>
+<b class="fc"><i>32</i>&nbsp;        http.headers().frameOptions().disable(); // needed for H2 console</b>
+<i>33</i>&nbsp;
+<b class="fc"><i>34</i>&nbsp;        http.logout()</b>
+<b class="fc"><i>35</i>&nbsp;                .logoutRequestMatcher(new AntPathRequestMatcher(&quot;/logout&quot;))</b>
+<b class="fc"><i>36</i>&nbsp;                .invalidateHttpSession(true)</b>
+<b class="fc"><i>37</i>&nbsp;                .logoutSuccessUrl(&quot;/login.xhtml&quot;);</b>
+<i>38</i>&nbsp;
+<b class="fc"><i>39</i>&nbsp;        http.authorizeRequests()</b>
+<b class="fc"><i>40</i>&nbsp;                .antMatchers(&quot;/error/**&quot;)</b>
+<b class="fc"><i>41</i>&nbsp;                .permitAll()</b>
+<i>42</i>&nbsp;                //Permit access only for some roles
+<b class="fc"><i>43</i>&nbsp;                .antMatchers(&quot;/secured/**&quot;)</b>
+<b class="fc"><i>44</i>&nbsp;				.hasAnyAuthority(&quot;MANAGER&quot;)</b>
+<b class="fc"><i>45</i>&nbsp;                .antMatchers(&quot;/players/**&quot;)</b>
+<b class="fc"><i>46</i>&nbsp;                .hasAnyAuthority(&quot;PLAYER&quot;, &quot;MANAGER&quot;)</b>
+<b class="fc"><i>47</i>&nbsp;                .antMatchers(&quot;/login/**&quot;)</b>
+<b class="fc"><i>48</i>&nbsp;                .hasAnyAuthority(&quot;PLAYER&quot;, &quot;MANAGER&quot;)</b>
+<b class="fc"><i>49</i>&nbsp;                .antMatchers(&quot;/quizroom/**&quot;)</b>
+<b class="fc"><i>50</i>&nbsp;                .hasAnyAuthority(&quot;PLAYER&quot;)</b>
+<b class="fc"><i>51</i>&nbsp;                .antMatchers(&quot;/qr/**&quot;)</b>
+<b class="fc"><i>52</i>&nbsp;                .hasAnyAuthority(&quot;PLAYER&quot;)</b>
+<b class="fc"><i>53</i>&nbsp;                .antMatchers(&quot;/uploads&quot;)</b>
+<b class="fc"><i>54</i>&nbsp;                .hasAnyAuthority(&quot;PLAYER&quot;, &quot;MANAGER&quot;)</b>
+<b class="fc"><i>55</i>&nbsp;                .and()</b>
+<b class="fc"><i>56</i>&nbsp;                .formLogin()</b>
+<b class="fc"><i>57</i>&nbsp;                .loginPage(&quot;/login.xhtml&quot;)</b>
+<b class="fc"><i>58</i>&nbsp;                .loginProcessingUrl(&quot;/login&quot;)</b>
+<b class="fc"><i>59</i>&nbsp;                .defaultSuccessUrl(&quot;/login/redirect.xhtml&quot;)</b>
+<b class="fc"><i>60</i>&nbsp;                .failureUrl(&quot;/login.xhtml?error&quot;);</b>
+<i>61</i>&nbsp;
+<b class="fc"><i>62</i>&nbsp;        http.exceptionHandling().accessDeniedPage(&quot;/error/402.xhtml&quot;);</b>
+<i>63</i>&nbsp;
+<b class="fc"><i>64</i>&nbsp;        http.sessionManagement().invalidSessionUrl(&quot;/&quot;);</b>
+<i>65</i>&nbsp;
+<b class="fc"><i>66</i>&nbsp;    }</b>
+<i>67</i>&nbsp;
+<i>68</i>&nbsp;    @Autowired
+<i>69</i>&nbsp;    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+<i>70</i>&nbsp;        //Configure roles and passwords via datasource
+<b class="fc"><i>71</i>&nbsp;        auth.jdbcAuthentication().dataSource(dataSource)</b>
+<b class="fc"><i>72</i>&nbsp;				.usersByUsernameQuery(&quot;select username, password, enabled from user where username=?&quot;)</b>
+<b class="fc"><i>73</i>&nbsp;				.authoritiesByUsernameQuery(&quot;select username, role from user where username=?&quot;).passwordEncoder(new BCryptPasswordEncoder(6));</b>
+<b class="fc"><i>74</i>&nbsp;    }</b>
+<i>75</i>&nbsp;
+<i>76</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-06-26 10:09</div>
+</div>
+</body>
+</html>

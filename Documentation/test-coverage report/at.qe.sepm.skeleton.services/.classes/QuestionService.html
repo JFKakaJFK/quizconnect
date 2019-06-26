@@ -1,0 +1,238 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: QuestionService</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">at.qe.sepm.skeleton.services</a> ]
+</div>
+
+<h1>Coverage Summary for Class: QuestionService (at.qe.sepm.skeleton.services)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">QuestionService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (7/ 7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (36/ 36)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package at.qe.sepm.skeleton.services;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.Collection;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;import org.slf4j.Logger;
+<i>6</i>&nbsp;import org.slf4j.LoggerFactory;
+<i>7</i>&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+<i>8</i>&nbsp;import org.springframework.context.annotation.Scope;
+<i>9</i>&nbsp;import org.springframework.stereotype.Component;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;import at.qe.sepm.skeleton.model.Question;
+<i>12</i>&nbsp;import at.qe.sepm.skeleton.model.QuestionType;
+<i>13</i>&nbsp;import at.qe.sepm.skeleton.repositories.QuestionRepository;
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;/**
+<i>16</i>&nbsp; * Service for accessing and manipulating {@link Question} entities.
+<i>17</i>&nbsp; *
+<i>18</i>&nbsp; * @author Johannes Koch
+<i>19</i>&nbsp; */
+<i>20</i>&nbsp;@Component
+<i>21</i>&nbsp;@Scope(&quot;application&quot;)
+<b class="fc"><i>22</i>&nbsp;public class QuestionService</b>
+<i>23</i>&nbsp;{
+<i>24</i>&nbsp;	
+<b class="fc"><i>25</i>&nbsp;	private Logger log = LoggerFactory.getLogger(QuestionService.class);</b>
+<i>26</i>&nbsp;	
+<i>27</i>&nbsp;	@Autowired
+<i>28</i>&nbsp;	QuestionRepository questionRepository;
+<i>29</i>&nbsp;	
+<i>30</i>&nbsp;	/**
+<i>31</i>&nbsp;	 * @param id
+<i>32</i>&nbsp;	 * 		Id of the Question to find.
+<i>33</i>&nbsp;	 * @return The Question with id or null if none was found.
+<i>34</i>&nbsp;	 */
+<i>35</i>&nbsp;	public Question getById(Integer id)
+<i>36</i>&nbsp;	{
+<b class="fc"><i>37</i>&nbsp;		return questionRepository.findOne(id);</b>
+<i>38</i>&nbsp;	}
+<i>39</i>&nbsp;	
+<i>40</i>&nbsp;	/**
+<i>41</i>&nbsp;	 * @param type
+<i>42</i>&nbsp;	 * 		Type of Questions to be returned.
+<i>43</i>&nbsp;	 * @return All {@link Question} of a {@link QuestionType}.
+<i>44</i>&nbsp;	 */
+<i>45</i>&nbsp;	public Collection&lt;Question&gt; getAllByType(QuestionType type)
+<i>46</i>&nbsp;	{
+<b class="fc"><i>47</i>&nbsp;		return questionRepository.findByType(type);</b>
+<i>48</i>&nbsp;	}
+<i>49</i>&nbsp;	
+<i>50</i>&nbsp;	/**
+<i>51</i>&nbsp;	 * @param text
+<i>52</i>&nbsp;	 * 		Text to be contained in the rightAnswerString of the Questions.
+<i>53</i>&nbsp;	 * @return All {@link Question} where the {@link Question#rightAnswerString} contains the search phrase.
+<i>54</i>&nbsp;	 */
+<i>55</i>&nbsp;	public Collection&lt;Question&gt; getAllByAnswerContaining(String text)
+<i>56</i>&nbsp;	{
+<b class="fc"><i>57</i>&nbsp;		return questionRepository.findAllByAnswersContaining(text);</b>
+<i>58</i>&nbsp;	}
+<i>59</i>&nbsp;	
+<i>60</i>&nbsp;	/**
+<i>61</i>&nbsp;	 * @param text
+<i>62</i>&nbsp;	 * 		Text to be contained in the questionString of the Questions.
+<i>63</i>&nbsp;	 * @return All {@link Question} where the {@link Question#questionString} contains a search phrase.
+<i>64</i>&nbsp;	 */
+<i>65</i>&nbsp;	public Collection&lt;Question&gt; getAllByQuestionContaining(String text)
+<i>66</i>&nbsp;	{
+<b class="fc"><i>67</i>&nbsp;		return questionRepository.findByQuestionStringContaining(text);</b>
+<i>68</i>&nbsp;	}
+<i>69</i>&nbsp;	
+<i>70</i>&nbsp;	/**
+<i>71</i>&nbsp;	 * Saves a {@link Question} to the database.
+<i>72</i>&nbsp;	 *
+<i>73</i>&nbsp;	 * @param question
+<i>74</i>&nbsp;	 * 		Question to be saved.
+<i>75</i>&nbsp;	 * @return new Question reference. Use for all further operations.
+<i>76</i>&nbsp;	 * @throws IllegalArgumentException
+<i>77</i>&nbsp;	 * 		If any sanity checks fail.
+<i>78</i>&nbsp;	 */
+<i>79</i>&nbsp;	public Question saveQuestion(Question question) throws IllegalArgumentException
+<i>80</i>&nbsp;	{
+<i>81</i>&nbsp;		// is the context valid?
+<b class="fc"><i>82</i>&nbsp;		if (question == null)</b>
+<i>83</i>&nbsp;		{
+<b class="fc"><i>84</i>&nbsp;			throw new IllegalArgumentException(&quot;Question cannot be null&quot;);</b>
+<i>85</i>&nbsp;		}
+<b class="fc"><i>86</i>&nbsp;		if (question.getQuestionSet() == null)</b>
+<i>87</i>&nbsp;		{
+<b class="fc"><i>88</i>&nbsp;			throw new IllegalArgumentException(&quot;Question must be associated to a QuestionSet&quot;);</b>
+<i>89</i>&nbsp;		}
+<i>90</i>&nbsp;		
+<i>91</i>&nbsp;		// is the question itself valid?
+<b class="fc"><i>92</i>&nbsp;		if (question.getType() == null)</b>
+<i>93</i>&nbsp;		{
+<b class="fc"><i>94</i>&nbsp;			throw new IllegalArgumentException(&quot;Question Type can not be null&quot;);</b>
+<i>95</i>&nbsp;		}
+<b class="fc"><i>96</i>&nbsp;		if (question.getQuestionString() == null)</b>
+<i>97</i>&nbsp;		{
+<b class="fc"><i>98</i>&nbsp;			throw new IllegalArgumentException(&quot;Question can not be null&quot;);</b>
+<i>99</i>&nbsp;		}
+<b class="fc"><i>100</i>&nbsp;		if (question.getQuestionString().length() &gt; 200)</b>
+<i>101</i>&nbsp;		{
+<b class="fc"><i>102</i>&nbsp;			throw new IllegalArgumentException(&quot;Question is too long(MAX: 200Chars)&quot;);</b>
+<i>103</i>&nbsp;		}
+<i>104</i>&nbsp;		
+<b class="fc"><i>105</i>&nbsp;		if (question.getRightAnswerString() == null)</b>
+<i>106</i>&nbsp;		{
+<b class="fc"><i>107</i>&nbsp;			throw new IllegalArgumentException(&quot;Answer can not be null&quot;);</b>
+<i>108</i>&nbsp;		}
+<b class="fc"><i>109</i>&nbsp;		if (question.getRightAnswerString().length() &gt; 200)</b>
+<i>110</i>&nbsp;		{
+<b class="fc"><i>111</i>&nbsp;			throw new IllegalArgumentException(&quot;Answer is too long(MAX: 200Chars)&quot;);</b>
+<i>112</i>&nbsp;		}
+<i>113</i>&nbsp;		
+<i>114</i>&nbsp;		// check wrong answers
+<b class="fc"><i>115</i>&nbsp;		if (question.getWrongAnswerString_1() == null)</b>
+<i>116</i>&nbsp;		{
+<b class="fc"><i>117</i>&nbsp;			throw new IllegalArgumentException(&quot;At least one wrong answer is required&quot;);</b>
+<i>118</i>&nbsp;		}
+<b class="fc"><i>119</i>&nbsp;		if (question.getWrongAnswerString_1() != null &amp;&amp; question.getWrongAnswerString_1().length() &gt; 200)</b>
+<i>120</i>&nbsp;		{
+<b class="fc"><i>121</i>&nbsp;			throw new IllegalArgumentException(&quot;Wrong Answer 1 is too long(MAX: 200Chars)&quot;);</b>
+<i>122</i>&nbsp;		}
+<b class="fc"><i>123</i>&nbsp;		if (question.getWrongAnswerString_2() != null &amp;&amp; question.getWrongAnswerString_2().length() &gt; 200)</b>
+<i>124</i>&nbsp;		{
+<b class="fc"><i>125</i>&nbsp;			throw new IllegalArgumentException(&quot;Wrong Answer 2 is too long(MAX: 200Chars)&quot;);</b>
+<i>126</i>&nbsp;		}
+<b class="fc"><i>127</i>&nbsp;		if (question.getWrongAnswerString_3() != null &amp;&amp; question.getWrongAnswerString_3().length() &gt; 200)</b>
+<i>128</i>&nbsp;		{
+<b class="fc"><i>129</i>&nbsp;			throw new IllegalArgumentException(&quot;Wrong Answer 3 is too long(MAX: 200Chars)&quot;);</b>
+<i>130</i>&nbsp;		}
+<b class="fc"><i>131</i>&nbsp;		if (question.getWrongAnswerString_4() != null &amp;&amp; question.getWrongAnswerString_4().length() &gt; 200)</b>
+<i>132</i>&nbsp;		{
+<b class="fc"><i>133</i>&nbsp;			throw new IllegalArgumentException(&quot;Wrong Answer 4 is too long(MAX: 200Chars)&quot;);</b>
+<i>134</i>&nbsp;		}
+<b class="fc"><i>135</i>&nbsp;		if (question.getWrongAnswerString_5() != null &amp;&amp; question.getWrongAnswerString_5().length() &gt; 200)</b>
+<i>136</i>&nbsp;		{
+<b class="fc"><i>137</i>&nbsp;			throw new IllegalArgumentException(&quot;Wrong Answer 5 is too long(MAX: 200Chars)&quot;);</b>
+<i>138</i>&nbsp;		}
+<i>139</i>&nbsp;		
+<b class="fc"><i>140</i>&nbsp;		return questionRepository.save(question);</b>
+<i>141</i>&nbsp;	}
+<i>142</i>&nbsp;	
+<i>143</i>&nbsp;	/**
+<i>144</i>&nbsp;	 * Deletes a {@link Question} from the database.
+<i>145</i>&nbsp;	 *
+<i>146</i>&nbsp;	 * @param question
+<i>147</i>&nbsp;	 * 		Question to be deleted.
+<i>148</i>&nbsp;	 */
+<i>149</i>&nbsp;	public void deleteQuestion(Question question)
+<i>150</i>&nbsp;	{
+<b class="fc"><i>151</i>&nbsp;		questionRepository.delete(question);</b>
+<b class="fc"><i>152</i>&nbsp;		log.info(&quot;Deleted Question &quot; + question.getId());</b>
+<b class="fc"><i>153</i>&nbsp;	}</b>
+<i>154</i>&nbsp;	
+<i>155</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-06-26 10:09</div>
+</div>
+</body>
+</html>

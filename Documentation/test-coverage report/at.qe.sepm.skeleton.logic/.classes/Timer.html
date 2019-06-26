@@ -1,0 +1,142 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Timer</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">at.qe.sepm.skeleton.logic</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Timer (at.qe.sepm.skeleton.logic)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Timer</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (13/ 13)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package at.qe.sepm.skeleton.logic;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.Date;
+<i>4</i>&nbsp;import java.util.concurrent.ScheduledFuture;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import org.springframework.context.annotation.Scope;
+<i>7</i>&nbsp;import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+<i>8</i>&nbsp;import org.springframework.stereotype.Component;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;/**
+<i>11</i>&nbsp; * Class for calling a function periodically while keeping track of the delta time.
+<i>12</i>&nbsp; */
+<i>13</i>&nbsp;public class Timer
+<i>14</i>&nbsp;{
+<i>15</i>&nbsp;	private long startTime;
+<i>16</i>&nbsp;	private long lastTime;
+<i>17</i>&nbsp;	ScheduledFuture&lt;?&gt; sFuture;
+<i>18</i>&nbsp;	
+<i>19</i>&nbsp;	/**
+<i>20</i>&nbsp;	 * Creates a new Timer to call action every timeStep ms. Uses scheduler to start the thread.
+<i>21</i>&nbsp;	 *
+<i>22</i>&nbsp;	 * @param scheduler
+<i>23</i>&nbsp;	 *         Scheduling service to use for the thread.
+<i>24</i>&nbsp;	 * @param action
+<i>25</i>&nbsp;	 *         Action to be executed.
+<i>26</i>&nbsp;	 * @param timeStep
+<i>27</i>&nbsp;	 *         Time between executions.
+<i>28</i>&nbsp;	 */
+<i>29</i>&nbsp;	public Timer(ThreadPoolTaskScheduler scheduler, ITimedAction action, long timeStep)
+<b class="fc"><i>30</i>&nbsp;	{</b>
+<b class="fc"><i>31</i>&nbsp;		startTime = new Date().getTime();</b>
+<b class="fc"><i>32</i>&nbsp;		lastTime = startTime;</b>
+<i>33</i>&nbsp;		
+<b class="fc"><i>34</i>&nbsp;		sFuture = scheduler.scheduleAtFixedRate(() -&gt; {</b>
+<b class="fc"><i>35</i>&nbsp;				long now = new Date().getTime();</b>
+<b class="fc"><i>36</i>&nbsp;				long delta = now - lastTime;</b>
+<b class="fc"><i>37</i>&nbsp;				lastTime = now;</b>
+<i>38</i>&nbsp;				
+<b class="fc"><i>39</i>&nbsp;				action.onTimeUpdate(delta);</b>
+<b class="fc"><i>40</i>&nbsp;			}, timeStep);</b>
+<b class="fc"><i>41</i>&nbsp;	}</b>
+<i>42</i>&nbsp;	
+<i>43</i>&nbsp;	/**
+<i>44</i>&nbsp;	 * @return The total elapsed time.
+<i>45</i>&nbsp;	 */
+<i>46</i>&nbsp;	public long getElapsedTime()
+<i>47</i>&nbsp;	{
+<b class="fc"><i>48</i>&nbsp;		return (new Date().getTime()) - startTime;</b>
+<i>49</i>&nbsp;	}
+<i>50</i>&nbsp;	
+<i>51</i>&nbsp;	/**
+<i>52</i>&nbsp;	 * Stops the timer.
+<i>53</i>&nbsp;	 */
+<i>54</i>&nbsp;	public void stop()
+<i>55</i>&nbsp;	{
+<b class="fc"><i>56</i>&nbsp;		sFuture.cancel(false);</b>
+<b class="fc"><i>57</i>&nbsp;	}</b>
+<i>58</i>&nbsp;	
+<i>59</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-06-26 10:09</div>
+</div>
+</body>
+</html>

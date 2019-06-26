@@ -1,0 +1,127 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: StorageService</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">at.qe.sepm.skeleton.services</a> ]
+</div>
+
+<h1>Coverage Summary for Class: StorageService (at.qe.sepm.skeleton.services)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">StorageService</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package at.qe.sepm.skeleton.services;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.File;
+<i>4</i>&nbsp;import java.io.IOException;
+<i>5</i>&nbsp;import java.nio.file.Path;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;/**
+<i>8</i>&nbsp; * Interface of a service for storing and retrieving avatar and answer pictures.
+<i>9</i>&nbsp; *
+<i>10</i>&nbsp; * @author Johannes Koch
+<i>11</i>&nbsp; */
+<i>12</i>&nbsp;public interface StorageService {
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;    /**
+<i>15</i>&nbsp;     * Prepares the service for storing files
+<i>16</i>&nbsp;     *
+<i>17</i>&nbsp;     * @throws IOException
+<i>18</i>&nbsp;     */
+<i>19</i>&nbsp;    void init() throws IOException;
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;    /**
+<i>22</i>&nbsp;     * Stores a user avatar {@link File} in the service
+<i>23</i>&nbsp;     *
+<i>24</i>&nbsp;     * @param file to store
+<i>25</i>&nbsp;     * @param managerId id of {@link at.qe.sepm.skeleton.model.Player}s {@link at.qe.sepm.skeleton.model.Manager}
+<i>26</i>&nbsp;     * @return filename of the stored file, needed for retrieval of stored file
+<i>27</i>&nbsp;     * @throws IOException
+<i>28</i>&nbsp;     */
+<i>29</i>&nbsp;    String storeAvatar(File file, String managerId) throws IOException;
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;    /**
+<i>32</i>&nbsp;     * Stores an answer {@link File} in the service
+<i>33</i>&nbsp;     *
+<i>34</i>&nbsp;     * @param file to store
+<i>35</i>&nbsp;     * @param managerId id of the {@link at.qe.sepm.skeleton.model.Manager} storing the file.
+<i>36</i>&nbsp;     * @param qSetId id of the {@link at.qe.sepm.skeleton.model.QuestionSet} the picture is for.
+<i>37</i>&nbsp;     * @return filename of the stored file, needed for retrieval of stored file
+<i>38</i>&nbsp;     * @throws IOException
+<i>39</i>&nbsp;     */
+<i>40</i>&nbsp;    String storeAnswer(File file, String managerId, String qSetId) throws IOException;
+<i>41</i>&nbsp;
+<i>42</i>&nbsp;    /**
+<i>43</i>&nbsp;     * Returns a stored avatar
+<i>44</i>&nbsp;     *
+<i>45</i>&nbsp;     * @param avatar filename of previously stored avatar
+<i>46</i>&nbsp;     * @return Path to file
+<i>47</i>&nbsp;     */
+<i>48</i>&nbsp;    Path loadAvatar(String avatar);
+<i>49</i>&nbsp;
+<i>50</i>&nbsp;    /**
+<i>51</i>&nbsp;     * Returns a stored answer
+<i>52</i>&nbsp;     *
+<i>53</i>&nbsp;     * @param answer filename of previously stored answer
+<i>54</i>&nbsp;     * @return Path to file
+<i>55</i>&nbsp;     */
+<i>56</i>&nbsp;    Path loadAnswer(String answer);
+<i>57</i>&nbsp;
+<i>58</i>&nbsp;    /**
+<i>59</i>&nbsp;     * Deletes avatar from the service
+<i>60</i>&nbsp;     *
+<i>61</i>&nbsp;     * @param avatar file to be deleted
+<i>62</i>&nbsp;     * @throws IOException
+<i>63</i>&nbsp;     */
+<i>64</i>&nbsp;    void deleteAvatar(String avatar);
+<i>65</i>&nbsp;
+<i>66</i>&nbsp;    /**
+<i>67</i>&nbsp;     * Deletes answer from the service
+<i>68</i>&nbsp;     *
+<i>69</i>&nbsp;     * @param answer file to be deleted
+<i>70</i>&nbsp;     * @throws IOException
+<i>71</i>&nbsp;     */
+<i>72</i>&nbsp;    void deleteAnswer(String answer);
+<i>73</i>&nbsp;
+<i>74</i>&nbsp;    /**
+<i>75</i>&nbsp;     * Deletes all answers of a specific {@link at.qe.sepm.skeleton.model.QuestionSet}.
+<i>76</i>&nbsp;     * @param managerId
+<i>77</i>&nbsp;     * @param questionSetId
+<i>78</i>&nbsp;     */
+<i>79</i>&nbsp;    void deleteAllAnswersOfQuestionSet(String managerId, String questionSetId);
+<i>80</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-06-26 10:09</div>
+</div>
+</body>
+</html>

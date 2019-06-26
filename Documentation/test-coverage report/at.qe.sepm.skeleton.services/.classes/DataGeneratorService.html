@@ -1,0 +1,345 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: DataGeneratorService</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">at.qe.sepm.skeleton.services</a> ]
+</div>
+
+<h1>Coverage Summary for Class: DataGeneratorService (at.qe.sepm.skeleton.services)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DataGeneratorService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    9,1%
+  </span>
+  <span class="absValue">
+    (1/ 11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    3,9%
+  </span>
+  <span class="absValue">
+    (3/ 77)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package at.qe.sepm.skeleton.services;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;
+<i>4</i>&nbsp;import java.util.HashSet;
+<i>5</i>&nbsp;import java.util.Random;
+<i>6</i>&nbsp;import java.util.Set;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import org.slf4j.Logger;
+<i>9</i>&nbsp;import org.slf4j.LoggerFactory;
+<i>10</i>&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+<i>11</i>&nbsp;import org.springframework.context.annotation.Scope;
+<i>12</i>&nbsp;import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+<i>13</i>&nbsp;import org.springframework.security.crypto.password.PasswordEncoder;
+<i>14</i>&nbsp;import org.springframework.stereotype.Component;
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;import at.qe.sepm.skeleton.model.Manager;
+<i>17</i>&nbsp;import at.qe.sepm.skeleton.model.Player;
+<i>18</i>&nbsp;import at.qe.sepm.skeleton.model.Question;
+<i>19</i>&nbsp;import at.qe.sepm.skeleton.model.QuestionSet;
+<i>20</i>&nbsp;import at.qe.sepm.skeleton.model.QuestionSetDifficulty;
+<i>21</i>&nbsp;import at.qe.sepm.skeleton.model.QuestionType;
+<i>22</i>&nbsp;import at.qe.sepm.skeleton.model.User;
+<i>23</i>&nbsp;import at.qe.sepm.skeleton.utils.AuthenticationUtil;
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;/**
+<i>26</i>&nbsp; * Service for generating test data
+<i>27</i>&nbsp; *
+<i>28</i>&nbsp; * @author Simon Triendl
+<i>29</i>&nbsp; */
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;@Component
+<i>32</i>&nbsp;@Scope(&quot;application&quot;)
+<b class="fc"><i>33</i>&nbsp;public class DataGeneratorService {</b>
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;    public static final boolean enabled = false;
+<i>36</i>&nbsp;
+<b class="fc"><i>37</i>&nbsp;    private final int countMultiplier = 1;</b>
+<i>38</i>&nbsp;
+<b class="fc"><i>39</i>&nbsp;    private final Logger logger = LoggerFactory.getLogger(this.getClass());</b>
+<i>40</i>&nbsp;
+<i>41</i>&nbsp;    @Autowired
+<i>42</i>&nbsp;    UserService userService;
+<i>43</i>&nbsp;
+<i>44</i>&nbsp;    @Autowired
+<i>45</i>&nbsp;    ManagerService managerService;
+<i>46</i>&nbsp;
+<i>47</i>&nbsp;    @Autowired
+<i>48</i>&nbsp;    PlayerService playerService;
+<i>49</i>&nbsp;
+<i>50</i>&nbsp;    @Autowired
+<i>51</i>&nbsp;    QuestionService questionService;
+<i>52</i>&nbsp;
+<i>53</i>&nbsp;    @Autowired
+<i>54</i>&nbsp;    QuestionSetService questionSetService;
+<i>55</i>&nbsp;
+<i>56</i>&nbsp;    /**
+<i>57</i>&nbsp;     * Method to control all following generator-functions
+<i>58</i>&nbsp;     * Do use getRandomString setters have to be adjusted according to the MaxLength in the JavaDoc
+<i>59</i>&nbsp;     */
+<i>60</i>&nbsp;    public void generateData(){
+<i>61</i>&nbsp;        if(!enabled){
+<b class="nc"><i>62</i>&nbsp;            return;</b>
+<i>63</i>&nbsp;        }
+<i>64</i>&nbsp;
+<i>65</i>&nbsp;        Random random = new Random();
+<i>66</i>&nbsp;
+<i>67</i>&nbsp;        AuthenticationUtil.configureAuthentication(&quot;MANAGER&quot;);
+<i>68</i>&nbsp;
+<i>69</i>&nbsp;        generatePlayer(random.nextInt(10 * countMultiplier)); // +  (30 * countMultiplier));
+<i>70</i>&nbsp;
+<i>71</i>&nbsp;        //generateManager(random.nextInt(5 * countMultiplier) + (10 * countMultiplier));
+<i>72</i>&nbsp;
+<i>73</i>&nbsp;        //generateQuestion(random.nextInt( 50 * countMultiplier) + (60 * countMultiplier));
+<i>74</i>&nbsp;
+<i>75</i>&nbsp;        //generateQuestionSet(random.nextInt(20 * countMultiplier) + (20 * countMultiplier));
+<i>76</i>&nbsp;
+<i>77</i>&nbsp;        //generateQuestionSetAndQuestions(random.nextInt(20 * countMultiplier) + (10 *countMultiplier));
+<i>78</i>&nbsp;
+<i>79</i>&nbsp;        AuthenticationUtil.clearAuthentication();
+<i>80</i>&nbsp;    }
+<i>81</i>&nbsp;
+<i>82</i>&nbsp;    /**
+<i>83</i>&nbsp;     * Method that creates a random String
+<i>84</i>&nbsp;     * @param maxLength
+<i>85</i>&nbsp;     * @return
+<i>86</i>&nbsp;     */
+<i>87</i>&nbsp;
+<i>88</i>&nbsp;    private String getRandomString(int maxLength){
+<b class="nc"><i>89</i>&nbsp;        Random rand = new Random();</b>
+<i>90</i>&nbsp;        // the maxLength has to be reduced by 4 since because of an edge case in getQuestion
+<b class="nc"><i>91</i>&nbsp;        maxLength -= 4;</b>
+<b class="nc"><i>92</i>&nbsp;        final String lexicon = &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ12345674890?!:_;&quot;;</b>
+<i>93</i>&nbsp;
+<b class="nc"><i>94</i>&nbsp;        final Set&lt;String&gt; identifiers = new HashSet&lt;String&gt;();</b>
+<i>95</i>&nbsp;
+<b class="nc"><i>96</i>&nbsp;        StringBuilder builder = new StringBuilder();</b>
+<b class="nc"><i>97</i>&nbsp;        while(builder.toString().length() == 0) {</b>
+<b class="nc"><i>98</i>&nbsp;            int length = rand.nextInt(maxLength) + 1;</b>
+<b class="nc"><i>99</i>&nbsp;            for(int i = 0; i &lt; length; i++) {</b>
+<b class="nc"><i>100</i>&nbsp;                builder.append(lexicon.charAt(rand.nextInt(lexicon.length())));</b>
+<i>101</i>&nbsp;            }
+<b class="nc"><i>102</i>&nbsp;            if(identifiers.contains(builder.toString())) {</b>
+<b class="nc"><i>103</i>&nbsp;                builder = new StringBuilder();</b>
+<i>104</i>&nbsp;            }
+<b class="nc"><i>105</i>&nbsp;        }</b>
+<b class="nc"><i>106</i>&nbsp;        return builder.toString();</b>
+<i>107</i>&nbsp;    }
+<i>108</i>&nbsp;
+<i>109</i>&nbsp;    /**
+<i>110</i>&nbsp;     * Method that creates, saves to DB and returns a Question
+<i>111</i>&nbsp;     * MaxLength: Name = 100
+<i>112</i>&nbsp;     *            Description = 300
+<i>113</i>&nbsp;     * @param current
+<i>114</i>&nbsp;     * @return
+<i>115</i>&nbsp;     */
+<i>116</i>&nbsp;    private QuestionSet getQuestionSet(int current){
+<b class="nc"><i>117</i>&nbsp;        Manager creator = managerService.getManagerById(101);</b>
+<i>118</i>&nbsp;
+<b class="nc"><i>119</i>&nbsp;        QuestionSet questionSet = new QuestionSet();</b>
+<b class="nc"><i>120</i>&nbsp;        questionSet.setName(&quot;GeneratedSet&quot; + current);</b>
+<b class="nc"><i>121</i>&nbsp;        questionSet.setDescription(&quot;GeneratedDescription&quot; + current);</b>
+<b class="nc"><i>122</i>&nbsp;        questionSet.setDifficulty((current % 2 == 0) ? QuestionSetDifficulty.easy : QuestionSetDifficulty.hard);</b>
+<b class="nc"><i>123</i>&nbsp;        questionSet.setAuthor(creator);</b>
+<i>124</i>&nbsp;
+<b class="nc"><i>125</i>&nbsp;        return questionSet;</b>
+<i>126</i>&nbsp;    }
+<i>127</i>&nbsp;
+<i>128</i>&nbsp;    /**
+<i>129</i>&nbsp;     * Method that creates, saves to DB and return a QuestionSet
+<i>130</i>&nbsp;     * MaxLength: any String in Question = 200
+<i>131</i>&nbsp;     * @param set
+<i>132</i>&nbsp;     * @param current
+<i>133</i>&nbsp;     * @return
+<i>134</i>&nbsp;     */
+<i>135</i>&nbsp;    private Question getQuestion(int set ,int current){
+<i>136</i>&nbsp;
+<b class="nc"><i>137</i>&nbsp;        Question question = new Question();</b>
+<b class="nc"><i>138</i>&nbsp;        question.setType(QuestionType.text);</b>
+<b class="nc"><i>139</i>&nbsp;        question.setQuestionString(&quot;GeneratedTestString &quot; + set + &quot; &quot; + current);</b>
+<b class="nc"><i>140</i>&nbsp;        question.setRightAnswerString(&quot;GeneratedRightAnswer &quot; + set + &quot; &quot; + current);</b>
+<b class="nc"><i>141</i>&nbsp;        question.setWrongAnswerString_1(&quot;GeneratedWrongAnswer1 &quot; + set + &quot; &quot; + current);</b>
+<b class="nc"><i>142</i>&nbsp;        question.setWrongAnswerString_2(&quot;GeneratedWrongAnswer2 &quot; + set + &quot; &quot; + current);</b>
+<b class="nc"><i>143</i>&nbsp;        question.setWrongAnswerString_3(&quot;GeneratedWrongAnswer3 &quot; + set + &quot; &quot; + current);</b>
+<b class="nc"><i>144</i>&nbsp;        question.setWrongAnswerString_4(&quot;GeneratedWrongAnswer4 &quot; + set + &quot; &quot; + current);</b>
+<b class="nc"><i>145</i>&nbsp;        question.setWrongAnswerString_5(&quot;GeneratedWrongAnswer5 &quot; + set + &quot; &quot; + current);</b>
+<i>146</i>&nbsp;
+<b class="nc"><i>147</i>&nbsp;        return question;</b>
+<i>148</i>&nbsp;    }
+<i>149</i>&nbsp;    /**
+<i>150</i>&nbsp;     * Method to generate a User
+<i>151</i>&nbsp;     * Formally used  at generatePlayer and generateManager
+<i>152</i>&nbsp;     * Not needed since saveNewPlayer and saveNewManager create a User
+<i>153</i>&nbsp;     * MaxLength: Username = 100
+<i>154</i>&nbsp;     * @param numUser
+<i>155</i>&nbsp;     * @return
+<i>156</i>&nbsp;     */
+<i>157</i>&nbsp;    private User generateUser(int numUser){
+<b class="nc"><i>158</i>&nbsp;        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(6);</b>
+<i>159</i>&nbsp;
+<b class="nc"><i>160</i>&nbsp;        User user = new User();</b>
+<b class="nc"><i>161</i>&nbsp;        user.setUsername(&quot;GeneratedUser&quot; + numUser);</b>
+<b class="nc"><i>162</i>&nbsp;        user.setPassword(passwordEncoder.encode(&quot;passwd&quot; + numUser));</b>
+<b class="nc"><i>163</i>&nbsp;        user.setEnabled(true);</b>
+<i>164</i>&nbsp;
+<b class="nc"><i>165</i>&nbsp;        userService.saveUser(user);</b>
+<i>166</i>&nbsp;
+<b class="nc"><i>167</i>&nbsp;        return user;</b>
+<i>168</i>&nbsp;    }
+<i>169</i>&nbsp;
+<i>170</i>&nbsp;    /**
+<i>171</i>&nbsp;     * Method to generate Players (for test purposes only)
+<i>172</i>&nbsp;     * MaxLength: Username = 100
+<i>173</i>&nbsp;     * @param count
+<i>174</i>&nbsp;     */
+<i>175</i>&nbsp;    private void generatePlayer(int count){
+<b class="nc"><i>176</i>&nbsp;        for (int i = 1; i &lt;= count; i++){</b>
+<i>177</i>&nbsp;
+<b class="nc"><i>178</i>&nbsp;            Manager creator = managerService.getManagerById(101);</b>
+<i>179</i>&nbsp;
+<b class="nc"><i>180</i>&nbsp;            Player player = new Player();</b>
+<b class="nc"><i>181</i>&nbsp;            player.setCreator(creator);</b>
+<i>182</i>&nbsp;
+<b class="nc"><i>183</i>&nbsp;            playerService.saveNewPlayer(player, &quot;GeneratedName&quot; + i, &quot;passwd&quot; + i);</b>
+<i>184</i>&nbsp;        }
+<i>185</i>&nbsp;
+<b class="nc"><i>186</i>&nbsp;        logger.info(count + &quot; Player have been created&quot;);</b>
+<b class="nc"><i>187</i>&nbsp;    }</b>
+<i>188</i>&nbsp;
+<i>189</i>&nbsp;    /**
+<i>190</i>&nbsp;     * Method to generate Manager (for test purposes only)
+<i>191</i>&nbsp;     * MaxLength: Email = 100
+<i>192</i>&nbsp;     *            Institution = 200
+<i>193</i>&nbsp;     * @param count
+<i>194</i>&nbsp;     */
+<i>195</i>&nbsp;    private void generateManager(int count){
+<b class="nc"><i>196</i>&nbsp;        for (int i = 1; i &lt;= count; i++){</b>
+<i>197</i>&nbsp;
+<b class="nc"><i>198</i>&nbsp;            Manager manager = new Manager();</b>
+<b class="nc"><i>199</i>&nbsp;            manager.setEmail(&quot;generatedMail@test.com&quot; + i);</b>
+<b class="nc"><i>200</i>&nbsp;            manager.setInstitution(&quot;generatedInst&quot; + i);</b>
+<i>201</i>&nbsp;
+<b class="nc"><i>202</i>&nbsp;            managerService.saveNewManager(manager, &quot;passwd&quot; + i);</b>
+<i>203</i>&nbsp;        }
+<i>204</i>&nbsp;
+<b class="nc"><i>205</i>&nbsp;        logger.info(count + &quot; Manager have been created&quot;);</b>
+<b class="nc"><i>206</i>&nbsp;    }</b>
+<i>207</i>&nbsp;
+<i>208</i>&nbsp;    /**
+<i>209</i>&nbsp;     * Method to generate Questions (for test purposes only)
+<i>210</i>&nbsp;     * @param count
+<i>211</i>&nbsp;     */
+<i>212</i>&nbsp;    private void generateQuestion(int count){
+<i>213</i>&nbsp;
+<b class="nc"><i>214</i>&nbsp;        QuestionSet questionSet = getQuestionSet(1);</b>
+<b class="nc"><i>215</i>&nbsp;        questionSetService.saveQuestionSet(questionSet);</b>
+<i>216</i>&nbsp;
+<b class="nc"><i>217</i>&nbsp;        for (int i = 1; i &lt;= count; i++){</b>
+<i>218</i>&nbsp;
+<b class="nc"><i>219</i>&nbsp;            Question question = getQuestion(1, i);</b>
+<b class="nc"><i>220</i>&nbsp;            question.setQuestionSet(questionSet);</b>
+<b class="nc"><i>221</i>&nbsp;            questionService.saveQuestion(question);</b>
+<i>222</i>&nbsp;        }
+<i>223</i>&nbsp;
+<b class="nc"><i>224</i>&nbsp;        logger.info(count + &quot; Questions have been created&quot;);</b>
+<b class="nc"><i>225</i>&nbsp;    }</b>
+<i>226</i>&nbsp;
+<i>227</i>&nbsp;    /**
+<i>228</i>&nbsp;     * Method to generate QuestionSets (for test purposes only)
+<i>229</i>&nbsp;     * @param count
+<i>230</i>&nbsp;     */
+<i>231</i>&nbsp;    private void generateQuestionSet(int count){
+<i>232</i>&nbsp;
+<b class="nc"><i>233</i>&nbsp;        for (int i = 1; i &lt;= count; i++){</b>
+<i>234</i>&nbsp;
+<b class="nc"><i>235</i>&nbsp;            QuestionSet questionSet = getQuestionSet(i);</b>
+<b class="nc"><i>236</i>&nbsp;            questionSetService.saveQuestionSet(questionSet);</b>
+<i>237</i>&nbsp;        }
+<i>238</i>&nbsp;
+<b class="nc"><i>239</i>&nbsp;        logger.info(count + &quot; QuestionSets have been created&quot;);</b>
+<b class="nc"><i>240</i>&nbsp;    }</b>
+<i>241</i>&nbsp;
+<i>242</i>&nbsp;    /**
+<i>243</i>&nbsp;     * Method to generate QuestionSets with each 30 associated Questions (for test purposes only)
+<i>244</i>&nbsp;     * @param count
+<i>245</i>&nbsp;     */
+<i>246</i>&nbsp;    private void generateQuestionSetAndQuestions(int count){
+<b class="nc"><i>247</i>&nbsp;        for (int i = 1; i &lt;= count; i++){</b>
+<i>248</i>&nbsp;
+<b class="nc"><i>249</i>&nbsp;            QuestionSet questionSet = getQuestionSet(i);</b>
+<b class="nc"><i>250</i>&nbsp;            questionSetService.saveQuestionSet(questionSet);</b>
+<i>251</i>&nbsp;
+<b class="nc"><i>252</i>&nbsp;            for (int y = 1; y &lt;= 30; y++){</b>
+<i>253</i>&nbsp;
+<b class="nc"><i>254</i>&nbsp;                Question question = getQuestion(i, y);</b>
+<b class="nc"><i>255</i>&nbsp;                question.setQuestionSet(questionSet);</b>
+<b class="nc"><i>256</i>&nbsp;                questionService.saveQuestion(question);</b>
+<i>257</i>&nbsp;            }
+<i>258</i>&nbsp;        }
+<b class="nc"><i>259</i>&nbsp;        logger.info(count + &quot;QuestionSet and &quot; + count*30 + &quot; Questions have been created&quot;);</b>
+<b class="nc"><i>260</i>&nbsp;    }</b>
+<i>261</i>&nbsp;
+<i>262</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-06-26 10:09</div>
+</div>
+</body>
+</html>

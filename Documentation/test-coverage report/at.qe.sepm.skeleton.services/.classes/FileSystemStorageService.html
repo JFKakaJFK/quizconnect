@@ -1,0 +1,303 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: FileSystemStorageService</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">at.qe.sepm.skeleton.services</a> ]
+</div>
+
+<h1>Coverage Summary for Class: FileSystemStorageService (at.qe.sepm.skeleton.services)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">FileSystemStorageService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (12/ 12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    85,2%
+  </span>
+  <span class="absValue">
+    (46/ 54)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package at.qe.sepm.skeleton.services;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import at.qe.sepm.skeleton.ui.controllers.ImageAPIController;
+<i>4</i>&nbsp;import org.apache.commons.io.FilenameUtils;
+<i>5</i>&nbsp;import org.slf4j.Logger;
+<i>6</i>&nbsp;import org.slf4j.LoggerFactory;
+<i>7</i>&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+<i>8</i>&nbsp;import org.springframework.beans.factory.annotation.Value;
+<i>9</i>&nbsp;import org.springframework.stereotype.Service;
+<i>10</i>&nbsp;import org.springframework.util.FileSystemUtils;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;import java.io.File;
+<i>13</i>&nbsp;import java.io.FileInputStream;
+<i>14</i>&nbsp;import java.io.IOException;
+<i>15</i>&nbsp;import java.io.InputStream;
+<i>16</i>&nbsp;import java.nio.file.Files;
+<i>17</i>&nbsp;import java.nio.file.Path;
+<i>18</i>&nbsp;import java.nio.file.Paths;
+<i>19</i>&nbsp;import java.nio.file.StandardCopyOption;
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;/**
+<i>22</i>&nbsp; * Service for storing, retrieving and deleting answer pictures and avatars
+<i>23</i>&nbsp; *
+<i>24</i>&nbsp; * @author Johannes Koch
+<i>25</i>&nbsp; */
+<i>26</i>&nbsp;@Service
+<i>27</i>&nbsp;public class FileSystemStorageService implements StorageService {
+<i>28</i>&nbsp;
+<b class="fc"><i>29</i>&nbsp;    private static final Logger log = LoggerFactory.getLogger(ImageAPIController.class);</b>
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;    private Path temp;
+<i>32</i>&nbsp;    private Path avatars;
+<i>33</i>&nbsp;    private Path answers;
+<i>34</i>&nbsp;    private int avatarSize;
+<i>35</i>&nbsp;    private int answerSize;
+<i>36</i>&nbsp;    @Value(&quot;${storage.avatars.imageType}&quot;)
+<i>37</i>&nbsp;    private String avatarType;
+<i>38</i>&nbsp;    @Value(&quot;${storage.answers.imageType}&quot;)
+<i>39</i>&nbsp;    private String answerType;
+<i>40</i>&nbsp;    @Value(&quot;${storage.avatars.default}&quot;)
+<i>41</i>&nbsp;    private String defaultAvatar;
+<i>42</i>&nbsp;    @Value(&quot;${storage.answers.default}&quot;)
+<i>43</i>&nbsp;    private String defaultAnswer;
+<i>44</i>&nbsp;    private ImageService imageService;
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;    /**
+<i>47</i>&nbsp;     * Initializes the {@link StorageService} with the properties specified in the application.properties file.
+<i>48</i>&nbsp;     *
+<i>49</i>&nbsp;     * @param root Root directory where files are stored.
+<i>50</i>&nbsp;     * @param temp  Directory for temporary files.
+<i>51</i>&nbsp;     * @param avatarSize Resolution for the {@link at.qe.sepm.skeleton.model.Player} avatars.
+<i>52</i>&nbsp;     * @param answerSize Resolution for the {@link at.qe.sepm.skeleton.model.Question} answers.
+<i>53</i>&nbsp;     * @param avatarEndpoint Path to storage of avatars.
+<i>54</i>&nbsp;     * @param answerEndpoint Path to storage of answers.
+<i>55</i>&nbsp;     */
+<i>56</i>&nbsp;    @Autowired
+<i>57</i>&nbsp;    public void initProperties(
+<i>58</i>&nbsp;            @Value(&quot;${storage.uploads.location}&quot;) String root,
+<i>59</i>&nbsp;            @Value(&quot;${storage.uploads.temporary}&quot;) String temp,
+<i>60</i>&nbsp;            @Value(&quot;${storage.avatars.minResolution}&quot;) String avatarSize,
+<i>61</i>&nbsp;            @Value(&quot;${storage.answers.minResolution}&quot;) String answerSize,
+<i>62</i>&nbsp;            @Value(&quot;${storage.api.avatars}&quot;) String avatarEndpoint,
+<i>63</i>&nbsp;            @Value(&quot;${storage.api.answers}&quot;) String answerEndpoint) {
+<b class="fc"><i>64</i>&nbsp;        this.temp = Paths.get(temp);</b>
+<b class="fc"><i>65</i>&nbsp;        this.avatars = Paths.get(root).resolve(avatarEndpoint);</b>
+<b class="fc"><i>66</i>&nbsp;        this.answers = Paths.get(root).resolve(answerEndpoint);</b>
+<b class="fc"><i>67</i>&nbsp;        this.avatarSize = Integer.valueOf(avatarSize);</b>
+<b class="fc"><i>68</i>&nbsp;        this.answerSize = Integer.valueOf(answerSize);</b>
+<b class="fc"><i>69</i>&nbsp;    }</b>
+<i>70</i>&nbsp;
+<i>71</i>&nbsp;    /**
+<i>72</i>&nbsp;     * Autowires the {@link ImageService} on creation
+<i>73</i>&nbsp;     *
+<i>74</i>&nbsp;     * @param imageService {@link ImageService} is used to resize uploaded images.
+<i>75</i>&nbsp;     */
+<i>76</i>&nbsp;    @Autowired
+<b class="fc"><i>77</i>&nbsp;    public FileSystemStorageService(ImageService imageService) {</b>
+<b class="fc"><i>78</i>&nbsp;        this.imageService = imageService;</b>
+<b class="fc"><i>79</i>&nbsp;    }</b>
+<i>80</i>&nbsp;
+<i>81</i>&nbsp;    /**
+<i>82</i>&nbsp;     * Initializes storage by creating storage directories
+<i>83</i>&nbsp;     *
+<i>84</i>&nbsp;     * @throws IOException
+<i>85</i>&nbsp;     */
+<i>86</i>&nbsp;    @Override
+<i>87</i>&nbsp;    public void init() throws IOException {
+<b class="fc"><i>88</i>&nbsp;        Files.createDirectories(temp);</b>
+<b class="fc"><i>89</i>&nbsp;        Files.createDirectories(avatars);</b>
+<b class="fc"><i>90</i>&nbsp;        Files.createDirectories(answers);</b>
+<b class="fc"><i>91</i>&nbsp;    }</b>
+<i>92</i>&nbsp;
+<i>93</i>&nbsp;    /**
+<i>94</i>&nbsp;     * Stores an avatar in the service
+<i>95</i>&nbsp;     *
+<i>96</i>&nbsp;     * @return filepath of avatar
+<i>97</i>&nbsp;     * @throws IOException
+<i>98</i>&nbsp;     */
+<i>99</i>&nbsp;    @Override
+<i>100</i>&nbsp;    public String storeAvatar(File file, String managerId) {
+<b class="fc"><i>101</i>&nbsp;        return store(file, managerId, avatars, avatarSize, avatarType);</b>
+<i>102</i>&nbsp;    }
+<i>103</i>&nbsp;
+<i>104</i>&nbsp;    /**
+<i>105</i>&nbsp;     * Stores an answer in the service
+<i>106</i>&nbsp;     *
+<i>107</i>&nbsp;     * @param file to store
+<i>108</i>&nbsp;     * @param managerId
+<i>109</i>&nbsp;     * @param qSetId
+<i>110</i>&nbsp;     * @return filepath to answer
+<i>111</i>&nbsp;     */
+<i>112</i>&nbsp;    @Override
+<i>113</i>&nbsp;    public String storeAnswer(File file, String managerId, String qSetId) {
+<b class="fc"><i>114</i>&nbsp;        return store(file, managerId + &quot;/&quot; + qSetId, answers, answerSize, answerType);</b>
+<i>115</i>&nbsp;    }
+<i>116</i>&nbsp;
+<i>117</i>&nbsp;    /**
+<i>118</i>&nbsp;     * First stores the stream contents in a temporary directory, resizes the image and
+<i>119</i>&nbsp;     * then saves it to {root}/{pathPrefix}/{uniqueFilename.ext}
+<i>120</i>&nbsp;     *
+<i>121</i>&nbsp;     * @param file File to store.
+<i>122</i>&nbsp;     * @param pathPrefix Subdirectory within the root directory, will be created.
+<i>123</i>&nbsp;     * @param root  Root directory.
+<i>124</i>&nbsp;     * @param size  Resolution of stored file.
+<i>125</i>&nbsp;     * @return Path to File as String.
+<i>126</i>&nbsp;     */
+<i>127</i>&nbsp;    private String store(File file, String pathPrefix, Path root, int size, String type){
+<b class="fc"><i>128</i>&nbsp;        String extension = FilenameUtils.getExtension(file.getName());</b>
+<i>129</i>&nbsp;
+<b class="fc"><i>130</i>&nbsp;        Path tempFile = null;</b>
+<i>131</i>&nbsp;        Path filePath;
+<b class="fc"><i>132</i>&nbsp;        try(InputStream inputStream = new FileInputStream(file)) {</b>
+<b class="fc"><i>133</i>&nbsp;            tempFile = Files.createTempFile(temp, &quot;answer&quot;, &quot;.&quot; + extension);</b>
+<b class="fc"><i>134</i>&nbsp;            Files.copy(inputStream, tempFile, StandardCopyOption.REPLACE_EXISTING);</b>
+<b class="fc"><i>135</i>&nbsp;            Files.createDirectories(root.resolve(pathPrefix));</b>
+<i>136</i>&nbsp;
+<b class="fc"><i>137</i>&nbsp;            filePath = imageService.resizeImage(tempFile, root.resolve(pathPrefix), size, size, type);</b>
+<b class="fc"><i>138</i>&nbsp;            if(filePath == null) return null;</b>
+<b class="fc"><i>139</i>&nbsp;        } catch (IOException e){</b>
+<b class="nc"><i>140</i>&nbsp;            log.error(&quot;Failed to store uploaded file in temporary directory&quot;);</b>
+<b class="nc"><i>141</i>&nbsp;            return null;</b>
+<i>142</i>&nbsp;        } finally {
+<b class="fc"><i>143</i>&nbsp;            try {</b>
+<b class="fc"><i>144</i>&nbsp;                Files.deleteIfExists(tempFile);</b>
+<b class="nc"><i>145</i>&nbsp;            } catch (IOException e){</b>
+<b class="nc"><i>146</i>&nbsp;                log.warn(&quot;Couldn&#39;t delete temporary file&quot;);</b>
+<b class="fc"><i>147</i>&nbsp;            }</b>
+<b class="fc"><i>148</i>&nbsp;        }</b>
+<i>149</i>&nbsp;
+<b class="fc"><i>150</i>&nbsp;        return pathPrefix + &quot;/&quot; + filePath.getFileName();</b>
+<i>151</i>&nbsp;    }
+<i>152</i>&nbsp;
+<i>153</i>&nbsp;    /**
+<i>154</i>&nbsp;     * Loads a stored avatar or returns a default
+<i>155</i>&nbsp;     *
+<i>156</i>&nbsp;     * @param avatar
+<i>157</i>&nbsp;     * @return
+<i>158</i>&nbsp;     */
+<i>159</i>&nbsp;    @Override
+<i>160</i>&nbsp;    public Path loadAvatar(String avatar) {
+<b class="fc"><i>161</i>&nbsp;        Path path = avatars.resolve(avatar);</b>
+<b class="fc"><i>162</i>&nbsp;        if(Files.exists(path)){</b>
+<b class="fc"><i>163</i>&nbsp;            return path;</b>
+<i>164</i>&nbsp;        }
+<b class="fc"><i>165</i>&nbsp;        return avatars.resolve(defaultAvatar);</b>
+<i>166</i>&nbsp;    }
+<i>167</i>&nbsp;
+<i>168</i>&nbsp;    /**
+<i>169</i>&nbsp;     * Loads a stored answer or returns a default
+<i>170</i>&nbsp;     *
+<i>171</i>&nbsp;     * @param answer
+<i>172</i>&nbsp;     * @return
+<i>173</i>&nbsp;     */
+<i>174</i>&nbsp;    @Override
+<i>175</i>&nbsp;    public Path loadAnswer(String answer) {
+<b class="fc"><i>176</i>&nbsp;        Path path = answers.resolve(answer);</b>
+<b class="fc"><i>177</i>&nbsp;        if(Files.exists(path)){</b>
+<b class="fc"><i>178</i>&nbsp;            return path;</b>
+<i>179</i>&nbsp;        }
+<b class="fc"><i>180</i>&nbsp;        return answers.resolve(defaultAnswer);</b>
+<i>181</i>&nbsp;    }
+<i>182</i>&nbsp;
+<i>183</i>&nbsp;    /**
+<i>184</i>&nbsp;     * Deletes a stored avatar
+<i>185</i>&nbsp;     *
+<i>186</i>&nbsp;     * @param avatar file to be deleted
+<i>187</i>&nbsp;     */
+<i>188</i>&nbsp;    @Override
+<i>189</i>&nbsp;    public void deleteAvatar(String avatar) {
+<i>190</i>&nbsp;        try {
+<b class="fc"><i>191</i>&nbsp;            Files.deleteIfExists(avatars.resolve(avatar));</b>
+<b class="nc"><i>192</i>&nbsp;        } catch (IOException e){</b>
+<b class="nc"><i>193</i>&nbsp;            log.error(&quot;Could not delete avatar &quot; + avatar);</b>
+<b class="fc"><i>194</i>&nbsp;        }</b>
+<b class="fc"><i>195</i>&nbsp;    }</b>
+<i>196</i>&nbsp;
+<i>197</i>&nbsp;    /**
+<i>198</i>&nbsp;     * Deletes a stored answer
+<i>199</i>&nbsp;     *
+<i>200</i>&nbsp;     * @param answer file to be deleted
+<i>201</i>&nbsp;     */
+<i>202</i>&nbsp;    @Override
+<i>203</i>&nbsp;    public void deleteAnswer(String answer) {
+<i>204</i>&nbsp;        try {
+<b class="fc"><i>205</i>&nbsp;            Files.deleteIfExists(answers.resolve(answer));</b>
+<b class="nc"><i>206</i>&nbsp;        } catch (IOException e){</b>
+<b class="nc"><i>207</i>&nbsp;            log.error(&quot;Could not delete avatar &quot; + answer);</b>
+<b class="fc"><i>208</i>&nbsp;        }</b>
+<b class="fc"><i>209</i>&nbsp;    }</b>
+<i>210</i>&nbsp;
+<i>211</i>&nbsp;    /**
+<i>212</i>&nbsp;     * Deletes all answers of the {@link at.qe.sepm.skeleton.model.QuestionSet}.
+<i>213</i>&nbsp;     * @param managerId
+<i>214</i>&nbsp;     * @param questionSetId
+<i>215</i>&nbsp;     */
+<i>216</i>&nbsp;    @Override
+<i>217</i>&nbsp;    public void deleteAllAnswersOfQuestionSet(String managerId, String questionSetId) {
+<b class="fc"><i>218</i>&nbsp;        FileSystemUtils.deleteRecursively(answers.resolve(managerId + &quot;/&quot; + questionSetId).toFile());</b>
+<b class="fc"><i>219</i>&nbsp;    }</b>
+<i>220</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-06-26 10:09</div>
+</div>
+</body>
+</html>

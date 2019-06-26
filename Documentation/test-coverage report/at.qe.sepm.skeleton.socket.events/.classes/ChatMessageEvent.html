@@ -1,0 +1,108 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ChatMessageEvent</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">at.qe.sepm.skeleton.socket.events</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ChatMessageEvent (at.qe.sepm.skeleton.socket.events)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ChatMessageEvent</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (8/ 8)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package at.qe.sepm.skeleton.socket.events;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;/**
+<i>4</i>&nbsp; * JSON representation of a chat message event.
+<i>5</i>&nbsp; */
+<i>6</i>&nbsp;public class ChatMessageEvent extends SocketEvent {
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;    private ChatMessageJSON message;
+<i>9</i>&nbsp;
+<b class="fc"><i>10</i>&nbsp;    public ChatMessageEvent(){}</b>
+<i>11</i>&nbsp;
+<b class="fc"><i>12</i>&nbsp;    public ChatMessageEvent(String message, String from, int playerId, int id){</b>
+<b class="fc"><i>13</i>&nbsp;        this.setEvent(&quot;chatMessage&quot;);</b>
+<b class="fc"><i>14</i>&nbsp;        this.message = new ChatMessageJSON(message, from, playerId, id);</b>
+<b class="fc"><i>15</i>&nbsp;    }</b>
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;    public ChatMessageJSON getMessage() {
+<b class="fc"><i>18</i>&nbsp;        return message;</b>
+<i>19</i>&nbsp;    }
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;    public void setMessage(ChatMessageJSON message) {
+<b class="fc"><i>22</i>&nbsp;        this.message = message;</b>
+<b class="fc"><i>23</i>&nbsp;    }</b>
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-06-26 10:09</div>
+</div>
+</body>
+</html>
