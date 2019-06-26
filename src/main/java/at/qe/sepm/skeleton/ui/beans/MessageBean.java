@@ -19,24 +19,7 @@ import java.io.Serializable;
 public class MessageBean implements Serializable {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    
-    /**
-     * Show success message
-     *
-     * @param id
-     * 		Target id.
-     * @param text
-     * 		Text to be displayed.
-     */
-    public void showInformation(String id, String text) {
-        logger.info("messageBean called with target-id: " + id + " and text: "+text);
-        if(FacesContext.getCurrentInstance() != null) {
-            FacesContext.getCurrentInstance().addMessage(id,
-                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", text)
-            );
-        }
-    }
-    
+
     /**
      * Show success message
      *

@@ -20,3 +20,7 @@ form {
         width: 50%;
     }
 }
+
+.fixed-top {
+    align-items: flex-start;
+}

@@ -49,8 +49,7 @@
                                  actionListener="#{questionSetBean.setbEditSet(false)}" value="Create new"/>
 
                 <h:commandButton styleClass="btn btn-secondary searchbar-action" p:data-toggle="modal"
-                                 p:data-target="#uploadCSV" p:data-backdrop="static" value="Upload CSV"
-                                 onclick="#{CSVImportBean.setManager(sessionInfoBean.currentUser.manager)}">
+                                 p:data-target="#uploadCSV" p:data-backdrop="static" value="Upload CSV">
                     <f:ajax execute="@form" render="@none"/>
                 </h:commandButton>
             </h:panelGroup>
@@ -127,15 +126,22 @@
                 <qc:upload target="#{CSVImportBean.file}"
                            listener="#{CSVImportBean.handleFileUpload}"
                            accept=".csv"
-                           update=":modals:modal:body :modals:modal:footer"
+                           update=":modals:modal:preview :modals:modal:footer"
                            text="Upload CSV"
+                           required="true"
                 />
 
-                <div jsf:id="preview" class="preview">
-                    <h:outputText p:id="preview"
-                                  value="TODO"
-                                  alt="File"/>
-                </div>
+                <h:panelGroup id="preview" styleClass="preview my-3" layout="block">
+                    <i data-feather="#{CSVImportBean.uploadStatus?'check':'x'}" class='lg'></i>
+                    <h:panelGroup rendered="#{CSVImportBean.uploadStatus}">
+                        <h:outputText value="CSV uploaded"/>
+                    </h:panelGroup>
+
+                    <h:panelGroup rendered="#{!CSVImportBean.uploadStatus}">
+                        <h:outputText value="No CSV uploaded"/>
+                    </h:panelGroup>
+
+                </h:panelGroup>
 
                 <div class="form-group required">
                     <label for="nameCSV">Name</label>

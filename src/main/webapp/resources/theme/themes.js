@@ -24,7 +24,7 @@ const themes = {
     '--success': '#2de2e6',
     '--success-gradient': 'linear-gradient(35deg, #2de2e6 25%, #F706cf 100%)',
     '--error': '#FD1D53',
-    '--main-panel-background': 'url("https://i.imgur.com/M8Qj9bu.jpg")', // todo
+    '--main-panel-background': 'url("/resources/theme/outrun_background_blur.jpg")',
   },
   light: {
     '--default-font-color': '#424242',

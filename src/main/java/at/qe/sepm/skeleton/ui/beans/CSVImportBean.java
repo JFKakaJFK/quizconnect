@@ -36,10 +36,14 @@ public class CSVImportBean implements Serializable {
     @Autowired
     private QSOverviewBean QSOverviewBean;
 
+    @Autowired
+    private SessionInfoBean sessionInfoBean;
+
     private Path temp;
 
     private String nameCSV;
     private String descriptionCSV;
+    private boolean uploadStatus;
 
     @Autowired
     public CSVImportBean(CSVImportService csvImportService,
@@ -58,8 +62,10 @@ public class CSVImportBean implements Serializable {
 
     @PostConstruct
     public void init() {
+        manager = sessionInfoBean.getCurrentUser().getManager();
         nameCSV = null;
         descriptionCSV = null;
+        uploadStatus = false;
     }
 
     public void handleFileUpload(){
@@ -71,6 +77,7 @@ public class CSVImportBean implements Serializable {
                 Files.copy(is, filename, StandardCopyOption.REPLACE_EXISTING);
                 is.close();
                 Files.deleteIfExists(file.toPath());
+                uploadStatus = true;
             } catch (IOException e){
                 logger.error("Failed to store uploaded .csv file");
                 filename = null;
@@ -92,15 +99,12 @@ public class CSVImportBean implements Serializable {
 
     public void processCSV() {
         logger.info("processCSV called");
-        QuestionSet questionSet;
-        questionSet = csvImportService.importQuestionSetFromCSV(filename.toFile(), manager, nameCSV, descriptionCSV);
 
-        QSOverviewBean.addQuestionSetForDisplay(questionSet);
+        QSOverviewBean.addQuestionSetForDisplay(csvImportService.importQuestionSetFromCSV(filename.toFile(), manager, nameCSV, descriptionCSV));
 
-        //messageBean.updateComponent("formOverview-QSets:overview-QSets");
+        //messageBean.updateComponent("form"); //TODO: Update ui:repeat after import
 
-        //String message = String.format("Successfully imported CSV");
-        //messageBean.showGlobalInformation(message);
+        //messageBean.alertInformation("Success", "Successfully imported CSV");
         //messageBean.updateComponent("messages");
 
         descriptionCSV = null;
@@ -137,5 +141,9 @@ public class CSVImportBean implements Serializable {
 
     public void setFile(File file) {
         this.file = file;
+    }
+
+    public boolean getUploadStatus() {
+        return uploadStatus;
     }
 }

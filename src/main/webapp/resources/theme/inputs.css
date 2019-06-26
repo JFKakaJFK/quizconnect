@@ -100,9 +100,8 @@ span.error {
     color: var(--error);
 }
 
-meter { /* todo fix chrome @jspies */
+meter {
     /* Reset the default appearance */
-    -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
     margin: var(--default-padding) auto;
@@ -123,7 +122,7 @@ meter[value="1"]::-webkit-meter-optimum-value { background: var(--error); box-si
 meter[value="2"]::-webkit-meter-optimum-value { background: var(--warning); box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; border-right: 2px solid #FFFFFF;}
 meter[value="3"]::-webkit-meter-optimum-value { background: var(--info); box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; border-right: 2px solid #FFFFFF;}
 meter[value="4"]::-webkit-meter-optimum-value { background: var(--success);}
-meter[value="1"]::-moz-meter-bar { background: var(--error); box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; border-right: 2px solid #FFFFFF};
+meter[value="1"]::-moz-meter-bar { background: var(--error); box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; border-right: 2px solid #FFFFFF;}
 meter[value="2"]::-moz-meter-bar { background: var(--warning); box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; border-right: 2px solid #FFFFFF;}
 meter[value="3"]::-moz-meter-bar { background: var(--info); box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; border-right: 2px solid #FFFFFF;}
 meter[value="4"]::-moz-meter-bar { background: var(--success); }

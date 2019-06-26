@@ -35,7 +35,7 @@ body {
     position: relative;
     z-index: 1;
     background: var(--main-panel-background);
-    background: var(--background-gradient);
+    /*background: var(--background-gradient);*/
     background-size: 1000% 1000%;
     will-change: transform;
     min-height: 100vh;
