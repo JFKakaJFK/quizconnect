@@ -135,6 +135,15 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- fixes view scope info message CDI @ViewScoped bean functionality unavailable -->
+        <!-- https://mvnrepository.com/artifact/javax.enterprise/cdi-api -->
+        <dependency>
+            <groupId>javax.enterprise</groupId>
+            <artifactId>cdi-api</artifactId>
+            <version>1.2</version>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- mockito dependencies -->
         <dependency>
             <groupId>junit</groupId>
