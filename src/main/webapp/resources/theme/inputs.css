@@ -126,3 +126,10 @@ meter[value="1"]::-moz-meter-bar { background: var(--error); box-sizing: border-
 meter[value="2"]::-moz-meter-bar { background: var(--warning); box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; border-right: 2px solid #FFFFFF;}
 meter[value="3"]::-moz-meter-bar { background: var(--info); box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; border-right: 2px solid #FFFFFF;}
 meter[value="4"]::-moz-meter-bar { background: var(--success); }
+
+[data-theme-name="outrun"] input,
+[data-theme-name="outrun"] input:focus,
+[data-theme-name="outrun"] textarea,
+[data-theme-name="outrun"] textarea:focus {
+    box-shadow: var(--default-box-shadow);
+}

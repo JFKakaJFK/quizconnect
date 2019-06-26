@@ -57,3 +57,7 @@
 .btn[disabled]:hover {
     filter: brightness(0.9);
 }
+
+[data-theme-name="outrun"] .btn {
+    box-shadow: var(--default-box-shadow);
+}

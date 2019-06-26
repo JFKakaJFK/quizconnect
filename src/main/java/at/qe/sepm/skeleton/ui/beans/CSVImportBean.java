@@ -68,6 +68,9 @@ public class CSVImportBean implements Serializable {
         uploadStatus = false;
     }
 
+    /**
+     * Handles the upload of csv files.
+     */
     public void handleFileUpload(){
         if(file != null){
             try(InputStream is = new FileInputStream(file)){
@@ -85,30 +88,43 @@ public class CSVImportBean implements Serializable {
         }
     }
 
+    /**
+     * On abort, any uploaded files are deleted.
+     */
     public void abort() {
-        if (filename != null) {
-            try{
-                Files.deleteIfExists(filename);
-            } catch (IOException e){
-                logger.error("deleteIfExists - error");
-            }
+        uploadStatus = false;
+        descriptionCSV = null;
+        nameCSV = null;
 
+        try{
+            if (filename != null) Files.deleteIfExists(filename);
+        } catch (IOException e){
+            logger.error("deleteIfExists - error");
+        } finally {
             filename = null;
         }
     }
 
+    /**
+     * Saves the new {@link QuestionSet}
+     */
     public void processCSV() {
         logger.info("processCSV called");
 
         QSOverviewBean.addQuestionSetForDisplay(csvImportService.importQuestionSetFromCSV(filename.toFile(), manager, nameCSV, descriptionCSV));
 
-        //messageBean.updateComponent("form"); //TODO: Update ui:repeat after import
+        messageBean.alertInformation("Success", "Successfully imported CSV");
+        messageBean.updateComponent("messages");
+        abort();
+    }
 
-        //messageBean.alertInformation("Success", "Successfully imported CSV");
-        //messageBean.updateComponent("messages");
-
-        descriptionCSV = null;
-        nameCSV = null;
+    /**
+     * Returns true, if the confirm action should be disabled.
+     *
+     * @return
+     */
+    public boolean disableConfirm(){
+        return !uploadStatus || filename == null || descriptionCSV == null || descriptionCSV.equals("") || nameCSV == null || nameCSV.equals("");
     }
 
     public Manager getManager() {

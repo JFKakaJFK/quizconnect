@@ -35,24 +35,10 @@ body {
     position: relative;
     z-index: 1;
     background: var(--main-panel-background);
-    /*background: var(--background-gradient);*/
-    background-size: 1000% 1000%;
+    background-size: cover;
+    background-position: 50%, 50%;
     will-change: transform;
     min-height: 100vh;
-    animation: bg 30s ease infinite;
-}
-
-@keyframes bg {
-    0%  { background-position:   0% 50%}
-    50% { background-position: 100% 50%}
-    100%{ background-position:   0% 50%}
-}
-
-[data-theme-name="outrun"] .slideout-panel {
-    animation: none;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
 }
 
 .slideout-open,

@@ -69,6 +69,12 @@
     }
 }
 
+@media only screen and (min-width: 992px) {
+    .collection {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
 .search-available {
     margin: var(--default-padding) 0;
 }

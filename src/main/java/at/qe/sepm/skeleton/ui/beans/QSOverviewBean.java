@@ -80,6 +80,7 @@ public class QSOverviewBean implements Serializable {
         questionSets.add(toAdd);
         questionSetsByManager.add(toAdd); //add to questionSetsByManager to correctly show edit/delete button right after the import (without having to reload the page)
         logger.info("Added QuestionSet to DisplayList");
+        filterAndUpdateSets();
     }
 
     /**
@@ -116,7 +117,7 @@ public class QSOverviewBean implements Serializable {
      * Filters the {@link Player}s using {@link this#searchPhrase} and updates {@link this#paginator}.
      */
     private void filterAndUpdateSets(){
-        paginator.updateList((onlyByManager && true ? questionSetsByManager : questionSets).stream().parallel()
+        paginator.updateList((onlyByManager ? questionSetsByManager : questionSets).stream().parallel()
                 .filter(questionSet -> questionSet.getName().toLowerCase().contains(searchPhrase.toLowerCase()))
                 .collect(Collectors.toList()));
     }
