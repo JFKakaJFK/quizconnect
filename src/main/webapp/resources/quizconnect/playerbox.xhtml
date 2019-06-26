@@ -5,7 +5,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:cc="http://java.sun.com/jsf/composite"
       xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:qc="http://java.sun.com/jsf/composite/quizconnect"
+      xmlns:qc="http://java.sun.com/jsf/composite/quizconnect" xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
       xml:lang="en"
       lang="en">
     <cc:interface>
@@ -16,39 +17,16 @@
         information about the player.
 
         - player the player of the box
-        - online [ true | false ]
+        - detail level of detail
 
         ==============================================-->
         <cc:attribute name="player" type="at.qe.sepm.skeleton.model.Player" required="true" />
-        <cc:attribute name="online" default="false" />
 
     </cc:interface>
 
     <cc:implementation>
-        <div id="#{cc.clientId}" class="playerbox py-3 px-3" data-ingame="#{cc.attrs.online}" data-id="#{cc.attrs.player.id}"><!-- TODO: change online source -->
-            <div class="playerbox-avatar mx-2 my-2">
-                <h:graphicImage value="#{avatarBean.getAvatar(cc.attrs.player)}" alt="avatar"/>
-            </div>
-
-            <div class="playerbox-info mx-2 my-2">
-                <div class="playerbox-actions text-right">
-                    <cc:insertChildren/>
-                </div>
-
-                <div class="playerbox-info-row">
-                    <qc:stat value="#{cc.attrs.player.user.username}"
-                             label="username"
-                             align="left"
-                             size="lg"
-                             styleClass="playerbox-info-name" />
-
-                    <qc:stat value="#{cc.attrs.player.playerRank}"
-                             label="rank"
-                             size="sm"
-                             align="right" />
-                </div>
-
-            </div>
-        </div>
+        <qc:collectionbox name="#{cc.attrs.player.user.username}" icon="#{avatarBean.getAvatar(cc.attrs.player)}" sub="#{cc.attrs.player.playerRank}" styleClass="player-box">
+            <cc:insertChildren />
+        </qc:collectionbox>
     </cc:implementation>
 </html>

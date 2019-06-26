@@ -19,6 +19,11 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
 
+/**
+ * Bean that connects frontend with CSVImportService
+ *
+ * @author Johannes Koch, Johannes Spies, Simon Triendl
+ */
 @Controller
 @Scope("view")
 public class CSVImportBean implements Serializable {
@@ -31,10 +36,14 @@ public class CSVImportBean implements Serializable {
     @Autowired
     private QSOverviewBean QSOverviewBean;
 
+    @Autowired
+    private SessionInfoBean sessionInfoBean;
+
     private Path temp;
 
     private String nameCSV;
     private String descriptionCSV;
+    private boolean uploadStatus;
 
     @Autowired
     public CSVImportBean(CSVImportService csvImportService,
@@ -53,19 +62,25 @@ public class CSVImportBean implements Serializable {
 
     @PostConstruct
     public void init() {
+        manager = sessionInfoBean.getCurrentUser().getManager();
         nameCSV = null;
         descriptionCSV = null;
+        uploadStatus = false;
     }
 
+    /**
+     * Handles the upload of csv files.
+     */
     public void handleFileUpload(){
         if(file != null){
             try(InputStream is = new FileInputStream(file)){
-                // If there is no upload in the time between processing this upload & the next upload of the user,
+                // If there is no upload in the time between processing this upload & the _next upload of the user,
                 // the file attribute could be used directly
                 filename = Files.createTempFile(temp, "qs", ".csv");
                 Files.copy(is, filename, StandardCopyOption.REPLACE_EXISTING);
                 is.close();
                 Files.deleteIfExists(file.toPath());
+                uploadStatus = true;
             } catch (IOException e){
                 logger.error("Failed to store uploaded .csv file");
                 filename = null;
@@ -73,33 +88,43 @@ public class CSVImportBean implements Serializable {
         }
     }
 
+    /**
+     * On abort, any uploaded files are deleted.
+     */
     public void abort() {
-        if (filename != null) {
-            try{
-                Files.deleteIfExists(filename);
-            } catch (IOException e){
-                logger.error("deleteIfExists - error");
-            }
+        uploadStatus = false;
+        descriptionCSV = null;
+        nameCSV = null;
 
+        try{
+            if (filename != null) Files.deleteIfExists(filename);
+        } catch (IOException e){
+            logger.error("deleteIfExists - error");
+        } finally {
             filename = null;
         }
     }
 
+    /**
+     * Saves the new {@link QuestionSet}
+     */
     public void processCSV() {
         logger.info("processCSV called");
-        QuestionSet questionSet;
-        questionSet = csvImportService.importQuestionSetFromCSV(filename.toFile(), manager, nameCSV, descriptionCSV);
 
-        QSOverviewBean.addQuestionSetForDisplay(questionSet);
+        QSOverviewBean.addQuestionSetForDisplay(csvImportService.importQuestionSetFromCSV(filename.toFile(), manager, nameCSV, descriptionCSV));
 
-        messageBean.updateComponent("formOverview-QSets:overview-QSets");
-
-        String message = String.format("Successfully imported CSV");
-        messageBean.showGlobalInformation(message);
+        messageBean.alertInformation("Success", "Successfully imported CSV");
         messageBean.updateComponent("messages");
+        abort();
+    }
 
-        descriptionCSV = null;
-        nameCSV = null;
+    /**
+     * Returns true, if the confirm action should be disabled.
+     *
+     * @return
+     */
+    public boolean disableConfirm(){
+        return !uploadStatus || filename == null || descriptionCSV == null || descriptionCSV.equals("") || nameCSV == null || nameCSV.equals("");
     }
 
     public Manager getManager() {
@@ -107,7 +132,6 @@ public class CSVImportBean implements Serializable {
     }
 
     public void setManager(Manager manager) {
-        logger.info("Set manager with ID:" + manager.getId());
         this.manager = manager;
     }
 
@@ -133,5 +157,9 @@ public class CSVImportBean implements Serializable {
 
     public void setFile(File file) {
         this.file = file;
+    }
+
+    public boolean getUploadStatus() {
+        return uploadStatus;
     }
 }

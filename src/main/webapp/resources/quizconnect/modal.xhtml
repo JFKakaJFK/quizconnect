@@ -49,17 +49,20 @@
     <cc:attribute name="disableConfirm" default="false"/>
     <cc:attribute name="closeOnConfirm" default="#{true}" required="false" type="java.lang.Boolean"/>
     <cc:attribute name="update" default="@none"/>
-    <cc:attribute name="modaltype" default=""/>
     <cc:attribute name="closable" default="true"/>
+    <cc:attribute name="ajax" default="true" type="boolean"/>
 
 
     <cc:attribute name="footerId" default="modal-footer"/>
     <cc:attribute name="bodyId" default="modal-body"/>
+    <cc:attribute name="headerId" default="modal-header"/>
 
     <cc:attribute name="abort" default="Close"/>
     <cc:attribute name="showAbort" default="true" type="boolean"/>
+    <cc:attribute name="abortButton" default="btn btn-secondary" type="java.lang.String"/>
     <cc:attribute name="confirm" default="Save changes"/>
     <cc:attribute name="showConfirm" default="true" type="boolean"/>
+    <cc:attribute name="confirmButton" default="btn btn-primary" type="java.lang.String"/>
     <cc:attribute name="closeAction" method-signature="void action()" default="#{QCModalController.defaultAction}"/>
     <cc:attribute name="abortAction" method-signature="void action()" default="#{QCModalController.defaultAction}"/>
     <cc:attribute name="executeOnAbort" default="@form"/>
@@ -70,16 +73,16 @@
 <cc:implementation>
     <div class="modal fade" id="#{cc.attrs.target}" tabindex="-1" role="dialog" aria-labelledby="#{cc.attrs.id}"
          aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-#{cc.attrs.modaltype}" role="document">
+        <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
-                <div class="modal-header">
+                <div jsf:id="#{cc.attrs.headerId}" class="modal-header">
                     <h5 class="modal-title">#{cc.attrs.title}</h5>
 
                     <c:if test="#{cc.attrs.closable}">
                         <h:commandLink actionListener="#{cc.attrs.closeAction}" p:class="close" p:aria-label="Close"
                                        p:data-dismiss="modal">
                             <span aria-hidden="true">
-                                <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M16.24 14.83a1 1 0 0 1-1.41 1.41L12 13.41l-2.83 2.83a1 1 0 0 1-1.41-1.41L10.59 12 7.76 9.17a1 1 0 0 1 1.41-1.41L12 10.59l2.83-2.83a1 1 0 0 1 1.41 1.41L13.41 12l2.83 2.83z"/></svg>
+                                <i data-feather="x" class="lg"></i>
                             </span>
                             <f:ajax execute="@form" render="#{cc.attrs.update}"/>
                         </h:commandLink>
@@ -89,37 +92,42 @@
 
                 <div jsf:id="#{cc.attrs.bodyId}" class="modal-body">
                     <div class="text-center">
-                        <c:if test="#{cc.attrs.modaltype == 'warning'}"><i
-                                class="fas fa-exclamation fa-4x mb-3"></i></c:if>
-                        <c:if test="#{cc.attrs.modaltype == 'success'}"><i class="fas fa-check fa-4x mb-3"></i></c:if>
-                        <c:if test="#{cc.attrs.modaltype == 'error'}"><i class="fas fa-times fa-4x mb-3"></i></c:if>
-                        <c:if test="#{cc.attrs.modaltype == 'question'}"><i
-                                class="fas fa-question fa-4x mb-3"></i></c:if>
-                        <c:if test="#{cc.attrs.modaltype == 'edit'}"><i class="fas fa-edit fa-4x mb-3"></i></c:if>
                         <cc:insertChildren/>
                     </div>
                 </div>
 
                 <div jsf:id="#{cc.attrs.footerId}" class="modal-footer">
                     <ui:fragment rendered="#{cc.attrs.showAbort}">
-                        <h:commandButton actionListener="#{cc.attrs.abortAction}" p:class="btn btn-tertiary"
+                        <h:commandButton actionListener="#{cc.attrs.abortAction}" p:class="#{cc.attrs.abortButton}"
                                          p:data-dismiss="modal" value="#{cc.attrs.abort}">
                             <f:ajax execute="#{cc.attrs.executeOnAbort}" render="#{cc.attrs.update}"/>
                         </h:commandButton>
                     </ui:fragment>
-                    <ui:fragment rendered="#{cc.attrs.showConfirm}">
+                    <ui:fragment rendered="#{cc.attrs.showConfirm and cc.attrs.ajax}">
                         <h:commandButton actionListener="#{cc.attrs.confirmAction}"
-                                         p:class="btn btn-primary"
+                                         p:class="#{cc.attrs.confirmButton}"
                                          p:data-dismiss="#{cc.attrs.closeOnConfirm ? 'modal' : ''}"
                                          value="#{cc.attrs.confirm}"
                                          disabled="#{cc.attrs.disableConfirm}">
                             <f:ajax execute="@form" render="#{cc.attrs.update}"/>
                         </h:commandButton>
                     </ui:fragment>
+
+                    <ui:fragment rendered="#{cc.attrs.showConfirm and not cc.attrs.ajax}">
+                        <h:commandButton actionListener="#{cc.attrs.confirmAction}"
+                                         id="submitButton" type="submit"
+                                         p:class="#{cc.attrs.confirmButton}"
+                                         value="#{cc.attrs.confirm}"
+                                         disabled="#{cc.attrs.disableConfirm}">
+                        </h:commandButton>
+
+
+                    </ui:fragment>
                 </div>
             </div>
         </div>
     </div>
+
 </cc:implementation>
 
 </html>

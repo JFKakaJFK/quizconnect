@@ -1,0 +1,90 @@
+.stat.pin h3 {
+    --space: .5rem;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: var(--space);
+    padding: 0 0 0 var(--space);
+}
+
+.fab-actions {
+    position: fixed;
+    bottom: 4rem;
+    transform: translate(0, 50%);
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    pointer-events: none;
+    z-index: 1;
+    backface-visibility: hidden;
+}
+
+@media screen and (min-width: 992px) {
+    .fab-actions {
+        right: 30%;
+    }
+}
+
+.fab-btn {
+    width: 5rem;
+    height: 5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--fab-btn-background);
+    color: var(--fab-btn-color);
+    border: 0;
+    border-radius: 50%;
+    box-shadow: var(--default-box-shadow);
+    transition: all .25s ease-in-out;
+    pointer-events: initial;
+}
+
+.fab-btn .feather {
+    width: 2.25rem;
+    height: 2.25rem;
+}
+
+.fab-btn[data-disabled="true"]{
+    filter: brightness(.75);
+    pointer-events: none;
+}
+
+@media screen and (max-width: 560px) {
+    .fab-actions {
+        bottom: 3rem;
+    }
+
+    .fab-btn {
+        width: 4rem;
+        height: 4rem;
+    }
+
+    .fab-btn .feather {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+}
+
+.fab-btn:hover {
+    cursor: pointer;
+    color: var(--default-active-color);
+    transform: scale(1.1);
+    filter: brightness(1.5);
+}
+
+body.finished .fab-btn,
+body.join .fab-btn {
+    display: none;
+}
+
+body.lobby .fab-btn.joker-use {
+    display: none;
+}
+
+@media only screen and (min-width: 992px) {
+    .fab-btn.chat-open {
+        display: none;
+    }
+}

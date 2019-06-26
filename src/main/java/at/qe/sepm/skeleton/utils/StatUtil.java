@@ -8,6 +8,9 @@ import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.Collections;
 
+/**
+ * Utility Class for converting and associating stats for Players
+ */
 @Controller
 @Scope("request")
 public class StatUtil implements Serializable {
@@ -51,7 +54,7 @@ public class StatUtil implements Serializable {
         ms -= hours * HOUR_MS;
         long minutes = ms / MINUTE_MS;
         if(hours == 0 && minutes == 0){
-            return ms == 0 ? "0" : "< 1min"; // TODO maybe improve 0s text?
+            return ms == 0 ? "0" : "< 1min";
         } else if(hours == 0){
             return String.valueOf(minutes) + "min";
         }

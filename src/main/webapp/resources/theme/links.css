@@ -1,0 +1,19 @@
+a {
+    color: var(--default-font-color);
+    position: relative;
+    text-decoration: none;
+    transition: color .25s ease-in-out;
+}
+
+a:hover {
+    color: var(--default-active-color);
+    text-decoration: none;
+}
+
+a.icon,
+a.icon:link,
+a.icon:visited,
+a.icon:hover,
+a.icon:active {
+    text-decoration: none;
+}

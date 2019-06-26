@@ -1,0 +1,133 @@
+.profile-grid {
+    display: grid;
+    grid-gap: var(--default-spacing);
+    padding-bottom: var(--default-padding);
+    box-sizing: border-box;
+}
+
+.profile-actions {
+    display: grid;
+    grid-gap: var(--default-spacing);
+}
+
+.profile-stat-box {
+    display: grid;
+    grid-gap: var(--default-spacing);
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    align-items: center;
+}
+
+@media only screen and (min-width: 768px) {
+    .profile-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .profile-actions {
+        grid-template-columns: 1fr 1fr;
+        grid-column: span 2;
+        justify-items: center;
+    }
+
+    .profile-stat-line {
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        grid-template-rows: auto;
+        grid-column: span 2;
+    }
+}
+
+
+
+.player-box-info {
+    display: grid;
+    grid-template-columns: auto;
+    grid-template-rows: auto auto auto;
+    text-align: center;
+}
+
+.player-box-icon {
+    background: var(--collection-box-icon-background);
+    border-radius: 50%;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.preview,
+.player-box-info .player-box-icon {
+    width: 6rem;
+    height: 6rem;
+    margin: 0 auto;
+}
+
+@media only screen and (min-width: 560px) {
+    .preview,
+    .player-box-info .player-box-icon {
+        width: 8rem;
+        height: 8rem;
+        margin: 0 auto;
+    }
+}
+
+.preview img,
+.player-box-icon img {
+    width: 100%;
+    height: auto;
+    border-radius: 50%;
+}
+
+.player-box-name,
+.player-box-name h3 {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 400;
+}
+
+.player-box-rank {
+    font-weight: 300;
+    text-transform: uppercase;
+    font-size: 75%;
+    line-height: 1;
+}
+
+.box:empty {
+    display: none;
+}
+
+.collection-header {
+    margin: 0 0 calc(var(--default-spacing)  / 2) 2rem;
+}
+
+/* APEX CHARTS */
+.collection-header h5,
+.box.chart h5 {
+    font-weight: var(--default-font-weight);
+}
+
+.apexcharts-canvas {
+    background: transparent !important;
+}
+
+.apexcharts-canvas .apexcharts-yaxis .apexcharts-yaxis-label,
+.apexcharts-canvas .apexcharts-xaxis .apexcharts-xaxis-label,
+.apexcharts-canvas .apexcharts-xaxis .apexcharts-xaxis-label tspan,
+.apexcharts-canvas .apexcharts-legend-text {
+    font-weight: var(--default-font-weight);
+    font-family: var(--default-font) !important;
+    color: var(--default-font-color) !important;
+    font-size: 14px !important;
+}
+
+.apexcharts-canvas .apexcharts-xaxis .apexcharts-xaxis-label {
+    fill: var(--default-font-color) !important;
+}
+
+.apexcharts-canvas .apexcharts-toolbar {
+    display: none;
+}
+
+.apexcharts-canvas .apexcharts-tooltip-title {
+    display: none;
+}

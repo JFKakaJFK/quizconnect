@@ -1,0 +1,63 @@
+.btn {
+    white-space: nowrap;
+    min-width: 120px;
+    padding: .5rem 1.5rem;
+    border-radius: 10rem;
+    box-sizing: border-box;
+    height: 42px;
+    transition: all .3s ease-in-out;
+}
+
+.btn:hover {
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: var(--default-accent-gradient);
+    border: 0;
+}
+
+.btn-primary:hover {
+    filter: brightness(1.15);
+    border: 0;
+}
+
+.btn-secondary {
+    color: var(--default-font-color);
+    background: var(--background-lighter);
+    border: solid 2px var(--background-darker);
+}
+
+.btn-secondary:hover {
+    color: var(--default-active-color);
+    background: var(--background-lighter);
+    border: solid 2px var(--default-active-color);
+}
+
+.btn-danger {
+    color: var(--error);
+    background: transparent;
+    border: solid 2px var(--error);
+    border-color: var(--error); /* Bootstrap override */
+}
+
+.btn-danger:hover {
+    background-color: var(--error);
+    border-color: var(--error);
+    color: var(--default-font-color);
+    transition: all 0.3s ease 0s;
+    filter: saturate(1.2);
+}
+
+
+.btn[disabled] {
+    filter: brightness(0.9);
+}
+
+.btn[disabled]:hover {
+    filter: brightness(0.9);
+}
+
+[data-theme-name="outrun"] .btn {
+    box-shadow: var(--default-box-shadow);
+}

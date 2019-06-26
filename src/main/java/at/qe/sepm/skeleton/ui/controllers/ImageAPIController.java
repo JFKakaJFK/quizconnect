@@ -115,8 +115,7 @@ public class ImageAPIController {
         response.setContentType("image/" + type);
         response.setContentLengthLong(file.length());
         response.setDateHeader("Expires", System.currentTimeMillis() + 604800000L); // expires in a week
-        // response.setDateHeader("Last-Modified", 0);
-        // TODO: set moar headers (maybe get a nice eTag, expires & last modified working)
+
         try(InputStream is = new FileInputStream(file); OutputStream os = response.getOutputStream()) {
             IOUtils.copy(is, os);
             response.flushBuffer();

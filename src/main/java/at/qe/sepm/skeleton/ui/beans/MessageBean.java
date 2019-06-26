@@ -23,40 +23,43 @@ public class MessageBean implements Serializable {
     /**
      * Show success message
      *
-     * @param id
+     * @param summary
+     *      Short summary.
      * @param text
+     * 		Text to be displayed.
      */
-    public void showInformation(String id, String text) {
-        logger.info("messageBean called with target-id: " + id + " and text: "+text);
-        if(FacesContext.getCurrentInstance() != null) {
-            FacesContext.getCurrentInstance().addMessage(id,
-                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", text)
-            );
-        }
-    }
-
-    public void showGlobalInformation(String text) {
+    public void alertInformation(String summary, String text) {
         logger.info("messageBean called with global and text: "+text);
         if(FacesContext.getCurrentInstance() != null) {
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", text)
-            );
-        }
-    }
-    /**
-     * Show error message
-     * @param id
-     * @param text
-     */
-    public void showError(String id, String text) {
-        logger.info("showError called with global and text: "+text);
-        if(FacesContext.getCurrentInstance() != null) {
-            FacesContext.getCurrentInstance().addMessage(id,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Fehler", text)
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, summary, text)
             );
         }
     }
 
+    /**
+     * Show error message
+     *
+     * @param summary
+     *      Short summary.
+     * @param text
+     * 		Text to be displayed.
+     */
+    public void alertError(String summary, String text) {
+        logger.info("messageBean called with global and text: " + text);
+        if(FacesContext.getCurrentInstance() != null) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, summary, text)
+            );
+        }
+    }
+
+    /**
+     * Updates a message component.
+     *
+     * @param id
+     *  Id to update.
+     */
     public void updateComponent(String id) {
         logger.info("updating component: " + id);
         FacesContext.getCurrentInstance().getPartialViewContext().getRenderIds().add(id);

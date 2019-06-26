@@ -7,6 +7,9 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import java.util.Properties;
 
+/**
+ * Class that holds all configurations for the MailSending
+ */
 @Configuration
 public class MailConfig {
 
@@ -19,7 +22,7 @@ public class MailConfig {
         javaMailSender.setPort(587);
 
         javaMailSender.setUsername("mail@quizconnect.rocks");
-        //javaMailSender.setPassword("");
+        javaMailSender.setPassword(")Fm:49]6gfnvp");
 
         Properties props = javaMailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");

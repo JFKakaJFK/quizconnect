@@ -1,0 +1,29 @@
+.question-info-box {
+    display: grid;
+    grid-gap: var(--default-spacing);
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    align-items: center;
+}
+
+.question-info-box.picture img {
+    width: 50%;
+    border-radius: var(--default-border-radius);
+}
+
+.preview-overview img {
+    max-width: 35%;
+    border-radius: var(--default-border-radius);
+}
+
+.qset-actions {
+    display: grid;
+    grid-gap: var(--default-spacing);
+}
+
+@media only screen and (min-width: 560px) {
+    .qset-actions {
+        grid-auto-flow: column;
+        grid-auto-columns: minmax(auto, 200px);
+    }
+}

@@ -3,6 +3,7 @@ package at.qe.sepm.skeleton.ui.beans;
 import at.qe.sepm.skeleton.model.Manager;
 import at.qe.sepm.skeleton.services.MailSenderService;
 import at.qe.sepm.skeleton.services.ManagerService;
+import at.qe.sepm.skeleton.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +33,16 @@ public class CreateManagerBean implements Serializable {
     private ManagerService managerService;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private PasswordBean passwordBean;
 
+    @Autowired
+    private ValidationBean validationBean;
+
     private String password;
+    private String repeatPassword;
     private Manager manager;
 
 
@@ -47,15 +55,16 @@ public class CreateManagerBean implements Serializable {
      * Creates a new {@link Manager} (and sends an email to the entered address)
      */
     public void createNewManager() {
-        if (password != null && manager.getEmail() != null) {
+
+        if (userService.existsUser(manager.getEmail())) {
+            logger.error("User already exists!");
+            redirectRegistrationUserExists();
+        } else if (password != null && validationBean.isValidPassword(password, repeatPassword) && validationBean.isValidEmail(manager.getEmail())) {
             managerService.saveNewManager(manager, passwordBean.encodePassword(password));
             logger.info("Created and saved a new manager: " + manager.toString());
-            //sendRegistrationEmail();
+            sendRegistrationEmail();
             redirectRegistration();
-
         }
-
-
     }
 
     /**
@@ -65,6 +74,18 @@ public class CreateManagerBean implements Serializable {
         try {
             FacesContext.getCurrentInstance().
                     getExternalContext().redirect("/login.xhtml?registration=success");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Redirects the user to the login-page after creating the account (parameter registration=success is used for displaying an animation on the login-page)
+     */
+    public void redirectRegistrationUserExists() {
+        try {
+            FacesContext.getCurrentInstance().
+                    getExternalContext().redirect("/signup.xhtml?registration=userexists");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -88,7 +109,8 @@ public class CreateManagerBean implements Serializable {
                         "I am so proud, I am so honored, I am so EXCITED to be here right now—and, hey, let me tell you something: that each and every one of YOU, has the opportunity to become, like those amazing people that we know here FROM VIETNAM! HEY HEY, MY PEOPLE HERE FROM VIETNAM, making so much money that they can probably have a real hard time counting it!\n\n\n" +
                         "AHAHAHAHAHAh!\n\n\n" +
                         "So GUYS, let me tell you: I LOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOVE QUIZ CON EEEEEEECT\n\n\n" +
-                        "http://www.quizconnect.rocks");
+                        "Your credentials:" + manager.getEmail() + " and the password you registered with\n\n" +
+                        "http://quizconnect.rocks:8080");
 
     }
 
@@ -98,6 +120,14 @@ public class CreateManagerBean implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getRepeatPassword() {
+        return repeatPassword;
+    }
+
+    public void setRepeatPassword(String repeatPassword) {
+        this.repeatPassword = repeatPassword;
     }
 
     public Manager getManager() {

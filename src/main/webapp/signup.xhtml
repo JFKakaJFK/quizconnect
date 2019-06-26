@@ -8,63 +8,85 @@
     <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/resources/favicon/apple-touch-icon.png"/>
+    <link rel="icon" type="image/png" sizes="32x32" href="/resources/favicon/favicon-32x32.png"/>
+    <link rel="icon" type="image/png" sizes="16x16" href="/resources/favicon/favicon-16x16.png"/>
+    <link rel="manifest" href="/resources/favicon/site.webmanifest"/>
+    <link rel="mask-icon" href="/resources/favicon/safari-pinned-tab.svg" color="#5bbad5"/>
+    <link rel="shortcut icon" href="/resources/favicon/favicon.ico"/>
+    <meta name="msapplication-TileColor" content="#da532c"/>
+    <meta name="msapplication-config" content="/resources/favicon/browserconfig.xml"/>
+    <meta name="theme-color" content="#191919"/>
+
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"/>
 
     <!-- Optional theme -->
-    <link rel="stylesheet" type="text/css" href="resources/css/main.css" />
-    <link rel="stylesheet" type="text/css" href="resources/css/login.css" />
+    <link rel="stylesheet" type="text/css" href="/resources/signup.css"/>
+
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"/>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"/>
     <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"/>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.2.0/zxcvbn.js"/>
-    <script type="text/javascript" src="resources/js/signup/pwchecker.js"/>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.4.2/zxcvbn.js"/>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"/>
-    <script type="text/javascript" src="resources/js/signup/validation.js"/>
+    <script type="text/javascript" src="/resources/util/passwordhelp-signup.js"/>
+    <script type="text/javascript" src="/resources/util/validatePassword-signup.js"/>
 </h:head>
 
-<h:body>
-    <div class="container pt-5 reduced-mobile-spacing">
-        <div class="row py-3">
-            <div class="col-lg">
-                <h1 class="display-4 text-center">QuizConnect</h1>
-            </div>
-        </div>
-    </div>
+<h:body styleClass="center-page-content">
 
+    <script type="text/javascript">
+        window.onload = function () {
+            if (window.location.href.indexOf('registration=userexists') > -1) {
+                document.getElementById('userexists')
+                    .innerHTML = '<p>User already exists. Please try again with another email address!</p>';
+            }
+        }
+    </script>
     <h:form id="signupform" action="#{createManagerBean.redirectRegistration}" method="post">
-        <div class="container-fluid mt-5 reduced-mobile-margin" id="responsive-formgroup">
+
+
+
+        <div class="container">
+            <div class="row pt-3 pb-5">
+                <div class="col-lg">
+                    <h1 class="display-4 text-center">QuizConnect&trade;</h1>
+                </div>
+            </div>
+
+            <h:panelGroup pt:id="userexists" styleClass="h4 userexists" layout="block"/>
+
             <div class="form-group">
                 <label for="institution">Institution</label>
-                <h:inputText type="text" styleClass="form-control" value="#{createManagerBean.manager.institution}" name="institution" id="institution" pt:id="institution" pt:placeholder="Universtität Innsbruck" pt:autocomplete="off"/>
+                <h:inputText pt:autofocus="true" type="text" styleClass="form-control" value="#{createManagerBean.manager.institution}" name="institution" id="institution" pt:id="institution" pt:placeholder="Universtität Innsbruck" pt:autocomplete="off" pt:maxlength="200"/>
             </div>
 
-            <div class="form-group">
+            <div class="form-group required">
                 <label for="username">E-Mail</label>
-                <h:inputText type="text" styleClass="form-control" value="#{createManagerBean.manager.email}" name="username" id="username" pt:id="username" pt:placeholder="john.doe@mail.com" autocomplete="username"/>
-                <h:inputText pt:id="email" pt:name="email" styleClass="state-hidden-input" type="text" value="me@example.test" autocomplete="username"/>
+                <h:inputText type="text" styleClass="form-control" value="#{createManagerBean.manager.email}" name="username" id="username" pt:id="username" pt:placeholder="john.doe@mail.com" autocomplete="username" pt:maxlength="100" pt:required="true" pt:pattern="[^@]+@[^@]+\.[a-zA-Z]{2,}"/>
+                <h:inputText pt:id="email" pt:name="email" pt:maxlength="100" styleClass="jsf-hide" type="text" value="me@example.test" autocomplete="username"/>
             </div>
 
-            <div class="form-group">
+            <div class="form-group required">
                 <label for="reg_password">Password</label>
-                <h:inputSecret styleClass="form-control" value="#{createManagerBean.password}" name="reg_password" id="reg_password" pt:id="reg_password" pt:placeholder="******" pt:autocomplete="new-password"/>
+                <h:inputSecret styleClass="form-control" value="#{createManagerBean.password}" name="reg_password" id="reg_password" pt:id="reg_password" pt:placeholder="******" pt:autocomplete="new-password" pt:required="true"/>
 
                 <label for="confirm_password" class="mt-3">Repeat password</label>
-                <h:inputSecret class="form-control" name="confirm_password" id="confirm_password" pt:placeholder="******" pt:autocomplete="new-password"/>
+                <h:inputSecret styleClass="form-control" value="#{createManagerBean.repeatPassword}" name="confirm_password" id="confirm_password" pt:id="confirm_password" pt:placeholder="******" pt:autocomplete="new-password" pt:required="true"/>
 
-                <p class="mt-3 state-warning" id="password-strength-text"></p>
+                <meter max="4" class="meter" id="password-strength-meter"></meter>
 
+                <h:panelGroup layout="block" styleClass="box" pt:id="password-strength-text" id="password-strength-text"/>
             </div>
 
-            <div class="state-error" id="errorcontainer">
-            </div>
 
-            <div class="row py-5 pb-md-5">
+            <div class="row py-3">
                 <div class="col text-center">
-                    <h:commandButton styleClass="btn btn-block btn-primary btn-lg" id="submit" value="Sign up!" action="#{createManagerBean.createNewManager}"/>
+                    <h:commandButton styleClass="btn btn-primary" id="submit" value="Sign up!" action="#{createManagerBean.createNewManager}"/>
                 </div>
             </div>
 

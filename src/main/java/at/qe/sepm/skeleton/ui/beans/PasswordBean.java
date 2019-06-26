@@ -8,7 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.io.Serializable;
 
 /**
- * Bean to help with some password functionalities.
+ * Bean to help with some password functionalism's.
  *
  * @author Johannes Spies
  */
@@ -16,11 +16,13 @@ import java.io.Serializable;
 @Component
 @Scope("request")
 public class PasswordBean implements Serializable {
+    
     /**
      * Uses the BCryptPasswordEncoder to encode the password
      *
      * @param password
-     * @return
+     * 		Password to be encoded.
+     * @return The encoded password.
      */
     public String encodePassword(String password) {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
