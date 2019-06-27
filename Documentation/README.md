@@ -25,7 +25,7 @@ Any further procedures should be fairly intuitive.
 
 # Tasks
 
-See issue board for details. Not all tasks achieved in a week may be listed(or assigned), since weekly milestones are not updated.
+See issue board for details. Not all tasks achieved in a week may be listed (or assigned), since weekly milestones are not updated.
 
 ## 27.03 - 3.04
 
@@ -75,14 +75,14 @@ Backend
 
 Frontend
 
-- [ ] QuestionSet & Question CRUD fixes
+- [x] QuestionSet & Question CRUD fixes
 - [x] Player Creation
 - [x] Game Creation UI
 - [x] Game Join UI
 - [x] Game UI Boilerplate
-- [ ] Game Sounds
-- [ ] Selenium Setup
-- [ ] Selenium Webdriver einbinden
-- [ ] Selenium Tests
+- [x] Game Sounds
+- [x] Selenium Setup
+- [x] Selenium Webdriver einbinden
+- [x] Selenium Tests
 
 Other
