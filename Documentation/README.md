@@ -86,3 +86,8 @@ Frontend
 - [x] Selenium Tests
 
 Other
+
+- [x] Win "IT-Preis der Stadt Innsbruck" (Good job guys!)
+
+
+Notes: Our e-mail registration will expire on the 4th of July. We have decided not to extend the license. Please use your own email-account for sending registration-mails.
